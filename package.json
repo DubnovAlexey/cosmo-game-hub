@@ -1,0 +1,12 @@
+{
+  "name": "cosmo-game-hub",
+  "version": "1.0.0",
+  "description": "Main workspace for Cosmo Game Hub",
+  "license": "UNLICENSED",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

@@ -1,1 +1,19 @@
 .idea
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build artifacts
+dist/
+.output/
+.astro/
+
+# logs and environment
+npm-debug.log*
+.env
+.env.*
+
+# ide settings
+.idea/
+.vscode/
