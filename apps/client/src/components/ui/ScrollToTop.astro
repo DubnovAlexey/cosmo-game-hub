@@ -1,0 +1,55 @@
+---
+// Floating button component to scroll back to the top of the page
+// Компонент плавающей кнопки для возврата к началу страницы
+---
+
+<!-- Button with fixed positioning, initially hidden via opacity -->
+<!-- Кнопка с фиксированным позиционированием, изначально скрыта через прозрачность -->
+<button
+		id="scrollToTopBtn"
+		class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50"
+		aria-label="Scroll to top"
+>
+    <!-- SVG Icon for up arrow -->
+    <!-- SVG иконка стрелки вверх -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+    </svg>
+</button>
+
+<!-- Client-side script to handle scroll logic -->
+<!-- Клиентский скрипт для обработки логики прокрутки -->
+<script>
+    // Get the button element from the DOM
+    // Получаем элемент кнопки из DOM
+    const btn = document.getElementById('scrollToTopBtn');
+
+    if (btn) {
+        // Listen for scroll events on the window
+        // Слушаем события прокрутки окна
+        window.addEventListener('scroll', () => {
+            // If scrolled down more than 300 pixels
+            // Если прокрутили вниз более чем на 300 пикселей
+            if (window.scrollY > 300) {
+                // Show button by changing opacity and pointer events
+                // Показываем кнопку, меняя прозрачность и события указателя
+                btn.classList.remove('opacity-0', 'pointer-events-none');
+                btn.classList.add('opacity-100', 'pointer-events-auto');
+            } else {
+                // Hide button
+                // Скрываем кнопку
+                btn.classList.add('opacity-0', 'pointer-events-none');
+                btn.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+        });
+
+        // Scroll to top on click
+        // Прокрутка наверх при клике
+        btn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+</script>

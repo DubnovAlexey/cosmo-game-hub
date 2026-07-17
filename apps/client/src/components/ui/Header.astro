@@ -7,20 +7,20 @@
 <!-- Семантическая обертка шапки со стилями Tailwind -->
 <header class="bg-gray-800 text-white shadow-md">
 
-    <!-- Container to constrain width and center content -->
-    <!-- Контейнер для ограничения ширины и центрирования контента -->
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <!-- Container with responsive flex direction (column on mobile, row on desktop) -->
+    <!-- Контейнер с адаптивным направлением flex (колонка на мобильных, строка на десктопе) -->
+    <div class="container mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
 
         <!-- Site Logo/Title -->
         <!-- Логотип/Название сайта -->
-        <a href="/" class="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
+        <a href="/" class="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors text-center">
             Cosmo Game Hub
         </a>
 
         <!-- Main Navigation Menu -->
         <!-- Главное навигационное меню -->
-        <nav>
-            <ul class="flex space-x-8 text-lg font-medium">
+        <nav class="w-full md:w-auto">
+            <ul class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-lg font-medium">
                 <li>
                     <a href="/games" class="hover:text-blue-400 transition-colors">Games</a>
                 </li>
@@ -35,8 +35,8 @@
 
         <!-- User Authentication Actions -->
         <!-- Действия аутентификации пользователя -->
-        <div>
-            <button class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg font-semibold transition-colors">
+        <div class="w-full md:w-auto flex justify-center">
+            <button class="bg-blue-600 hover:bg-blue-700 px-8 py-2 rounded-lg font-semibold transition-colors w-full md:w-auto">
                 Login
             </button>
         </div>

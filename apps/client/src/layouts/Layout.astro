@@ -1,4 +1,6 @@
 ---
+import ScrollToTop from '@components/ui/ScrollToTop.astro';
+
 // Import global styles for Tailwind CSS
 // Импортируем глобальные стили для Tailwind CSS
 import '../styles/global.css';
@@ -16,15 +18,15 @@ interface Props {
 
 // Destructure the title from Astro.props
 // Деструктуризируем title из Astro.props
-const { title } = Astro.props;
+const {title} = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang = "en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Cosmo Game Hub - Play and Learn">
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <meta name = "description" content = "Cosmo Game Hub - Play and Learn">
 
 	<!-- Dynamic title injection -->
 	<!-- Динамическая вставка заголовка -->
@@ -33,25 +35,26 @@ const { title } = Astro.props;
 
 <!-- Body acts as a flex container to push footer to the bottom -->
 <!-- Body выступает в роли flex-контейнера, чтобы прижать подвал к низу -->
-<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+<body class = "bg-gray-900 text-white min-h-screen flex flex-col">
 
     <!-- Global Header Component -->
     <!-- Глобальный компонент Header -->
-    <Header />
+    <Header/>
 
     <!-- Main content wrapper that grows to fill available space -->
     <!-- Обертка основного контента, которая растягивается на доступное пространство -->
-    <main class="flex-grow">
+    <main class = "flex-grow">
 
         <!-- The page content will be injected into this slot -->
         <!-- Контент страницы будет вставлен в этот слот -->
-        <slot />
+        <slot/>
 
     </main>
 
     <!-- Global Footer Component -->
     <!-- Глобальный компонент Footer -->
-    <Footer />
+    <Footer/>
 
+<ScrollToTop/>
 </body>
 </html>
