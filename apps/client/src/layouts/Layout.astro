@@ -3,6 +3,11 @@
 // Импортируем глобальные стили для Tailwind CSS
 import '../styles/global.css';
 
+// Import UI components using Path Aliases
+// Импортируем UI-компоненты, используя псевдонимы путей
+import Header from '@components/ui/Header.astro';
+import Footer from '@components/ui/Footer.astro';
+
 // Define the shape of our Props using a TypeScript interface
 // Определяем структуру наших Props с помощью интерфейса TypeScript
 interface Props {
@@ -25,9 +30,28 @@ const { title } = Astro.props;
 	<!-- Динамическая вставка заголовка -->
     <title>{title}</title>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <!-- The page content will be injected into this slot -->
-    <!-- Контент страницы будет вставлен в этот слот -->
-    <slot />
+
+<!-- Body acts as a flex container to push footer to the bottom -->
+<!-- Body выступает в роли flex-контейнера, чтобы прижать подвал к низу -->
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+    <!-- Global Header Component -->
+    <!-- Глобальный компонент Header -->
+    <Header />
+
+    <!-- Main content wrapper that grows to fill available space -->
+    <!-- Обертка основного контента, которая растягивается на доступное пространство -->
+    <main class="flex-grow">
+
+        <!-- The page content will be injected into this slot -->
+        <!-- Контент страницы будет вставлен в этот слот -->
+        <slot />
+
+    </main>
+
+    <!-- Global Footer Component -->
+    <!-- Глобальный компонент Footer -->
+    <Footer />
+
 </body>
 </html>
