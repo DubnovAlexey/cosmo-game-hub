@@ -1,0 +1,33 @@
+---
+// Import global styles for Tailwind CSS
+// Импортируем глобальные стили для Tailwind CSS
+import '../styles/global.css';
+
+// Define the shape of our Props using a TypeScript interface
+// Определяем структуру наших Props с помощью интерфейса TypeScript
+interface Props {
+    title: string;
+}
+
+// Destructure the title from Astro.props
+// Деструктуризируем title из Astro.props
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cosmo Game Hub - Play and Learn">
+
+	<!-- Dynamic title injection -->
+	<!-- Динамическая вставка заголовка -->
+    <title>{title}</title>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- The page content will be injected into this slot -->
+    <!-- Контент страницы будет вставлен в этот слот -->
+    <slot />
+</body>
+</html>

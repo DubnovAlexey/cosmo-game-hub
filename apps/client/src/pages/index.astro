@@ -1,22 +1,35 @@
 ---
-// Import global Tailwind styles
-// Импортируем глобальные стили Tailwind
-import '../styles/global.css';
+// Import the base Layout component using a Path Alias
+// Импортируем базовый компонент Layout, используя псевдоним пути (Path Alias)
+import Layout from '@layouts/Layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Cosmo Game Hub</title>
-	</head>
-	<body>
-		<!-- Add a test Tailwind class: bg-gray-900 (dark background) and text-white -->
-		<!-- Добавляем тестовый класс Tailwind: bg-gray-900 (темный фон) и text-white -->
-		<div class="bg-gray-900 text-white min-h-screen p-8">
-			<h1>Cosmo Game Hub is ready!</h1>
-		</div>
-	</body>
-</html>
+<!-- We use the Layout component and pass the "title" Prop -->
+<!-- Мы используем компонент Layout и передаем Prop "title" -->
+<Layout title="Home | Cosmo Game Hub">
+
+    <!-- Main container for the landing page -->
+    <!-- Главный контейнер для посадочной страницы -->
+    <div class="flex flex-col items-center justify-center min-h-[80vh] text-center">
+
+        <!-- Main Heading -->
+        <!-- Главный заголовок -->
+        <h1 class="text-5xl font-bold mb-6 text-blue-400">
+            Welcome to Cosmo Game Hub
+        </h1>
+
+        <!-- Subtitle -->
+        <!-- Подзаголовок -->
+        <p class="text-xl text-gray-300 mb-8 max-w-2xl">
+            Your ultimate platform for playing, learning, and competing in classic logic games.
+        </p>
+
+        <!-- Call to Action Button -->
+        <!-- Кнопка призыва к действию -->
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+            Start Playing
+        </button>
+
+    </div>
+
+</Layout>

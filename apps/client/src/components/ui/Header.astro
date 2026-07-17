@@ -1,0 +1,45 @@
+---
+// Header component for global site navigation
+// Компонент Header для глобальной навигации по сайту
+---
+
+<!-- Semantic header wrapper with Tailwind styling -->
+<!-- Семантическая обертка шапки со стилями Tailwind -->
+<header class="bg-gray-800 text-white shadow-md">
+
+    <!-- Container to constrain width and center content -->
+    <!-- Контейнер для ограничения ширины и центрирования контента -->
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+
+        <!-- Site Logo/Title -->
+        <!-- Логотип/Название сайта -->
+        <a href="/" class="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
+            Cosmo Game Hub
+        </a>
+
+        <!-- Main Navigation Menu -->
+        <!-- Главное навигационное меню -->
+        <nav>
+            <ul class="flex space-x-8 text-lg font-medium">
+                <li>
+                    <a href="/games" class="hover:text-blue-400 transition-colors">Games</a>
+                </li>
+                <li>
+                    <a href="/leaderboard" class="hover:text-blue-400 transition-colors">Leaderboard</a>
+                </li>
+                <li>
+                    <a href="/about" class="hover:text-blue-400 transition-colors">About</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- User Authentication Actions -->
+        <!-- Действия аутентификации пользователя -->
+        <div>
+            <button class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg font-semibold transition-colors">
+                Login
+            </button>
+        </div>
+
+    </div>
+</header>
