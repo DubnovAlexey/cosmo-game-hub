@@ -1,67 +1,71 @@
-import React, { useState, useEffect } from 'react';
-// Import legacy CSS [ɪmˈpɔrt ˈlɛgəsi si-ɛs-ɛs]
-// Импорт старых стилей
-import './ChessStyles.css';
+import React, { useState } from 'react';
+import clsx from 'clsx';
+import styles from './Chess.module.css';
+import { INITIAL_BOARD } from './chessConstants';
+import ChessBoard from './ChessBoard';
 
-export default function ChessGame() {
-    // Game initialization state [geɪm ɪˌnɪʃəlaɪˈzeɪʃən steɪt]
-    // Состояние инициализации игры
-    const [isGameActive, setIsGameActive] = useState<boolean>(false);
+export const ChessGame: React.FC = () => {
+    // [EN] State array for highlighted squares
+    // [RU] State-массив для подсвеченных клеток
+    const [highlightedSquares, setHighlightedSquares] = useState<number[]>([]);
 
-    // Player color state (w or b) [ˈpleɪər ˈkʌlər steɪt]
-    // Состояние цвета игрока (белые или черные)
-    const [playerColor, setPlayerColor] = useState<'w' | 'b'>('w');
-
-    // Mount effect [maʊnt ɪˈfɛkt]
-    // Эффект при монтировании (загрузке) компонента
-    useEffect(() => {
-        console.log("Chess Game Mounted!");
-        // Here we will initialize Stockfish Web Worker later
-        // Здесь мы позже инициализируем фоновый поток Stockfish
-    }, []);
+    const handleSquareClick = (index: number) => {
+        // [EN] If square is already highlighted, deselect it. Otherwise, select it.
+        // [RU] Если клетка уже подсвечена, снимаем выделение. Иначе выделяем ее.
+        if (highlightedSquares.includes(index)) {
+            setHighlightedSquares([]);
+        } else {
+            setHighlightedSquares([index]);
+        }
+    };
 
     return (
-        <div className="chess-container">
-            <h1 className="chess-title">Cosmo Chess</h1>
+        <div className={clsx(styles['chess-container'])}>
+            <h1 className={clsx(styles['chess-title'])}>Cosmo Chess</h1>
 
-            <div className="game-zone">
-                {/* Timers and UI will go here */}
-                {/* Таймеры и интерфейс будут здесь */}
-                <div className="timers-container">
-                    <div className="timer-card timer-white">
-                        10:00
-                    </div>
-                    <div className="timer-card timer-black">
-                        10:00
-                    </div>
-                </div>
-
-                <div className="board-area-wrapper">
-                    {/* Placeholder for the Board Component */}
-                    {/* Заглушка для компонента доски */}
-                    <div className="board-wrapper">
-                        <div style={{ color: 'white', margin: 'auto' }}>
-                            Board rendering in progress...
+            <div className={clsx(styles['game-zone'])}>
+                <div className={clsx(styles['control-panel'])}>
+                    <div className={clsx(styles['timers-container'])}>
+                        <div className={clsx(styles['timer-card'], styles['timer-white'], styles['active-turn'])}>
+                            10:00
+                        </div>
+                        <div className={clsx(styles['timer-card'], styles['timer-black'])}>
+                            10:00
                         </div>
                     </div>
                 </div>
 
-                <div className="controls-container">
-                    <button
-                        className="btn btn-start"
-                        onClick={() => setIsGameActive(true)}
-                        disabled={isGameActive}
-                    >
+                <div className={clsx(styles['board-area-wrapper'])}>
+                    <div className={clsx(styles['graveyard'])}></div>
+
+                    <div className={clsx(styles['board-wrapper'])}>
+                        <ChessBoard
+                            boardState={INITIAL_BOARD}
+                            isBlackOriented={false}
+                            onSquareClick={handleSquareClick}
+                            // [EN] Pass the array down to the Board component
+                            // [RU] Передаем массив вниз в компонент доски
+                            highlightedSquares={highlightedSquares}
+                        />
+                    </div>
+
+                    <div className={clsx(styles['graveyard'])}></div>
+                </div>
+
+                <div className={clsx(styles['controls-container'])}>
+                    <button className={clsx(styles['btn'], styles['btn-start'])}>
                         Start Game
                     </button>
-                    <button className="btn" id="btn-pause">
-                        Pause
-                    </button>
-                    <button className="btn" id="btn-open-settings-modal">
+                    <button className={clsx(styles['btn'])}>
                         Settings
+                    </button>
+                    <button className={clsx(styles['btn'])}>
+                        Resign
                     </button>
                 </div>
             </div>
         </div>
     );
-}
+};
+
+export default ChessGame;

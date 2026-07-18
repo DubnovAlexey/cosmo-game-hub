@@ -21,5 +21,14 @@
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react"
+  },
+  // [EN] Set the base directory for resolving non-relative module names
+  // [RU] Устанавливаем базовую директорию для разрешения неабсолютных путей
+  "baseUrl": ".",
+
+  // [EN] Configure path aliases for the project
+  // [RU] Настраиваем псевдонимы путей для проекта
+  "paths": {
+    "@assets/*": ["src/assets/*"]
   }
 }

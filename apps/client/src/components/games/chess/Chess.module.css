@@ -1,0 +1,461 @@
+/* [EN] Global reboot and space background */
+/* [RU] Глобальный сброс стилей и космический фон */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+
+    /* [EN] Path uses the new @assets alias configured in tsconfig.json */
+    /* [RU] Путь использует новый алиас @assets, настроенный в tsconfig.json */
+    background:
+            radial-gradient(circle at center, #2c1a4d 0%, #05040a 100%),
+            url('@assets/images/chess/space-bg.jpg');
+    background-blend-mode: screen;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.chess-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
+    padding: 20px;
+    gap: 20px;
+}
+
+.chess-title {
+    font-size: 2.2rem;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    background: linear-gradient(90deg, #00ff88, #9d4ede);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 20px rgba(0, 255, 136, 0.15);
+}
+
+/* [EN] Centralized game layout with graveyard zones */
+/* [RU] Централизованная разметка игры с зонами для "съеденных" фигур (кладбищем) */
+.game-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+}
+
+.board-area-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    width: 100%;
+}
+
+.graveyard {
+    width: 60px;
+    height: 620px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    gap: 8px;
+}
+
+.control-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 620px;
+    gap: 15px;
+}
+
+.timers-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+}
+
+.timer-card {
+    flex: 1;
+    padding: 10px 20px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    font-family: monospace;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.01);
+}
+
+.timer-white {
+    border-left: 4px solid #ffffff;
+}
+
+.timer-black {
+    border-left: 4px solid #9d4ede;
+}
+
+.active-turn {
+    background: rgba(0, 255, 136, 0.05);
+    border-color: rgba(0, 255, 136, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+}
+
+/* [EN] Advanced 10x10 shadowed chessboard grid matrix */
+/* [RU] Продвинутая матрица сетки шахматной доски 10x10 с тенями */
+.board-wrapper {
+    display: grid;
+    grid-template-columns: 6% repeat(8, 11%) 6%;
+    grid-template-rows: 6% repeat(8, 11%) 6%;
+    width: 100%;
+    max-width: 620px;
+    aspect-ratio: 1 / 1;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 6px #0d0c14,
+    0 20px 45px rgba(0, 0, 0, 0.95),
+    0 0 35px rgba(255, 255, 255, 0.25),
+    0 0 65px rgba(255, 255, 255, 0.12),
+    inset 0 0 30px rgba(0, 0, 0, 0.85);
+}
+
+.board-frame-cell {
+    background-color: #1c1a27;
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    user-select: none;
+    font-family: monospace;
+}
+
+.tile-light {
+    background-color: rgba(255, 255, 255, 0.75);
+    color: #14121f;
+}
+
+.tile-dark {
+    background-color: rgba(35, 32, 50, 0.85);
+}
+
+.board-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.board-tile:hover {
+    background-color: rgba(0, 255, 136, 0.2) !important;
+}
+
+.highlight-selected {
+    background-color: rgba(0, 255, 136, 0.5) !important;
+    box-shadow: inset 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.highlight-move {
+    background-color: rgba(0, 255, 136, 0.15) !important;
+    border: 1px solid rgba(0, 255, 136, 0.4);
+}
+
+.highlight-check {
+    background-color: rgba(255, 0, 50, 0.5) !important;
+    box-shadow: inset 0 0 20px rgba(255, 0, 50, 0.8) !important;
+}
+
+/* [EN] Piece rendering */
+/* [RU] Отрисовка фигур */
+.chess-piece {
+    width: 85%;
+    height: 85%;
+    cursor: grab;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.1s ease;
+    z-index: 2;
+}
+
+.chess-piece:active {
+    cursor: grabbing;
+    transform: scale(1.08);
+}
+
+.b_pawn, .b_rook, .b_knight, .b_bishop, .b_queen, .b_king {
+    filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.95)) drop-shadow(0px 0px 3px rgba(157, 78, 221, 0.5));
+}
+
+.graveyard-piece {
+    width: 42px;
+    height: 42px;
+    background-size: 75%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+/* [EN] Footer controls */
+/* [RU] Элементы управления в нижней части */
+.controls-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    gap: 10px;
+}
+
+.btn {
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.controls-container .btn-start {
+    grid-column: 1 / -1;
+    padding: 14px;
+    font-size: 1.05rem;
+}
+
+.btn-start {
+    background: #00ff88;
+    color: #000000;
+    border: none;
+}
+
+.btn-start:hover {
+    background: #00cc6e;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.btn-start:disabled {
+    background: rgba(0, 255, 136, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* [EN] SVG pieces image mapping with correct @assets/images/chess/ paths */
+/* [RU] Привязка SVG-изображений фигур с правильными путями @assets/images/chess/ */
+.w_pawn { background-image: url('@assets/images/chess/w_pawn.svg.webp'); }
+.b_pawn { background-image: url('@assets/images/chess/b_pawn.svg.webp'); }
+.w_rook { background-image: url('@assets/images/chess/w_rook.svg.webp'); }
+.b_rook { background-image: url('@assets/images/chess/b_rook.svg.webp'); }
+.w_knight { background-image: url('@assets/images/chess/w_knight.svg.webp'); }
+.b_knight { background-image: url('@assets/images/chess/b_knight.svg.webp'); }
+.w_bishop { background-image: url('@assets/images/chess/w_bishop.svg.webp'); }
+.b_bishop { background-image: url('@assets/images/chess/b_bishop.svg.webp'); }
+.w_queen { background-image: url('@assets/images/chess/w_queen.svg.webp'); }
+.b_queen { background-image: url('@assets/images/chess/b_queen.svg.webp'); }
+.w_king { background-image: url('@assets/images/chess/w_king.svg.webp'); }
+.b_king { background-image: url('@assets/images/chess/b_king.svg.webp'); }
+
+/* [EN] Cyber modal settings */
+/* [RU] Кибер-модальное окно (настройки) */
+.cyber-modal {
+    margin: auto;
+    padding: 0;
+    border: 2px solid #00ff88;
+    border-radius: 12px;
+    background: #14121f;
+    color: #ffffff;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+}
+
+.cyber-modal::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    min-width: 300px;
+}
+
+.modal-content h2 {
+    font-size: 1.5rem;
+    color: #9d4ede;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.settings-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.settings-row label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.time-input {
+    width: 120px;
+    padding: 12px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #ffffff;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.time-input:focus {
+    border-color: #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+}
+
+.ai-select {
+    width: 100%;
+    max-width: 250px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #ffffff;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+}
+
+.ai-select option {
+    background: #14121f;
+    color: #ffffff;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.promotion-options {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.promo-btn {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(0, 255, 136, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    background-size: 80%;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 0.2s ease;
+}
+
+.promo-btn:hover {
+    background-color: rgba(0, 255, 136, 0.2);
+    border-color: #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+    transform: scale(1.1);
+}
+
+/* [EN] Responsive media queries */
+/* [RU] Адаптивные медиа-запросы для мобильных устройств */
+@media (max-width: 768px) {
+    .board-area-wrapper {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .graveyard {
+        width: 100%;
+        height: auto;
+        min-height: 52px;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 5px;
+        gap: 8px;
+    }
+
+    .graveyard-piece {
+        width: 32px;
+        height: 32px;
+    }
+
+    .board-wrapper {
+        width: 95vw !important;
+        height: 95vw !important;
+        max-width: 95vw !important;
+        max-height: 95vw !important;
+        grid-template-columns: 6% repeat(8, 11%) 6%;
+        grid-template-rows: 6% repeat(8, 11%) 6%;
+    }
+
+    .board-frame-cell {
+        font-size: 0.65rem;
+    }
+
+    .controls-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .chess-title {
+        font-size: 1.8rem;
+        letter-spacing: 3px;
+    }
+}
