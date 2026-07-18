@@ -1,124 +1,81 @@
-// [EN] Import React hooks
-// [RU] Импортируем хуки React
-import { useState, useRef, useCallback, useEffect } from 'react';
-
-// [EN] Import Chess engine and our strict types/constants
-// [RU] Импортируем шахматный движок и наши строгие типы/константы
+// [EN] Import React hooks and the Chess class from chess.js library
+// [RU] Импортируем хуки React и класс Chess из библиотеки chess.js
+import { useState, useRef, useCallback } from 'react';
 import { Chess } from 'chess.js';
-import { SQUARE_MAP, type ChessSquare } from '../components/games/chess/chessConstants';
 
-// [EN] Dictionary pattern to map engine piece types to our UI naming
-// [RU] Паттерн "Словарь" для сопоставления типов фигур движка с нашими названиями UI
-const PIECE_DICTIONARY: Record<string, string> = {
-    'p': 'pawn',
-    'n': 'knight',
-    'b': 'bishop',
-    'r': 'rook',
-    'q': 'queen',
-    'k': 'king'
-};
+// [EN] Define strict types for the game status
+// [RU] Определяем строгие типы для статуса игры
+export type GameStatus = 'active' | 'win' | 'lose' | 'draw';
 
 export const useChessLogic = () => {
-    const engineRef = useRef(new Chess());
+    // [EN] Initialize the chess engine instance inside a mutable ref to persist across renders
+    // [RU] Инициализируем экземпляр шахматного движка внутри мутабельного рефа для сохранения между рендерами
+    const engineRef = useRef<Chess>(new Chess());
 
-    const [boardState, setBoardState] = useState<string[]>([]);
-    const [selectedSquare, setSelectedSquare] = useState<number | null>(null);
-    const [highlightedSquares, setHighlightedSquares] = useState<number[]>([]);
+    // [EN] State for the visual board representation as a 2D array
+    // [RU] Стейт для визуального представления доски в виде двумерного массива
+    const [board, setBoard] = useState(engineRef.current.board());
 
-    // [EN] State to pause the game and wait for user's promotion choice
-    // [RU] Состояние для паузы игры и ожидания выбора фигуры для превращения
-    const [pendingPromotion, setPendingPromotion] = useState<{ from: ChessSquare, to: ChessSquare } | null>(null);
+    // [EN] State to track the current phase and outcome of the match
+    // [RU] Стейт для отслеживания текущей фазы и результата матча
+    const [gameStatus, setGameStatus] = useState<GameStatus>('active');
 
-    const syncBoard = useCallback(() => {
-        const currentBoard2D = engineRef.current.board();
-        const newBoard1D = currentBoard2D.flat().map((piece) => {
-            if (piece === null) return '';
-            return `${piece.color}_${PIECE_DICTIONARY[piece.type]}`;
-        });
-        setBoardState(newBoard1D);
+    // [EN] Evaluates the board using native chess.js methods to detect game over states
+    // [RU] Оценивает доску с помощью встроенных методов chess.js для обнаружения окончания игры
+    const evaluateGameEnd = useCallback((engine: Chess) => {
+        if (engine.isCheckmate()) {
+            // [EN] If checkmate occurs, the side whose turn it is loses the game
+            // [RU] Если происходит мат, сторона, чей сейчас ход, проигрывает игру
+            setGameStatus('lose');
+        } else if (
+            engine.isDraw() ||
+            engine.isStalemate() ||
+            engine.isThreefoldRepetition()
+        ) {
+            // [EN] Captures any draw, stalemate, or repetition condition safely
+            // [RU] Безопасно фиксирует любые условия ничьей, пата или повторения ходов
+            setGameStatus('draw');
+        }
     }, []);
 
-    useEffect(() => {
-        syncBoard();
-    }, [syncBoard]);
+    // [EN] Handles the core move execution logic with validation
+    // [RU] Обрабатывает основную логику выполнения хода с валидацией
+    const makeMove = useCallback((from: string, to: string, promotion?: string) => {
+        try {
+            const move = engineRef.current.move({
+                from,
+                to,
+                promotion: promotion || undefined
+            });
 
-    const playSound = useCallback((type: 'move' | 'error') => {
-        const audio = new Audio(`/sounds/${type}.mp3`);
-        audio.play().catch(() => {});
+            if (move) {
+                // [EN] Update board representation and instantly check for game over triggers
+                // [RU] Обновляем представление доски и мгновенно проверяем триггеры окончания игры
+                setBoard(engineRef.current.board());
+                evaluateGameEnd(engineRef.current);
+                return true;
+            }
+        } catch (error) {
+            // [EN] Silent catch for invalid user interactions
+            // [RU] Тихое перехватывание невалидных действий пользователя
+            return false;
+        }
+        return false;
+    }, [evaluateGameEnd]);
+
+    // [EN] Completely resets the engine and state to initial values
+    // [RU] Полностью сбрасывает движок и стейт к исходным значениям
+    const resetGame = useCallback(() => {
+        engineRef.current = new Chess();
+        setBoard(engineRef.current.board());
+        setGameStatus('active');
     }, []);
-
-    const handleSquareClick = useCallback((index: number) => {
-        if (pendingPromotion) return;
-
-        // [EN] Get algebraic notation and apply Type Guard (Runtime Validation)
-        // [RU] Получаем алгебраическую нотацию и применяем защиту типа (проверка во время выполнения)
-        const targetAlgebraic = SQUARE_MAP[index];
-        if (!targetAlgebraic) return;
-
-        const pieceOnTarget = engineRef.current.get(targetAlgebraic);
-
-        if (selectedSquare === null) {
-            if (pieceOnTarget) {
-                setSelectedSquare(index);
-                setHighlightedSquares([index]);
-            }
-            return;
-        }
-
-        const sourceAlgebraic = SQUARE_MAP[selectedSquare];
-        if (!sourceAlgebraic) return;
-
-        const pieceOnSource = engineRef.current.get(sourceAlgebraic);
-
-        if (pieceOnTarget && pieceOnSource && pieceOnTarget.color === pieceOnSource.color) {
-            setSelectedSquare(index);
-            setHighlightedSquares([index]);
-            return;
-        }
-
-        const legalMoves = engineRef.current.moves({ square: sourceAlgebraic, verbose: true });
-        const moveAttempt = legalMoves.find(m => m.to === targetAlgebraic);
-
-        if (moveAttempt) {
-            if (moveAttempt.promotion) {
-                setPendingPromotion({ from: sourceAlgebraic, to: targetAlgebraic });
-                return;
-            }
-
-            engineRef.current.move({ from: sourceAlgebraic, to: targetAlgebraic });
-            playSound('move');
-            syncBoard();
-            setSelectedSquare(null);
-            setHighlightedSquares([]);
-        } else {
-            playSound('error');
-            setSelectedSquare(null);
-            setHighlightedSquares([]);
-        }
-    }, [selectedSquare, pendingPromotion, syncBoard, playSound]);
-
-    const completePromotion = useCallback((pieceType: string) => {
-        if (!pendingPromotion) return;
-
-        engineRef.current.move({
-            from: pendingPromotion.from,
-            to: pendingPromotion.to,
-            promotion: pieceType
-        });
-
-        playSound('move');
-        syncBoard();
-        setPendingPromotion(null);
-        setSelectedSquare(null);
-        setHighlightedSquares([]);
-    }, [pendingPromotion, syncBoard, playSound]);
 
     return {
-        boardState,
-        highlightedSquares,
-        handleSquareClick,
-        pendingPromotion,
-        completePromotion,
-        engine: engineRef.current
+        board,
+        gameStatus,
+        makeMove,
+        resetGame,
+        turn: engineRef.current.turn()
     };
 };
