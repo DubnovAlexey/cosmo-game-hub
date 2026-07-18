@@ -1,0 +1,59 @@
+---
+// Import the global Layout component using Path Alias
+// Импортируем глобальный компонент Layout, используя псевдоним пути
+import Layout from '@layouts/Layout.astro';
+---
+
+<!-- Wrap the page content in the Layout -->
+<!-- Оборачиваем контент страницы в Layout -->
+<Layout title="About | Cosmo Game Hub">
+
+    <!-- Main container with vertical padding and centered content -->
+    <!-- Главный контейнер с вертикальными отступами и отцентрированным контентом -->
+    <div class="container mx-auto px-6 py-12 max-w-4xl">
+
+        <!-- Page Title -->
+        <!-- Заголовок страницы -->
+        <h1 class="text-4xl font-bold text-blue-400 mb-8 text-center">
+            About Cosmo Game Hub
+        </h1>
+
+        <!-- Content Wrapper with card styling -->
+        <!-- Обертка контента со стилизацией карточки -->
+        <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-8 md:p-12">
+
+            <!-- Section Title -->
+            <!-- Заголовок секции -->
+            <h2 class="text-2xl font-semibold text-white mb-4">Our Mission</h2>
+
+            <!-- Text Paragraph -->
+            <!-- Текстовый абзац -->
+            <p class="text-gray-300 leading-relaxed mb-8">
+                Welcome to the ultimate destination for classic logic games. Our goal is to provide a seamless, modern, and fast platform for players to enjoy timeless classics like Chess, Go, and Poker. Whether you are a beginner or a grandmaster, you will find your challenge here.
+            </p>
+
+            <!-- Section Title -->
+            <!-- Заголовок секции -->
+            <h2 class="text-2xl font-semibold text-white mb-4">Technology Stack</h2>
+
+            <!-- Unordered List -->
+            <!-- Маркированный список -->
+            <ul class="list-disc list-inside text-gray-300 space-y-3 mb-10">
+                <li>Built with Astro for extreme performance and SEO optimization.</li>
+                <li>Styled using Tailwind CSS for a responsive, modern look.</li>
+                <li>Interactive islands powered by React for complex game logic.</li>
+            </ul>
+
+            <!-- Call to Action Button Container -->
+            <!-- Контейнер кнопки призыва к действию -->
+            <div class="text-center mt-8 pt-8 border-t border-gray-700">
+                <a href="/games" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-lg hover:shadow-blue-500/20">
+                    Start Playing Now
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</Layout>

@@ -1,35 +1,25 @@
 {
-  // Extend the strict TypeScript settings recommended by Astro
-  // Наследуем строгие настройки TypeScript, рекомендованные Astro
   "extends": "astro/tsconfigs/strict",
-
   "compilerOptions": {
-    // Set the base directory to the current folder (apps/client)
-    // Устанавливаем базовую директорию на текущую папку (apps/client)
     "baseUrl": ".",
-
-    // Define the Path Aliases mapping
-    // Определяем сопоставление псевдонимов путей
     "paths": {
-      // Alias for the entire src folder
-      // Псевдоним для всей папки src
-      "@/*": ["src/*"],
-
-      // Alias specifically for components
-      // Псевдоним специально для компонентов
-      "@components/*": ["src/components/*"],
-
-      // Alias specifically for layouts
-      // Псевдоним специально для макетов
-      "@layouts/*": ["src/layouts/*"],
-
-      // Alias specifically for utility functions
-      // Псевдоним специально для вспомогательных функций
-      "@utils/*": ["src/utils/*"],
-
-      // Alias specifically for static assets (images, fonts)
-      // Псевдоним специально для статических ресурсов (картинки, шрифты)
-      "@assets/*": ["src/assets/*"]
-    }
+      "@/*": [
+        "src/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@layouts/*": [
+        "src/layouts/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
+      ]
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   }
 }

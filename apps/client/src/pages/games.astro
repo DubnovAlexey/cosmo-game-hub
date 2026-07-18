@@ -6,10 +6,12 @@ import Layout from '@layouts/Layout.astro';
 // Import the GameCard component
 // Импортируем компонент GameCard
 import GameCard from '@components/games/GameCard.astro';
+
+// Import our mock database
+// Импортируем нашу базу данных-заглушку
+import { games } from '@utils/mockGames';
 ---
 
-<!-- Wrap the page content in the Layout -->
-<!-- Оборачиваем контент страницы в Layout -->
 <Layout title="Games | Cosmo Game Hub">
 
     <div class="container mx-auto px-6 py-12">
@@ -22,73 +24,16 @@ import GameCard from '@components/games/GameCard.astro';
 	    <!-- Контейнер CSS Grid для адаптивной сетки карточек -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-            <!-- Game 1: Chess -->
-            <!-- Игра 1: Шахматы -->
-            <GameCard
-					title="Chess"
-		            description="Classic strategic board game for two players. Master your tactics and checkmate the king."
-		            badge="Hot"
-		            gameUrl="/games/chess"
-			/>
-
-            <!-- Game 2: Checkers -->
-            <!-- Игра 2: Шашки -->
-            <GameCard
-					title="Checkers"
-		            description="Traditional board game of diagonal moves and captures. Simple to learn, hard to master."
-		            gameUrl="/games/checkers"
-			/>
-
-            <!-- Game 3: Go -->
-            <!-- Игра 3: Го -->
-            <GameCard
-					title="Go"
-		            description="Ancient abstract strategy board game aiming to surround more territory than the opponent."
-		            badge="Pro"
-		            gameUrl="/games/go"
-			/>
-
-            <!-- Game 4: Monopoly -->
-            <!-- Игра 4: Монополия -->
-            <GameCard
-					title="Monopoly"
-		            description="Economic and strategic board game. Buy properties, build hotels, and bankrupt your friends."
-		            gameUrl="/games/monopoly"
-			/>
-
-            <!-- Game 5: Preferans -->
-            <!-- Игра 5: Преферанс -->
-            <GameCard
-					title="Preferans"
-		            description="Classic Eastern European trick-taking card game featuring complex bidding and strategy."
-		            gameUrl="/games/preferans"
-			/>
-
-            <!-- Game 6: Poker -->
-            <!-- Игра 6: Покер -->
-            <GameCard
-					title="Poker"
-		            description="The ultimate card game combining strategy, psychology, and a little bit of luck."
-		            badge="Hot"
-		            gameUrl="/games/poker"
-			/>
-
-            <!-- Game 7: Tic-Tac-Toe (Extra) -->
-            <!-- Игра 7: Крестики-нолики (Дополнительно) -->
-            <GameCard
-					title="Tic-Tac-Toe"
-		            description="Quick and fun logic game. Perfect for a short break or testing your basic algorithms."
-		            gameUrl="/games/tic-tac-toe"
-			/>
-
-            <!-- Game 8: Cosmo Snake (Extra) -->
-            <!-- Игра 8: Космическая змейка (Дополнительно) -->
-            <GameCard
-					title="Cosmo Snake"
-		            description="Navigate your snake through space, collect stars, and grow as long as possible without crashing."
-		            badge="New"
-		            gameUrl="/games/snake"
-			/>
+            <!-- Map through the games array and render a GameCard for each -->
+            <!-- Проходим по массиву игр и рендерим GameCard для каждой -->
+			{games.map((game) => (
+				<GameCard
+					title={game.title}
+			        description={game.description}
+			        badge={game.badge}
+			        gameUrl={game.gameUrl}
+				/>
+			))}
 
             <!-- Future Game Placeholder -->
             <!-- Карточка-заглушка для будущих игр -->

@@ -1,0 +1,59 @@
+---
+// Import the global Layout component
+// Импортируем глобальный компонент Layout
+import Layout from '@layouts/Layout.astro';
+
+// Array representing the 8 ranks (rows) and 8 files (columns)
+// Массив, представляющий 8 горизонталей (строк) и 8 вертикалей (столбцов)
+const boardIndexes = Array.from({ length: 8 }, (_, i) => i);
+---
+
+<Layout title="Chess | Cosmo Game Hub">
+
+    <div class="container mx-auto px-6 py-12 flex flex-col items-center">
+
+        <h1 class="text-4xl font-bold text-white mb-6">Chess</h1>
+
+		<!-- Game controls container -->
+	    <!-- Контейнер управления игрой -->
+        <div class="mb-8 flex gap-4">
+            <button id="saveGameBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition-colors shadow-lg">
+                Save Game
+            </button>
+            <button id="loadGameBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded transition-colors shadow-lg">
+                Load Game
+            </button>
+        </div>
+
+	    <!-- Chessboard container using CSS Grid -->
+	    <!-- Контейнер шахматной доски с использованием CSS Grid -->
+	    <!-- w-[320px] for mobile, md:w-[480px] for desktop -->
+	    <!-- w-[320px] для мобильных, md:w-[480px] для десктопа -->
+        <div class="grid grid-cols-8 grid-rows-8 border-4 border-gray-800 shadow-2xl w-[320px] h-[320px] md:w-[480px] md:h-[480px]">
+
+            <!-- Nested loops to generate the 64 squares -->
+            <!-- Вложенные циклы для генерации 64 клеток -->
+            {boardIndexes.map((row) => (
+                boardIndexes.map((col) => {
+                    // Calculate color: if row + col is odd, it's a dark square
+                    // Вычисляем цвет: если строка + столбец нечетные, это темная клетка
+                    const isDark = (row + col) % 2 === 1;
+
+                    return (
+							<div
+									class={`w-full h-full flex items-center justify-center text-2xl cursor-pointer ${isDark ? 'bg-amber-800' : 'bg-amber-200'}`}
+							        data-row={row}
+							        data-col={col}
+							>
+                            <!-- Empty square for now -->
+                            <!-- Пока пустая клетка -->
+                        </div>
+                    );
+                })
+            ))}
+
+        </div>
+
+    </div>
+
+</Layout>

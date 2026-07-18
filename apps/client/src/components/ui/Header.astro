@@ -1,18 +1,22 @@
 ---
 // Header component for global site navigation
 // Компонент Header для глобальной навигации по сайту
+
+// Get the current URL path to determine active links
+// Получаем текущий путь URL для определения активных ссылок
+const currentPath = Astro.url.pathname;
 ---
 
-<!-- Semantic header wrapper with Tailwind styling -->
-<!-- Семантическая обертка шапки со стилями Tailwind -->
+<!-- Semantic header wrapper -->
+<!-- Семантическая обертка шапки -->
 <header class="bg-gray-800 text-white shadow-md">
 
-    <!-- Container with responsive flex direction (column on mobile, row on desktop) -->
-    <!-- Контейнер с адаптивным направлением flex (колонка на мобильных, строка на десктопе) -->
+    <!-- Responsive flex container -->
+    <!-- Адаптивный flex-контейнер -->
     <div class="container mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
 
-        <!-- Site Logo/Title -->
-        <!-- Логотип/Название сайта -->
+        <!-- Site Logo -->
+        <!-- Логотип сайта -->
         <a href="/" class="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors text-center">
             Cosmo Game Hub
         </a>
@@ -21,22 +25,52 @@
         <!-- Главное навигационное меню -->
         <nav class="w-full md:w-auto">
             <ul class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-lg font-medium">
+
                 <li>
-                    <a href="/games" class="hover:text-blue-400 transition-colors">Games</a>
+                    <!-- Use class:list for conditional active styling -->
+                    <!-- Используем class:list для условной активной стилизации -->
+                    <a
+							href="/games"
+		                    class:list={[
+                                "transition-all duration-300",
+                                currentPath.startsWith('/games') ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
+                            ]}
+					>
+                        Games
+                    </a>
                 </li>
+
                 <li>
-                    <a href="/leaderboard" class="hover:text-blue-400 transition-colors">Leaderboard</a>
+                    <a
+							href="/leaderboard"
+		                    class:list={[
+                                "transition-all duration-300",
+                                currentPath === '/leaderboard' ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
+                            ]}
+					>
+                        Leaderboard
+                    </a>
                 </li>
+
                 <li>
-                    <a href="/about" class="hover:text-blue-400 transition-colors">About</a>
+                    <a
+							href="/about"
+		                    class:list={[
+                                "transition-all duration-300",
+                                currentPath === '/about' ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
+                            ]}
+					>
+                        About
+                    </a>
                 </li>
+
             </ul>
         </nav>
 
         <!-- User Authentication Actions -->
         <!-- Действия аутентификации пользователя -->
         <div class="w-full md:w-auto flex justify-center">
-            <button class="bg-blue-600 hover:bg-blue-700 px-8 py-2 rounded-lg font-semibold transition-colors w-full md:w-auto">
+            <button class="bg-blue-600 hover:bg-blue-700 px-8 py-2 rounded-lg font-semibold transition-colors w-full md:w-auto shadow-lg hover:shadow-blue-500/20">
                 Login
             </button>
         </div>
