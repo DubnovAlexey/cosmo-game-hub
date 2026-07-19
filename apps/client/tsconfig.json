@@ -1,34 +1,24 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
+    // [EN] Base URL serves as a starting point for path resolution
+    // [RU] Базовый URL служит отправной точкой для разрешения путей
     "baseUrl": ".",
+
+    // [EN] Define path aliases to avoid long relative import paths
+    // [RU] Определяем псевдонимы путей, чтобы избежать длинных относительных импортов
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@layouts/*": [
-        "src/layouts/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ],
-      "@assets/*": [
-        "src/assets/*"
-      ]
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@utils/*": ["src/utils/*"],
+      "@assets/*": ["src/assets/*"],
+      "@hooks/*": ["src/hooks/*"]
     },
+
+    // [EN] React JSX configuration for Astro
+    // [RU] Конфигурация React JSX для Astro
     "jsx": "react-jsx",
     "jsxImportSource": "react"
-  },
-  // [EN] Set the base directory for resolving non-relative module names
-  // [RU] Устанавливаем базовую директорию для разрешения неабсолютных путей
-  "baseUrl": ".",
-
-  // [EN] Configure path aliases for the project
-  // [RU] Настраиваем псевдонимы путей для проекта
-  "paths": {
-    "@assets/*": ["src/assets/*"]
   }
 }

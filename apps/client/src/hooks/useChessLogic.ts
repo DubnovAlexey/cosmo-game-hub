@@ -8,7 +8,7 @@ import { Chess } from 'chess.js';
 export type GameStatus = 'active' | 'win' | 'lose' | 'draw';
 
 export const useChessLogic = () => {
-    // [EN] Initialize the chess engine instance inside a mutable ref to persist across renders
+    // [EN] Initialize the chess engines instance inside a mutable ref to persist across renders
     // [RU] Инициализируем экземпляр шахматного движка внутри мутабельного рефа для сохранения между рендерами
     const engineRef = useRef<Chess>(new Chess());
 
@@ -63,7 +63,7 @@ export const useChessLogic = () => {
         return false;
     }, [evaluateGameEnd]);
 
-    // [EN] Completely resets the engine and state to initial values
+    // [EN] Completely resets the engines and state to initial values
     // [RU] Полностью сбрасывает движок и стейт к исходным значениям
     const resetGame = useCallback(() => {
         engineRef.current = new Chess();

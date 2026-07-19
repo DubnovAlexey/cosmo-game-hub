@@ -19,7 +19,7 @@ import b_r from '../../../assets/images/chess/b_rook.svg.webp';
 import b_q from '../../../assets/images/chess/b_queen.svg.webp';
 import b_k from '../../../assets/images/chess/b_king.svg.webp';
 
-// [EN] Mapping dictionary connecting engine shortcodes to the .src property of imported image objects
+// [EN] Mapping dictionary connecting engines shortcodes to the .src property of imported image objects
 // [RU] Словарь маппинга, связывающий короткие коды движка со свойством .src импортированных объектов изображений
 const PIECE_IMAGES: Record<string, string> = {
     'w-p': w_p.src, 'w-n': w_n.src, 'w-b': w_b.src, 'w-r': w_r.src, 'w-q': w_q.src, 'w-k': w_k.src,

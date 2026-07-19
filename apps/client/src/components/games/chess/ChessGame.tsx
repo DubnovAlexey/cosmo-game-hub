@@ -1,52 +1,68 @@
-// [EN] Import React and necessary components
-// [RU] Импортируем React и необходимые компоненты
-import React from 'react';
-import { ChessBoard } from './ChessBoard';
-import { useChessLogic } from '@/hooks/useChessLogic.ts';
-import { GameOverOverlay } from '../shared/GameOverOverlay';
+// [EN] Import React, useState hook, and components using Path Aliases
+// [RU] Импортируем React, хук useState и компоненты, используя псевдонимы путей
+import React, { useState } from 'react';
+import { ChessBoard } from '@components/games/chess/ChessBoard';
+import { DifficultySelector } from '@components/games/chess/DifficultySelector';
+import { TimerPanel } from '@components/games/chess/TimerPanel';
+import { useChessLogic } from '@hooks/useChessLogic';
 
 export const ChessGame: React.FC = () => {
-    // [EN] Destructure game state and core methods from our custom hook
-    // [RU] Деструктурируем состояние игры и основные методы из нашего пользовательского хука
-    const { board, makeMove, gameStatus, resetGame } = useChessLogic();
+    // [EN] Extract board, move handler, and current turn from the engines hook
+    // [RU] Извлекаем доску, обработчик ходов и текущий ход из хука движка
+    const { board, makeMove: handleMove, turn } = useChessLogic();
+
+    // [EN] Initialize local state for difficulty level
+    // [RU] Инициализируем локальное состояние для уровня сложности
+    const [difficulty, setDifficulty] = useState<number>(1);
+    // [EN] Map the engines's turn format ('w'/'b') to our TimerPanel format ('White'/'Black')
+    // [RU] Преобразуем формат хода движка ('w'/'b') в формат для TimerPanel ('White'/'Black')
+    const currentPlayer = turn === 'b' ? 'Black' : 'White';
+
+    // [EN] Handler for timer timeout event
+    // [RU] Обработчик события истечения времени таймера
+    const handleTimeOut = (player: 'White' | 'Black') => {
+        console.log(`Time is out for ${player}!`);
+        // We will add game over logic here later
+    };
 
     return (
-        // [EN] Main wrapper for the game view
-        // [RU] Главная обертка для игрового вида
-        <div className="relative w-full max-w-3xl mx-auto p-4 flex flex-col items-center">
+        // [EN] Main Grid Layout
+        // [RU] Главная сеточная компоновка
+        <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[300px_auto_300px] gap-8 items-start justify-center p-4">
 
-            {/* [EN] Header / Game Title */}
-            {/* [RU] Заголовок игры */}
-            <h1 className="text-3xl font-bold text-slate-100 mb-6 uppercase tracking-widest drop-shadow-md">
-                Cosmo Chess
-            </h1>
+            {/* [EN] Left Sidebar: Engine Settings and Timers */}
+            {/* [RU] Левая боковая панель: Настройки движка и Таймеры */}
+            <aside className="bg-slate-900 border-2 border-slate-700 rounded-xl p-6 shadow-2xl flex flex-col gap-6 min-h-[500px]">
+                <h2 className="text-amber-500 font-bold text-xl uppercase tracking-widest border-b-2 border-slate-700 pb-2">
+                    Game Controls
+                </h2>
 
-            {/* [EN] The core game board container */}
-            {/* [RU] Основной контейнер игровой доски */}
-            <div className="relative w-full aspect-square border-4 border-slate-800 rounded-lg overflow-hidden shadow-2xl">
+                <DifficultySelector currentDifficulty={difficulty} onSelect={setDifficulty} />
 
-                <ChessBoard
-                    board={board}
-                    onMove={makeMove}
-                />
+                {/* [EN] Inject the TimerPanel with the current player state */}
+                {/* [RU] Внедряем TimerPanel с состоянием текущего игрока */}
+                <TimerPanel currentPlayer={currentPlayer} onTimeOut={handleTimeOut} />
+            </aside>
 
-                {/* [EN] Conditional Rendering for Game Over state */}
-                {/* [RU] Условный рендеринг для состояния окончания игры */}
-                {gameStatus !== 'active' && (
-                    <GameOverOverlay status={gameStatus}>
-                        {/* [EN] Injecting slot content based on status */}
-                        {/* [RU] Внедряем контент слота в зависимости от статуса */}
-                        <div className="text-xl font-medium">
-                            {gameStatus === 'win'
-                                ? 'The enemy king is crushed. Excellent strategy.'
-                                : gameStatus === 'lose'
-                                    ? 'Your forces have been annihilated. Pathetic.'
-                                    : 'A sterile draw. Nobody wins.'}
-                        </div>
-                    </GameOverOverlay>
-                )}
-
+            {/* [EN] Center: The Chess Board Wrapper */}
+            {/* [RU] Центр: Обертка для шахматной доски */}
+            <div className="w-full flex items-center justify-center">
+                <div className="w-full max-w-[700px] aspect-square">
+                    <ChessBoard board={board} onMove={handleMove} />
+                </div>
             </div>
+
+            {/* [EN] Right Sidebar: Match Stats */}
+            {/* [RU] Правая боковая панель: Статистика матча */}
+            <aside className="bg-slate-900 border-2 border-slate-700 rounded-xl p-6 shadow-2xl flex flex-col gap-4 min-h-[500px]">
+                <h2 className="text-amber-500 font-bold text-xl uppercase tracking-widest border-b-2 border-slate-700 pb-2">
+                    Match Stats
+                </h2>
+                <div className="flex flex-col gap-2">
+                    <div className="text-slate-400 italic">Captured Pieces</div>
+                    <div className="text-slate-400 italic">Move History</div>
+                </div>
+            </aside>
         </div>
     );
 };

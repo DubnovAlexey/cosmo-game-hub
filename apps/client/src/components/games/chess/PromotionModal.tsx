@@ -13,7 +13,7 @@ interface PromotionModalProps {
     onSelect: (pieceType: string) => void;
 }
 
-// [EN] Array of piece types available for promotion (engine standard)
+// [EN] Array of piece types available for promotion (engines standard)
 // [RU] Массив типов фигур, доступных для превращения (стандарт движка)
 const PROMOTION_PIECES = ['q', 'r', 'b', 'n'];
 
