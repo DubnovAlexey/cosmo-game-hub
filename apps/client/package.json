@@ -19,10 +19,12 @@
     "chess.js": "^1.4.0",
     "clsx": "^2.1.1",
     "react": "^19.2.7",
+    "react-chessboard": "^5.10.0",
     "react-dom": "^19.2.7",
     "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
+    "@types/node": "^26.1.1",
     "@types/react": "^19.2.17"
   }
 }

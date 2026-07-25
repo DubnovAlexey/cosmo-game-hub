@@ -3,27 +3,27 @@
 import React, { useState } from 'react';
 import type { Square, PieceSymbol, Color } from 'chess.js';
 
-// [EN] Static imports of all piece images from the assets folder
-// [RU] Статические импорты всех изображений фигур из папки ресурсов
-import w_p from '../../../assets/images/chess/w_pawn.svg.webp';
-import w_n from '../../../assets/images/chess/w_knight.svg.webp';
-import w_b from '../../../assets/images/chess/w_bishop.svg.webp';
-import w_r from '../../../assets/images/chess/w_rook.svg.webp';
-import w_q from '../../../assets/images/chess/w_queen.svg.webp';
-import w_k from '../../../assets/images/chess/w_king.svg.webp';
+// [EN] Static imports of all piece images from the assets folder using Aliases
+// [RU] Статические импорты всех изображений фигур из папки ресурсов с использованием Алиасов
+import w_p from '@assets/images/chess/w_pawn.svg.webp';
+import w_n from '@assets/images/chess/w_knight.svg.webp';
+import w_b from '@assets/images/chess/w_bishop.svg.webp';
+import w_r from '@assets/images/chess/w_rook.svg.webp';
+import w_q from '@assets/images/chess/w_queen.svg.webp';
+import w_k from '@assets/images/chess/w_king.svg.webp';
 
-import b_p from '../../../assets/images/chess/b_pawn.svg.webp';
-import b_n from '../../../assets/images/chess/b_knight.svg.webp';
-import b_b from '../../../assets/images/chess/b_bishop.svg.webp';
-import b_r from '../../../assets/images/chess/b_rook.svg.webp';
-import b_q from '../../../assets/images/chess/b_queen.svg.webp';
-import b_k from '../../../assets/images/chess/b_king.svg.webp';
+import b_p from '@assets/images/chess/b_pawn.svg.webp';
+import b_n from '@assets/images/chess/b_knight.svg.webp';
+import b_b from '@assets/images/chess/b_bishop.svg.webp';
+import b_r from '@assets/images/chess/b_rook.svg.webp';
+import b_q from '@assets/images/chess/b_queen.svg.webp';
+import b_k from '@assets/images/chess/b_king.svg.webp';
 
-// [EN] Mapping dictionary connecting engines shortcodes to the .src property of imported image objects
-// [RU] Словарь маппинга, связывающий короткие коды движка со свойством .src импортированных объектов изображений
+// [EN] Mapping dictionary connecting engine shortcodes to the imported image strings
+// [RU] Словарь маппинга, связывающий короткие коды движка с импортированными строками изображений
 const PIECE_IMAGES: Record<string, string> = {
-    'w-p': w_p.src, 'w-n': w_n.src, 'w-b': w_b.src, 'w-r': w_r.src, 'w-q': w_q.src, 'w-k': w_k.src,
-    'b-p': b_p.src, 'b-n': b_n.src, 'b-b': b_b.src, 'b-r': b_r.src, 'b-q': b_q.src, 'b-k': b_k.src,
+    'w-p': w_p, 'w-n': w_n, 'w-b': w_b, 'w-r': w_r, 'w-q': w_q, 'w-k': w_k,
+    'b-p': b_p, 'b-n': b_n, 'b-b': b_b, 'b-r': b_r, 'b-q': b_q, 'b-k': b_k,
 };
 
 // [EN] Strict interface for a single piece object based on chess.js logic

@@ -1,68 +1,125 @@
-// [EN] Import React, useState hook, and components using Path Aliases
-// [RU] Импортируем React, хук useState и компоненты, используя псевдонимы путей
+// [EN] Import React and useState hook
+// [RU] Импортируем React и хук useState
 import React, { useState } from 'react';
-import { ChessBoard } from '@components/games/chess/ChessBoard';
-import { DifficultySelector } from '@components/games/chess/DifficultySelector';
-import { TimerPanel } from '@components/games/chess/TimerPanel';
+
+// [EN] Import UI components according to the project architecture
+// [RU] Импортируем UI-компоненты согласно архитектуре проекта
+import { ChessBoard } from './ChessBoard';
+import { ChessTimer } from './ChessTimer';
+import { DifficultySelector } from './DifficultySelector';
+import { PromotionModal } from './PromotionModal';
+import { TimerPanel } from './TimerPanel';
+import { GameOverOverlay } from '../shared/GameOverOverlay';
+
+// [EN] Import logic hook and parser utility using Aliases
+// [RU] Импортируем хук логики и утилиту парсинга, используя Алиасы
 import { useChessLogic } from '@hooks/useChessLogic';
+import { parseFenToBoard } from '@utils/engine/fenParser';
+
+// [EN] Import CSS module stylesheet
+// [RU] Импортируем таблицу стилей CSS-модуля
+import styles from './Chess.module.css';
 
 export const ChessGame: React.FC = () => {
-    // [EN] Extract board, move handler, and current turn from the engines hook
-    // [RU] Извлекаем доску, обработчик ходов и текущий ход из хука движка
-    const { board, makeMove: handleMove, turn } = useChessLogic();
+    // [EN] Local state for engine difficulty (default is 3)
+    // [RU] Локальное состояние для сложности движка (по умолчанию 3)
+    const [difficulty, setDifficulty] = useState<number>(3);
 
-    // [EN] Initialize local state for difficulty level
-    // [RU] Инициализируем локальное состояние для уровня сложности
-    const [difficulty, setDifficulty] = useState<number>(1);
-    // [EN] Map the engines's turn format ('w'/'b') to our TimerPanel format ('White'/'Black')
-    // [RU] Преобразуем формат хода движка ('w'/'b') в формат для TimerPanel ('White'/'Black')
-    const currentPlayer = turn === 'b' ? 'Black' : 'White';
+    // [EN] Extract live state and methods from our custom chess logic hook
+    // [RU] Извлекаем живое состояние и методы из нашего кастомного хука шахматной логики
+    const { fen, turn, isGameOver, isEngineThinking, handleUserMove } = useChessLogic(difficulty);
 
-    // [EN] Handler for timer timeout event
-    // [RU] Обработчик события истечения времени таймера
-    const handleTimeOut = (player: 'White' | 'Black') => {
-        console.log(`Time is out for ${player}!`);
-        // We will add game over logic here later
-    };
+    // [EN] Compute the 2D array matrix on the fly from the current FEN string
+    // [RU] Вычисляем матрицу двумерного массива на лету из текущей FEN-строки
+    const boardMatrix = parseFenToBoard(fen);
+
+    // [EN] Temporary empty handler for components not yet fully implemented
+    // [RU] Временный пустой обработчик для компонентов, которые еще не полностью реализованы
+    const emptyHandler = () => {};
+
+    // [EN] ADAPTER: Transform internal logic state ('w' | 'b') to UI string contracts
+    // [RU] АДАПТЕР: Трансформируем внутреннее состояние логики ('w' | 'b') в строковые контракты UI
+    const mappedPlayer = turn === 'w' ? 'White' : 'Black';
+
+    // [EN] Derive the specific game over status for the overlay
+    // [RU] Вычисляем конкретный статус окончания игры для оверлея
+    const gameStatus = isGameOver ? (turn === 'w' ? 'lose' : 'win') : null;
 
     return (
-        // [EN] Main Grid Layout
-        // [RU] Главная сеточная компоновка
-        <div className="w-full h-full grid grid-cols-1 lg:grid-cols-[300px_auto_300px] gap-8 items-start justify-center p-4">
+        <div className={styles['chess-container']}>
+            <h1 className={styles['chess-title']}>Cosmo Game Hub</h1>
 
-            {/* [EN] Left Sidebar: Engine Settings and Timers */}
-            {/* [RU] Левая боковая панель: Настройки движка и Таймеры */}
-            <aside className="bg-slate-900 border-2 border-slate-700 rounded-xl p-6 shadow-2xl flex flex-col gap-6 min-h-[500px]">
-                <h2 className="text-amber-500 font-bold text-xl uppercase tracking-widest border-b-2 border-slate-700 pb-2">
-                    Game Controls
-                </h2>
+            {/* [EN] Pass real state and setter to the DifficultySelector */}
+            {/* [RU] Передаем реальное состояние и функцию обновления в DifficultySelector */}
+            <DifficultySelector
+                currentDifficulty={difficulty}
+                onSelect={(level: number) => setDifficulty(level)}
+            />
 
-                <DifficultySelector currentDifficulty={difficulty} onSelect={setDifficulty} />
+            <div className={styles['game-zone']}>
+                <div className={styles['board-area-wrapper']}>
+                    <div className={styles['graveyard']}></div>
 
-                {/* [EN] Inject the TimerPanel with the current player state */}
-                {/* [RU] Внедряем TimerPanel с состоянием текущего игрока */}
-                <TimerPanel currentPlayer={currentPlayer} onTimeOut={handleTimeOut} />
-            </aside>
+                    <div className={styles['board-wrapper']}>
+                        {/* [EN] Render the board, passing the dynamic matrix and move handler */}
+                        {/* [RU] Рендерим доску, передавая динамическую матрицу и обработчик ходов */}
+                        <ChessBoard
+                            board={boardMatrix}
+                            onMove={handleUserMove}
+                            isBlackOriented={false}
+                        />
 
-            {/* [EN] Center: The Chess Board Wrapper */}
-            {/* [RU] Центр: Обертка для шахматной доски */}
-            <div className="w-full flex items-center justify-center">
-                <div className="w-full max-w-[700px] aspect-square">
-                    <ChessBoard board={board} onMove={handleMove} />
+                        {/* [EN] Optional: visual indicator when engine is thinking */}
+                        {/* [RU] Опционально: визуальный индикатор, когда движок думает */}
+                        {isEngineThinking && (
+                            <div className="absolute top-2 right-2 flex items-center gap-2 bg-slate-900/80 px-3 py-1 rounded text-amber-400 text-sm font-bold z-10">
+                                <span className="animate-pulse">Engine is thinking...</span>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={styles['graveyard']}></div>
                 </div>
             </div>
 
-            {/* [EN] Right Sidebar: Match Stats */}
-            {/* [RU] Правая боковая панель: Статистика матча */}
-            <aside className="bg-slate-900 border-2 border-slate-700 rounded-xl p-6 shadow-2xl flex flex-col gap-4 min-h-[500px]">
-                <h2 className="text-amber-500 font-bold text-xl uppercase tracking-widest border-b-2 border-slate-700 pb-2">
-                    Match Stats
-                </h2>
-                <div className="flex flex-col gap-2">
-                    <div className="text-slate-400 italic">Captured Pieces</div>
-                    <div className="text-slate-400 italic">Move History</div>
-                </div>
-            </aside>
+            <div className={styles['control-panel']}>
+                {/* [EN] Sync timer panel with the mapped player ('White' | 'Black') */}
+                {/* [RU] Синхронизируем панель таймера с отформатированным игроком */}
+                <TimerPanel
+                    currentPlayer={mappedPlayer}
+                    onTimeOut={emptyHandler}
+                />
+            </div>
+
+            <ChessTimer
+                player={mappedPlayer}
+                isActive={!isGameOver && !isEngineThinking}
+                initialSeconds={600}
+                onTimeOut={emptyHandler}
+            />
+
+            <PromotionModal
+                pendingPromotion={null} // To be implemented next
+                onSelect={emptyHandler}
+            />
+
+            {/* [EN] CONDITIONAL RENDERING: Render overlay if game is actually over */}
+            {/* [RU] УСЛОВНЫЙ РЕНДЕРИНГ: Рендерим оверлей, если игра действительно окончена */}
+            {isGameOver && gameStatus !== null && (
+                <GameOverOverlay status={gameStatus as "win" | "lose" | "draw"}>
+                    <div className="text-center">
+                        <p className="text-xl mb-4 text-slate-200">The game has ended!</p>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded transition-colors"
+                        >
+                            Play Again
+                        </button>
+                    </div>
+                </GameOverOverlay>
+            )}
         </div>
     );
 };
+
+export default ChessGame;

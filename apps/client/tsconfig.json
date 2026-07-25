@@ -1,24 +1,54 @@
 {
-  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    // [EN] Base URL serves as a starting point for path resolution
-    // [RU] Базовый URL служит отправной точкой для разрешения путей
+    // [EN] Core JavaScript version target
+    // [RU] Базовая целевая версия JavaScript
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+
+    // [EN] React JSX transformation support
+    // [RU] Поддержка трансформации React JSX
+    "jsx": "react-jsx",
+
+    // [EN] CRITICAL: Inject Vite environment and Node types in a single array
+    // [RU] КРИТИЧНО: Внедряем типы окружения Vite и Node в единый массив
+    "types": ["vite/client", "node"],
+
+    // [EN] Bundler module resolution settings
+    // [RU] Настройки разрешения модулей для сборщика
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    // [EN] Base directory for absolute imports
+    // [RU] Базовая директория для абсолютных импортов
     "baseUrl": ".",
 
-    // [EN] Define path aliases to avoid long relative import paths
-    // [RU] Определяем псевдонимы путей, чтобы избежать длинных относительных импортов
+    // [EN] Global path aliases mapped properly to the src folder
+    // [RU] Глобальные алиасы путей, корректно привязанные к папке src
     "paths": {
-      "@/*": ["src/*"],
-      "@components/*": ["src/components/*"],
-      "@layouts/*": ["src/layouts/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@utils/*": ["src/utils/*"],
       "@assets/*": ["src/assets/*"],
-      "@hooks/*": ["src/hooks/*"]
+      "@components/*": ["src/components/*"],
+      "@engines/*": ["src/engines/*"]
     },
 
-    // [EN] React JSX configuration for Astro
-    // [RU] Конфигурация React JSX для Astro
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
-  }
+    // [EN] Strict type-checking rules
+    // [RU] Строгие правила проверки типов
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true
+  },
+
+  // [EN] Include source files and bundler config
+  // [RU] Включаем файлы исходного кода и конфиг сборщика
+  "include": ["src", "vite.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }
