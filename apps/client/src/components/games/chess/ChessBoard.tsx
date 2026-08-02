@@ -1,45 +1,24 @@
-// [EN] Import React, state hook, and exact types from chess.js
-// [RU] Импортируем React, хук состояния и точные типы из chess.js
+// [EN] Import React, state hook, and the exact Square type from chess.js
+// [RU] Импортируем React, хук состояния и точный тип Square из chess.js
 import React, { useState } from 'react';
-import type { Square, PieceSymbol, Color } from 'chess.js';
+import type { Square } from 'chess.js';
 
-// [EN] Static imports of all piece images from the assets folder using Aliases
-// [RU] Статические импорты всех изображений фигур из папки ресурсов с использованием Алиасов
-import w_p from '@assets/images/chess/w_pawn.svg.webp';
-import w_n from '@assets/images/chess/w_knight.svg.webp';
-import w_b from '@assets/images/chess/w_bishop.svg.webp';
-import w_r from '@assets/images/chess/w_rook.svg.webp';
-import w_q from '@assets/images/chess/w_queen.svg.webp';
-import w_k from '@assets/images/chess/w_king.svg.webp';
+// [EN] NEW: BoardPiece now comes from fenParser.ts instead of being redefined here —
+// it was a duplicate of the exact same interface already exported there
+// [RU] НОВОЕ: BoardPiece теперь импортируется из fenParser.ts, а не переопределяется здесь —
+// это был дубликат точно такого же интерфейса, уже экспортированного оттуда
+import type { BoardPiece } from '@utils/engine/fenParser';
 
-import b_p from '@assets/images/chess/b_pawn.svg.webp';
-import b_n from '@assets/images/chess/b_knight.svg.webp';
-import b_b from '@assets/images/chess/b_bishop.svg.webp';
-import b_r from '@assets/images/chess/b_rook.svg.webp';
-import b_q from '@assets/images/chess/b_queen.svg.webp';
-import b_k from '@assets/images/chess/b_king.svg.webp';
-
-// [EN] Mapping dictionary connecting engine shortcodes to the imported image strings
-// [RU] Словарь маппинга, связывающий короткие коды движка с импортированными строками изображений
-const PIECE_IMAGES: Record<string, string> = {
-    'w-p': w_p, 'w-n': w_n, 'w-b': w_b, 'w-r': w_r, 'w-q': w_q, 'w-k': w_k,
-    'b-p': b_p, 'b-n': b_n, 'b-b': b_b, 'b-r': b_r, 'b-q': b_q, 'b-k': b_k,
-};
-
-// [EN] Strict interface for a single piece object based on chess.js logic
-// [RU] Строгий интерфейс для объекта отдельной фигуры на основе логики chess.js
-interface BoardPiece {
-    square: Square;
-    type: PieceSymbol;
-    color: Color;
-}
+// [EN] NEW: piece image map moved to a shared module so PromotionModal can reuse it too
+// [RU] НОВОЕ: карта изображений фигур вынесена в общий модуль, чтобы PromotionModal тоже мог её использовать
+import { PIECE_IMAGES } from '@assets/chessPieces';
 
 // [EN] Props interface updated to accept a 2D array and move handler
 // [RU] Интерфейс свойств обновлен для приема двумерного массива и обработчика ходов
 interface ChessBoardProps {
     board: (BoardPiece | null)[][];
     isBlackOriented?: boolean;
-    onMove: (from: string, to: string) => void;
+    onMove: (from: Square, to: Square) => void;
 }
 
 export const ChessBoard: React.FC<ChessBoardProps> = ({
@@ -49,14 +28,14 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
                                                       }) => {
     // [EN] Local state to memorize the selected square for making a move
     // [RU] Локальное состояние для запоминания выбранной клетки при совершении хода
-    const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
+    const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
-    const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-    const RANKS = ['8', '7', '6', '5', '4', '3', '2', '1'];
+    const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
+    const RANKS = ['8', '7', '6', '5', '4', '3', '2', '1'] as const;
 
     // [EN] Handles click interactions for selecting and moving pieces
     // [RU] Обрабатывает взаимодействия по клику для выбора и перемещения фигур
-    const handleSquareClick = (squareId: string) => {
+    const handleSquareClick = (squareId: Square) => {
         if (selectedSquare) {
             // [EN] If a square is already selected, attempt to execute a move
             // [RU] Если клетка уже выбрана, пытаемся выполнить ход
@@ -102,7 +81,9 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
             const actualRow = isBlackOriented ? 7 - boardRow : boardRow;
             const actualCol = isBlackOriented ? 7 - boardCol : boardCol;
 
-            const squareId = `${FILES[actualCol]}${RANKS[actualRow]}`;
+            // [EN] Cast is safe: FILES/RANKS only ever produce valid algebraic squares
+            // [RU] Каст безопасен: FILES/RANKS всегда дают валидные алгебраические клетки
+            const squareId = `${FILES[actualCol]}${RANKS[actualRow]}` as Square;
 
             // [EN] Extract piece directly from the 2D array matrix
             // [RU] Извлекаем фигуру напрямую из матрицы двумерного массива

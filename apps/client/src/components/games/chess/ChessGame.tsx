@@ -25,9 +25,20 @@ export const ChessGame: React.FC = () => {
     // [RU] Локальное состояние для сложности движка (по умолчанию 3)
     const [difficulty, setDifficulty] = useState<number>(3);
 
-    // [EN] Extract live state and methods from our custom chess logic hook
-    // [RU] Извлекаем живое состояние и методы из нашего кастомного хука шахматной логики
-    const { fen, turn, isGameOver, isEngineThinking, handleUserMove } = useChessLogic(difficulty);
+    // [EN] Extract live state and methods from our custom chess logic hook.
+    // [EN] NEW: pendingPromotion / confirmPromotion / cancelPromotion power Feature 1 (pawn promotion)
+    // [RU] Извлекаем живое состояние и методы из нашего кастомного хука шахматной логики.
+    // [RU] НОВОЕ: pendingPromotion / confirmPromotion / cancelPromotion обеспечивают Фичу 1 (превращение пешки)
+    const {
+        fen,
+        turn,
+        isGameOver,
+        isEngineThinking,
+        pendingPromotion,
+        handleUserMove,
+        confirmPromotion,
+        cancelPromotion
+    } = useChessLogic(difficulty);
 
     // [EN] Compute the 2D array matrix on the fly from the current FEN string
     // [RU] Вычисляем матрицу двумерного массива на лету из текущей FEN-строки
@@ -41,8 +52,12 @@ export const ChessGame: React.FC = () => {
     // [RU] АДАПТЕР: Трансформируем внутреннее состояние логики ('w' | 'b') в строковые контракты UI
     const mappedPlayer = turn === 'w' ? 'White' : 'Black';
 
-    // [EN] Derive the specific game over status for the overlay
-    // [RU] Вычисляем конкретный статус окончания игры для оверлея
+    // [EN] Derive the specific game over status for the overlay.
+    // [EN] NOTE: still win/lose-only — proper draw detection (stalemate, repetition, etc.) is scoped
+    // into the Timers + game result step (Feature 2), not touched here to keep this diff focused
+    // [RU] Вычисляем конкретный статус окончания игры для оверлея.
+    // [RU] ПРИМЕЧАНИЕ: пока только win/lose — корректное определение ничьей (пат, повторение и т.д.)
+    // войдёт в шаг с таймерами и результатом партии (Фича 2), здесь не трогаю, чтобы не размывать диф
     const gameStatus = isGameOver ? (turn === 'w' ? 'lose' : 'win') : null;
 
     return (
@@ -98,9 +113,12 @@ export const ChessGame: React.FC = () => {
                 onTimeOut={emptyHandler}
             />
 
+            {/* [EN] NEW: wired to real promotion state instead of the pendingPromotion={null} stub */}
+            {/* [RU] НОВОЕ: подключено к реальному состоянию превращения вместо заглушки pendingPromotion={null} */}
             <PromotionModal
-                pendingPromotion={null} // To be implemented next
-                onSelect={emptyHandler}
+                pendingPromotion={pendingPromotion}
+                onSelect={confirmPromotion}
+                onCancel={cancelPromotion}
             />
 
             {/* [EN] CONDITIONAL RENDERING: Render overlay if game is actually over */}

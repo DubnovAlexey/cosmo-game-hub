@@ -2,42 +2,66 @@
 // [RU] Импортируем React
 import React from 'react';
 
-// [EN] Import our strict type for squares
-// [RU] Импортируем наш строгий тип для клеток
-import type { ChessSquare } from './chessConstants';
+// [EN] Reuse the exact pending-promotion shape and piece-choice type from the logic hook —
+// single source of truth instead of a parallel local type
+// [RU] Переиспользуем точную форму pendingPromotion и тип выбора фигуры из хука логики —
+// единый источник истины вместо параллельного локального типа
+import type { PendingPromotion, PromotionPieceSymbol } from '@hooks/useChessLogic';
 
-// [EN] Interface for component props
-// [RU] Интерфейс для свойств компонента
+// [EN] Shared piece image map — same source ChessBoard uses, avoids a second copy of the assets
+// [RU] Общая карта изображений фигур — тот же источник, что использует ChessBoard, без второй копии ассетов
+import { PIECE_IMAGES } from '@assets/chessPieces';
+
+// [EN] Reuse the existing themed modal styles (cyber-modal, promo-btn, ...) instead of inventing new ones —
+// this stylesheet is already wired into Chess.module.css but wasn't used by this component yet
+// [RU] Переиспользуем уже готовую тематическую стилизацию модалки (cyber-modal, promo-btn, ...) —
+// эти классы уже есть в Chess.module.css, но раньше этот компонент их не использовал
+import styles from './Chess.module.css';
+
 interface PromotionModalProps {
-    pendingPromotion: { from: ChessSquare; to: ChessSquare } | null;
-    onSelect: (pieceType: string) => void;
+    pendingPromotion: PendingPromotion | null;
+    onSelect: (piece: PromotionPieceSymbol) => void;
+    onCancel?: () => void;
 }
 
-// [EN] Array of piece types available for promotion (engines standard)
-// [RU] Массив типов фигур, доступных для превращения (стандарт движка)
-const PROMOTION_PIECES = ['q', 'r', 'b', 'n'];
+// [EN] Piece choices in a conventional visual order
+// [RU] Варианты фигур в привычном визуальном порядке
+const PROMOTION_PIECES: PromotionPieceSymbol[] = ['q', 'r', 'b', 'n'];
 
-export const PromotionModal: React.FC<PromotionModalProps> = ({ pendingPromotion, onSelect }) => {
-    // [EN] State-driven UI: If there is no promotion pending, render nothing
-    // [RU] UI, управляемый состоянием: Если нет ожидающего превращения, ничего не рендерим
+export const PromotionModal: React.FC<PromotionModalProps> = ({ pendingPromotion, onSelect, onCancel }) => {
+    // [EN] State-driven UI: if there is no promotion pending, render nothing
+    // [RU] UI, управляемый состоянием: если нет ожидающего превращения, ничего не рендерим
     if (!pendingPromotion) return null;
 
+    const { color } = pendingPromotion;
+
     return (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-            <div className="bg-slate-800 p-6 rounded-xl shadow-2xl border border-slate-600 text-center">
-                <h2 className="text-white text-xl font-bold mb-6">Choose Promotion</h2>
-                <div className="flex gap-4 justify-center">
-                    {PROMOTION_PIECES.map((piece) => (
-                        <button
-                            key={piece}
-                            onClick={() => onSelect(piece)}
-                            className="w-16 h-16 bg-slate-700 hover:bg-slate-500 rounded-lg flex items-center justify-center transition-all duration-200 transform hover:scale-105"
-                        >
-                            {/* [EN] Placeholder for piece image. Using text for now. */}
-                            {/* [RU] Заглушка для картинки фигуры. Пока используем текст. */}
-                            <span className="text-white text-3xl uppercase">{piece}</span>
-                        </button>
-                    ))}
+        // [EN] Backdrop mirrors GameOverOverlay's overlay pattern; clicking it cancels the pending move
+        // [RU] Подложка повторяет паттерн оверлея из GameOverOverlay; клик по ней отменяет отложенный ход
+        <div
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={onCancel}
+        >
+            <div
+                className={styles['cyber-modal']}
+                // [EN] Stop the click from bubbling to the backdrop so picking a piece can't also cancel it
+                // [RU] Останавливаем всплытие клика к подложке, чтобы выбор фигуры не отменял его же
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className={styles['modal-content']}>
+                    <h2>Choose Promotion</h2>
+                    <div className={styles['promotion-options']}>
+                        {PROMOTION_PIECES.map((piece) => (
+                            <button
+                                key={piece}
+                                type="button"
+                                onClick={() => onSelect(piece)}
+                                className={styles['promo-btn']}
+                                style={{ backgroundImage: `url(${PIECE_IMAGES[`${color}-${piece}`]})` }}
+                                aria-label={`Promote to ${piece}`}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

@@ -2,13 +2,26 @@
 // [RU] Импортируем хуки React для управления состоянием и жизненным циклом
 import { useState, useEffect, useCallback } from 'react';
 
-// [EN] Import the chess.js library for game rules validation
-// [RU] Импортируем библиотеку chess.js для валидации правил игры
+// [EN] Import the chess.js library and its types for game rules validation
+// [RU] Импортируем библиотеку chess.js и её типы для валидации правил игры
 import { Chess } from 'chess.js';
+import type { Square, Color, PieceSymbol } from 'chess.js';
 
 // [EN] Import our custom engine hook
 // [RU] Импортируем наш кастомный хук движка
 import { useEngine } from './useEngine';
+
+// [EN] Only four pieces are legal promotion targets — pawn and king are excluded at the type level
+// [RU] Только четыре фигуры — легальные цели превращения; пешка и король исключены на уровне типов
+export type PromotionPieceSymbol = Exclude<PieceSymbol, 'p' | 'k'>;
+
+// [EN] A legal move that is waiting on the player's promotion piece choice
+// [RU] Легальный ход, ожидающий выбора фигуры превращения от игрока
+export interface PendingPromotion {
+    from: Square;
+    to: Square;
+    color: Color;
+}
 
 export const useChessLogic = (difficultyLevel: number = 5) => {
     // [EN] Lazy initialization: the instance is created exactly once during the first render
@@ -31,6 +44,10 @@ export const useChessLogic = (difficultyLevel: number = 5) => {
     // [RU] Состояние для отслеживания, считает ли сейчас движок
     const [isEngineThinking, setIsEngineThinking] = useState(false);
 
+    // [EN] NEW: a legal move waiting on the player's promotion piece choice, or null
+    // [RU] НОВОЕ: легальный ход, ожидающий выбора фигуры превращения от игрока, или null
+    const [pendingPromotion, setPendingPromotion] = useState<PendingPromotion | null>(null);
+
     // [EN] Initialize the engine hook
     // [RU] Инициализируем хук движка
     const { getBestMove } = useEngine();
@@ -51,9 +68,9 @@ export const useChessLogic = (difficultyLevel: number = 5) => {
             try {
                 // [EN] The engine sends moves in UCI format (e.g., 'e2e4')
                 // [RU] Движок присылает ходы в формате UCI (например, 'e2e4')
-                const from = moveStr.substring(0, 2);
-                const to = moveStr.substring(2, 4);
-                const promotion = moveStr.length > 4 ? moveStr.charAt(4) : undefined;
+                const from = moveStr.substring(0, 2) as Square;
+                const to = moveStr.substring(2, 4) as Square;
+                const promotion = moveStr.length > 4 ? (moveStr.charAt(4) as PieceSymbol) : undefined;
 
                 g.move({ from, to, promotion });
             } catch (error) {
@@ -85,31 +102,77 @@ export const useChessLogic = (difficultyLevel: number = 5) => {
         }
     }, [turn, isGameOver, fen, difficultyLevel, getBestMove, applyEngineMove]);
 
-    // [EN] Function for handling the user's manual move
-    // [RU] Функция для обработки ручного хода пользователя
-    const handleUserMove = useCallback((from: string, to: string, promotion?: string) => {
-        // [EN] Prevent user from moving if game is over or engine is thinking
-        // [RU] Не даем пользователю ходить, если игра окончена или движок думает
-        if (isGameOver || isEngineThinking || turn !== 'w') return false;
+    // [EN] Function for handling the user's manual move.
+    // [EN] NEW: now detects promotion-requiring moves via chess.js's own legal-move list instead of
+    // just trying g.move() directly, so the mutation can be deferred until the player picks a piece
+    // [RU] Функция для обработки ручного хода пользователя.
+    // [RU] НОВОЕ: теперь определяет ходы, требующие превращения, через список легальных ходов chess.js,
+    // а не сразу пробует g.move(), чтобы отложить мутацию до выбора фигуры игроком
+    const handleUserMove = useCallback((from: Square, to: Square) => {
+        // [EN] Block new move attempts if the game is over, engine is thinking, it's not white's turn,
+        // or a promotion choice is already pending (defense in depth even if the modal doesn't visually block clicks)
+        // [RU] Блокируем новые попытки хода, если игра окончена, движок думает, сейчас не ход белых,
+        // или уже ожидается выбор превращения (доп. защита, даже если модалка не блокирует клики визуально)
+        if (isGameOver || isEngineThinking || turn !== 'w' || pendingPromotion) return false;
+
+        // [EN] Ask chess.js for legal moves from this square, and check whether the specific
+        // from->to pair requested is one that requires a promotion piece
+        // [RU] Спрашиваем у chess.js легальные ходы с этой клетки и проверяем, требует ли
+        // конкретно запрошенная пара from->to выбора фигуры превращения
+        const candidates = game.moves({ square: from, verbose: true });
+        const promotionMove = candidates.find((m) => m.to === to && m.promotion);
+
+        if (promotionMove) {
+            // [EN] Don't mutate the game yet — defer until the player picks a piece in the modal
+            // [RU] Пока не мутируем игру — откладываем до выбора фигуры игроком в модалке
+            setPendingPromotion({ from, to, color: turn });
+            return true;
+        }
 
         let moveResult = null;
 
         safeGameMutate((g) => {
             try {
-                moveResult = g.move({ from, to, promotion });
+                moveResult = g.move({ from, to });
             } catch (e) {
                 moveResult = null; // [EN] Invalid move [RU] Недопустимый ход
             }
         });
 
         return moveResult !== null;
-    }, [isGameOver, isEngineThinking, turn, safeGameMutate]);
+    }, [isGameOver, isEngineThinking, turn, pendingPromotion, safeGameMutate, game]);
+
+    // [EN] NEW: resolves a pending promotion once the player has picked a piece
+    // [RU] НОВОЕ: завершает отложенный ход превращения после выбора фигуры игроком
+    const confirmPromotion = useCallback((piece: PromotionPieceSymbol) => {
+        if (!pendingPromotion) return;
+        const { from, to } = pendingPromotion;
+
+        safeGameMutate((g) => {
+            try {
+                g.move({ from, to, promotion: piece });
+            } catch (error) {
+                console.error('Promotion move error:', error);
+            }
+        });
+
+        setPendingPromotion(null);
+    }, [pendingPromotion, safeGameMutate]);
+
+    // [EN] NEW: lets the player back out of a pending promotion without making a move
+    // [RU] НОВОЕ: позволяет игроку отменить отложенное превращение без совершения хода
+    const cancelPromotion = useCallback(() => {
+        setPendingPromotion(null);
+    }, []);
 
     return {
         fen,
         turn,
         isGameOver,
         isEngineThinking,
-        handleUserMove
+        pendingPromotion,
+        handleUserMove,
+        confirmPromotion,
+        cancelPromotion
     };
 };
