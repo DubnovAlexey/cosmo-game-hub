@@ -30,6 +30,7 @@
     // [EN] Global path aliases mapped properly to the src folder
     // [RU] Глобальные алиасы путей, корректно привязанные к папке src
     "paths": {
+      "@layouts/*": ["src/layouts/*"],
       "@hooks/*": ["src/hooks/*"],
       "@utils/*": ["src/utils/*"],
       "@assets/*": ["src/assets/*"],
