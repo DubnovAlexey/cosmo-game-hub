@@ -17,14 +17,38 @@ export class EngineManager {
         this.init();
     }
 
+    // [EN] FIX: exposes engine readiness to callers — previously `isReady` was set on 'readyok' but
+    // never read anywhere, which TypeScript's noUnusedLocals correctly flagged (TS6133). This getter
+    // makes it genuinely usable (e.g. for a future "engine loading..." indicator) without changing any
+    // existing behavior — getBestMove still sends commands immediately, exactly as before.
+    // [RU] ИСПРАВЛЕНИЕ: открывает готовность движка для вызывающего кода — раньше `isReady`
+    // выставлялся при 'readyok', но нигде не читался, что noUnusedLocals в TypeScript корректно
+    // пометил как ошибку (TS6133). Этот геттер делает поле реально полезным (например, для будущего
+    // индикатора "движок загружается...") без изменения текущего поведения — getBestMove по-прежнему
+    // отправляет команды сразу же, как и раньше.
+    public get ready(): boolean {
+        return this.isReady;
+    }
+
     // [EN] Initialize the Web Worker and send initial UCI commands
     // [RU] Инициализация Web Worker и отправка начальных команд UCI
     private init() {
         if (typeof window === 'undefined') return; // [EN] SSR Guard [RU] Защита от серверного рендеринга (SSR)
 
-        // [EN] Instantiate the worker directly from the public asset
-        // [RU] Создаем экземпляр воркера напрямую из публичного ассета
-        this.worker = new Worker('/engines/chess/stockfish.js');
+        // [EN] Instantiate the worker directly from the public asset.
+        // [EN] FIX: prefixed with import.meta.env.BASE_URL. The old hardcoded '/engines/chess/stockfish.js'
+        // only worked because the site was served from the domain root. Once deployed to GitHub Pages
+        // under base: '/cosmo-game-hub', the real file lives at /cosmo-game-hub/engines/chess/stockfish.js —
+        // a raw string path like this doesn't go through Astro's asset resolution, so it needs the
+        // base prefix added explicitly, unlike @assets imports which get it automatically.
+        // [RU] Создаем экземпляр воркера напрямую из публичного ассета.
+        // [RU] ИСПРАВЛЕНИЕ: добавлен префикс import.meta.env.BASE_URL. Старый жёстко прописанный путь
+        // '/engines/chess/stockfish.js' работал только потому, что сайт отдавался из корня домена.
+        // После деплоя на GitHub Pages с base: '/cosmo-game-hub' реальный файл лежит по адресу
+        // /cosmo-game-hub/engines/chess/stockfish.js — такая сырая строка не проходит через
+        // резолвинг ассетов Astro, поэтому префикс base нужно добавлять вручную, в отличие от
+        // импортов через @assets, которые получают его автоматически.
+        this.worker = new Worker(`${import.meta.env.BASE_URL}/engines/chess/stockfish.js`);
 
         // [EN] Listen for messages from the engine
         // [RU] Слушаем сообщения от движка

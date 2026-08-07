@@ -1,29 +1,16 @@
-/* [EN] Global reboot and space background */
-/* [RU] Глобальный сброс стилей и космический фон */
-* {
+/* [EN] FIX (earlier pass): the old unscoped `* {...}` and `body {...}` rules are gone. CSS Modules
+   only hash CLASS selectors — a bare `body`/`*` selector stays global and leaked onto the whole site
+   the moment ChessGame mounted. Both rules are folded into `.chess-container` (and its descendants),
+   so the theme stays inside the game window only. */
+/* [RU] ИСПРАВЛЕНИЕ (сделано ранее): старых нескоуп-ленных правил `* {...}` и `body {...}` больше нет.
+   CSS-модули хэшируют только КЛАССЫ — голый селектор `body`/`*` остаётся глобальным и утекал на весь
+   сайт в момент монтирования ChessGame. Оба правила свёрнуты в `.chess-container` (и его потомков),
+   так что тема остаётся только внутри игрового окна. */
+.chess-container,
+.chess-container * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-body {
-    min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow-x: hidden;
-
-    /* [EN] Path uses the new @assets alias configured in tsconfig.json */
-    /* [RU] Путь использует новый алиас @assets, настроенный в tsconfig.json */
-    background:
-            radial-gradient(circle at center, #2c1a4d 0%, #05040a 100%),
-            url('@assets/images/chess/space-bg.jpg');
-    background-blend-mode: screen;
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
 }
 
 .chess-container {
@@ -34,6 +21,18 @@ body {
     max-width: 1000px;
     padding: 20px;
     gap: 20px;
+
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
+    background:
+            radial-gradient(circle at center, #2c1a4d 0%, #05040a 100%),
+            url('@assets/images/chess/space-bg.jpg');
+    background-blend-mode: screen;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .chess-title {
@@ -118,6 +117,49 @@ body {
     background: rgba(0, 255, 136, 0.05);
     border-color: rgba(0, 255, 136, 0.3);
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+}
+
+/* [EN] NEW: move history side panel (Feature 3) */
+/* [RU] НОВОЕ: боковая панель истории ходов (Фича 3) */
+.history-panel {
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px;
+    gap: 10px;
+}
+
+.history-list {
+    max-height: 180px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: monospace;
+    font-size: 0.95rem;
+}
+
+.history-move-row {
+    display: flex;
+    gap: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.history-move-row:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.history-move-number {
+    color: rgba(255, 255, 255, 0.4);
+    min-width: 28px;
+}
+
+.history-san {
+    flex: 1;
+    color: #ffffff;
 }
 
 /* [EN] Advanced 10x10 shadowed chessboard grid matrix */
@@ -211,6 +253,13 @@ body {
     filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.95)) drop-shadow(0px 0px 3px rgba(157, 78, 221, 0.5));
 }
 
+/* [EN] NEW: small pop-in animation so newly captured pieces don't just silently appear (Feature 3) */
+/* [RU] НОВОЕ: небольшая анимация появления, чтобы новые захваченные фигуры не появлялись беззвучно (Фича 3) */
+@keyframes graveyardAppear {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+}
+
 .graveyard-piece {
     width: 42px;
     height: 42px;
@@ -221,6 +270,7 @@ body {
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+    animation: graveyardAppear 0.3s ease-out;
 }
 
 /* [EN] Footer controls */
@@ -249,6 +299,15 @@ body {
 .btn:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* [EN] NEW: generic disabled look for any .btn (previously only .btn-start had one) — used by the
+   Download PGN button in MoveHistory while there are no moves yet */
+/* [RU] НОВОЕ: общий вид disabled-состояния для любой .btn (раньше был только у .btn-start) —
+   используется кнопкой Download PGN в MoveHistory, пока ходов ещё нет */
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .controls-container .btn-start {

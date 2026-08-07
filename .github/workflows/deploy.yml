@@ -1,0 +1,58 @@
+# [EN] Deploys the Astro client (apps/client) to GitHub Pages on every push to main.
+# Uses Astro's own official action (withastro/action), which handles install + build + artifact
+# upload in one step; `path: apps/client` is what makes this work inside the monorepo — without it
+# the action would look for astro.config.mjs at the repo root and find nothing.
+# [RU] Деплоит Astro-клиент (apps/client) на GitHub Pages при каждом push в main.
+# Использует официальный экшн Astro (withastro/action), который сам делает install + build +
+# загрузку артефакта за один шаг; `path: apps/client` — это то, что заставляет его работать внутри
+# монорепозитория, без этого экшн искал бы astro.config.mjs в корне репозитория и не нашёл бы его.
+name: Deploy to GitHub Pages
+
+on:
+  # [EN] Trigger the workflow every time you push to the `main` branch
+  # [RU] Запускаем workflow при каждом push в ветку `main`
+  push:
+    branches: [ main ]
+  # [EN] Allows running this workflow manually from the Actions tab on GitHub
+  # [RU] Позволяет запускать этот workflow вручную из вкладки Actions на GitHub
+  workflow_dispatch:
+
+# [EN] Lets this job clone the repo and create a Pages deployment
+# [RU] Позволяет этому job'у клонировать репозиторий и создавать деплой на Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# [EN] Avoid two deployments racing each other if pushes land close together
+# [RU] Не даём двум деплоям запускаться одновременно, если пуши идут друг за другом быстро
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v7
+
+      # [EN] path points at the Astro project *inside* the monorepo — this is the key line for
+      # a monorepo setup. The action auto-detects the package manager from the lockfile in that folder.
+      # [RU] path указывает на Astro-проект *внутри* монорепозитория — это ключевая строка для
+      # монорепо. Экшн сам определяет пакетный менеджер по lock-файлу в этой папке.
+      - name: Install, build, and upload the client app
+        uses: withastro/action@v6
+        with:
+          path: apps/client
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

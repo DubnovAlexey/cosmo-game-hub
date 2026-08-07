@@ -3,28 +3,38 @@
 import React, { useState } from 'react';
 import type { Square } from 'chess.js';
 
-// [EN] NEW: BoardPiece now comes from fenParser.ts instead of being redefined here —
-// it was a duplicate of the exact same interface already exported there
-// [RU] НОВОЕ: BoardPiece теперь импортируется из fenParser.ts, а не переопределяется здесь —
-// это был дубликат точно такого же интерфейса, уже экспортированного оттуда
+// [EN] BoardPiece comes from fenParser.ts — single source of truth for this shape
+// [RU] BoardPiece импортируется из fenParser.ts — единый источник истины для этой формы
 import type { BoardPiece } from '@utils/engine/fenParser';
 
-// [EN] NEW: piece image map moved to a shared module so PromotionModal can reuse it too
-// [RU] НОВОЕ: карта изображений фигур вынесена в общий модуль, чтобы PromotionModal тоже мог её использовать
+// [EN] Piece image map shared with PromotionModal and Graveyard
+// [RU] Карта изображений фигур, общая с PromotionModal и Graveyard
 import { PIECE_IMAGES } from '@assets/chessPieces';
 
-// [EN] Props interface updated to accept a 2D array and move handler
-// [RU] Интерфейс свойств обновлен для приема двумерного массива и обработчика ходов
+// [EN] NEW (Feature 4): migrating square/border styling from ad-hoc Tailwind classes to the theme's
+// own .board-tile/.tile-light/.tile-dark/.board-frame-cell/.highlight-* classes — these already
+// existed in Chess.module.css but this component didn't use them until now
+// [RU] НОВОЕ (Фича 4): переносим стили клеток/рамки с разрозненных классов Tailwind на собственные
+// классы темы .board-tile/.tile-light/.tile-dark/.board-frame-cell/.highlight-* — они уже были в
+// Chess.module.css, но этот компонент их до сих пор не использовал
+import styles from './Chess.module.css';
+
+// [EN] Props interface: getLegalDestinations and checkedSquare are new for Feature 4 (highlighting + check)
+// [RU] Интерфейс пропсов: getLegalDestinations и checkedSquare — новые для Фичи 4 (подсветка + шах)
 interface ChessBoardProps {
     board: (BoardPiece | null)[][];
     isBlackOriented?: boolean;
     onMove: (from: Square, to: Square) => void;
+    getLegalDestinations: (square: Square) => Square[];
+    checkedSquare: Square | null;
 }
 
 export const ChessBoard: React.FC<ChessBoardProps> = ({
                                                           board,
                                                           isBlackOriented = false,
-                                                          onMove
+                                                          onMove,
+                                                          getLegalDestinations,
+                                                          checkedSquare
                                                       }) => {
     // [EN] Local state to memorize the selected square for making a move
     // [RU] Локальное состояние для запоминания выбранной клетки при совершении хода
@@ -33,17 +43,33 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
     const RANKS = ['8', '7', '6', '5', '4', '3', '2', '1'] as const;
 
-    // [EN] Handles click interactions for selecting and moving pieces
-    // [RU] Обрабатывает взаимодействия по клику для выбора и перемещения фигур
+    // [EN] NEW (Feature 4): legal destinations for the currently selected square, recomputed
+    // whenever the selection changes. Empty array when nothing is selected.
+    // [RU] НОВОЕ (Фича 4): легальные ходы для выбранной сейчас клетки, пересчитываются при смене
+    // выбора. Пустой массив, если ничего не выбрано.
+    const legalDestinations = selectedSquare ? getLegalDestinations(selectedSquare) : [];
+
+    // [EN] Handles click interactions for selecting and moving pieces.
+    // [EN] NEW (Feature 4): clicking a legal destination completes the move; clicking the already
+    // selected square deselects it; clicking a different square that itself has legal moves
+    // re-selects it instead of attempting (and silently failing) a move there; anything else deselects.
+    // [RU] Обрабатывает взаимодействия по клику для выбора и перемещения фигур.
+    // [RU] НОВОЕ (Фича 4): клик по легальной клетке назначения завершает ход; клик по уже выбранной
+    // клетке снимает выбор; клик по другой клетке, у которой у самой есть легальные ходы,
+    // переселекчивает её вместо попытки (и молчаливого провала) хода туда; всё остальное снимает выбор.
     const handleSquareClick = (squareId: Square) => {
         if (selectedSquare) {
-            // [EN] If a square is already selected, attempt to execute a move
-            // [RU] Если клетка уже выбрана, пытаемся выполнить ход
-            onMove(selectedSquare, squareId);
-            setSelectedSquare(null);
+            if (selectedSquare === squareId) {
+                setSelectedSquare(null);
+            } else if (legalDestinations.includes(squareId)) {
+                onMove(selectedSquare, squareId);
+                setSelectedSquare(null);
+            } else if (getLegalDestinations(squareId).length > 0) {
+                setSelectedSquare(squareId);
+            } else {
+                setSelectedSquare(null);
+            }
         } else {
-            // [EN] Select the square as the origin point
-            // [RU] Выбираем клетку в качестве начальной точки
             setSelectedSquare(squareId);
         }
     };
@@ -67,7 +93,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
                 }
 
                 return (
-                    <div key={`border-${index}`} className="flex items-center justify-center bg-slate-950 text-slate-500 font-bold text-xs uppercase tracking-widest">
+                    <div key={`border-${index}`} className={styles['board-frame-cell']}>
                         {label}
                     </div>
                 );
@@ -91,20 +117,33 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
 
             const isDark = (actualRow + actualCol) % 2 === 1;
             const isSelected = selectedSquare === squareId;
+            const isLegalMove = legalDestinations.includes(squareId);
+            const isChecked = checkedSquare === squareId;
 
-            // [EN] Styling: Highlight selected square, otherwise render checkboard pattern
-            // [RU] Стилизация: Подсветка выбранной клетки, иначе рендер шахматного узора
-            const bgClass = isSelected
-                ? 'bg-amber-500/80'
-                : isDark
-                    ? 'bg-slate-800'
-                    : 'bg-slate-300';
+            // [EN] NEW (Feature 4): priority when multiple states could apply to the same square —
+            // check is the most urgent thing to show, then selection, then legal-move hints. In
+            // practice check and legal-move can't overlap (you can never "move to" a king's square),
+            // but check and selected can (selecting your own checked king), so the order matters.
+            // [RU] НОВОЕ (Фича 4): приоритет, если на одну клетку могло бы претендовать несколько
+            // состояний — шах важнее всего показать, затем выбор, затем подсказки о ходах. На практике
+            // шах и легальный ход пересечься не могут (на клетку короля "сходить" нельзя), а вот шах
+            // и выбор — могут (если выбрать свой король под шахом), поэтому порядок важен.
+            let highlightClass = '';
+            if (isChecked) {
+                highlightClass = styles['highlight-check'];
+            } else if (isSelected) {
+                highlightClass = styles['highlight-selected'];
+            } else if (isLegalMove) {
+                highlightClass = styles['highlight-move'];
+            }
+
+            const tileColorClass = isDark ? styles['tile-dark'] : styles['tile-light'];
 
             return (
                 <div
                     key={squareId}
                     onClick={() => handleSquareClick(squareId)}
-                    className={`flex items-center justify-center cursor-pointer ${bgClass} transition-colors hover:bg-red-900/40 relative`}
+                    className={`${styles['board-tile']} ${tileColorClass} ${highlightClass} cursor-pointer`}
                 >
                     {/* [EN] Render the piece image if a piece exists on this square */}
                     {/* [RU] Рендерим изображение фигуры, если на этой клетке есть фигура */}

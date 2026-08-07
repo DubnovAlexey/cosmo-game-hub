@@ -1,41 +1,38 @@
-// [EN] Import React and the individual timer component
-// [RU] Импортируем React и отдельный компонент таймера
+// [EN] Import React, the timer hook, and the presentational timer component
+// [RU] Импортируем React, хук таймера и презентационный компонент часов
 import React from 'react';
-import { ChessTimer } from '@components/games/chess/ChessTimer';
+import { useChessTimer } from '@hooks/useChessTimer';
+import { ChessTimer } from './ChessTimer';
 
-// [EN] Interface defining the props expected by the TimerPanel
-// [RU] Интерфейс, определяющий пропсы, ожидаемые компонентом TimerPanel
+// [EN] Import CSS module for the horizontal side-by-side timer layout
+// [RU] Импортируем CSS-модуль для горизонтальной раскладки часов рядом друг с другом
+import styles from './Chess.module.css';
+
+// [EN] Interface defining the props expected by the TimerPanel.
+// activePlayer replaces the old currentPlayer — it's nullable: null means neither clock should be
+// running (before the first move, or once the match is over). initialSeconds is now optional and
+// defaults to a standard 10-minute game.
+// [RU] Интерфейс, определяющий пропсы, ожидаемые компонентом TimerPanel.
+// activePlayer заменяет старый currentPlayer — он nullable: null означает, что ни один таймер не должен
+// идти (до первого хода или после конца партии). initialSeconds теперь опционален и по умолчанию
+// равен стандартным 10 минутам.
 export interface TimerPanelProps {
-    currentPlayer: 'White' | 'Black';
+    activePlayer: 'White' | 'Black' | null;
     onTimeOut: (player: 'White' | 'Black') => void;
+    initialSeconds?: number;
 }
 
-export const TimerPanel: React.FC<TimerPanelProps> = ({ currentPlayer, onTimeOut }) => {
+export const TimerPanel: React.FC<TimerPanelProps> = ({ activePlayer, onTimeOut, initialSeconds = 600 }) => {
+    // [EN] The actual ticking lives in useChessTimer, called once here. Its per-second state updates
+    // only re-render this component's own subtree — ChessGame and ChessBoard above it are untouched.
+    // [RU] Само тиканье живёт в useChessTimer, вызываемом один раз здесь. Обновления состояния раз
+    // в секунду перерендерят только поддерево этого компонента — ChessGame и ChessBoard выше не затронуты.
+    const { whiteSeconds, blackSeconds } = useChessTimer({ activePlayer, initialSeconds, onTimeOut });
+
     return (
-        // [EN] Wrapper container with dark styling and vertical layout
-        // [RU] Контейнер-обертка с темной стилизацией и вертикальной компоновкой
-        <div className="flex flex-col gap-4 bg-slate-800 p-5 rounded-xl border-2 border-slate-700 shadow-inner">
-            <h3 className="text-slate-400 text-sm uppercase tracking-wider font-semibold text-center pb-2 border-b border-slate-700">
-                Time Control
-            </h3>
-
-            {/* [EN] Black player timer. Active only if currentPlayer is Black */}
-            {/* [RU] Таймер черного игрока. Активен только если текущий игрок - Black */}
-            <ChessTimer
-                player="Black"
-                isActive={currentPlayer === 'Black'}
-                initialSeconds={600} // 10 minutes
-                onTimeOut={onTimeOut}
-            />
-
-            {/* [EN] White player timer. Active only if currentPlayer is White */}
-            {/* [RU] Таймер белого игрока. Активен только если текущий игрок - White */}
-            <ChessTimer
-                player="White"
-                isActive={currentPlayer === 'White'}
-                initialSeconds={600} // 10 minutes
-                onTimeOut={onTimeOut}
-            />
+        <div className={styles['timers-container']}>
+            <ChessTimer player="Black" isActive={activePlayer === 'Black'} seconds={blackSeconds} />
+            <ChessTimer player="White" isActive={activePlayer === 'White'} seconds={whiteSeconds} />
         </div>
     );
 };
