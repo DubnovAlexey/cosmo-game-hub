@@ -1,60 +1,68 @@
 ---
+// [EN] Import floating button component
+// [RU] Импортируем компонент плавающей кнопки
 import ScrollToTop from '@components/ui/ScrollToTop.astro';
 
-// Import global styles for Tailwind CSS
-// Импортируем глобальные стили для Tailwind CSS
+// [EN] Import global styles for Tailwind CSS
+// [RU] Импортируем глобальные стили для Tailwind CSS
 import '../styles/global.css';
 
-// Import UI components using Path Aliases
-// Импортируем UI-компоненты, используя псевдонимы путей
+// [EN] Import UI components using Path Aliases
+// [RU] Импортируем UI-компоненты, используя псевдонимы путей
 import Header from '@components/ui/Header.astro';
 import Footer from '@components/ui/Footer.astro';
 
-// Define the shape of our Props using a TypeScript interface
-// Определяем структуру наших Props с помощью интерфейса TypeScript
+// [EN] Define the shape of our Props using a TypeScript interface
+// [RU] Определяем структуру наших Props с помощью интерфейса TypeScript
 interface Props {
     title: string;
 }
 
-// Destructure the title from Astro.props
-// Деструктуризируем title из Astro.props
+// [EN] Destructure the title from Astro.props
+// [RU] Деструктуризируем title из Astro.props
 const {title} = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang = "en">
+<html lang="en">
 <head>
-    <meta charset = "UTF-8">
-    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
-    <meta name = "description" content = "Cosmo Game Hub - Play and Learn">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cosmo Game Hub - Play and Learn">
 
-	<!-- Dynamic title injection -->
-	<!-- Динамическая вставка заголовка -->
+    <!-- [EN] FIX: Dynamic base-aware path for the favicon to prevent 404 errors on GitHub Pages -->
+    <!-- [RU] ИСПРАВЛЕНИЕ: Динамический путь с учетом базового URL для иконки, чтобы предотвратить 404 на GitHub Pages -->
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
+
+    <!-- [EN] Dynamic title injection -->
+    <!-- [RU] Динамическая вставка заголовка -->
     <title>{title}</title>
 </head>
 
-<!-- Body acts as a flex container to push footer to the bottom -->
-<!-- Body выступает в роли flex-контейнера, чтобы прижать подвал к низу -->
-<body class = "bg-gray-900 text-white min-h-screen flex flex-col">
+<!-- [EN] Body acts as a flex container to push footer to the bottom -->
+<!-- [RU] Body выступает в роли flex-контейнера, чтобы прижать подвал к низу -->
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
 
-    <!-- Global Header Component -->
-    <!-- Глобальный компонент Header -->
-    <Header/>
+<!-- [EN] Global Header Component -->
+<!-- [RU] Глобальный компонент Header -->
+<Header/>
 
-    <!-- Main content wrapper that grows to fill available space -->
-    <!-- Обертка основного контента, которая растягивается на доступное пространство -->
-    <main class = "flex-grow">
+<!-- [EN] Main content wrapper that grows to fill available space -->
+<!-- [RU] Обертка основного контента, которая растягивается на доступное пространство -->
+<main class="flex-grow">
 
-        <!-- The page content will be injected into this slot -->
-        <!-- Контент страницы будет вставлен в этот слот -->
-        <slot/>
+    <!-- [EN] The page content will be injected into this slot -->
+    <!-- [RU] Контент страницы будет вставлен в этот слот -->
+    <slot/>
 
-    </main>
+</main>
 
-    <!-- Global Footer Component -->
-    <!-- Глобальный компонент Footer -->
-    <Footer/>
+<!-- [EN] Global Footer Component -->
+<!-- [RU] Глобальный компонент Footer -->
+<Footer/>
 
+<!-- [EN] Floating scroll-to-top button -->
+<!-- [RU] Плавающая кнопка прокрутки наверх -->
 <ScrollToTop/>
 </body>
 </html>
