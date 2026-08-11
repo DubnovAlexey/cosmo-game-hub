@@ -159,8 +159,18 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
         });
     };
 
+    // [EN] FIX: .board-wrapper (the parent, in Chess.module.css) is itself a 10x10 CSS grid. Without
+    // col-span-full/row-span-full, this single child auto-places into just the first cell (6% of the
+    // board), squeezing the entire 8x8 board into that corner — which is exactly what showed up as a
+    // tiny icon with the space background showing through everywhere else. This has been here since
+    // the very first version of this component; it was masked earlier by the separate broken-image bug.
+    // [RU] ИСПРАВЛЕНИЕ: .board-wrapper (родитель, в Chess.module.css) сам является CSS-сеткой 10x10.
+    // Без col-span-full/row-span-full этот единственный ребёнок автоматически встаёт только в первую
+    // ячейку (6% доски), втискивая всю доску 8x8 в этот угол — именно это и показывалось как крошечная
+    // иконка с просвечивающим космическим фоном везде вокруг. Это было здесь с самой первой версии
+    // компонента; раньше маскировалось отдельным багом с битыми картинками.
     return (
-        <div className="w-full h-full grid grid-cols-10 grid-rows-10 border-4 border-slate-950 shadow-2xl">
+        <div className="w-full h-full grid grid-cols-10 grid-rows-10 border-4 border-slate-950 shadow-2xl col-span-full row-span-full">
             {renderMatrix()}
         </div>
     );

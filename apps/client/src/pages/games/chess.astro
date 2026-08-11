@@ -1,37 +1,21 @@
 ---
-// [EN] Import the global Layout component (Импорт зе глобал лейаут компонент)
-// [RU] Импортируем глобальный компонент макета Layout
+// [EN] Import the main Layout component using configured path alias
+// [RU] Импортируем главный компонент макета, используя настроенный алиас пути
 import Layout from '@layouts/Layout.astro';
 
-// [EN] Import our new React component for the chess game (Импорт ауэр нью реакт компонент)
-// [RU] Импортируем наш новый React-компонент для шахматной игры
-import { ChessGame } from '@components/games/chess/ChessGame.tsx';
+// [EN] Import the React ChessGame component using configured path alias
+// [RU] Импортируем React-компонент шахматной игры, используя настроенный алиас пути
+import ChessGame from '@components/games/chess/ChessGame';
 ---
 
-<!--
-  [EN] Render the global Layout with standard title (Рендер зе глобал лейаут)
-  [RU] Отрисовываем глобальный макет со стандартным заголовком
--->
-<Layout title="Play Chess | Cosmo Game Hub">
+<!-- [EN] Use the Layout component to wrap our page and set metadata -->
+<!-- [RU] Используем компонент Layout для обертки нашей страницы и установки метаданных -->
+<Layout title="Chess | Cosmo Game Hub">
 
-    <!--
-      [EN] Main container with flexbox for centered alignment (Мейн контейнер виз флексбокс)
-      [RU] Главный контейнер с flexbox для выравнивания по центру
-    -->
-    <main class="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-[80vh]">
-
-        <h1 class="text-4xl font-bold text-white mb-8 tracking-wider uppercase">
-            Chess
-        </h1>
-
-		<!--
-          [EN] Injecting React component with highest Hydration priority (Инджектинг реакт компонент)
-          [RU] Внедряем React-компонент с высшим приоритетом гидратации (client:load)
-        -->
-        <div class="w-full max-w-6xl">
-            <ChessGame client:load />
-        </div>
-
-    </main>
+    <!-- [EN] CRITICAL: Render ChessGame strictly on the client side -->
+    <!-- [EN] This prevents Node.js from crashing when trying to execute stockfish.js during SSR -->
+    <!-- [RU] КРИТИЧНО: Рендерим ChessGame строго на стороне клиента -->
+    <!-- [RU] Это предотвращает падение Node.js при попытке выполнить stockfish.js во время SSR -->
+    <ChessGame client:only="react" />
 
 </Layout>

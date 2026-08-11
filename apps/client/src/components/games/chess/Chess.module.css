@@ -1,11 +1,5 @@
-/* [EN] FIX (earlier pass): the old unscoped `* {...}` and `body {...}` rules are gone. CSS Modules
-   only hash CLASS selectors — a bare `body`/`*` selector stays global and leaked onto the whole site
-   the moment ChessGame mounted. Both rules are folded into `.chess-container` (and its descendants),
-   so the theme stays inside the game window only. */
-/* [RU] ИСПРАВЛЕНИЕ (сделано ранее): старых нескоуп-ленных правил `* {...}` и `body {...}` больше нет.
-   CSS-модули хэшируют только КЛАССЫ — голый селектор `body`/`*` остаётся глобальным и утекал на весь
-   сайт в момент монтирования ChessGame. Оба правила свёрнуты в `.chess-container` (и его потомков),
-   так что тема остаётся только внутри игрового окна. */
+/* [EN] FIX: Removed global unscoped rules to prevent style leakage. */
+/* [RU] ИСПРАВЛЕНИЕ: Удалены глобальные правила без скоупа для предотвращения утечки стилей. */
 .chess-container,
 .chess-container * {
     margin: 0;
@@ -13,12 +7,14 @@
     box-sizing: border-box;
 }
 
+/* [EN] Main container. Removed max-width so the background spans the entire viewport. */
+/* [RU] Главный контейнер. Удалена max-width, чтобы фон занимал весь вьюпорт. */
 .chess-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 1000px;
+    /* max-width: 1000px; <- Removed / Удалено */
     padding: 20px;
     gap: 20px;
 
@@ -35,6 +31,8 @@
     background-attachment: fixed;
 }
 
+/* [EN] Title styling */
+/* [RU] Стилизация заголовка */
 .chess-title {
     font-size: 2.2rem;
     text-transform: uppercase;
@@ -119,8 +117,8 @@
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
 }
 
-/* [EN] NEW: move history side panel (Feature 3) */
-/* [RU] НОВОЕ: боковая панель истории ходов (Фича 3) */
+/* [EN] Move history side panel */
+/* [RU] Боковая панель истории ходов */
 .history-panel {
     display: flex;
     flex-direction: column;
@@ -253,8 +251,8 @@
     filter: drop-shadow(0px 0px 1px rgba(255, 255, 255, 0.95)) drop-shadow(0px 0px 3px rgba(157, 78, 221, 0.5));
 }
 
-/* [EN] NEW: small pop-in animation so newly captured pieces don't just silently appear (Feature 3) */
-/* [RU] НОВОЕ: небольшая анимация появления, чтобы новые захваченные фигуры не появлялись беззвучно (Фича 3) */
+/* [EN] Graveyard appear animation */
+/* [RU] Анимация появления на кладбище */
 @keyframes graveyardAppear {
     from { opacity: 0; transform: scale(0.5); }
     to { opacity: 1; transform: scale(1); }
@@ -301,10 +299,6 @@
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* [EN] NEW: generic disabled look for any .btn (previously only .btn-start had one) — used by the
-   Download PGN button in MoveHistory while there are no moves yet */
-/* [RU] НОВОЕ: общий вид disabled-состояния для любой .btn (раньше был только у .btn-start) —
-   используется кнопкой Download PGN в MoveHistory, пока ходов ещё нет */
 .btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -333,21 +327,6 @@
     box-shadow: none;
     cursor: not-allowed;
 }
-
-/* [EN] SVG pieces image mapping with correct @assets/images/chess/ paths */
-/* [RU] Привязка SVG-изображений фигур с правильными путями @assets/images/chess/ */
-.w_pawn { background-image: url('@assets/images/chess/w_pawn.svg.webp'); }
-.b_pawn { background-image: url('@assets/images/chess/b_pawn.svg.webp'); }
-.w_rook { background-image: url('@assets/images/chess/w_rook.svg.webp'); }
-.b_rook { background-image: url('@assets/images/chess/b_rook.svg.webp'); }
-.w_knight { background-image: url('@assets/images/chess/w_knight.svg.webp'); }
-.b_knight { background-image: url('@assets/images/chess/b_knight.svg.webp'); }
-.w_bishop { background-image: url('@assets/images/chess/w_bishop.svg.webp'); }
-.b_bishop { background-image: url('@assets/images/chess/b_bishop.svg.webp'); }
-.w_queen { background-image: url('@assets/images/chess/w_queen.svg.webp'); }
-.b_queen { background-image: url('@assets/images/chess/b_queen.svg.webp'); }
-.w_king { background-image: url('@assets/images/chess/w_king.svg.webp'); }
-.b_king { background-image: url('@assets/images/chess/b_king.svg.webp'); }
 
 /* [EN] Cyber modal settings */
 /* [RU] Кибер-модальное окно (настройки) */
@@ -380,69 +359,6 @@
     color: #9d4ede;
     text-transform: uppercase;
     letter-spacing: 2px;
-}
-
-.settings-row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-}
-
-.settings-row label {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.time-input {
-    width: 120px;
-    padding: 12px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: #ffffff;
-    outline: none;
-    transition: all 0.2s ease;
-}
-
-.time-input:focus {
-    border-color: #00ff88;
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
-}
-
-.ai-select {
-    width: 100%;
-    max-width: 250px;
-    padding: 12px;
-    font-size: 1rem;
-    font-weight: bold;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: #ffffff;
-    outline: none;
-    cursor: pointer;
-    appearance: none;
-}
-
-.ai-select option {
-    background: #14121f;
-    color: #ffffff;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    width: 100%;
-    margin-top: 10px;
 }
 
 .promotion-options {
