@@ -1,49 +1,66 @@
 ---
-// Import the global Layout component using Path Alias
-// Импортируем глобальный компонент Layout, используя псевдоним пути
-import Layout from '@layouts/Layout.astro';
+// [EN] Define the properties this component expects to receive
+// [RU] Определяем свойства, которые ожидает получить этот компонент
+interface Props {
+    title: string;
+    description: string;
+    badge?: string;
+    gameUrl: string;
+    coverUrl?: string; // [EN] NEW: Optional cover image [RU] НОВОЕ: Необязательная картинка-обложка
+}
 
-// Import the GameCard component
-// Импортируем компонент GameCard
-import GameCard from '@components/games/GameCard.astro';
+// [EN] Destructure props
+// [RU] Деструктуризируем пропсы
+const { title, description, badge, gameUrl, coverUrl } = Astro.props;
 
-// Import our mock database
-// Импортируем нашу базу данных-заглушку
-import { games } from '@utils/mockGames';
+// [EN] Helper function to safely prepend BASE_URL for GitHub Pages
+// [RU] Вспомогательная функция для безопасного добавления BASE_URL для GitHub Pages
+const getAssetUrl = (path: string) => {
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+    return `${base}${cleanPath}`;
+};
 ---
 
-<Layout title="Games | Cosmo Game Hub">
+<!-- [EN] Card acts as a clickable link entirely -->
+<!-- [RU] Вся карточка работает как кликабельная ссылка -->
+<a href={getAssetUrl(gameUrl)} class="block bg-gray-800 rounded-xl shadow-lg border border-gray-700 hover:border-blue-500 transition-colors overflow-hidden group">
 
-    <div class="container mx-auto px-6 py-12">
+    <!-- [EN] Image / Placeholder container -->
+    <!-- [RU] Контейнер для картинки / заглушки -->
+    <div class="h-48 bg-gray-700 relative overflow-hidden flex items-center justify-center">
 
-        <h1 class="text-4xl font-bold text-blue-400 mb-8 text-center">
-            Our Games Collection
-        </h1>
+        {coverUrl ? (
+            <!-- [EN] Render the image if coverUrl is provided -->
+            <!-- [RU] Рендерим картинку, если передан coverUrl -->
+                <img
+                        src={getAssetUrl(coverUrl)}
+                        alt={`${title} cover`}
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+        ) : (
+            <!-- [EN] Fallback placeholder if no image is provided -->
+            <!-- [RU] Резервная заглушка, если картинка не передана -->
+                <span class="text-gray-500 font-medium">Image Placeholder</span>
+        )}
 
-		<!-- CSS Grid container for responsive card layout -->
-	    <!-- Контейнер CSS Grid для адаптивной сетки карточек -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            <!-- Map through the games array and render a GameCard for each -->
-            <!-- Проходим по массиву игр и рендерим GameCard для каждой -->
-			{games.map((game) => (
-				<GameCard
-					title={game.title}
-			        description={game.description}
-			        badge={game.badge}
-			        gameUrl={game.gameUrl}
-				/>
-			))}
-
-            <!-- Future Game Placeholder -->
-            <!-- Карточка-заглушка для будущих игр -->
-            <article class="bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-700 flex flex-col items-center justify-center p-6 text-center opacity-70">
-                <h3 class="text-xl font-bold text-gray-400">Coming Soon</h3>
-                <p class="text-gray-500 mt-2">More classic logic games are on the way!</p>
-            </article>
-
-        </div>
-
+        <!-- [EN] Optional Badge (e.g., "HOT", "PRO") -->
+        <!-- [RU] Необязательный бейдж (например, "HOT", "PRO") -->
+        {badge && (
+                <span class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wide shadow-md">
+                {badge}
+            </span>
+        )}
     </div>
 
-</Layout>
+    <!-- [EN] Text Content -->
+    <!-- [RU] Текстовый контент -->
+    <div class="p-6">
+        <h3 class="text-2xl font-bold text-white mb-2">{title}</h3>
+        <p class="text-gray-400 mb-6 h-12 overflow-hidden text-sm leading-relaxed">{description}</p>
+
+        <div class="w-full bg-blue-600 group-hover:bg-blue-500 text-white text-center font-semibold py-2 rounded transition-colors">
+            Play Now
+        </div>
+    </div>
+</a>

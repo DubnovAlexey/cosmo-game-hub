@@ -5,6 +5,7 @@ export interface Game {
     description: string;
     badge?: string; // Optional property (необязательное свойство)
     gameUrl: string;
+    coverUrl?: string; // [EN] Optional cover image URL [RU] Необязательная ссылка на обложку
 }
 
 // Export the array of games as our mock database
@@ -14,7 +15,8 @@ export const games: Game[] = [
         title: "Chess",
         description: "Classic strategic board game for two players. Master your tactics and checkmate the king.",
         badge: "Hot",
-        gameUrl: "/games/chess"
+        gameUrl: "/games/chess",
+        coverUrl: "/assets/images/covers/chess-cover.jpg" // [EN] Path to our new cover [RU] Путь к нашей новой обложке
     },
     {
         title: "Checkers",
