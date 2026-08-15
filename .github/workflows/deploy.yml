@@ -49,6 +49,9 @@ jobs:
         uses: withastro/action@v3
         with:
           path: apps/client
+          # [EN] FIX: Explicitly specify npm because the lockfile is at the monorepo root
+          # [RU] ИСПРАВЛЕНИЕ: Явно указываем npm, так как lock-файл находится в корне монорепозитория
+          package-manager: npm
 
   deploy:
     needs: build
