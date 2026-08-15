@@ -1,20 +1,17 @@
 ---
 // Define the shape of the component properties using TypeScript
-// Определяем структуру свойств компонента с помощью TypeScript
 interface Props {
     title: string;
     description: string;
-    badge?: string; // The '?' means this property is optional (необязательное свойство)
+    badge?: string;
     gameUrl: string;
-    coverUrl?: string; // [EN] NEW: Optional cover image [RU] НОВОЕ: Необязательная картинка-обложка
+    coverUrl?: string;
 }
 
 // Destructure the properties from Astro.props
-// Деструктуризируем свойства из Astro.props
 const { title, description, badge, gameUrl, coverUrl } = Astro.props;
 
-// [EN] FIX: Improved base-aware path helper to safely handle slashes for GitHub Pages.
-// [RU] ИСПРАВЛЕНИЕ: Улучшенный хелпер путей, который безопасно обрабатывает слэши для GitHub Pages.
+// Helper to safely handle slashes for GitHub Pages
 const withBase = (path: string) => {
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
     const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
@@ -22,30 +19,20 @@ const withBase = (path: string) => {
 };
 ---
 
-<!-- Article tag represents an independent, self-contained piece of content -->
-<!-- Тег article представляет собой независимый, самодостаточный блок контента -->
 <article class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-blue-500/20 transition-all duration-300 flex flex-col border border-gray-700 hover:border-blue-500 group">
 
-    <!-- Placeholder or actual image for the game -->
-    <!-- Заглушка или реальное изображение для игры -->
     <div class="h-48 bg-gray-700 flex items-center justify-center relative overflow-hidden">
 
         {coverUrl ? (
-            <!-- [EN] Render the image if coverUrl is provided -->
-            <!-- [RU] Рендерим картинку, если передан coverUrl -->
                 <img
                         src={withBase(coverUrl)}
                         alt={`${title} cover`}
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
         ) : (
-            <!-- [EN] Fallback placeholder -->
-            <!-- [RU] Резервная заглушка -->
                 <span class="text-gray-500 font-medium">Image Placeholder</span>
         )}
 
-        <!-- Render the badge conditionally if it exists -->
-        <!-- Рендерим бейдж условно, если он существует -->
         {badge && (
                 <span class="absolute top-4 right-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
                 {badge}
@@ -53,25 +40,11 @@ const withBase = (path: string) => {
         )}
     </div>
 
-    <!-- Container for card text and actions -->
-    <!-- Контейнер для текста карточки и действий -->
     <div class="p-6 flex flex-col flex-grow">
-
-        <!-- Game Title -->
-        <!-- Название игры -->
         <h3 class="text-2xl font-bold text-white mb-2">{title}</h3>
-
-        <!-- Game Description -->
-        <!-- Описание игры -->
-        <p class="text-gray-400 mb-6 flex-grow">
-            {description}
-        </p>
-
-        <!-- Action Button -->
-        <!-- Кнопка действия -->
+        <p class="text-gray-400 mb-6 flex-grow">{description}</p>
         <a href={withBase(gameUrl)} class="block w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
             Play Now
         </a>
-
     </div>
 </article>
