@@ -11,6 +11,7 @@ import { TimerPanel } from './TimerPanel';
 import { MoveHistory } from './MoveHistory';
 import { Graveyard } from './Graveyard';
 import { GameOverOverlay } from '../shared/GameOverOverlay';
+import { GameSetupModal } from './GameSetupModal';
 
 // [EN] Import logic hooks and parser utility using Aliases
 // [RU] Импортируем хуки логики и утилиту парсинга, используя Алиасы
@@ -28,22 +29,20 @@ export const ChessGame: React.FC = () => {
     // [RU] Локальное состояние для сложности движка (по умолчанию 3)
     const [difficulty, setDifficulty] = useState<number>(3);
 
-    // [EN] Tracks which side ran out on the clock, if any. Lives here (not in useChessLogic) because
-    // it's a wall-clock concern, not a chess-rules concern. Typed with TimerPlayer (from
-    // useChessTimer) instead of a fresh 'White'|'Black' literal, so it matches TimerPanel exactly.
-    // [RU] Отслеживает, у какой стороны закончилось время на часах, если закончилось. Живёт здесь
-    // (не в useChessLogic), потому что это про настенное время, а не про правила шахмат. Типизирован
-    // через TimerPlayer (из useChessTimer), а не через свежий литерал 'White'|'Black', чтобы точно
-    // совпадать с TimerPanel.
+    // [EN] Tracks which side ran out on the clock, if any.
+    // [RU] Отслеживает, у какой стороны закончилось время на часах, если закончилось.
     const [timeoutLoser, setTimeoutLoser] = useState<TimerPlayer | null>(null);
 
-    // [EN] Extract live state and methods from our custom chess logic hook. Passing timeoutLoser !== null
-    // back in as isExternallyOver stops the engine from moving and blocks further input once time is up.
-    // getLegalDestinations / checkedSquare are new (Feature 4) — wired into ChessBoard below.
-    // [RU] Извлекаем живое состояние и методы из нашего кастомного хука шахматной логики. Передача
-    // timeoutLoser !== null обратно как isExternallyOver останавливает движок и блокирует ввод,
-    // когда время истекло. getLegalDestinations / checkedSquare — новые (Фича 4), подключены к
-    // ChessBoard ниже.
+    // [EN] State for the setup phase and game parameters
+    // [RU] Состояние для фазы настройки и параметров игры
+    const [isSetupPhase, setIsSetupPhase] = useState<boolean>(true);
+    const [playerColor, setPlayerColor] = useState<'w' | 'b'>('w');
+    const [initialTime, setInitialTime] = useState<number>(600);
+
+    // [EN] Extract live state and methods from our custom chess logic hook.
+    // [EN] FIX: Pass playerColor to the hook so the engine knows who the human is.
+    // [RU] Извлекаем живое состояние и методы из нашего кастомного хука шахматной логики.
+    // [RU] ИСПРАВЛЕНИЕ: Передаем playerColor в хук, чтобы движок знал, за кого играет человек.
     const {
         fen,
         turn,
@@ -60,23 +59,17 @@ export const ChessGame: React.FC = () => {
         confirmPromotion,
         cancelPromotion,
         generatePgn
-    } = useChessLogic(difficulty, timeoutLoser !== null);
+    } = useChessLogic(difficulty, timeoutLoser !== null, playerColor);
 
     // [EN] Compute the 2D array matrix on the fly from the current FEN string
     // [RU] Вычисляем матрицу двумерного массива на лету из текущей FEN-строки
     const boardMatrix = parseFenToBoard(fen);
 
-    // [EN] FIX (TS2322): a bare ternary between two string literals widens to plain `string` by
-    // default — TimerPanelProps.activePlayer ('White'|'Black'|null) correctly rejected that. The
-    // explicit `: TimerPlayer` annotation keeps the literal union narrow.
-    // [RU] ИСПРАВЛЕНИЕ (TS2322): обычный тернарник между двумя строковыми литералами по умолчанию
-    // расширяется до простого `string` — TimerPanelProps.activePlayer ('White'|'Black'|null)
-    // справедливо это отвергал. Явная аннотация `: TimerPlayer` удерживает узкий литеральный union.
     const mappedPlayer: TimerPlayer = turn === 'w' ? 'White' : 'Black';
 
-    // [EN] Neither clock should tick until the first move is made, or once the match is over
-    // [RU] Часы не должны идти, пока не сделан первый ход, и после окончания партии
-    const activeTimerPlayer: TimerPlayer | null = (!hasStarted || isGameOver) ? null : mappedPlayer;
+    // [EN] Neither clock should tick until the first move is made, or once the match is over, or during setup
+    // [RU] Часы не должны идти, пока не сделан первый ход, после окончания партии, или во время настройки
+    const activeTimerPlayer: TimerPlayer | null = (!hasStarted || isGameOver || isSetupPhase) ? null : mappedPlayer;
 
     // [EN] Called by TimerPanel exactly once when a clock reaches zero
     // [RU] Вызывается TimerPanel ровно один раз, когда часы дошли до нуля
@@ -84,10 +77,8 @@ export const ChessGame: React.FC = () => {
         setTimeoutLoser((prev) => (isGameOver || prev ? prev : player));
     }, [isGameOver]);
 
-    // [EN] Combine every way the match can end into one result: timeout first, then chess.js's own
-    // checkmate/draw detection
-    // [RU] Объединяем все способы завершения партии в один результат: сначала просрочка времени,
-    // затем собственное определение chess.js мата/ничьей
+    // [EN] Combine every way the match can end into one result
+    // [RU] Объединяем все способы завершения партии в один результат
     let gameStatus: 'win' | 'lose' | 'draw' | null = null;
     if (timeoutLoser) {
         gameStatus = timeoutLoser === 'White' ? 'lose' : 'win';
@@ -115,12 +106,23 @@ export const ChessGame: React.FC = () => {
         URL.revokeObjectURL(url);
     }, [generatePgn, gameStatus]);
 
+    // [EN] Handle completing the setup phase
+    // [RU] Обработка завершения фазы настройки
+    const handleSetupComplete = (color: 'w' | 'b', time: number) => {
+        setPlayerColor(color);
+        setInitialTime(time);
+        setIsSetupPhase(false);
+    };
+
     return (
         <div className={styles['chess-container']}>
+
+            {/* [EN] Render Setup Modal if in setup phase */}
+            {/* [RU] Рендерим модальное окно настроек, если мы в фазе настройки */}
+            {isSetupPhase && <GameSetupModal onStart={handleSetupComplete} />}
+
             <h1 className={styles['chess-title']}>Cosmo Game Hub</h1>
 
-            {/* [EN] Pass real state and setter to the DifficultySelector */}
-            {/* [RU] Передаем реальное состояние и функцию обновления в DifficultySelector */}
             <DifficultySelector
                 currentDifficulty={difficulty}
                 onSelect={(level: number) => setDifficulty(level)}
@@ -128,25 +130,19 @@ export const ChessGame: React.FC = () => {
 
             <div className={styles['game-zone']}>
                 <div className={styles['board-area-wrapper']}>
-                    {/* [EN] Left slot shows White's trophies — pieces captured FROM Black */}
-                    {/* [RU] Левый слот — трофеи белых, фигуры, взятые У чёрных */}
+                    {/* [EN] Trophies display */}
+                    {/* [RU] Отображение трофеев */}
                     <Graveyard pieces={capturedPieces.b} color="b" />
 
                     <div className={styles['board-wrapper']}>
-                        {/* [EN] NEW (Feature 4): getLegalDestinations + checkedSquare wired through so
-                        ChessBoard can light up legal moves and the king in check */}
-                        {/* [RU] НОВОЕ (Фича 4): getLegalDestinations + checkedSquare подключены, чтобы
-                        ChessBoard мог подсвечивать легальные ходы и короля под шахом */}
                         <ChessBoard
                             board={boardMatrix}
                             onMove={handleUserMove}
-                            isBlackOriented={false}
+                            isBlackOriented={playerColor === 'b'}
                             getLegalDestinations={getLegalDestinations}
                             checkedSquare={checkedSquare}
                         />
 
-                        {/* [EN] Optional: visual indicator when engine is thinking */}
-                        {/* [RU] Опционально: визуальный индикатор, когда движок думает */}
                         {isEngineThinking && (
                             <div className="absolute top-2 right-2 flex items-center gap-2 bg-slate-900/80 px-3 py-1 rounded text-amber-400 text-sm font-bold z-10">
                                 <span className="animate-pulse">Engine is thinking...</span>
@@ -154,8 +150,6 @@ export const ChessGame: React.FC = () => {
                         )}
                     </div>
 
-                    {/* [EN] Right slot shows Black's trophies — pieces captured FROM White */}
-                    {/* [RU] Правый слот — трофеи чёрных, фигуры, взятые У белых */}
                     <Graveyard pieces={capturedPieces.w} color="w" />
                 </div>
             </div>
@@ -164,6 +158,7 @@ export const ChessGame: React.FC = () => {
                 <TimerPanel
                     activePlayer={activeTimerPlayer}
                     onTimeOut={handleTimeOut}
+                    initialSeconds={initialTime}
                 />
 
                 <MoveHistory moves={moveHistory} onDownloadPgn={handleDownloadPgn} />
@@ -175,8 +170,6 @@ export const ChessGame: React.FC = () => {
                 onCancel={cancelPromotion}
             />
 
-            {/* [EN] CONDITIONAL RENDERING: Render overlay if the match is actually over */}
-            {/* [RU] УСЛОВНЫЙ РЕНДЕРИНГ: Рендерим оверлей, если партия действительно окончена */}
             {isGameOver && gameStatus !== null && (
                 <GameOverOverlay status={gameStatus as "win" | "lose" | "draw"}>
                     <div className="text-center">

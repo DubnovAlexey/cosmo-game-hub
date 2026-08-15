@@ -49,10 +49,12 @@ export type PgnResult = '1-0' | '0-1' | '1/2-1/2' | '*';
 const PIECE_VALUE_ORDER: PieceSymbol[] = ['p', 'n', 'b', 'r', 'q'];
 
 // [EN] isExternallyOver lets a parent declare the match over for a reason chess.js itself can't see
-// (e.g. a clock running out) without this hook needing to know anything about timers
+// (e.g. a clock running out) without this hook needing to know anything about timers.
+// FIX: Added playerColor to dictate which side the engine plays.
 // [RU] isExternallyOver позволяет родителю объявить партию оконченной по причине, которую сам chess.js
-// не видит (например, закончилось время на часах), при этом хуку не нужно ничего знать о таймерах
-export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boolean = false) => {
+// не видит (например, закончилось время).
+// ИСПРАВЛЕНИЕ: Добавлен playerColor для определения того, за какую сторону играет движок.
+export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boolean = false, playerColor: 'w' | 'b' = 'w') => {
     // [EN] Lazy initialization: the instance is created exactly once during the first render
     // [RU] Ленивая инициализация: экземпляр создается ровно один раз при первом рендере
     const [game] = useState(() => {
@@ -188,10 +190,10 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
         });
     }, [safeGameMutate]);
 
-    // [EN] Reactive effect to trigger the engine when it is black's turn
-    // [RU] Реактивный эффект для запуска движка, когда ход черных
+    // [EN] FIX: Reactive effect to trigger the engine whenever it is not the human player's turn
+    // [RU] ИСПРАВЛЕНИЕ: Реактивный эффект для запуска движка, когда очередь хода не совпадает с цветом человека
     useEffect(() => {
-        if (turn === 'b' && !isGameOver) {
+        if (turn !== playerColor && !isGameOver) {
             setIsEngineThinking(true);
             const timer = setTimeout(async () => {
                 const bestMoveStr = await getBestMove(fen, difficultyLevel);
@@ -202,7 +204,7 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
             }, 500);
             return () => clearTimeout(timer);
         }
-    }, [turn, isGameOver, fen, difficultyLevel, getBestMove, applyEngineMove]);
+    }, [turn, playerColor, isGameOver, fen, difficultyLevel, getBestMove, applyEngineMove]);
 
     // [EN] NEW (Feature 4): pure query — what squares can the piece on `from` legally move to right
     // now. Reuses the exact same chess.js call already used for promotion detection below, just
@@ -217,12 +219,10 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
         return game.moves({ square: from, verbose: true }).map((m) => m.to);
     }, [game]);
 
-    // [EN] Function for handling the user's manual move. Detects promotion-requiring moves via
-    // chess.js's own legal-move list and defers the mutation until the player picks a piece
-    // [RU] Функция для обработки ручного хода пользователя. Определяет ходы, требующие превращения,
-    // через список легальных ходов chess.js и откладывает мутацию до выбора фигуры игроком
+    // [EN] FIX: Update user move handler to rely on playerColor instead of assuming human plays white
+    // [RU] ИСПРАВЛЕНИЕ: Обработчик ручного хода теперь проверяет playerColor, а не считает, что человек всегда белый
     const handleUserMove = useCallback((from: Square, to: Square) => {
-        if (isGameOver || isEngineThinking || turn !== 'w' || pendingPromotion) return false;
+        if (isGameOver || isEngineThinking || turn !== playerColor || pendingPromotion) return false;
 
         const candidates = game.moves({ square: from, verbose: true });
         const promotionMove = candidates.find((m) => m.to === to && m.promotion);
@@ -242,7 +242,7 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
         });
 
         return moveResult !== null;
-    }, [isGameOver, isEngineThinking, turn, pendingPromotion, safeGameMutate, game]);
+    }, [isGameOver, isEngineThinking, turn, playerColor, pendingPromotion, safeGameMutate, game]);
 
     // [EN] Resolves a pending promotion once the player has picked a piece
     // [RU] Завершает отложенный ход превращения после выбора фигуры игроком
