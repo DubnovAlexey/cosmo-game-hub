@@ -5,7 +5,7 @@ export interface Game {
     description: string;
     badge?: string; // Optional property (необязательное свойство)
     gameUrl: string;
-    coverUrl?: string; // [EN] Optional cover image URL [RU] Необязательная ссылка на обложку
+    coverUrl?: string; // [EN] NEW: Optional cover image URL [RU] НОВОЕ: Необязательная ссылка на обложку
 }
 
 // Export the array of games as our mock database

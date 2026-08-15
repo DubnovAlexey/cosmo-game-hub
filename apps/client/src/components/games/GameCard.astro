@@ -6,35 +6,48 @@ interface Props {
     description: string;
     badge?: string; // The '?' means this property is optional (необязательное свойство)
     gameUrl: string;
+    coverUrl?: string; // [EN] NEW: Optional cover image [RU] НОВОЕ: Необязательная картинка-обложка
 }
 
 // Destructure the properties from Astro.props
 // Деструктуризируем свойства из Astro.props
-const { title, description, badge, gameUrl } = Astro.props;
+const { title, description, badge, gameUrl, coverUrl } = Astro.props;
 
-// [EN] FIX: base-aware path helper, same pattern already working in Header.astro. gameUrl arrives
-// as a root-relative path like "/games/chess" from mockGames.ts — used directly, it 404s once the
-// site is served under the /cosmo-game-hub base path (locally with `base` active, and on GitHub Pages).
-// [RU] ИСПРАВЛЕНИЕ: хелпер для путей с учётом base, тот же паттерн, что уже работает в Header.astro.
-// gameUrl приходит как путь от корня вида "/games/chess" из mockGames.ts — при прямом использовании
-// даёт 404, как только сайт отдаётся из-под base-пути /cosmo-game-hub (локально при активном `base`,
-// и на GitHub Pages).
-const withBase = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+// [EN] FIX: Improved base-aware path helper to safely handle slashes for GitHub Pages.
+// [RU] ИСПРАВЛЕНИЕ: Улучшенный хелпер путей, который безопасно обрабатывает слэши для GitHub Pages.
+const withBase = (path: string) => {
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+    return `${base}${cleanPath}`;
+};
 ---
 
 <!-- Article tag represents an independent, self-contained piece of content -->
 <!-- Тег article представляет собой независимый, самодостаточный блок контента -->
-<article class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-blue-500/20 transition-all duration-300 flex flex-col border border-gray-700 hover:border-blue-500">
+<article class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-blue-500/20 transition-all duration-300 flex flex-col border border-gray-700 hover:border-blue-500 group">
 
-    <!-- Placeholder for the game image -->
-    <!-- Заглушка для изображения игры -->
-    <div class="h-48 bg-gray-700 flex items-center justify-center relative">
-        <span class="text-gray-500 font-medium">Image Placeholder</span>
+    <!-- Placeholder or actual image for the game -->
+    <!-- Заглушка или реальное изображение для игры -->
+    <div class="h-48 bg-gray-700 flex items-center justify-center relative overflow-hidden">
+
+        {coverUrl ? (
+            <!-- [EN] Render the image if coverUrl is provided -->
+            <!-- [RU] Рендерим картинку, если передан coverUrl -->
+                <img
+                        src={withBase(coverUrl)}
+                        alt={`${title} cover`}
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+        ) : (
+            <!-- [EN] Fallback placeholder -->
+            <!-- [RU] Резервная заглушка -->
+                <span class="text-gray-500 font-medium">Image Placeholder</span>
+        )}
 
         <!-- Render the badge conditionally if it exists -->
         <!-- Рендерим бейдж условно, если он существует -->
         {badge && (
-                <span class="absolute top-4 right-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                <span class="absolute top-4 right-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
                 {badge}
             </span>
         )}
