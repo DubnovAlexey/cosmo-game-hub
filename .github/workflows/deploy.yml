@@ -52,6 +52,9 @@ jobs:
           # [EN] FIX: Explicitly specify npm because the lockfile is at the monorepo root
           # [RU] ИСПРАВЛЕНИЕ: Явно указываем npm, так как lock-файл находится в корне монорепозитория
           package-manager: npm
+          # [EN] FIX: Astro v7 requires Node.js v22+ (GitHub Actions default is v20)
+          # [RU] ИСПРАВЛЕНИЕ: Astro v7 требует Node.js v22+ (по умолчанию в GitHub Actions стоит v20)
+          node-version: 22
 
   deploy:
     needs: build
