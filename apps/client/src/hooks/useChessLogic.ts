@@ -50,18 +50,14 @@ const PIECE_VALUE_ORDER: PieceSymbol[] = ['p', 'n', 'b', 'r', 'q'];
 
 // [EN] isExternallyOver lets a parent declare the match over for a reason chess.js itself can't see
 // (e.g. a clock running out) without this hook needing to know anything about timers.
-// FIX: Added playerColor to dictate which side the engine plays.
 // [RU] isExternallyOver позволяет родителю объявить партию оконченной по причине, которую сам chess.js
 // не видит (например, закончилось время).
-// ИСПРАВЛЕНИЕ: Добавлен playerColor для определения того, за какую сторону играет движок.
 export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boolean = false, playerColor: 'w' | 'b' = 'w') => {
     // [EN] Lazy initialization: the instance is created exactly once during the first render
     // [RU] Ленивая инициализация: экземпляр создается ровно один раз при первом рендере
     const [game] = useState(() => {
         const g = new Chess();
         g.setHeader('Event', 'Cosmo Game Hub - Chess');
-        g.setHeader('White', 'Player');
-        g.setHeader('Black', 'Stockfish');
         return g;
     });
 
@@ -119,11 +115,7 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
     capturedPieces.b.sort((a, b) => PIECE_VALUE_ORDER.indexOf(a) - PIECE_VALUE_ORDER.indexOf(b));
 
     // [EN] NEW (Feature 4): the square of the king currently in check, or null. Scans game.board()
-    // (the same shape fenParser.ts already casts to BoardPiece) rather than guessing at a dedicated
-    // chess.js "find king" method that may or may not exist in this version.
     // [RU] НОВОЕ (Фича 4): клетка короля, находящегося под шахом, либо null. Сканирует game.board()
-    // (та же форма, к которой уже приводит fenParser.ts через BoardPiece), а не полагается на
-    // угаданный отдельный метод "найти короля" из chess.js, который может отсутствовать в этой версии.
     const checkedSquare: Square | null = game.isCheck()
         ? ((game.board() as (BoardPiece | null)[][])
             .flat()
@@ -137,20 +129,16 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
         isGameOverRef.current = isGameOver;
     }, [isGameOver]);
 
-    // [EN] Remembers how many half-moves existed after the last sound cue, so a rejected/invalid
-    // move attempt doesn't accidentally replay the previous move's sound
-    // [RU] Запоминает, сколько полуходов было после последнего звукового сигнала, чтобы
-    // отклонённая/невалидная попытка хода случайно не проигрывала звук предыдущего хода заново
+    // [EN] Remembers how many half-moves existed after the last sound cue
+    // [RU] Запоминает, сколько полуходов было после последнего звукового сигнала
     const lastSoundedMoveCountRef = useRef(0);
 
     // [EN] Initialize the engine hook
     // [RU] Инициализируем хук движка
     const { getBestMove } = useEngine();
 
-    // [EN] Function to safely update the game state. Also plays the matching sound for whatever
-    // just happened, exactly once per real move.
-    // [RU] Функция для безопасного обновления состояния игры. Также проигрывает подходящий звук
-    // для того, что только что произошло, ровно один раз на реальный ход.
+    // [EN] Function to safely update the game state and play sounds
+    // [RU] Функция для безопасного обновления состояния игры и проигрывания звуков
     const safeGameMutate = useCallback((modify: (g: Chess) => void) => {
         modify(game);
         setFen(game.fen());
@@ -190,8 +178,8 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
         });
     }, [safeGameMutate]);
 
-    // [EN] FIX: Reactive effect to trigger the engine whenever it is not the human player's turn
-    // [RU] ИСПРАВЛЕНИЕ: Реактивный эффект для запуска движка, когда очередь хода не совпадает с цветом человека
+    // [EN] Reactive effect to trigger the engine whenever it is not the human player's turn
+    // [RU] Реактивный эффект для запуска движка, когда очередь хода не совпадает с цветом человека
     useEffect(() => {
         if (turn !== playerColor && !isGameOver) {
             setIsEngineThinking(true);
@@ -206,21 +194,14 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
         }
     }, [turn, playerColor, isGameOver, fen, difficultyLevel, getBestMove, applyEngineMove]);
 
-    // [EN] NEW (Feature 4): pure query — what squares can the piece on `from` legally move to right
-    // now. Reuses the exact same chess.js call already used for promotion detection below, just
-    // mapped to destinations instead of filtered for a promotion flag. Used by ChessBoard to light up
-    // legal-move squares and to decide "reselect vs. attempt move" on the second click.
-    // [RU] НОВОЕ (Фича 4): чистый запрос — на какие клетки фигура на `from` может легально пойти прямо
-    // сейчас. Переиспользует тот же самый вызов chess.js, что уже используется ниже для определения
-    // превращения, просто результат превращается в список клеток назначения вместо фильтра по
-    // превращению. Используется ChessBoard, чтобы подсвечивать легальные клетки и решать
-    // "переселект или попытка хода" по второму клику.
+    // [EN] Pure query — what squares can the piece on `from` legally move to right now.
+    // [RU] Чистый запрос — на какие клетки фигура на `from` может легально пойти прямо сейчас.
     const getLegalDestinations = useCallback((from: Square): Square[] => {
         return game.moves({ square: from, verbose: true }).map((m) => m.to);
     }, [game]);
 
-    // [EN] FIX: Update user move handler to rely on playerColor instead of assuming human plays white
-    // [RU] ИСПРАВЛЕНИЕ: Обработчик ручного хода теперь проверяет playerColor, а не считает, что человек всегда белый
+    // [EN] Update user move handler to rely on playerColor
+    // [RU] Обработчик ручного хода теперь проверяет playerColor
     const handleUserMove = useCallback((from: Square, to: Square) => {
         if (isGameOver || isEngineThinking || turn !== playerColor || pendingPromotion) return false;
 
@@ -237,7 +218,7 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
             try {
                 moveResult = g.move({ from, to });
             } catch (e) {
-                moveResult = null; // [EN] Invalid move [RU] Недопустимый ход
+                moveResult = null;
             }
         });
 
@@ -265,14 +246,14 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
         setPendingPromotion(null);
     }, []);
 
-    // [EN] Produces a full PGN string on demand, given the result tag from the caller (which knows
-    // about timeouts; this hook deliberately doesn't)
-    // [RU] Формирует полную строку PGN по запросу, принимая тег результата от вызывающего кода
-    // (который знает про просрочки времени; этот хук — намеренно нет)
+    // [EN] Produces a full PGN string on demand with dynamic color assignment
+    // [RU] Формирует полную строку PGN по запросу с динамическим распределением цветов
     const generatePgn = useCallback((resultTag: PgnResult = '*') => {
+        game.setHeader('White', playerColor === 'w' ? 'Player' : 'Stockfish');
+        game.setHeader('Black', playerColor === 'b' ? 'Player' : 'Stockfish');
         game.setHeader('Result', resultTag);
         return game.pgn();
-    }, [game]);
+    }, [game, playerColor]);
 
     return {
         fen,

@@ -40,9 +40,7 @@ export const ChessGame: React.FC = () => {
     const [initialTime, setInitialTime] = useState<number>(600);
 
     // [EN] Extract live state and methods from our custom chess logic hook.
-    // [EN] FIX: Pass playerColor to the hook so the engine knows who the human is.
     // [RU] Извлекаем живое состояние и методы из нашего кастомного хука шахматной логики.
-    // [RU] ИСПРАВЛЕНИЕ: Передаем playerColor в хук, чтобы движок знал, за кого играет человек.
     const {
         fen,
         turn,
@@ -77,22 +75,32 @@ export const ChessGame: React.FC = () => {
         setTimeoutLoser((prev) => (isGameOver || prev ? prev : player));
     }, [isGameOver]);
 
-    // [EN] Combine every way the match can end into one result
-    // [RU] Объединяем все способы завершения партии в один результат
+    // [EN] FIX: Correctly determine winner regardless of which color the human chose
+    // [RU] ИСПРАВЛЕНИЕ: Корректное определение победителя вне зависимости от того, какой цвет выбрал человек
     let gameStatus: 'win' | 'lose' | 'draw' | null = null;
     if (timeoutLoser) {
-        gameStatus = timeoutLoser === 'White' ? 'lose' : 'win';
+        const humanTimerColor: TimerPlayer = playerColor === 'w' ? 'White' : 'Black';
+        gameStatus = timeoutLoser === humanTimerColor ? 'lose' : 'win';
     } else if (isGameOver) {
-        gameStatus = isCheckmate ? (turn === 'w' ? 'lose' : 'win') : 'draw';
+        // [EN] If it's checkmate, the person whose turn it is just lost
+        // [RU] Если поставлен мат, игрок, чья сейчас очередь ходить, только что проиграл
+        gameStatus = isCheckmate ? (turn === playerColor ? 'lose' : 'win') : 'draw';
     }
 
     // [EN] Builds and downloads the current game as a .pgn file
     // [RU] Собирает и скачивает текущую партию как файл .pgn
     const handleDownloadPgn = useCallback(() => {
-        const resultTag: PgnResult =
-            gameStatus === 'win' ? '1-0' :
-                gameStatus === 'lose' ? '0-1' :
-                    gameStatus === 'draw' ? '1/2-1/2' : '*';
+        // [EN] FIX: PGN Standard expects White result first. (e.g., 1-0 means White wins)
+        // [RU] ИСПРАВЛЕНИЕ: Стандарт PGN ожидает результат белых первым. (например, 1-0 означает победу белых)
+        let resultTag: PgnResult = '*';
+
+        if (gameStatus === 'draw') {
+            resultTag = '1/2-1/2';
+        } else if (gameStatus === 'win') {
+            resultTag = playerColor === 'w' ? '1-0' : '0-1';
+        } else if (gameStatus === 'lose') {
+            resultTag = playerColor === 'w' ? '0-1' : '1-0';
+        }
 
         const pgnText = generatePgn(resultTag);
         const blob = new Blob([pgnText], { type: 'application/x-chess-pgn' });
@@ -104,7 +112,7 @@ export const ChessGame: React.FC = () => {
         link.click();
 
         URL.revokeObjectURL(url);
-    }, [generatePgn, gameStatus]);
+    }, [generatePgn, gameStatus, playerColor]);
 
     // [EN] Handle completing the setup phase
     // [RU] Обработка завершения фазы настройки
