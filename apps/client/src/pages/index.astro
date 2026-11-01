@@ -2,6 +2,7 @@
 // Import the base Layout component using a Path Alias
 // Импортируем базовый компонент Layout, используя псевдоним пути (Path Alias)
 import Layout from '@layouts/Layout.astro';
+import { withBase } from '@utils/withBase';
 ---
 
 <!-- We use the Layout component and pass the "title" Prop -->
@@ -26,9 +27,11 @@ import Layout from '@layouts/Layout.astro';
 
         <!-- Call to Action Button -->
         <!-- Кнопка призыва к действию -->
-        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+        <!-- [EN] FIX: was a <button> without an action; now a link to the games collection -->
+        <!-- [RU] ИСПРАВЛЕНИЕ: была <button> без действия; теперь это ссылка на коллекцию игр -->
+        <a href={withBase('/games')} class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
             Start Playing
-        </button>
+        </a>
 
     </div>
 

@@ -1,6 +1,7 @@
 ---
 // Footer component for global site bottom
 // Компонент Footer для глобального подвала сайта
+import { withBase } from '@utils/withBase';
 ---
 
 <!-- Semantic footer wrapper with Tailwind styling -->
@@ -15,6 +16,14 @@
         <!-- Информация об авторских правах -->
         <p class="text-sm">
             &copy; 2026 Cosmo Game Hub. All rights reserved.
+        </p>
+
+        <!-- [EN] The bundled chess engine is GPL-3.0: every page links to its license and source -->
+        <!-- [RU] Встроенный шахматный движок под GPL-3.0: с каждой страницы есть ссылка на лицензию и исходники -->
+        <p class="text-xs mt-2">
+            Chess engine: Stockfish (GPL-3.0) ·
+            <a href={withBase('/engines/chess/COPYING.txt')} class="underline hover:text-white">License</a> ·
+            <a href="https://github.com/lichess-org/stockfish.js/tree/e105072e84cf8ee5dd5219e2c5be29c3b8bf8a5a" class="underline hover:text-white" target="_blank" rel="noopener noreferrer">Source code</a>
         </p>
 
     </div>

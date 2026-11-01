@@ -6,13 +6,13 @@
 // Получаем текущий путь URL для определения активных ссылок
 const currentPath = Astro.url.pathname;
 
-// [EN] NEW: base-aware path helper. Required once `base: '/cosmo-game-hub'` is set in
-// astro.config.mjs for GitHub Pages — hardcoded hrefs like href="/games" would otherwise point at
-// the domain root and 404 once deployed under a repo-name subpath.
-// [RU] НОВОЕ: хелпер для путей с учётом base. Нужен, как только в astro.config.mjs выставлен
-// `base: '/cosmo-game-hub'` для GitHub Pages — иначе жёстко прописанные href вида href="/games"
-// будут вести в корень домена и дадут 404 после деплоя под подпутём с именем репозитория.
-const withBase = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+// [EN] Base-aware path helper, shared with the pages (src/utils/withBase.ts). Required once
+// `base: '/cosmo-game-hub'` is set in astro.config.mjs for GitHub Pages — hardcoded hrefs like
+// href="/games" would otherwise point at the domain root and 404 under a repo-name subpath.
+// [RU] Хелпер для путей с учётом base, общий со страницами (src/utils/withBase.ts). Нужен, как
+// только в astro.config.mjs выставлен `base: '/cosmo-game-hub'` для GitHub Pages — иначе жёстко
+// прописанные href вида href="/games" будут вести в корень домена и дадут 404.
+import { withBase } from '@utils/withBase';
 ---
 
 <!-- Semantic header wrapper -->
@@ -81,9 +81,16 @@ const withBase = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
         <!-- User Authentication Actions -->
         <!-- Действия аутентификации пользователя -->
+        <!-- [EN] Player accounts are not built yet: the button is honestly disabled instead of doing nothing on click -->
+        <!-- [RU] Аккаунтов игроков пока нет: кнопка честно выключена, а не молчит при нажатии -->
         <div class="w-full md:w-auto flex justify-center">
-            <button class="bg-blue-600 hover:bg-blue-700 px-8 py-2 rounded-lg font-semibold transition-colors w-full md:w-auto shadow-lg hover:shadow-blue-500/20">
-                Login
+            <button
+                    type="button"
+                    disabled
+                    title="Player accounts are coming soon"
+                    class="bg-gray-700 text-gray-400 px-8 py-2 rounded-lg font-semibold w-full md:w-auto cursor-not-allowed"
+            >
+                Login · soon
             </button>
         </div>
 

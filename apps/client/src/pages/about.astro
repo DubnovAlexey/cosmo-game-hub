@@ -2,6 +2,10 @@
 // Import the global Layout component using Path Alias
 // Импортируем глобальный компонент Layout, используя псевдоним пути
 import Layout from '@layouts/Layout.astro';
+
+// [EN] FIX: links go through withBase — a raw href="/games" led to the domain root (404 on Pages)
+// [RU] ИСПРАВЛЕНИЕ: ссылки идут через withBase — «сырой» href="/games" вёл в корень домена (404 на Pages)
+import { withBase } from '@utils/withBase';
 ---
 
 <!-- Wrap the page content in the Layout -->
@@ -42,12 +46,24 @@ import Layout from '@layouts/Layout.astro';
                 <li>Built with Astro for extreme performance and SEO optimization.</li>
                 <li>Styled using Tailwind CSS for a responsive, modern look.</li>
                 <li>Interactive islands powered by React for complex game logic.</li>
+                <li>The chess computer runs Stockfish in a Web Worker, so the page stays responsive while it thinks.</li>
             </ul>
+
+            <!-- [EN] Third-party engine notice required by its GPL-3.0 license -->
+            <!-- [RU] Сведения о стороннем движке, которых требует его лицензия GPL-3.0 -->
+            <h2 class="text-2xl font-semibold text-white mb-4">Open Source</h2>
+            <p class="text-gray-300 leading-relaxed">
+                The chess engine is <a href="https://stockfishchess.org/" class="text-blue-400 hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">Stockfish</a>,
+                compiled to JavaScript by the stockfish.js project (version 10.0.2) and distributed under the
+                <a href={withBase('/engines/chess/COPYING.txt')} class="text-blue-400 hover:text-blue-300 underline">GNU General Public License v3</a>.
+                Its complete source code is available at
+                <a href="https://github.com/lichess-org/stockfish.js/tree/e105072e84cf8ee5dd5219e2c5be29c3b8bf8a5a" class="text-blue-400 hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">lichess-org/stockfish.js</a>.
+            </p>
 
             <!-- Call to Action Button Container -->
             <!-- Контейнер кнопки призыва к действию -->
             <div class="text-center mt-8 pt-8 border-t border-gray-700">
-                <a href="/games" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-lg hover:shadow-blue-500/20">
+                <a href={withBase('/games')} class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-lg hover:shadow-blue-500/20">
                     Start Playing Now
                 </a>
             </div>

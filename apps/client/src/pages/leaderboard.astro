@@ -12,9 +12,16 @@ import { leaderboardData } from '@utils/mockLeaderboard';
 
     <div class="container mx-auto px-6 py-12">
 
-        <h1 class="text-4xl font-bold text-blue-400 mb-8 text-center">
+        <h1 class="text-4xl font-bold text-blue-400 mb-4 text-center">
             Top Players
+            <span class="align-middle ml-2 text-xs font-bold uppercase tracking-wider bg-gray-700 text-gray-300 border border-gray-600 px-3 py-1 rounded-full">Demo</span>
         </h1>
+
+        <!-- [EN] The table shows sample data until player accounts exist — say so instead of passing it off as real players -->
+        <!-- [RU] Пока нет аккаунтов игроков, в таблице примерные данные — так и пишем, а не выдаём их за настоящих игроков -->
+        <p class="text-gray-400 text-center mb-8 max-w-2xl mx-auto">
+            Sample data for now: real rankings will appear once player accounts and saved games arrive.
+        </p>
 
         <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-lg border border-gray-700">
 

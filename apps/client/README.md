@@ -1,43 +1,21 @@
-# Astro Starter Kit: Minimal
+# Cosmo Game Hub — client
 
-```sh
-npm create astro@latest -- --template minimal
-```
+The Astro site of Cosmo Game Hub. The project description, features and credits are in the [root README](../../README.md).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Commands
 
-## 🚀 Project Structure
+Run them from the repository root:
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command | Action |
+| :-- | :-- |
+| `npm install` | Installs the dependencies of every workspace |
+| `npm run dev --workspace client` | Starts the dev server at http://localhost:4321/cosmo-game-hub/ |
+| `npm run build --workspace client` | Builds the static site into `apps/client/dist/` |
+| `npm run preview --workspace client` | Serves the built site locally |
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Folders
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- `src/pages/` — routes: home, games collection, chess, leaderboard, about.
+- `src/components/` — UI and game components; React islands for the games.
+- `src/hooks/`, `src/utils/` — game logic, the engine bridge, the shared `withBase` link helper.
+- `public/engines/chess/` — the Stockfish engine (GPL-3.0) with its license and source link.

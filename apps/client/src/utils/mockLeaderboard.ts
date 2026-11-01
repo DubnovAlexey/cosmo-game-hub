@@ -10,6 +10,8 @@ export interface LeaderboardEntry {
 
 // Export the array of players as our mock database
 // Экспортируем массив игроков как нашу базу данных-заглушку
+// [EN] Sample players only: leaderboard.astro marks the table as "Demo" until real accounts exist.
+// [RU] Только примерные игроки: leaderboard.astro помечает таблицу как «Demo», пока нет настоящих аккаунтов.
 export const leaderboardData: LeaderboardEntry[] = [
     {
         rank: 1,
