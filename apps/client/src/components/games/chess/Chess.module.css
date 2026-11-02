@@ -24,7 +24,7 @@
     overflow-x: hidden;
     background:
             radial-gradient(circle at center, #2c1a4d 0%, #05040a 100%),
-            url('@assets/images/chess/space-bg.jpg');
+            url('@assets/images/chess/space-bg.webp');
     background-blend-mode: screen;
     background-size: cover;
     background-position: center;

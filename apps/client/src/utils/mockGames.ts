@@ -24,7 +24,7 @@ export const games: Game[] = [
         description: "Classic strategic board game for two players. Master your tactics and checkmate the king.",
         badge: "Hot",
         gameUrl: "/games/chess",
-        coverUrl: "/assets/images/covers/chess-cover.jpg", // [EN] Path to our new cover [RU] Путь к нашей новой обложке
+        coverUrl: "/assets/images/covers/chess-cover.webp", // [EN] Path to our new cover [RU] Путь к нашей новой обложке
         status: "playable"
     },
     {
