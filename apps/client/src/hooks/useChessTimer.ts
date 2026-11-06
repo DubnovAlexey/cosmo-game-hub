@@ -1,3 +1,7 @@
+// ФАЙЛ: src/hooks/useChessTimer.ts
+// НАЗНАЧЕНИЕ: Локальные часы шахмат, выбранный контроль времени и однократный timeout.
+// РАЗДЕЛЫ: Типы; состояние и смена контроля; ход/пауза; окончание времени.
+// ФУНКЦИИ: useChessTimer; эффекты освобождают таймер при смене стороны и unmount.
 // [EN] Import React hooks for state, side effects, and a mutable ref that survives re-renders
 // [RU] Импортируем хуки React для состояния, побочных эффектов и мутируемого ref, переживающего ре-рендеры
 import { useState, useEffect, useRef } from 'react';
@@ -44,6 +48,20 @@ export const useChessTimer = ({ activePlayer, initialSeconds, onTimeOut }: UseCh
     // [RU] Защищает onTimeOut от повторного срабатывания на одно и то же обнуление часов — страхует от
     // повторного запуска эффекта ниже, если вызывающий код передаёт новую ссылку onTimeOut на несвязанном ре-рендере
     const hasFiredRef = useRef(false);
+    const previousInitialSeconds = useRef(initialSeconds);
+    const timeControlChanged = previousInitialSeconds.current !== initialSeconds;
+
+    // НАЧАЛО ЭФФЕКТА resetTimeControl
+    // Панель уже смонтирована за Match Setup: выбранные минуты должны заменить начальные 600 секунд.
+    useEffect(() => {
+        if (!timeControlChanged) return;
+        previousInitialSeconds.current = initialSeconds;
+        hasFiredRef.current = false;
+        setWhiteSeconds(initialSeconds);
+        setBlackSeconds(initialSeconds);
+    }, [initialSeconds, timeControlChanged]);
+    // КОНЕЦ ЭФФЕКТА resetTimeControl
+
 
     // [EN] Ticking: (re)starts an interval whenever the active side changes (including going to null,
     // e.g. before the first move or once the match ends), decrementing only that side's clock. The
@@ -69,14 +87,14 @@ export const useChessTimer = ({ activePlayer, initialSeconds, onTimeOut }: UseCh
     // [EN] Timeout detection: fires onTimeOut exactly once when the active side's clock reaches 0
     // [RU] Обнаружение просрочки: вызывает onTimeOut ровно один раз, когда время активной стороны дошло до 0
     useEffect(() => {
-        if (!activePlayer || hasFiredRef.current) return;
+        if (timeControlChanged || !activePlayer || hasFiredRef.current) return;
 
         const activeSeconds = activePlayer === 'White' ? whiteSeconds : blackSeconds;
         if (activeSeconds === 0) {
             hasFiredRef.current = true;
             onTimeOut(activePlayer);
         }
-    }, [activePlayer, whiteSeconds, blackSeconds, onTimeOut]);
+    }, [activePlayer, whiteSeconds, blackSeconds, onTimeOut, timeControlChanged]);
 
     return { whiteSeconds, blackSeconds };
 };

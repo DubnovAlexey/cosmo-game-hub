@@ -1,3 +1,7 @@
+// ФАЙЛ: src/utils/withBase.ts
+// НАЗНАЧЕНИЕ: Ссылки под base URL и точное определение активного раздела.
+// РАЗДЕЛЫ: withBase формирует ссылку; isNavigationPathActive сравнивает pathname.
+// НАЧАЛО ФУНКЦИИ withBase
 // [EN] Base-aware link helper. On GitHub Pages the site is served from /cosmo-game-hub/, so a raw
 // href="/games" points at the domain root and gives 404. Works whether BASE_URL ends with a slash or not.
 // [RU] Ссылка с учётом base. На GitHub Pages сайт отдаётся из /cosmo-game-hub/, поэтому «сырой»
@@ -7,3 +11,14 @@ export function withBase(path: string): string {
     const cleanPath = path.replace(/^\/+/, '');
     return `${base}/${cleanPath}`;
 }
+
+// КОНЕЦ ФУНКЦИИ withBase
+
+// НАЧАЛО ФУНКЦИИ isNavigationPathActive
+/** Trailing slash не меняет страницу; дочерний путь учитывается только по границе сегмента. */
+export function isNavigationPathActive(currentPath: string, linkPath: string, includeChildren = false): boolean {
+    const current = currentPath.replace(/\/+$/, '') || '/';
+    const link = linkPath.replace(/\/+$/, '') || '/';
+    return current === link || (includeChildren && link !== '/' && current.startsWith(`${link}/`));
+}
+// КОНЕЦ ФУНКЦИИ isNavigationPathActive

@@ -12,7 +12,12 @@ const currentPath = Astro.url.pathname;
 // [RU] Хелпер для путей с учётом base, общий со страницами (src/utils/withBase.ts). Нужен, как
 // только в astro.config.mjs выставлен `base: '/cosmo-game-hub'` для GitHub Pages — иначе жёстко
 // прописанные href вида href="/games" будут вести в корень домена и дадут 404.
-import { withBase } from '@utils/withBase';
+import { withBase, isNavigationPathActive } from '@utils/withBase';
+
+// Один pathname-контракт для подсветки и aria-current, включая production URL со слешем.
+const gamesActive = isNavigationPathActive(currentPath, withBase('/games'), true);
+const leaderboardActive = isNavigationPathActive(currentPath, withBase('/leaderboard'));
+const aboutActive = isNavigationPathActive(currentPath, withBase('/about'));
 ---
 
 <!-- Semantic header wrapper -->
@@ -43,9 +48,10 @@ import { withBase } from '@utils/withBase';
                     <!-- подсветка активной ссылки тихо ломается, как только сайт отдаётся из-под /cosmo-game-hub/ -->
                     <a
                             href={withBase('/games')}
+                            aria-current={gamesActive ? 'page' : undefined}
                             class:list={[
                                 "transition-all duration-300",
-                                currentPath.startsWith(withBase('/games')) ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
+                                gamesActive ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
                             ]}
                     >
                         Games
@@ -55,9 +61,10 @@ import { withBase } from '@utils/withBase';
                 <li>
                     <a
                             href={withBase('/leaderboard')}
+                            aria-current={leaderboardActive ? 'page' : undefined}
                             class:list={[
                                 "transition-all duration-300",
-                                currentPath === withBase('/leaderboard') ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
+                                leaderboardActive ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
                             ]}
                     >
                         Leaderboard
@@ -67,9 +74,10 @@ import { withBase } from '@utils/withBase';
                 <li>
                     <a
                             href={withBase('/about')}
+                            aria-current={aboutActive ? 'page' : undefined}
                             class:list={[
                                 "transition-all duration-300",
-                                currentPath === withBase('/about') ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
+                                aboutActive ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
                             ]}
                     >
                         About
