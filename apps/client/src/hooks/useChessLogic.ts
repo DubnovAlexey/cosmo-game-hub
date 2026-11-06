@@ -181,18 +181,20 @@ export const useChessLogic = (difficultyLevel: number = 5, isExternallyOver: boo
     // [EN] Reactive effect to trigger the engine whenever it is not the human player's turn
     // [RU] Реактивный эффект для запуска движка, когда очередь хода не совпадает с цветом человека
     useEffect(() => {
-        if (turn !== playerColor && !isGameOver) {
-            setIsEngineThinking(true);
-            const timer = setTimeout(async () => {
+        if (turn === playerColor || isGameOver) { setIsEngineThinking(false); return; }
+        let cancelled = false;
+        setIsEngineThinking(true);
+        const timer = setTimeout(async () => {
+            try {
                 const bestMoveStr = await getBestMove(fen, difficultyLevel);
-                if (bestMoveStr && !isGameOverRef.current) {
+                // Поздний ответ после reset, undo, смены цвета или размонтирования не ходит.
+                if (!cancelled && bestMoveStr && !isGameOverRef.current && game.fen() === fen) {
                     applyEngineMove(bestMoveStr);
                 }
-                setIsEngineThinking(false);
-            }, 500);
-            return () => clearTimeout(timer);
-        }
-    }, [turn, playerColor, isGameOver, fen, difficultyLevel, getBestMove, applyEngineMove]);
+            } finally { if (!cancelled) setIsEngineThinking(false); }
+        }, 500);
+        return () => { cancelled = true; clearTimeout(timer); };
+    }, [turn, playerColor, isGameOver, fen, difficultyLevel, getBestMove, applyEngineMove, game]);
 
     // [EN] Pure query — what squares can the piece on `from` legally move to right now.
     // [RU] Чистый запрос — на какие клетки фигура на `from` может легально пойти прямо сейчас.

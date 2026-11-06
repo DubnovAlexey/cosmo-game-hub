@@ -62,3 +62,7 @@ To build the static site: `npm run build --workspace client` (the result goes to
 
 - Chess engine: [Stockfish](https://stockfishchess.org/), compiled to JavaScript by the stockfish.js project (version 10.0.2), GPL-3.0. The license text and the link to the complete source code are in [`apps/client/public/engines/chess`](apps/client/public/engines/chess/README.md).
 - Libraries: [chess.js](https://github.com/jhlywa/chess.js) (BSD-2-Clause), [react-chessboard](https://github.com/Clariity/react-chessboard) (MIT).
+
+## Engine regression checks
+
+Run `npm test` from the repository root after `npm install`. The tests use the existing build toolchain and a Worker mock to check readiness, overlapping UCI requests and promise cleanup; they do not launch an external engine. React also rejects cancelled or outdated FEN responses. `npm run build --workspace client` validates the static output.

@@ -12,6 +12,8 @@ export class EngineManager {
     // [EN] Callback to resolve the Promise when the best move is found
     // [RU] Коллбэк для успешного выполнения Promise, когда найден лучший ход
     private bestMoveResolve: ((move: string) => void) | null = null;
+    // Только один UCI-поиск активен; очередь содержит лишь последнюю ожидающую позицию.
+    private pendingSearch: { fen: string; level: number; resolve: (move: string) => void } | null = null;
 
     constructor() {
         this.init();
@@ -48,7 +50,8 @@ export class EngineManager {
         // /cosmo-game-hub/engines/chess/stockfish.js — такая сырая строка не проходит через
         // резолвинг ассетов Astro, поэтому префикс base нужно добавлять вручную, в отличие от
         // импортов через @assets, которые получают его автоматически.
-        this.worker = new Worker(`${import.meta.env.BASE_URL}/engines/chess/stockfish.js`);
+        this.worker = new Worker(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/engines/chess/stockfish.js`);
+        this.worker.onerror = () => this.destroy();
 
         // [EN] Listen for messages from the engine
         // [RU] Слушаем сообщения от движка
@@ -59,6 +62,7 @@ export class EngineManager {
             // [RU] Движок подтверждает свою готовность
             if (line === 'readyok') {
                 this.isReady = true;
+                this.drainPendingSearch();
             }
 
             // [EN] Parse the best move from the engine output
@@ -70,8 +74,10 @@ export class EngineManager {
                 const move = parts[1]; // [EN] 'e2e4' [RU] Извлекаем 'e2e4'
 
                 if (this.bestMoveResolve) {
-                    this.bestMoveResolve(move);
-                    this.bestMoveResolve = null; // [EN] Clear callback [RU] Очищаем коллбэк во избежание утечек памяти
+                    const resolve = this.bestMoveResolve;
+                    this.bestMoveResolve = null;
+                    resolve(move ?? '');
+                    this.drainPendingSearch();
                 }
             }
         };
@@ -94,37 +100,34 @@ export class EngineManager {
     // [RU] Запрос лучшего хода на основе текущего FEN и уровня сложности
     public getBestMove(fen: string, level: number): Promise<string> {
         return new Promise((resolve) => {
-            if (!this.worker) {
-                resolve('');
-                return;
-            }
-
-            // [EN] Store the resolve function to call it later in onmessage
-            // [RU] Сохраняем функцию resolve, чтобы вызвать её позже в onmessage
-            this.bestMoveResolve = resolve;
-
-            // [EN] Map our 1-10 level to Stockfish's Skill Level (0-20)
-            // [RU] Преобразуем наш уровень 1-10 в уровень навыка Stockfish (0-20)
-            const stockfishSkillLevel = Math.round((level / 10) * 20);
-
-            // [EN] Configure engine strength
-            // [RU] Настраиваем силу движка
-            this.sendCommand(`setoption name Skill Level value ${stockfishSkillLevel}`);
-
-            // [EN] Set the current board position
-            // [RU] Устанавливаем текущую позицию на доске
-            this.sendCommand(`position fen ${fen}`);
-
-            // [EN] Tell engine to start searching. Depth limits the search speed.
-            // [RU] Даем команду на поиск. Глубина (Depth) ограничивает скорость поиска.
-            const depth = Math.max(1, Math.round(level * 1.5));
-            this.sendCommand(`go depth ${depth}`);
+            if (!this.worker) { resolve(''); return; }
+            this.pendingSearch?.resolve('');
+            const boundedLevel = Number.isFinite(level) ? Math.max(1, Math.min(10, level)) : 1;
+            this.pendingSearch = { fen, level: boundedLevel, resolve };
+            if (this.bestMoveResolve) this.sendCommand('stop');
+            else this.drainPendingSearch();
         });
     }
+
+    // НАЧАЛО ФУНКЦИИ drainPendingSearch
+    /** Новый поиск начинается после bestmove предыдущего, поэтому ответы не смешиваются. */
+    private drainPendingSearch(): void {
+        if (!this.worker || !this.isReady || this.bestMoveResolve || !this.pendingSearch) return;
+        const request = this.pendingSearch;
+        this.pendingSearch = null;
+        this.bestMoveResolve = request.resolve;
+        this.sendCommand(`setoption name Skill Level value ${Math.round(request.level * 2)}`);
+        this.sendCommand(`position fen ${request.fen}`);
+        this.sendCommand(`go depth ${Math.max(1, Math.round(request.level * 1.5))}`);
+    }
+    // КОНЕЦ ФУНКЦИИ drainPendingSearch
 
     // [EN] Cleanup method to terminate the worker
     // [RU] Метод очистки для принудительного завершения работы воркера
     public destroy() {
+        this.isReady = false;
+        this.bestMoveResolve?.(''); this.bestMoveResolve = null;
+        this.pendingSearch?.resolve(''); this.pendingSearch = null;
         if (this.worker) {
             this.worker.terminate();
             this.worker = null;

@@ -62,3 +62,7 @@ npm run dev --workspace client
 
 - Шахматный движок: [Stockfish](https://stockfishchess.org/), собранный в JavaScript проектом stockfish.js (версия 10.0.2), лицензия GPL-3.0. Текст лицензии и ссылка на полный исходный код — в папке [`apps/client/public/engines/chess`](apps/client/public/engines/chess/README.md).
 - Библиотеки: [chess.js](https://github.com/jhlywa/chess.js) (BSD-2-Clause), [react-chessboard](https://github.com/Clariity/react-chessboard) (MIT).
+
+## Проверки движка
+
+`npm test` из корня проверяет готовность Worker, очередность UCI-запросов и освобождение ожиданий при закрытии. Поздние ответы после изменения позиции или размонтирования не применяются. Для сборки: `npm run build --workspace client`.
