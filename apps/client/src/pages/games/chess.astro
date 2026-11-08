@@ -1,11 +1,11 @@
 ---
 // [EN] Import the main Layout component using configured path alias
 // [RU] Импортируем главный компонент макета, используя настроенный алиас пути
-import Layout from '@layouts/Layout.astro';
+import Layout from '@shell/layouts/Layout.astro';
 
 // [EN] Import the React ChessGame component using configured path alias
 // [RU] Импортируем React-компонент шахматной игры, используя настроенный алиас пути
-import ChessGame from '@components/games/chess/ChessGame';
+import { ChessGame } from '@games/chess';
 ---
 
 <!-- [EN] Use the Layout component to wrap our page and set metadata -->

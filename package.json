@@ -10,6 +10,8 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test \"apps/client/src/**/tests/*.test.*\"",
+    "load": "node apps/client/scripts/load/run-all.mjs",
+    "load:quick": "node apps/client/scripts/load/run-all.mjs --quick"
   }
 }

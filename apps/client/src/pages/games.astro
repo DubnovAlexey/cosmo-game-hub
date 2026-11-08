@@ -1,15 +1,15 @@
 ---
 // Import the global Layout component using Path Alias
 // Импортируем глобальный компонент Layout, используя псевдоним пути
-import Layout from '@layouts/Layout.astro';
+import Layout from '@shell/layouts/Layout.astro';
 
 // Import the GameCard component
 // Импортируем компонент GameCard
-import GameCard from '@components/games/GameCard.astro';
+import GameCard from '@shell/components/GameCard.astro';
 
 // Import our mock database
 // Импортируем нашу базу данных-заглушку
-import { games } from '@utils/mockGames';
+import { games } from '@shell/data/mockGames';
 ---
 
 <Layout title="Games | Cosmo Game Hub">

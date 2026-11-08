@@ -1,11 +1,11 @@
 ---
 // Import the global Layout component using Path Alias
 // Импортируем глобальный компонент Layout, используя псевдоним пути
-import Layout from '@layouts/Layout.astro';
+import Layout from '@shell/layouts/Layout.astro';
 
 // [EN] FIX: links go through withBase — a raw href="/games" led to the domain root (404 on Pages)
 // [RU] ИСПРАВЛЕНИЕ: ссылки идут через withBase — «сырой» href="/games" вёл в корень домена (404 на Pages)
-import { withBase } from '@utils/withBase';
+import { withBase } from '@shell/utils/withBase';
 ---
 
 <!-- Wrap the page content in the Layout -->
@@ -55,7 +55,7 @@ import { withBase } from '@utils/withBase';
             <p class="text-gray-300 leading-relaxed">
                 The chess engine is <a href="https://stockfishchess.org/" class="text-blue-400 hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">Stockfish</a>,
                 compiled to JavaScript by the stockfish.js project (version 10.0.2) and distributed under the
-                <a href={withBase('/engines/chess/COPYING.txt')} class="text-blue-400 hover:text-blue-300 underline">GNU General Public License v3</a>.
+                <a href={withBase('/games/chess/COPYING.txt')} class="text-blue-400 hover:text-blue-300 underline">GNU General Public License v3</a>.
                 Its complete source code is available at
                 <a href="https://github.com/lichess-org/stockfish.js/tree/e105072e84cf8ee5dd5219e2c5be29c3b8bf8a5a" class="text-blue-400 hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">lichess-org/stockfish.js</a>.
             </p>

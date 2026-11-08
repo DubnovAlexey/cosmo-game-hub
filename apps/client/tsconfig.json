@@ -27,15 +27,16 @@
     // [RU] Базовая директория для абсолютных импортов
     "baseUrl": ".",
 
-    // [EN] Global path aliases mapped properly to the src folder
-    // [RU] Глобальные алиасы путей, корректно привязанные к папке src
+    // [EN] Three aliases = the three top-level parts of the app (see COSMO_GAME_HUB_BIBLE.md (English section) at the repo root, "Boundaries"):
+    //      @shell — the site around the games, @shared — code used by two or more games, @games — the games.
+    //      Inside one game folder imports stay relative, so a game folder can be read, moved and tested whole.
+    // [RU] Три алиаса = три верхние части приложения (см. COSMO_GAME_HUB_BIBLE.md в корне репозитория, «Границы»):
+    //      @shell — сайт вокруг игр, @shared — код для двух и более игр, @games — сами игры.
+    //      Внутри папки одной игры импорты относительные: папку игры можно читать, переносить и тестировать целиком.
     "paths": {
-      "@layouts/*": ["src/layouts/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@utils/*": ["src/utils/*"],
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@engines/*": ["src/engines/*"]
+      "@shell/*": ["src/shell/*"],
+      "@shared/*": ["src/shared/*"],
+      "@games/*": ["src/games/*"]
     },
 
     // [EN] Strict type-checking rules

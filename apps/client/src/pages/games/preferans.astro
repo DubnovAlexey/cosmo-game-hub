@@ -1,0 +1,12 @@
+---
+// [EN] Route /games/preferans. The page only places the game: everything else lives in src/games/preferans.
+// [RU] Маршрут /games/preferans. Страница только ставит игру на место: всё остальное — в src/games/preferans.
+import Layout from '@shell/layouts/Layout.astro';
+import { PreferansGame } from '@games/preferans';
+---
+
+<Layout title="Preferans | Cosmo Game Hub">
+    <!-- [EN] client:only — the game and its Web Worker bots run only in the browser. -->
+    <!-- [RU] client:only — игра и её боты в Web Worker работают только в браузере. -->
+    <PreferansGame client:only="react" />
+</Layout>

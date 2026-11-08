@@ -1,0 +1,586 @@
+/* [EN] FILE: games/preferans/components/Preferans.module.css — the preferans table: a cosmic room with a card table
+        in it, deep green felt in a wooden rail (the cards, the action panel and the white score sheet all lie on the
+        same cloth), card faces drawn in CSS (sharp on any screen) with a necromancy-and-vampires back (one small
+        SVG), seats, trick, panels, and the table menu drawn as a page of a home notebook.
+   [RU] ФАЙЛ: стили стола преферанса — космическая комната, а в ней карточный стол: глубокое зелёное сукно в
+        деревянном бортике (карты, панель решений и белый лист пули лежат на одном сукне), лицо карт на CSS
+        (чёткое на любом экране) и рубашка в стиле некромантии и вампиров (одна маленькая SVG), места игроков,
+        взятка, панели и меню стола в виде страницы домашней тетради. */
+
+/* ===== 1. Room, felt and layout / Комната, сукно и раскладка ===== */
+.room {
+    --card-w: clamp(44px, 6.4vw, 76px);
+    --card-h: calc(var(--card-w) * 1.42);
+    --cyan: #5eead4;
+    --violet: #a78bfa;
+    --gold: #fbbf24;
+    --cream: #f5dea0;
+    --ink: #e8ecf6;
+    --muted: #94a3b8;
+    /* [EN] The felt: a deep green cloth with fine fibres, a faint twill and the warm light of a lamp above the
+            middle of the table. One value for every place where things lie on the table: the table itself, the
+            large score sheet window, the backdrop of the menu.
+       [RU] Сукно: глубокое зелёное, с мелкими ворсинками, едва заметным диагональным плетением и тёплым светом
+            лампы над серединой стола. Одно значение для всех мест, где что-то лежит на столе: сам стол, крупное
+            окно пули, фон меню. */
+    --felt-base: #0c4d2e;
+    --felt:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0.26 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"),
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 4px),
+        radial-gradient(ellipse at 50% 24%, rgba(255, 226, 158, 0.11), transparent 62%),
+        radial-gradient(ellipse at 50% 40%, #187a4c 0%, #10603a 40%, #0b4a2c 72%, #07331e 100%);
+    /* [EN] The wooden rail around the felt: a light edge, walnut, a dark seam, and the shadow on the floor.
+       [RU] Деревянный бортик вокруг сукна: светлая кромка, орех, тёмный шов и тень на полу. */
+    --rail: 0 0 0 2px #7b4b29, 0 0 0 6px #553118, 0 0 0 7px #24130a, 0 22px 60px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    min-height: 100vh;
+    padding: 18px clamp(10px, 2.5vw, 28px) 40px;
+    color: var(--ink);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background:
+        radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
+        radial-gradient(1px 1px at 72% 32%, rgba(255, 255, 255, 0.55) 50%, transparent 51%),
+        radial-gradient(1.5px 1.5px at 38% 78%, rgba(255, 255, 255, 0.5) 50%, transparent 51%),
+        radial-gradient(1px 1px at 88% 82%, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
+        radial-gradient(ellipse at 50% 35%, #24164a 0%, #0a0717 62%, #05040a 100%);
+    background-attachment: fixed;
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    max-width: 1280px;
+    margin: 0 auto 16px;
+}
+
+.title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle { margin: 2px 0 0; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.04em; }
+
+.settings { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); }
+.settings select {
+    min-height: 36px;
+    padding: 6px 10px;
+    border: 1px solid rgba(245, 222, 160, 0.4);
+    border-radius: 8px;
+    background: rgba(15, 12, 35, 0.85);
+    color: var(--ink);
+}
+.language { display: inline-flex; align-items: center; gap: 6px; }
+
+/* [EN] One felt under everything that lies on the table: the play area, the action panel and, on a computer, the
+        score sheet next to the cards. [RU] Одно сукно подо всем, что лежит на столе: игровая зона, панель решений
+        и на компьютере пуля рядом с картами. */
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 20px 26px;
+    max-width: 1280px;
+    margin: 0 auto;
+    align-items: start;
+    padding: clamp(12px, 2vw, 24px);
+    border-radius: 40px;
+    background: var(--felt);
+    background-color: var(--felt-base);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35), inset 0 0 80px rgba(0, 0, 0, 0.5), var(--rail);
+}
+
+@media (max-width: 1023px) {
+    .layout { grid-template-columns: 1fr; }
+}
+
+/* ===== 2. Table / Стол ===== */
+/* [EN] The play area is marked on the cloth with a thin double line, like on a club table.
+   [RU] Игровая зона отмечена на сукне тонкой двойной линией, как на клубном столе. */
+.table {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(calc(var(--card-h) * 2.3), auto) auto;
+    grid-template-areas:
+        "left  info  right"
+        "left  trick right"
+        "hand  hand  hand";
+    gap: 14px;
+    padding: clamp(14px, 2.4vw, 26px);
+    border-radius: 30px;
+    background: radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.035), transparent 70%);
+    box-shadow: inset 0 0 0 1px rgba(245, 222, 160, 0.16);
+    outline: 1px solid rgba(245, 222, 160, 0.08);
+    outline-offset: -7px;
+}
+
+.seatLeft { grid-area: left; }
+.seatRight { grid-area: right; }
+.seatBottom { grid-area: hand; }
+.info { grid-area: info; }
+.trickZone { grid-area: trick; }
+
+/* [EN] Phones: the whole table must fit one screen — compact header, thinner rail padding, lower trick zone.
+   [RU] Телефоны: весь стол должен помещаться на один экран — компактный заголовок, тоньше поля сукна, ниже зона взятки. */
+@media (max-width: 640px) {
+    .room { --card-w: clamp(38px, 10.5vw, 52px); padding-top: 10px; }
+    .header { margin-bottom: 10px; }
+    .title { font-size: 1.25rem; letter-spacing: 0.16em; }
+    .subtitle { display: none; }
+    .layout { padding: 6px; border-radius: 24px; }
+    .table {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto minmax(calc(var(--card-h) * 1.75), auto) auto;
+        grid-template-areas:
+            "left  right"
+            "info  info"
+            "trick trick"
+            "hand  hand";
+        gap: 8px;
+        padding: 10px;
+        border-radius: 20px;
+        outline-offset: -5px;
+    }
+    .trickZone { min-height: calc(var(--card-h) * 1.75); }
+    .hint { font-size: 0.74rem; }
+    .hand { padding-top: 12px; }
+    .panel { margin-top: 8px; padding: 12px; }
+}
+
+/* ===== 3. Cards / Карты ===== */
+.card {
+    position: relative;
+    flex: none;
+    width: var(--card-w);
+    height: var(--card-h);
+    padding: 0;
+    border: 1px solid rgba(15, 23, 42, 0.25);
+    border-radius: calc(var(--card-w) * 0.11);
+    background: linear-gradient(160deg, #fffdf7 0%, #f2eee3 100%);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    line-height: 1;
+    user-select: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, filter 0.18s ease;
+}
+
+.cardSmall { --card-w: clamp(26px, 3.4vw, 40px); }
+
+.cardRed { color: #c8102e; }
+.cardBlack { color: #151826; }
+
+.cardCorner {
+    position: absolute;
+    top: calc(var(--card-w) * 0.07);
+    left: calc(var(--card-w) * 0.09);
+    font-size: calc(var(--card-w) * 0.24);
+    text-align: center;
+}
+
+.cardCornerBottom { top: auto; left: auto; right: calc(var(--card-w) * 0.09); bottom: calc(var(--card-w) * 0.07); transform: rotate(180deg); }
+
+.cardCenter {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: calc(var(--card-w) * 0.62);
+}
+
+/* [EN] The back: necromancy and vampires (../assets/card-back.svg — a fanged skull on a blood moon, bones, bats,
+        dripping blood, a cemetery fence). One small picture with the card's own proportions.
+   [RU] Рубашка: некромантия и вампиры (../assets/card-back.svg — череп с клыками на кровавой луне, кости, летучие
+        мыши, стекающая кровь, кладбищенская ограда). Одна маленькая картинка в пропорциях карты. */
+.cardBack {
+    border: 1px solid rgba(184, 155, 106, 0.55);
+    background: #0e0307 url('../assets/card-back.svg') center / 100% 100% no-repeat;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+button.card { cursor: pointer; }
+.card-playable:hover,
+.card-playable:focus-visible { transform: translateY(-12px); box-shadow: 0 0 0 2px var(--cyan), 0 10px 22px rgba(94, 234, 212, 0.35); outline: none; }
+.card-blocked { opacity: 0.5; filter: saturate(0.5); cursor: not-allowed !important; }
+.card-selected { transform: translateY(-18px); box-shadow: 0 0 0 3px var(--gold), 0 12px 24px rgba(251, 191, 36, 0.35); }
+
+/* ===== 4. Seats and hands / Места и руки ===== */
+.seat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.seatHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; }
+
+.seatName {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(3, 22, 13, 0.6);
+    border: 1px solid rgba(245, 222, 160, 0.28);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+}
+
+.seatTurn .seatName { border-color: var(--gold); box-shadow: 0 0 14px rgba(251, 191, 36, 0.45); }
+
+.badge {
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(245, 237, 214, 0.16);
+    color: #f5edd6;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.badgeDeclarer { background: rgba(251, 191, 36, 0.22); color: #fde68a; }
+.tricks { color: #c9d8cc; font-size: 0.78rem; }
+
+.bubble {
+    position: relative;
+    padding: 4px 10px;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 0.85rem;
+    animation: pop 0.25s ease-out;
+}
+
+.hand { display: flex; justify-content: center; padding-top: 20px; }
+.hand > * + * { margin-left: calc(var(--card-w) * -0.34); }
+.handBots > * + * { margin-left: calc(var(--card-w) * -0.62); }
+.handOpenBot > * + * { margin-left: calc(var(--card-w) * -0.55); }
+
+/* ===== 5. Trick, talon and info / Взятка, прикуп, сведения ===== */
+.info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.contract {
+    padding: 6px 16px;
+    border-radius: 12px;
+    background: rgba(3, 18, 10, 0.55);
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.hint { margin: 0; color: #d6e4d9; font-size: 0.82rem; }
+
+.trickZone {
+    position: relative;
+    min-height: calc(var(--card-h) * 2.3);
+}
+
+.trickSlot { position: absolute; left: 50%; top: 50%; transition: transform 0.25s ease; }
+.slotBottom { transform: translate(-50%, -12%); animation: fromBottom 0.3s ease-out; }
+.slotLeft { transform: translate(-120%, -78%) rotate(-8deg); animation: fromLeft 0.3s ease-out; }
+.slotRight { transform: translate(20%, -78%) rotate(8deg); animation: fromRight 0.3s ease-out; }
+.slotTalon { transform: translate(-50%, -150%); }
+.slotTalonRest { transform: translate(-50%, -50%); }
+.trickWinner > * { box-shadow: 0 0 0 3px var(--gold), 0 0 26px rgba(251, 191, 36, 0.55); }
+
+.talon { display: flex; justify-content: center; gap: 8px; }
+
+@keyframes fromBottom { from { opacity: 0; transform: translate(-50%, 60%) scale(0.85); } }
+@keyframes fromLeft { from { opacity: 0; transform: translate(-220%, -78%) rotate(-20deg) scale(0.85); } }
+@keyframes fromRight { from { opacity: 0; transform: translate(120%, -78%) rotate(20deg) scale(0.85); } }
+@keyframes pop { from { opacity: 0; transform: scale(0.7); } }
+
+/* ===== 6. Action panel / Панель решений ===== */
+.panel {
+    max-width: 1280px;
+    margin: 16px auto 0;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(3, 20, 12, 0.58);
+    border: 1px solid rgba(245, 222, 160, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 22px rgba(0, 0, 0, 0.35);
+}
+
+.panelTitle { margin: 0 0 10px; font-size: 0.95rem; font-weight: 700; color: #f5edd6; letter-spacing: 0.03em; }
+
+.bidGrid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; max-width: 460px; }
+
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.button {
+    min-height: 36px;
+    padding: 8px 14px;
+    border: 1px solid rgba(245, 222, 160, 0.4);
+    border-radius: 9px;
+    background: linear-gradient(180deg, rgba(16, 46, 32, 0.96), rgba(6, 26, 17, 0.96));
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
+}
+
+.button:hover:not(:disabled),
+.button:focus-visible { transform: translateY(-1px); border-color: var(--cream); box-shadow: 0 0 14px rgba(245, 222, 160, 0.3); outline: none; }
+.button:disabled { opacity: 0.32; cursor: not-allowed; }
+.buttonPrimary { border-color: rgba(251, 191, 36, 0.7); background: linear-gradient(180deg, #7c4a03, #4a2c02); }
+.buttonRed { color: #fecdd3; }
+
+.thinking { color: var(--gold); font-weight: 700; animation: breathe 1.4s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: 0.45; } }
+
+/* ===== 7. Deal list and rules (the sheet itself: ScoreSheet.module.css) / Список раздач и правила ===== */
+.log { margin: 12px 0 0; padding: 0; list-style: none; max-height: 260px; overflow-y: auto; }
+.log li { padding: 5px 0; border-bottom: 1px dashed rgba(245, 237, 214, 0.16); color: #dfe9e1; }
+.rules { margin-top: 12px; color: #dfe9e1; }
+.rules summary { cursor: pointer; font-weight: 700; color: #fde68a; }
+.rules ul { margin: 8px 0 0; padding-inline-start: 18px; }
+.rules li { margin: 4px 0; }
+
+/* ===== 8. Deal result / Итог раздачи ===== */
+.result {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+}
+
+.resultText { margin: 0; font-size: 0.95rem; }
+
+/* ===== 9. Table menu: a page of a home notebook / Меню стола: страница домашней тетради ===== */
+/* [EN] The menu lies on the felt like a page torn from a squared school notebook: pen headings, the chosen value
+        circled by hand, ticks in drawn boxes, explanations on sticky notes, a closed option noted in red pen, and
+        "Play" pressed like a stamp. Printed text is Georgia, the marks are handwriting — easy to read, still homey.
+   [RU] Меню лежит на сукне, как страница из школьной тетради в клетку: заголовки ручкой, выбранное значение
+        обведено от руки, галочки в нарисованных квадратиках, пояснения на листочках-записках, закрытая опция
+        помечена красной ручкой, а «Играть» — как штамп. Печатный текст — Georgia, пометки — от руки: легко
+        читать и по-домашнему. */
+.setupBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: start center;
+    padding: clamp(10px, 4vh, 48px) 12px;
+    overflow-y: auto;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), var(--felt);
+    background-color: var(--felt-base);
+}
+
+.setup {
+    --ink: #1f3a8a;
+    --ink-red: #a3242c;
+    --pencil: #5b6472;
+    --paper-text: #272c37;
+    --hand: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', 'Chalkboard SE', cursive;
+    --cell: 20px;
+    --margin: 30px;
+    position: relative;
+    width: min(660px, 100%);
+    padding: clamp(18px, 3vw, 30px) calc(var(--margin) + 14px) clamp(20px, 3vw, 30px) clamp(16px, 3vw, 28px);
+    border-radius: 3px;
+    color: var(--paper-text);
+    font-family: Georgia, 'Times New Roman', serif;
+    background-color: #fbfaf3;
+    background-image:
+        linear-gradient(90deg, transparent calc(100% - var(--margin)), rgba(205, 60, 60, 0.55) calc(100% - var(--margin)), rgba(205, 60, 60, 0.55) calc(100% - var(--margin) + 1.5px), transparent calc(100% - var(--margin) + 1.5px)),
+        radial-gradient(circle at 9% 96%, transparent 27px, rgba(140, 92, 40, 0.1) 28px, rgba(140, 92, 40, 0.05) 31px, transparent 33px),
+        linear-gradient(rgba(96, 140, 190, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(96, 140, 190, 0.2) 1px, transparent 1px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.36 0 0 0 0 0.22 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23f)'/%3E%3C/svg%3E");
+    background-size: 100% 100%, 100% 100%, var(--cell) var(--cell), var(--cell) var(--cell), 160px 160px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 26px 60px rgba(0, 0, 0, 0.55);
+}
+
+.setupTop { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; margin-bottom: 16px; }
+.setupTitle {
+    margin: 0;
+    color: var(--ink);
+    font: 700 clamp(1.45rem, 3.6vw, 1.9rem)/1.2 var(--hand);
+    text-decoration: underline;
+    text-decoration-color: rgba(31, 58, 138, 0.45);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 7px;
+}
+.setup .language { color: var(--pencil); font-size: 0.95rem; }
+.setup .language select {
+    min-height: 36px;
+    padding: 2px 6px;
+    border: none;
+    border-bottom: 1.5px dashed var(--pencil);
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink);
+    font: 700 0.95rem var(--hand);
+    cursor: pointer;
+}
+
+.setupSection { margin-bottom: 18px; }
+.setupLabel { margin: 0 0 4px; color: var(--ink); font: 700 1.08rem/1.35 var(--hand); }
+.setupNote { margin-inline-start: 6px; color: var(--pencil); font: italic 400 0.8rem Georgia, 'Times New Roman', serif; }
+.setupWide { width: 100%; margin-top: 4px; padding: 12px; }
+.setup .hint { margin: 6px 0 0; color: var(--pencil); font: italic 0.88rem/1.45 Georgia, 'Times New Roman', serif; }
+
+/* [EN] A required choice: the values are written in a row; the chosen one is circled by pen, hovering shows a pencil
+        circle. [RU] Обязательный выбор: значения написаны в ряд; выбранное обведено ручкой, при наведении — карандашом. */
+.choiceRow { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 4px; }
+.choice {
+    position: relative;
+    min-height: 44px;
+    padding: 6px 18px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--paper-text);
+    font: 700 1rem/1.2 var(--hand);
+    cursor: pointer;
+}
+.choice::after {
+    content: '';
+    position: absolute;
+    inset: -3px -10px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 48' preserveAspectRatio='none'%3E%3Cpath d='M8 29C3 18 30 6 63 5C96 4 117 13 114 26C111 39 84 45 55 43C27 41 6 35 7 23C8 14 25 8 41 6' fill='none' stroke='%231f3a8a' stroke-width='2.2' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    opacity: 0;
+    transform: scale(0.86) rotate(-2deg);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    pointer-events: none;
+}
+.choice:hover:not(:disabled)::after { opacity: 0.3; transform: scale(0.96) rotate(-2deg); }
+.choiceOn { color: var(--ink); }
+.choiceOn::after, .choiceOn:hover:not(:disabled)::after { opacity: 1; transform: rotate(-2deg); }
+.choice:focus-visible { outline: 2px dashed var(--ink); outline-offset: 2px; }
+.choice:disabled { color: #9aa1ab; cursor: not-allowed; }
+.choice small { margin-inline-start: 4px; color: var(--pencil); font: italic 600 0.7rem Georgia, 'Times New Roman', serif; }
+
+/* [EN] An option: a box drawn by hand, ticked by pen. [RU] Опция: квадратик от руки, галочка ручкой. */
+.toggle { display: flex; flex: 1; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; font: 600 1rem/1.3 var(--hand); }
+.toggle input {
+    appearance: none;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    border: 1.6px solid var(--ink);
+    border-radius: 3px 2px 4px 2px;
+    background: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+}
+.toggle input:checked {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12.5C6.5 14 8.5 16.5 10 19.5C12.5 13 16.5 7.5 21.5 3.5' fill='none' stroke='%231f3a8a' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 112% no-repeat, rgba(255, 255, 255, 0.6);
+}
+.toggle input:focus-visible { outline: 2px dashed var(--ink); outline-offset: 2px; }
+.toggle input:disabled { border-style: dashed; border-color: #a0a7b1; cursor: not-allowed; }
+
+/* [EN] Menu items with an explanation: hover shows it as a note (it lets the pointer through, so the next row
+        stays reachable); the "?" button pins it open inside the list — the only way on touch screens.
+   [RU] Пункты меню с объяснением: при наведении записка всплывает (и пропускает указатель, поэтому следующая
+        строка остаётся доступной); кнопка «?» закрепляет её в списке — единственный способ на сенсорных экранах. */
+.menuItem { position: relative; }
+.menuHead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.menuHead .setupLabel { margin: 0; }
+.setupSection > .menuItem + .menuItem { margin-top: 2px; }
+
+.infoButton {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border: 1.5px solid var(--ink);
+    border-radius: 50% 46% 52% 48%;
+    background: transparent;
+    color: var(--ink);
+    font: 700 0.95rem/1 var(--hand);
+    cursor: pointer;
+}
+.infoButton[aria-expanded='true'], .infoButton:hover, .infoButton:focus-visible { background: rgba(31, 58, 138, 0.1); box-shadow: 0 0 0 3px rgba(31, 58, 138, 0.14); outline: none; }
+
+.infoCard {
+    display: none;
+    margin: 6px 0 10px;
+    padding: 10px 14px;
+    border-radius: 2px;
+    background: #fff4b8;
+    color: #33302a;
+    font: 0.88rem/1.5 Georgia, 'Times New Roman', serif;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15), 0 8px 18px rgba(60, 40, 0, 0.28);
+    transform: rotate(-0.4deg);
+}
+.infoCard p { margin: 0 0 6px; }
+.infoCard p:last-child { margin-bottom: 0; }
+.infoCard b { color: var(--ink); }
+.menuItem[data-open='true'] > .infoCard { display: block; }
+@media (hover: hover) {
+    .menuItem:not([data-open='true']) > .menuHead:hover ~ .infoCard {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        z-index: 5;
+        display: block;
+        margin-top: 2px;
+        pointer-events: none;
+    }
+}
+
+.menuItemClosed .toggle { cursor: not-allowed; }
+.menuItemClosed .toggle > span { opacity: 0.5; }
+.closedNote { margin: 0 0 4px; margin-inline-start: 30px; color: var(--ink-red); font: italic 0.84rem/1.35 Georgia, 'Times New Roman', serif; }
+.term { color: var(--pencil); font: italic 400 0.86rem Georgia, 'Times New Roman', serif; }
+.soon { margin-inline-start: 6px; color: var(--pencil); font: italic 600 0.74rem Georgia, 'Times New Roman', serif; }
+.notice { margin: 0 0 12px; padding: 8px 12px; border-inline-start: 3px solid var(--ink-red); background: rgba(163, 36, 44, 0.06); color: var(--ink-red); font-size: 0.88rem; }
+/* [EN] The order, read back like a waiter does, written under a dashed line. [RU] Заказ, прочитанный как официантом, — под пунктирной чертой. */
+.order { margin: 6px 0 14px; padding-top: 10px; border-top: 1.5px dashed rgba(91, 100, 114, 0.5); color: var(--ink); font: 1rem/1.55 var(--hand); }
+
+/* [EN] Buttons on paper: outlined in pen; the main one is a red stamp. [RU] Кнопки на бумаге: обведены ручкой; главная — красный штамп. */
+.setup .button {
+    min-height: 44px;
+    padding: 8px 18px;
+    border: 1.6px solid var(--ink);
+    border-radius: 6px 10px 7px 9px;
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--ink);
+    font: 700 1rem/1.2 var(--hand);
+    box-shadow: none;
+}
+.setup .button:hover:not(:disabled),
+.setup .button:focus-visible { border-color: var(--ink); background: rgba(31, 58, 138, 0.08); box-shadow: 2px 3px 0 rgba(31, 58, 138, 0.22); outline: none; }
+.setup .buttonPrimary {
+    border: 2.4px solid var(--ink-red);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--ink-red);
+    font: 700 0.98rem/1.2 Georgia, 'Times New Roman', serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: inset 0 0 0 2px #fbfaf3, inset 0 0 0 3.4px rgba(163, 36, 44, 0.75);
+    rotate: -0.8deg;
+}
+.setup .buttonPrimary:hover:not(:disabled),
+.setup .buttonPrimary:focus-visible { border-color: var(--ink-red); background: rgba(163, 36, 44, 0.07); box-shadow: inset 0 0 0 2px #fbfaf3, inset 0 0 0 3.4px rgba(163, 36, 44, 0.75), 2px 3px 0 rgba(163, 36, 44, 0.2); }
+.setup .log { max-height: none; }
+.setup .log li { color: var(--paper-text); border-bottom: 1px dashed rgba(91, 100, 114, 0.35); font-size: 0.9rem; }
+
+/* [EN] Phones: a narrower margin, the same notebook. [RU] Телефоны: поля уже, тетрадь та же. */
+@media (max-width: 640px) {
+    .setupBackdrop { padding: 8px 6px; }
+    .setup { --margin: 18px; padding-inline-start: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card, .trickSlot, .bubble, .thinking, .choice::after { transition: none; animation: none; }
+}
