@@ -282,7 +282,7 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
   - Вынужденный вист на «Сталинграде» бот отдаёт без раздумий.
   - Безнадёжную игру бот уводит, только если ожидаемый недобор не меньше разрешённого ухода минус полвзятки.
 - **Известные недостатки.**
-  - Боты торгуются слишком осторожно, поэтому распасы выпадают чаще, чем у людей. Калибровка стоит в «Открытых задачах».
+  - Боты ошибаются в оценке руки, и это видно на замере 10.11.2026 (`scripts/load/preferans-calibrate.mjs`, 3000 раздач, точный решатель вместо розыгрыша): распасы — 34% раздач, и в 71% из них кто-то мог сыграть шестерную; 71% игр проходят без виста, хотя в 45% из них защита взяла бы своё; когда вистуют, обязательство недобрано в 28% случаев, а играющий делает игру в 61%. Калибровка стоит в «Открытых задачах».
   - У PIMC два классических изъяна:
     - «слияние стратегий» (strategy fusion): метод думает, что в каждом раскладе сможет сыграть по-своему, как будто знает расклад;
     - «нелокальность» (non-locality): метод не учитывает, что прошлые ходы соперников намекают на их карты.
@@ -434,6 +434,7 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
   - Преферанс: целые раздачи щелчками, продолжение после перезагрузки, телефон 390 px без горизонтальной прокрутки.
 - **Нагрузочные проверки** — `npm run load` (быстрый вариант `npm run load:quick`), скрипты в `apps/client/scripts/load/`. Браузерным частям нужна продакшен-сборка на `astro preview --port 4324`.
   - `preferans-engine.mjs` — движок в Node: решатель на 400 случайных полных раскладах и целые пули трёх ботов в 1 и в 8 потоков, сторож 20 с на каждое решение.
+  - `preferans-calibrate.mjs` — калибровка ботов по точному решателю: что рука тянет при каждой оценке и что боты делают на торговле и висте (3000 раздач за 40 с в 16 потоков).
   - `chess.mjs` — Stockfish сам с собой на уровнях 1–10, 4 движка разом, «шторм стопов» (60 прерванных поисков), настоящие партии щелчками.
   - `preferans-ui.mjs` — раздачи через стол щелчками против сильных ботов; каждый запрос к воркеру замеряется точно, по пути переключаются языки и открывается крупная пуля.
   - `hub.mjs` — тысячи запросов к серверу, страницы на компьютере и на медленном телефоне (FCP, LCP, CLS, долгие задачи), 20 кругов по сайту ради памяти.
@@ -457,7 +458,7 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 
 - **Преферанс:**
   - вычитка переводов на иврит, испанский и французский носителями языка;
-  - калибровка торговли ботов и решений сдающего (вист сдающего, мизер пополам);
+  - калибровка торговли и виста ботов и решений сдающего (вист сдающего, мизер пополам) по таблицам `scripts/load/preferans-calibrate.mjs`: цель — играющий делает игру примерно в 80% случаев, вист недобирает не чаще чем в 15%, распасов меньше, а замер повторяется после каждой правки;
   - точное решение 66 раскладов в открытом висте и на мизере;
   - фоны и рамки по промптам из `DESIGN_CONCEPT_RU.md`, если Алексей их сгенерирует;
   - игра по сети.
@@ -821,7 +822,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
   - A forced whist under Stalingrad is given without thinking.
   - The bot concedes a hopeless game only when the expected shortfall is at least the allowed concession minus half a trick.
 - **Known weaknesses.**
-  - The bots bid too cautiously, so all-pass comes up more often than with people. Calibration is listed in "Open tasks".
+  - The bots misjudge their hands, as the measurement of 10.11.2026 shows (`scripts/load/preferans-calibrate.mjs`, 3000 deals, the exact solver instead of the card play): all-pass in 34% of deals, and in 71% of them someone could have made a six; 71% of games pass without a whist although in 45% of them the defence would have held its share; when they whist, the obligation is missed in 28% of cases, and the declarer makes the game in 61%. Calibration is listed in "Open tasks".
   - PIMC has two classic flaws:
     - **strategy fusion:** the method assumes it can play differently in each deal, as if it knew the layout;
     - **non-locality:** the method ignores that the opponents' earlier moves hint at their cards.
@@ -973,6 +974,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
   - Preferans: whole deals played by clicks, resuming after a reload, a 390 px phone with no horizontal scrolling.
 - **Load tests** — `npm run load` (quick version `npm run load:quick`), scripts in `apps/client/scripts/load/`. The browser parts need the production build on `astro preview --port 4324`.
   - `preferans-engine.mjs` — the engine in Node: the solver on 400 random full deals and whole pools of three bots on 1 and 8 threads, with a 20 s watchdog per decision.
+  - `preferans-calibrate.mjs` — calibrating the bots by the exact solver: what a hand makes at every estimate and what the bots do in the auction and the whist (3000 deals in 40 s on 16 threads).
   - `chess.mjs` — Stockfish self-play at levels 1–10, 4 engines at once, a "stop storm" (60 interrupted searches), real games by clicks.
   - `preferans-ui.mjs` — deals at the table by clicks against strong bots; every worker request is timed exactly, and on the way the languages are switched and the large sheet is opened.
   - `hub.mjs` — thousands of requests to the server, pages on a computer and on a slow phone (FCP, LCP, CLS, long tasks), 20 rounds through the site to watch memory.
@@ -996,7 +998,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 
 - **Preferans:**
   - native speakers proofread the Hebrew, Spanish and French translations;
-  - calibrate the bots' bidding and the dealer's decisions (the dealer's whist, shared misère);
+  - calibrate the bots' bidding and whist and the dealer's decisions (the dealer's whist, shared misère) by the tables of `scripts/load/preferans-calibrate.mjs`: the target is a declarer who makes the game about 80% of the time, a whist that falls short no more than 15% of the time, fewer all-passes, and the measurement rerun after every change;
   - solve the 66 positions of open whist and misère exactly;
   - backgrounds and frames from the prompts of `DESIGN_CONCEPT_RU.md`, if Alexey generates them;
   - online play.
@@ -1366,7 +1368,7 @@ cosmo-game-hub/
   - את הוויסט הכפוי של סטלינגרד הבוט נותן בלי לחשוב.
   - הבוט מוותר על משחק אבוד רק אם החיסרון הצפוי הוא לפחות הוויתור המותר פחות חצי לקיחה.
 - **חולשות ידועות.**
-  - הבוטים מכריזים בזהירות יתרה, ולכן ראספסים יוצאים בתדירות גבוהה יותר מאשר אצל אנשים. הכיול מופיע ב"משימות פתוחות".
+  - הבוטים טועים בהערכת היד, כפי שמראה המדידה מ-10.11.2026 (`scripts/load/preferans-calibrate.mjs`, ‏3000 חלוקות, הפותר המדויק במקום המשחק): ראספסים ב-34% מהחלוקות, וב-71% מהם מישהו יכול היה לשחק שישייה; 71% מהמשחקים עוברים בלי ויסט, אף שב-45% מהם ההגנה הייתה לוקחת את שלה; כשמווסטים, ההתחייבות לא מושגת ב-28% מהמקרים, והמכריז עושה את המשחק ב-61%. הכיול מופיע ב"משימות פתוחות".
   - לשיטת PIMC יש שני פגמים קלאסיים:
     - **מיזוג אסטרטגיות (strategy fusion):** השיטה מניחה שתוכל לשחק אחרת בכל חלוקה, כאילו היא יודעת את פיזור הקלפים;
     - **אי-מקומיות (non-locality):** השיטה מתעלמת מכך שהמסעים הקודמים של היריבים רומזים על הקלפים שלהם.
@@ -1518,6 +1520,7 @@ cosmo-game-hub/
   - פרפרנס: חלוקות שלמות שוחקו בלחיצות, המשך אחרי רענון, וטלפון ברוחב 390 פיקסלים בלי גלילה אופקית.
 - **בדיקות עומס** — `npm run load` (גרסה מהירה `npm run load:quick`), הסקריפטים ב-`apps/client/scripts/load/`. החלקים בדפדפן צריכים את בניית הייצור על `astro preview --port 4324`.
   - `preferans-engine.mjs` — המנוע ב-Node: הפותר על 400 חלוקות מלאות אקראיות ופוליות שלמות של שלושה בוטים ב-1 וב-8 תהליכונים, עם שומר של 20 שניות לכל החלטה.
+  - `preferans-calibrate.mjs` — כיול הבוטים לפי הפותר המדויק: מה יד לוקחת בכל הערכה ומה הבוטים עושים במכרז ובוויסט (‏3000 חלוקות ב-40 שניות ב-16 תהליכונים).
   - `chess.mjs` — ‏Stockfish מול עצמו ברמות 1–10, ארבעה מנועים בבת אחת, "סערת עצירות" (60 חיפושים שנקטעו) ומשחקים אמיתיים בלחיצות.
   - `preferans-ui.mjs` — חלוקות ליד השולחן בלחיצות מול בוטים חזקים; כל בקשה ל-worker נמדדת בדיוק, ובדרך מתחלפות השפות ונפתח הדף הגדול.
   - `hub.mjs` — אלפי בקשות לשרת, דפים במחשב ובטלפון איטי (FCP, ‏LCP, ‏CLS, משימות ארוכות), ו-20 סבבים באתר כדי לעקוב אחרי הזיכרון.
@@ -1541,7 +1544,7 @@ cosmo-game-hub/
 
 - **פרפרנס:**
   - הגהה של התרגומים לעברית, לספרדית ולצרפתית בידי דוברי השפה;
-  - כיול המכרז של הבוטים והחלטות המחלק (ויסט המחלק, מיזר חצי־חצי);
+  - כיול המכרז והוויסט של הבוטים והחלטות המחלק (ויסט המחלק, מיזר חצי־חצי) לפי הטבלאות של `scripts/load/preferans-calibrate.mjs`: היעד — מכריז שעושה את המשחק בכ-80% מהמקרים, ויסט שלא משיג את ההתחייבות לא יותר מ-15%, פחות ראספסים, והמדידה חוזרת אחרי כל שינוי;
   - פתרון מדויק של 66 פריסות בוויסט גלוי ובמיזר;
   - רקעים ומסגרות לפי הפרומפטים מ־`DESIGN_CONCEPT_RU.md`, אם אלכסיי ייצר אותם;
   - משחק ברשת.
@@ -1907,7 +1910,7 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
   - El whist forzado de Stalingrado lo da sin pensar.
   - Se rinde ante una partida perdida solo si la falta esperada es al menos la rendición permitida menos media baza.
 - **Debilidades conocidas.**
-  - Los bots subastan con demasiada prudencia, así que los raspasy salen más a menudo que con personas. La calibración figura en «Tareas abiertas».
+  - Los bots se equivocan al valorar la mano, como muestra la medición del 10.11.2026 (`scripts/load/preferans-calibrate.mjs`, 3000 repartos, el solver exacto en lugar del juego de cartas): raspasy en el 34% de los repartos, y en el 71% de ellos alguien podía cumplir un seis; el 71% de los juegos pasan sin whist aunque en el 45% la defensa habría cumplido; cuando hacen whist, la obligación falla en el 28% de los casos y el declarante cumple en el 61%. La calibración figura en «Tareas abiertas».
   - PIMC tiene dos defectos clásicos:
     - **fusión de estrategias (strategy fusion):** el método supone que puede jugar distinto en cada reparto, como si conociera la distribución;
     - **no localidad (non-locality):** el método ignora que las jugadas anteriores de los rivales dan pistas sobre sus cartas.
@@ -2059,6 +2062,7 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
   - Preferans: repartos completos jugados con clics, continuación tras recargar, un teléfono de 390 px sin desplazamiento horizontal.
 - **Pruebas de carga** — `npm run load` (versión rápida `npm run load:quick`), scripts en `apps/client/scripts/load/`. Las partes de navegador necesitan la compilación de producción en `astro preview --port 4324`.
   - `preferans-engine.mjs` — el motor en Node: el solver en 400 repartos completos aleatorios y pulyas enteras de tres bots en 1 y 8 hilos, con un vigilante de 20 s por decisión.
+  - `preferans-calibrate.mjs` — la calibración de los bots con el solver exacto: qué cumple una mano con cada valoración y qué hacen los bots en la subasta y el whist (3000 repartos en 40 s con 16 hilos).
   - `chess.mjs` — Stockfish contra sí mismo en los niveles 1–10, 4 motores a la vez, una «tormenta de stops» (60 búsquedas interrumpidas) y partidas reales con clics.
   - `preferans-ui.mjs` — repartos en la mesa con clics contra bots fuertes; cada petición al worker se mide con exactitud, y por el camino se cambian los idiomas y se abre la hoja grande.
   - `hub.mjs` — miles de peticiones al servidor, páginas en un ordenador y en un móvil lento (FCP, LCP, CLS, tareas largas) y 20 vueltas por el sitio para vigilar la memoria.
@@ -2082,7 +2086,7 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 
 - **Preferans:**
   - revisión de las traducciones al hebreo, español y francés por hablantes nativos;
-  - calibrar la subasta de los bots y las decisiones del repartidor (su whist, la miseria a medias);
+  - calibrar la subasta y el whist de los bots y las decisiones del repartidor (su whist, la miseria a medias) con las tablas de `scripts/load/preferans-calibrate.mjs`: el objetivo es un declarante que cumple alrededor del 80% de las veces, un whist que falla como mucho el 15%, menos raspasy y la medición repetida tras cada cambio;
   - resolver con exactitud las 66 posiciones de whist abierto y miseria;
   - fondos y marcos con los prompts de `DESIGN_CONCEPT_RU.md`, si Alexey los genera;
   - juego en línea.
@@ -2446,7 +2450,7 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
   - Le whist forcé de Stalingrad est donné sans réfléchir.
   - Le bot n'abandonne une partie perdue que si la chute attendue atteint au moins l'abandon autorisé moins un demi-pli.
 - **Faiblesses connues.**
-  - Les bots enchérissent trop prudemment, si bien que les raspasy arrivent plus souvent qu'entre humains. Le calibrage figure dans « Tâches ouvertes ».
+  - Les bots jugent mal leur main, comme le montre la mesure du 10.11.2026 (`scripts/load/preferans-calibrate.mjs`, 3000 donnes, le solveur exact à la place du jeu de la carte) : raspasy dans 34 % des donnes, et dans 71 % d'entre eux quelqu'un pouvait faire un six ; 71 % des jeux passent sans whist alors que dans 45 % la défense aurait tenu sa part ; quand ils whistent, l'obligation manque dans 28 % des cas et le déclarant fait son jeu dans 61 %. Le calibrage figure dans « Tâches ouvertes ».
   - Le PIMC a deux défauts classiques :
     - **la fusion des stratégies (strategy fusion) :** la méthode suppose qu'elle pourra jouer différemment dans chaque donne, comme si elle connaissait la répartition ;
     - **la non-localité (non-locality) :** la méthode ignore que les coups précédents des adversaires renseignent sur leurs cartes.
@@ -2598,6 +2602,7 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
   - Préférence : des donnes entières jouées au clic, la reprise après un rechargement, un téléphone de 390 px sans défilement horizontal.
 - **Tests de charge** — `npm run load` (version rapide `npm run load:quick`), scripts dans `apps/client/scripts/load/`. Les parties dans le navigateur ont besoin de la construction de production sur `astro preview --port 4324`.
   - `preferans-engine.mjs` — le moteur dans Node : le solveur sur 400 donnes complètes aléatoires et des poules entières de trois bots sur 1 et 8 fils, avec un chien de garde de 20 s par décision.
+  - `preferans-calibrate.mjs` — le calibrage des bots par le solveur exact : ce qu'une main fait à chaque estimation et ce que font les bots aux enchères et au whist (3000 donnes en 40 s sur 16 fils).
   - `chess.mjs` — Stockfish contre lui-même aux niveaux 1 à 10, 4 moteurs à la fois, une « tempête de stops » (60 recherches interrompues) et de vraies parties par clics.
   - `preferans-ui.mjs` — des donnes à la table par clics contre des bots forts ; chaque requête au worker est mesurée exactement, et en chemin on change de langue et on ouvre la grande feuille.
   - `hub.mjs` — des milliers de requêtes au serveur, les pages sur ordinateur et sur un téléphone lent (FCP, LCP, CLS, tâches longues), et 20 tours du site pour surveiller la mémoire.
@@ -2621,7 +2626,7 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 
 - **Préférence :**
   - relecture des traductions en hébreu, espagnol et français par des locuteurs natifs ;
-  - calibrer les enchères des bots et les décisions du donneur (son whist, la misère partagée) ;
+  - calibrer les enchères et le whist des bots et les décisions du donneur (son whist, la misère partagée) d'après les tableaux de `scripts/load/preferans-calibrate.mjs` : le but est un déclarant qui fait son jeu environ 80 % du temps, un whist qui manque son obligation au plus 15 % du temps, moins de raspasy, et la mesure relancée après chaque changement ;
   - résoudre exactement les 66 positions du whist ouvert et de la misère ;
   - fonds et cadres d'après les prompts de `DESIGN_CONCEPT_RU.md`, si Alexey les génère ;
   - le jeu en ligne.
