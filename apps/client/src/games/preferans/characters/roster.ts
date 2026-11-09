@@ -1,7 +1,7 @@
 // =====================================================================
 // FILE: apps/client/src/games/preferans/characters/roster.ts
-// PURPOSE: who sits at the table against you. The lair has forty-three dwellers (vampires, ghouls, necromancers, a
-//   masked empress, a weeping queen…) and twenty-six guests from the neighbouring worlds (an alchemist, a zombie from
+// PURPOSE: who sits at the table against you. The lair has fifty-three dwellers (vampires, ghouls, necromancers, a
+//   masked empress, a weeping queen…) and thirty-eight guests from the neighbouring worlds (an alchemist, a zombie from
 //   Marseille, aliens, a raccoon, a ronin from an old print, a neon vampire…); every new pool seats a different
 //   company. Pictures: Alexey's own collection (Desktop «Favicon», 08–09.11.2026; some from StockCake, free to use),
 //   whole, with their backgrounds, only scaled down, in public/games/preferans/portraits.
@@ -22,6 +22,10 @@ export type CharacterId =
   | 'skuka' | 'mgla' | 'valentin' | 'pietro' | 'kenji' | 'octavian' | 'benedict' | 'akvarella' | 'skvoznyak' | 'melisande'
   | 'belladonna' | 'cassandra' | 'tobias' | 'kage' | 'florian' | 'neon' | 'glyuk' | 'astral' | 'herbarium' | 'deco'
   | 'bes'
+  /** The third company (09.11.2026, evening): 10 dwellers and 12 guests. */
+  | 'aurelia' | 'morrigan' | 'elza' | 'polunoch' | 'shadow' | 'gadyuka' | 'sobor' | 'crystal' | 'stilet' | 'rosa'
+  | 'banshee' | 'miko' | 'tryasina' | 'agafon' | 'plakalshchitsa' | 'fantom' | 'nebula' | 'undina' | 'okun' | 'gora'
+  | 'kaznachey' | 'galeon'
   /** The dummy of a game for two: never picked as an opponent, it sits in the third seat. */
   | 'dummy';
 
@@ -92,6 +96,16 @@ export const ROSTER: readonly CharacterInfo[] = Object.freeze([
   dweller('belladonna', true, [0.15, 0.85, 0, 1.0]),
   dweller('cassandra', true, [0.1, 0.9, 1, 1.0]),
   dweller('tobias', false, [0.2, 0.95, 1, 0.85]),
+  dweller('aurelia', true, [0, 1.05, 0, 1.1]),
+  dweller('morrigan', true, [0.35, 0.85, 1, 0.85]),
+  dweller('elza', true, [-0.15, 1.1, 0, 1.2]),
+  dweller('polunoch', true, [0.25, 0.9, 1, 0.8]),
+  dweller('shadow', true, [-0.2, 1.05, 0, 1.0]),
+  dweller('gadyuka', true, [0.4, 0.8, 0, 0.8]),
+  dweller('sobor', false, [-0.1, 1.05, 0, 1.4]),
+  dweller('crystal', false, [0, 1.0, 0, 1.1]),
+  dweller('stilet', false, [0.15, 0.9, 0, 1.0]),
+  dweller('rosa', true, [0.2, 0.85, 1, 1.0]),
   guest('berta', true, [0.3, 1, 0, 1]),
   guest('zhorzh', false, [0, 1, 2, 0.8]),
   guest('mortus', false, [-0.2, 1.1, 0, 1.4]),
@@ -118,6 +132,18 @@ export const ROSTER: readonly CharacterInfo[] = Object.freeze([
   guest('herbarium', false, [-0.3, 1.15, 0, 1.1]),
   guest('deco', false, [0.2, 0.95, 1, 1.0]),
   guest('bes', false, [0.5, 0.85, 0, 0.7]),
+  guest('banshee', true, [0.3, 0.9, 0, 0.8]),
+  guest('miko', true, [-0.05, 1.0, 1, 1.2]),
+  guest('tryasina', true, [0.3, 0.85, 1, 0.9]),
+  guest('agafon', false, [0.1, 0.95, 0, 1.3]),
+  guest('plakalshchitsa', true, [-0.2, 1.1, 0, 1.2]),
+  guest('fantom', false, [0.1, 0.95, 1, 1.0]),
+  guest('nebula', true, [0.35, 0.9, 2, 0.9]),
+  guest('undina', true, [-0.1, 1.0, 0, 1.1]),
+  guest('okun', false, [0.2, 0.8, 0, 0.8]),
+  guest('gora', false, [-0.3, 1.15, 0, 1.4]),
+  guest('kaznachey', false, [0.1, 1.0, 0, 1.2]),
+  guest('galeon', false, [0.45, 0.9, 0, 0.8]),
 ]);
 /** The dummy («болван») of a game for two: a scarecrow skeleton drawn for the game (portraits/dummy.svg). */
 export const DUMMY: CharacterInfo = character('dummy', false, true, [0, 1, 0, 1]);

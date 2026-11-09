@@ -197,7 +197,18 @@
     gap: 14px;
     padding: clamp(14px, 2.4vw, 26px);
     border-radius: 30px;
-    background: radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.03), transparent 70%);
+    /* [EN] Centuries of play show only a little (DESIGN_CONCEPT_RU.md §1): two wine rings left by a goblet in a free
+            corner, and a paler, flatter nap where the cards are played — the middle and in front of every player.
+       [RU] Века игры видны совсем чуть-чуть (DESIGN_CONCEPT_RU.md §1): два винных следа от кубка в свободном углу и
+            светлее, примятее ворс там, где кладут карты, — в середине и перед каждым игроком. */
+    background:
+        radial-gradient(circle 30px at 93% 90%, transparent 78%, rgba(80, 6, 20, 0.3) 83%, rgba(80, 6, 20, 0.12) 90%, transparent 95%),
+        radial-gradient(circle 29px at 90.5% 85%, transparent 80%, rgba(80, 6, 20, 0.16) 86%, transparent 93%),
+        radial-gradient(ellipse 22% 18% at 50% 46%, rgba(196, 228, 205, 0.05), transparent 72%),
+        radial-gradient(ellipse 26% 11% at 50% 84%, rgba(196, 228, 205, 0.04), transparent 72%),
+        radial-gradient(ellipse 13% 20% at 14% 38%, rgba(196, 228, 205, 0.035), transparent 72%),
+        radial-gradient(ellipse 13% 20% at 86% 38%, rgba(196, 228, 205, 0.035), transparent 72%),
+        radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.03), transparent 70%);
     /* [EN] A fine double line of tarnished silver marks the play area. [RU] Тонкая двойная линия старого серебра отмечает игровую зону. */
     box-shadow: inset 0 0 0 1px rgba(200, 205, 212, 0.2);
     outline: 1px solid rgba(200, 205, 212, 0.1);
@@ -510,7 +521,30 @@ button.card { cursor: pointer; }
     cursor: pointer;
     transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
+/* [EN] While a portrait loads, the frame holds dark velvet with a silver monogram, never a broken empty box.
+   [RU] Пока портрет грузится, в рамке тёмный бархат с серебряной монограммой, а не пустая сломанная коробка. */
+.portraitEmpty img { min-width: 96px; min-height: 118px; opacity: 0; }
+.monogram {
+    position: absolute;
+    inset: 8px;
+    display: grid;
+    place-items: center;
+    border: 3px solid #0c070a;
+    background: radial-gradient(circle at 50% 38%, #2c1822 0%, #12090d 72%);
+    pointer-events: none;
+}
+.monogram span {
+    background: linear-gradient(180deg, #f1f3f6 0%, #9097a1 55%, #3c4048 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: var(--grimoire), serif;
+    font-size: 3.2rem;
+    line-height: 1;
+    filter: drop-shadow(0 1px 0 #000);
+}
 .portrait img {
+    transition: opacity 0.35s ease;
     display: block;
     width: auto;
     height: auto;

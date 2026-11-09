@@ -128,6 +128,73 @@ const Candelabrum: React.FC<{ side: Side }> = ({ side }) => {
     );
 };
 
+/**
+ * [EN] An expensive bottle of absinthe, half empty, with a reservoir glass and a slotted spoon with a sugar cube —
+ *      the club's evening is already under way (Alexey's idea, 09.11.2026). It stands by the left candelabrum and
+ *      glows faintly green; on narrow screens it goes with the candelabra.
+ * [RU] Дорогая бутылка абсента, початая наполовину, с бокалом и ложечкой с кусочком сахара — вечер клуба уже идёт
+ *      (идея Алексея, 09.11.2026). Стоит у левого канделябра и чуть светится зелёным; на узких экранах уходит вместе
+ *      с канделябрами.
+ */
+const Absinthe: React.FC = () => (
+    <svg className={styles.absinthe} viewBox="0 0 100 140" aria-hidden="true">
+        <defs>
+            <linearGradient id="absinthe-glass" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" stopColor="#06120b" />
+                <stop offset="0.28" stopColor="#1c4630" />
+                <stop offset="0.44" stopColor="#4c8a62" />
+                <stop offset="0.62" stopColor="#163a26" />
+                <stop offset="1" stopColor="#040b07" />
+            </linearGradient>
+            <linearGradient id="absinthe-liquid" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" stopColor="#1f6e2a" />
+                <stop offset="0.45" stopColor="#8be35f" />
+                <stop offset="1" stopColor="#1a5a22" />
+            </linearGradient>
+            <radialGradient id="absinthe-glow">
+                <stop offset="0" stopColor="#9dff7a" stopOpacity="0.35" />
+                <stop offset="1" stopColor="#9dff7a" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="absinthe-foil" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" stopColor="#3c4048" />
+                <stop offset="0.5" stopColor="#d8dbe0" />
+                <stop offset="1" stopColor="#23262b" />
+            </linearGradient>
+            <clipPath id="absinthe-body">
+                <path d="M22 132Q20 132 20 128V62Q20 48 28.5 41.5V20H39.5V41.5Q48 48 48 62V128Q48 132 46 132Z" />
+            </clipPath>
+        </defs>
+        <ellipse cx="50" cy="135" rx="42" ry="4" fill="#000000" opacity="0.55" />
+        <circle className={styles.absintheGlow} cx="34" cy="104" r="30" fill="url(#absinthe-glow)" />
+        {/* [EN] The bottle: dark green glass, the absinthe down to the label's middle. [RU] Бутылка: тёмно-зелёное стекло, абсент до середины этикетки. */}
+        <path d="M22 132Q20 132 20 128V62Q20 48 28.5 41.5V20H39.5V41.5Q48 48 48 62V128Q48 132 46 132Z" fill="url(#absinthe-glass)" opacity="0.92" />
+        <g clipPath="url(#absinthe-body)">
+            <rect x="18" y="88" width="32" height="46" fill="url(#absinthe-liquid)" opacity="0.88" />
+            <ellipse cx="34" cy="88" rx="14" ry="1.4" fill="#d6ffb8" opacity="0.65" />
+        </g>
+        <path d="M22 132Q20 132 20 128V62Q20 48 28.5 41.5V20H39.5V41.5Q48 48 48 62V128Q48 132 46 132Z" fill="none" stroke="#0a1a10" strokeWidth="0.8" />
+        <path d="M24.2 60V126M31 22V40" stroke="#ffffff" strokeOpacity="0.28" strokeWidth="1.5" strokeLinecap="round" />
+        {/* [EN] The label: cream paper in a silver line, a bat over the word. [RU] Этикетка: кремовая бумага в серебряной линии, летучая мышь над словом. */}
+        <rect x="21.3" y="64" width="25.4" height="21" rx="1" fill="#e9dfc2" stroke="#7a6a45" strokeWidth="0.5" />
+        <rect x="22.6" y="65.3" width="22.8" height="18.4" fill="none" stroke="#9097a1" strokeWidth="0.35" />
+        <path d="M34 69.2l.5-.8.3 1c.9-.7 2.6-1.1 4.8-.1-.9.4-1.2 1.1-1.1 1.8-.8-.6-1.6-.5-1.9.3-.6-.4-1.3-.3-1.6.5-.3-.3-.6-.1-1 .5-.4-.6-.7-.8-1-.5-.3-.8-1-.9-1.6-.5-.3-.8-1.1-.9-1.9-.3.1-.7-.2-1.4-1.1-1.8 2.2-1 3.9-.6 4.8.1l.3-1Z" fill="#2a0208" />
+        <text x="34" y="77.6" textAnchor="middle" fontFamily="Ponomar, 'Cormorant Garamond', Georgia, serif" fontSize="5.4" fill="#1f4a30" letterSpacing="0.3">ABSINTHE</text>
+        <text x="34" y="82.2" textAnchor="middle" fontFamily="'Cormorant Garamond', Georgia, serif" fontSize="2.6" fill="#5a0711" fontStyle="italic">la fée verte · 72°</text>
+        {/* [EN] Foil, a cork sealed in black-red wax. [RU] Фольга, пробка под чёрно-красным сургучом. */}
+        <rect x="28" y="20" width="12" height="9" fill="url(#absinthe-foil)" />
+        <rect x="29.4" y="12.5" width="9.2" height="8" rx="1.6" fill="#4a0610" stroke="#1a0206" strokeWidth="0.5" />
+        <path d="M30 14.2h8" stroke="#ff9aa6" strokeOpacity="0.35" strokeWidth="0.6" />
+        {/* [EN] The reservoir glass with a slotted spoon and a sugar cube. [RU] Бокал с резервуаром, ложечка с прорезями и кусочек сахара. */}
+        <path d="M60 104Q60 96 63 92H85Q88 96 88 104Q88 116 74 118Q60 116 60 104Z" fill="#cfe9d6" fillOpacity="0.12" stroke="#a9c7b2" strokeOpacity="0.55" strokeWidth="0.6" />
+        <path d="M61.2 106Q62 115.4 74 116.8Q86 115.4 86.8 106Z" fill="url(#absinthe-liquid)" opacity="0.75" />
+        <path d="M74 118V130M66 132H82" stroke="#a9c7b2" strokeOpacity="0.6" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M56 91.5H92" stroke="url(#absinthe-foil)" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M66 91.2V92M70 91.2V92M78 91.2V92M82 91.2V92" stroke="#15171b" strokeWidth="0.5" />
+        <rect x="70.5" y="85.6" width="7" height="5.6" rx="0.6" fill="#f6f3ec" stroke="#cfc7b5" strokeWidth="0.4" />
+        <path d="M64 96.5V113" stroke="#ffffff" strokeOpacity="0.22" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+);
+
 /** [EN] A lancet window of the crypt: stone arch, leaded glass, a tracery rosette, cold moonlight. [RU] Стрельчатое окно. */
 const LancetWindow: React.FC<{ side: Side }> = ({ side }) => {
     const id = `window-${side}`;
@@ -209,6 +276,7 @@ export const Lair: React.FC = () => (
         <div className={`${styles.moonbeam} ${styles.moonbeamRight}`} />
         <Candelabrum side="left" />
         <Candelabrum side="right" />
+        <Absinthe />
         <Bat className={styles.batLeft} />
         <Bat className={styles.batRight} />
         <div className={styles.fog} />

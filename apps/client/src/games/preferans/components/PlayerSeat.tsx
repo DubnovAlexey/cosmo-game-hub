@@ -4,7 +4,7 @@
 // [RU] ФАЙЛ: игрок за столом — портрет обитателя логова в литой серебряной рамке (по нажатию — биография), табличка
 //      с именем, роль, последнее слово, рука (лицом для вас и открытых рук, иначе рубашкой) и взятые взятки на
 //      сукне, каждая — отдельной стопкой рубашкой вверх.
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { withBase } from '@shell/utils/withBase';
 import { countCards, type Card, type CardSet } from '../engine/index.ts';
 import { characterInfo, portraitPath, type CharacterId, type CharacterInfo } from '../characters/roster.ts';
@@ -96,12 +96,19 @@ const Portrait: React.FC<{ id: CharacterId; name: string; thinking: boolean; ali
         return () => window.removeEventListener('keydown', onKey);
     }, [open]);
     useEffect(() => { setOpen(false); }, [id]);
+    // [EN] Until the picture has loaded, the frame shows a monogram on velvet. [RU] Пока картинка не загрузилась, в рамке монограмма на бархате.
+    const [loaded, setLoaded] = useState(false);
+    const picture = useRef<HTMLImageElement>(null);
+    useEffect(() => { setLoaded(Boolean(picture.current?.complete && picture.current.naturalWidth > 0)); }, [id]);
     const text = t.characters[id];
+    const initial = (text.name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase();
     return (
         <div className={styles.portraitWrap}>
-            <button type="button" className={`${styles.portrait} ${thinking ? styles.portraitThinking : ''}`}
+            <button type="button" className={`${styles.portrait} ${thinking ? styles.portraitThinking : ''} ${loaded ? '' : styles.portraitEmpty}`}
                 aria-expanded={open} aria-controls={bioId} aria-label={t.portrait.about(name)} onClick={() => setOpen(value => !value)}>
-                <img src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" draggable={false} />
+                {!loaded && <span className={styles.monogram} aria-hidden="true"><span>{initial}</span></span>}
+                <img ref={picture} src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" draggable={false}
+                    onLoad={() => setLoaded(true)} onError={() => setLoaded(false)} />
             </button>
             {open && (
                 <div id={bioId} className={`${styles.bio} ${alignRight ? styles.bioRight : ''}`} role="dialog" aria-label={t.portrait.about(name)}>

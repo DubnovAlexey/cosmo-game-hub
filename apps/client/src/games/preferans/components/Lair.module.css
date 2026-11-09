@@ -50,6 +50,19 @@
 .skullEye { animation: smoulder 3.6s ease-in-out infinite; }
 @keyframes smoulder { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.85; } }
 
+/* [EN] The absinthe stands in front of the left candelabrum's foot. [RU] Абсент стоит перед основанием левого канделябра. */
+.absinthe {
+    position: absolute;
+    top: calc(250px + var(--side) * 1.42);
+    left: max(4px, calc(50% - 680px - var(--side) * 0.86 - 6px));
+    width: calc(var(--side) * 0.62);
+    height: calc(var(--side) * 0.868);
+    overflow: visible;
+    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.7));
+}
+.absintheGlow { animation: absintheGlow 4.2s ease-in-out infinite alternate; }
+@keyframes absintheGlow { from { opacity: 0.55; } to { opacity: 1; } }
+
 /* ===== Windows and moonlight / Окна и лунный свет ===== */
 /* [EN] High on the crypt wall, cold silver-blue against the warm candles. [RU] Высоко на стене крипты, холодные
    серебристо-голубые против тёплых свечей. */
@@ -141,7 +154,7 @@
 /* [EN] Narrow screens: no room beside the table; one small bat watches from the top edge.
    [RU] Узкие экраны: рядом со столом нет места; одна маленькая летучая мышь сторожит у верхнего края. */
 @media (max-width: 1359px) {
-    .candelabrum { display: none; }
+    .candelabrum, .absinthe { display: none; }
 }
 @media (max-width: 1279px) {
     .batRight { display: none; }
@@ -150,5 +163,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .flame, .flameCore, .glow, .skullEye, .moonbeam, .bat, .wingLeft, .wingRight, .eyes, .fangs, .fog { animation: none; }
+    .flame, .flameCore, .glow, .skullEye, .moonbeam, .bat, .wingLeft, .wingRight, .eyes, .fangs, .fog, .absintheGlow { animation: none; }
 }
