@@ -18,6 +18,7 @@ import {
 } from '../hooks/usePreferans';
 import { TextsContext, type Dictionary, type DictionaryFactory } from '../i18n/index.ts';
 import { Lair } from './Lair';
+import { drinkOf } from './drink';
 import { ActionPanel } from './ActionPanel';
 import { PlayerSeat } from './PlayerSeat';
 import { ScoreSheet } from './ScoreSheet';
@@ -82,6 +83,9 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
     const poolTarget = game.settings.table.poolTarget;
     const extras = OPTIONS.filter(spec => spec.kind === 'extra' && isOn(game.settings.table, spec.id)).map(spec => t.explain.options[spec.id].name);
     const teeth = useMemo(() => (deal.rules.teeth ? teethOf(game.log) : null), [deal.rules.teeth, game.log]);
+    // [EN] The absinthe of the lair empties as the pool goes on (drink.ts). [RU] Абсент логова убывает по ходу пули (drink.ts).
+    const drink = useMemo(() => drinkOf({ phase: deal.phase, tricks: deal.tricks.length, deals: game.log.length, pool: game.poolTotal, closesAt: poolTarget * size }),
+        [deal.phase, deal.tricks.length, game.log.length, game.poolTotal, poolTarget, size]);
 
     // [EN] A new phase or deal clears the discard selection. [RU] Новая фаза или раздача сбрасывает выбор сноса.
     useEffect(() => { setSelected([]); }, [deal.phase, deal.dealer]);
@@ -170,7 +174,7 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
     return (
         <TextsContext.Provider value={t}>
         <div id="preferans-room" className={styles.room}>
-            <Lair />
+            <Lair drink={drink} />
             <header className={styles.header}>
                 <div>
                     <h1 className={styles.title}><span className={styles.titleInitial}>{t.gameTitle.slice(0, 1)}</span>{t.gameTitle.slice(1)}</h1>
