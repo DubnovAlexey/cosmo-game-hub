@@ -517,20 +517,29 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 | 09.11.2026 | Кнопка «Сохранить» с временем и сохранение при скрытии страницы (`pagehide`, `visibilitychange`); на страницах игр нет плавающей кнопки «наверх» | Играют в дороге; кнопка «наверх» закрывала заявки на телефоне |
 | 09.11.2026 | Страницы хаба на пяти языках: ключи `data-i18n` и `shell/i18n`, общий выбор языка с играми | Главная была только по-английски |
 | 09.11.2026 | 69 героев: 31 новый из картинок Алексея (целиком, только уменьшение), биографии на пяти языках; превью платной картинки не взято | Просьба Алексея; на картинке с надписью «instant download» нет права на использование |
+| 09.11.2026 | 91 герой: ещё 22 из картинок Алексея, тоже целиком и с биографиями на пяти языках; шесть картинок с розами и цветами пошли образцом для роз на рубашке | Просьба Алексея: героев становится больше, старые не заменяются |
+| 09.11.2026 | Рубашка богаче (лак, дамаск, тройная серебряная рамка, розы с шипами и каплями крови), потёртый ворс и винные следы кубка на сукне, пустая рамка портрета с серебряной монограммой | Доделка концепта по просьбе Алексея: «дороже», «немножечко потёртости», «следы от кубка» |
+| 09.11.2026 | Абсент клуба (`Absinthe.tsx`): квадратная бутылка из толстого стекла с полынью внутри, гравюра Винсента с перевязанным ухом на своей этикетке «L'Oreille coupée», версальские рюмки с ложечкой и тростниковым сахаром; бутылка убывает по ходу пули, рюмки — взятка за взяткой (`drink.ts`, тест `drink.test.ts`) | Идея Алексея по образцу абсента с Ван Гогом; своя этикетка вместо чужой марки |
+| 09.11.2026 | Канделябры, абсент и летучие мыши живут на сцене, прилипшей к экрану (`position: sticky`, у логова `overflow: clip`): канделябры стоят у нижнего края, мыши летят по полям по кривой вниз и вверх вместе с прокруткой | Алексей: при прокрутке они уползали вверх, «нереалистично» |
+| 09.11.2026 | Портрет под мышью вырастает вдвое поверх всего; касание пальцем открывает карточку героя с крупной картинкой | Алексей: «непонятно, кто там нарисован»; палец и мышь равноценны |
+| 09.11.2026 | Перо писаря (Marck Script) вместо церковнославянского Ponomar и школьного Segoe Print / Comic Sans: заголовок, имена, вопросы, заметки и пуля пишутся от руки, маленькие таблички — гравированными капителями; сукно — тёмный бутылочный изумруд концепта | Алексей: «детская сказка», нужно «злее и жёстче», подписи — «от руки, курсивом, чуть покрупнее» |
+| 09.11.2026 | Череп на рубашке — гравюра: анатомический череп вампира (уже мультяшной головы), тяжёлые надбровья, угли в глубине глазниц вместо неоновых глаз, клыки в крови, штриховка со светом сверху слева; за ним бедренные кости крест-накрест | Алексей: «злее и жёстче», «детская сказка» — и «Да, перерисуй» |
 
 ### 19. Логово, все опции и игра пальцем (09.11.2026)
 
 - **Дизайн** собран по концепту `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (шесть разделов и три промпта для Midjourney):
-  - изумрудное сукно с тиснёным дамаском и светом канделябров у верхних углов;
+  - тёмное бутылочно-изумрудное сукно с тиснёным дамаском, потёртым ворсом и винными следами кубка;
   - литые рамки героев, таблички, кнопки и поля — черненое серебро на бархате;
   - пуля — крупный лист с обожжённым углом и пером из воронова крыла;
-  - канделябры, стрельчатые окна с луной и летучие мыши (`Lair.tsx`) стоят по краям, на телефоне уходят.
+  - канделябры с абсентом клуба стоят у нижнего края экрана и едут с прокруткой, летучие мыши летят по полям, стрельчатые окна с луной — на стенах (`Lair.tsx`, `Absinthe.tsx`); на телефоне всё это уходит;
+  - надписи — перо писаря (Marck Script), маленькие таблички — гравированные капители.
+  - рубашка — винно-чёрный лак с дамаском, розы с шипами и кровью по углам, в медальоне череп вампира гравюрой на кровавой луне.
 - **Главное правило экрана:** карты и стол — центр внимания, окружение только создаёт атмосферу.
-- **Герои.** 69 персонажей (`characters/roster.ts`): 43 обитателя склепа и 26 гостей, у каждого стиль игры и смешная биография на пяти языках.
+- **Герои.** 91 персонаж (`characters/roster.ts`): 53 обитателя склепа и 38 гостей, у каждого стиль игры и смешная биография на пяти языках. Портрет под мышью вырастает вдвое, касание открывает карточку с крупной картинкой.
 - **Столы.** Вдвоём, втроём и вчетвером; варианты Сочинка, Ленинградка, Ростовка и Классика.
 - **Опции.** Все из меню играются; правила каждой — в объяснениях меню и в `RULES.md`, §9.
 - **Сохранения:** после каждого хода, по кнопке «Сохранить» и при скрытии или закрытии страницы; в меню — «Продолжить».
-- **Проверки.** `npm test` — 90 тестов. `scripts/load/touch-play.mjs` играет пальцем на телефоне и планшете и мышью на компьютере (`INPUT=mouse`) и проверяет, что каждая кнопка и карта доступна и ничто её не закрывает.
+- **Проверки.** `npm test` — 93 теста. `scripts/load/touch-play.mjs` играет пальцем на телефоне и планшете и мышью на компьютере (`INPUT=mouse`) и проверяет, что каждая кнопка и карта доступна и ничто её не закрывает.
 
 [↑ К выбору языка](#top)
 
@@ -1047,20 +1056,29 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 | 09.11.2026 | A «Save» button with the time, and a save when the page hides (`pagehide`, `visibilitychange`); no floating «to top» button on game pages | People play on the way; the «to top» button covered the bids on a phone |
 | 09.11.2026 | The hub's pages in five languages: `data-i18n` keys and `shell/i18n`, one language choice shared with the games | The home page was English only |
 | 09.11.2026 | 69 characters: 31 new from Alexey's pictures (whole, only scaled down), biographies in five languages; a paid product preview left out | Alexey's request; a picture captioned "instant download" comes with no right to use it |
+| 09.11.2026 | 91 characters: 22 more from Alexey's pictures, also whole and with biographies in five languages; six pictures of roses and flowers served as the model for the roses of the card back | Alexey's request: the cast grows, nobody is replaced |
+| 09.11.2026 | A richer card back (lacquer, damask, a triple silver frame, thorned roses with drops of blood), worn nap and wine rings of a goblet on the felt, an empty portrait frame with a silver monogram | Finishing the concept at Alexey's request: "more expensive", "a little wear", "goblet marks" |
+| 09.11.2026 | The club's absinthe (`Absinthe.tsx`): a square bottle of thick glass with wormwood inside, an engraving of Vincent with the bandaged ear on our own label «L'Oreille coupée», Versailles glasses with a spoon and cane sugar; the bottle empties as the pool goes on, the glasses trick by trick (`drink.ts`, test `drink.test.ts`) | Alexey's idea after the absinthe with Van Gogh; our own label instead of someone else's brand |
+| 09.11.2026 | The candelabra, the absinthe and the bats live on a stage that sticks to the screen (`position: sticky`, `overflow: clip` on the lair): the candelabra stand at the bottom edge, the bats fly down and up the margins along a curve with the scroll | Alexey: on scrolling they crept up, "unrealistic" |
+| 09.11.2026 | A portrait grows twofold over everything under the mouse; a tap opens the character card with a large picture | Alexey: "you can't tell who is drawn there"; finger and mouse are equal |
+| 09.11.2026 | The scribe's quill (Marck Script) instead of the Church Slavonic Ponomar and the schoolboy Segoe Print / Comic Sans: the title, names, questions, notes and the sheet are written by hand, small plaques in engraved capitals; the felt is the deep bottle emerald of the concept | Alexey: "a children's fairy tale", it must be "more evil and harsher", the notes "by hand, in italics, a bit larger" |
+| 09.11.2026 | The skull on the card back as an engraving: an anatomical vampire skull (narrower than a cartoon head), heavy brows, embers deep in the orbits instead of neon eyes, bloodied fangs, hatching lit from the upper left; crossed femurs behind it | Alexey: "more evil and harsher", "a children's fairy tale" — then "yes, redraw" |
 
 ### 19. The lair, every option and playing by finger (09.11.2026)
 
 - **The design** follows the concept `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (six sections and three Midjourney prompts):
-  - emerald felt with an embossed damask and candlelight at the upper corners;
+  - deep bottle-emerald felt with an embossed damask, worn nap and wine rings of a goblet;
   - cast frames of the characters, plaques, buttons and fields — blackened silver on velvet;
   - the score sheet is a big page with a scorched corner and a raven-feather quill;
-  - candelabra, lancet windows with moonlight and bats (`Lair.tsx`) stand at the edges and step away on phones.
+  - the candelabra with the club's absinthe stand at the bottom edge of the screen and travel with the scroll, bats fly along the margins, lancet windows with moonlight hang on the walls (`Lair.tsx`, `Absinthe.tsx`); on phones it all steps away;
+  - the writing is the scribe's quill (Marck Script), small plaques are engraved capitals.
+  - the card back is wine-black lacquer with a damask, thorned roses with blood in the corners, and in the medallion a vampire skull engraved on a blood moon.
 - **The screen's main rule:** the cards and the table are the focus, the surroundings only set the mood.
-- **Characters.** 69 of them (`characters/roster.ts`): 43 dwellers of the crypt and 26 guests, each with a playing style and a funny biography in five languages.
+- **Characters.** 91 of them (`characters/roster.ts`): 53 dwellers of the crypt and 38 guests, each with a playing style and a funny biography in five languages. Under the mouse a portrait grows twofold; a tap opens the card with a large picture.
 - **Tables.** Two, three or four players; Sochi, Leningrad, Rostov and Classic rules.
 - **Options.** Every one on the menu plays; how, in the menu's explanations and in `RULES.md`, §9.
 - **Saves:** after every move, with the «Save» button and when the page is hidden or closed; «Continue» on the menu.
-- **Checks.** `npm test` — 90 tests. `scripts/load/touch-play.mjs` plays by finger on phones and tablets and with a mouse on a computer (`INPUT=mouse`) and checks that every button and card can be reached and nothing covers it.
+- **Checks.** `npm test` — 93 tests. `scripts/load/touch-play.mjs` plays by finger on phones and tablets and with a mouse on a computer (`INPUT=mouse`) and checks that every button and card can be reached and nothing covers it.
 
 [↑ Back to the languages](#top)
 
@@ -1583,20 +1601,29 @@ cosmo-game-hub/
 | 09.11.2026 | כפתור «לשמור» עם השעה, ושמירה כשהדף מוסתר (`pagehide`, `visibilitychange`); בדפי המשחקים אין כפתור צף «למעלה» | משחקים בדרכים; כפתור «למעלה» הסתיר את ההכרזות בטלפון |
 | 09.11.2026 | דפי האתר בחמש שפות: מפתחות `data-i18n` ו־`shell/i18n`, בחירת שפה אחת עם המשחקים | דף הבית היה רק באנגלית |
 | 09.11.2026 | ‏69 דמויות: 31 חדשות מהתמונות של אלכסיי (שלמות, רק הקטנה), ביוגרפיות בחמש שפות; תצוגה של מוצר בתשלום לא נלקחה | בקשה של אלכסיי; לתמונה עם הכיתוב "instant download" אין זכות שימוש |
+| 09.11.2026 | ‏91 דמויות: עוד 22 מהתמונות של אלכסיי, גם הן שלמות ועם ביוגרפיות בחמש שפות; שש תמונות של ורדים ופרחים שימשו דוגמה לוורדים שעל גב הקלף | בקשה של אלכסיי: הצוות גדל, אף אחד לא מוחלף |
+| 09.11.2026 | גב קלף עשיר יותר (לכה, דמשק, מסגרת כסף משולשת, ורדים עם קוצים וטיפות דם), סיבי לבד שחוקים וטבעות יין של גביע על הלבד, מסגרת דיוקן ריקה עם מונוגרמה מכסף | השלמת הקונספט לבקשת אלכסיי: "יקר יותר", "קצת שחיקה", "סימני גביע" |
+| 09.11.2026 | האבסינת של המועדון (`Absinthe.tsx`): בקבוק מרובע מזכוכית עבה עם לענה בפנים, תחריט של וינסנט עם האוזן החבושה על תווית משלנו «L'Oreille coupée», כוסות ורסאי עם כפית וסוכר קנים; הבקבוק מתרוקן במהלך הפוליה, הכוסות — לקיחה אחרי לקיחה (`drink.ts`, בדיקה `drink.test.ts`) | הרעיון של אלכסיי לפי האבסינת עם ואן גוך; תווית משלנו במקום מותג של מישהו אחר |
+| 09.11.2026 | המנורות, האבסינת והעטלפים חיים על במה שנצמדת למסך (`position: sticky`, ‏`overflow: clip` במאורה): המנורות עומדות בקצה התחתון, העטלפים עפים בשוליים בעקומה למטה ולמעלה יחד עם הגלילה | אלכסיי: בגלילה הם זחלו למעלה, "לא מציאותי" |
+| 09.11.2026 | דיוקן גדל פי שניים מעל הכול מתחת לעכבר; נגיעה פותחת את כרטיס הדמות עם תמונה גדולה | אלכסיי: "לא ברור מי מצויר שם"; אצבע ועכבר שווים |
+| 09.11.2026 | נוצת הסופר (Marck Script) במקום Ponomar הסלאבית־כנסייתית ו־Segoe Print / Comic Sans של תלמיד: הכותרת, השמות, השאלות, ההערות והדף נכתבים ביד, שלטים קטנים באותיות רישיות חרוטות; הלבד — אזמרגד בקבוק כהה של הקונספט | אלכסיי: "אגדה לילדים", צריך "רשע וקשוח יותר", ההערות "בכתב יד, באיטליק, קצת יותר גדול" |
+| 09.11.2026 | הגולגולת שעל גב הקלף כתחריט: גולגולת ערפד אנטומית (צרה מראש מצויר), גבות כבדות, גחלים בעומק ארובות העיניים במקום עיני ניאון, ניבים מגואלים בדם, קווקוו עם אור מלמעלה משמאל; מאחוריה עצמות ירך בהצלבה | אלכסיי: "רשע וקשוח יותר", "אגדה לילדים" — ואז "כן, לצייר מחדש" |
 
 ### 19. המאורה, כל האפשרויות ומשחק באצבע (09.11.2026)
 
 - **העיצוב** בנוי לפי הקונספט `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (שישה פרקים ושלושה פרומפטים ל־Midjourney):
-  - לבד אזמרגד עם דמשק מוטבע ואור נרות בפינות העליונות;
+  - לבד אזמרגד בקבוק כהה עם דמשק מוטבע, סיבים שחוקים וטבעות יין של גביע;
   - מסגרות הדמויות, השלטים, הכפתורים והשדות — כסף מושחר על קטיפה;
   - דף הניקוד הוא דף גדול עם פינה חרוכה ונוצת עורב;
-  - מנורות, חלונות גותיים באור ירח ועטלפים (`Lair.tsx`) עומדים בשוליים, ובטלפון נעלמים.
+  - המנורות עם האבסינת של המועדון עומדות בקצה התחתון של המסך ונעות עם הגלילה, עטלפים עפים בשוליים, חלונות גותיים באור ירח על הקירות (`Lair.tsx`, ‏`Absinthe.tsx`); בטלפון כל זה נעלם;
+  - הכתב — נוצת הסופר (Marck Script), שלטים קטנים — אותיות רישיות חרוטות.
+  - גב הקלף — לכה שחורה־יינית עם דמשק, ורדים עם קוצים ודם בפינות, ובמדליון גולגולת ערפד בתחריט על ירח דם.
 - **הכלל הראשי של המסך:** הקלפים והשולחן במרכז, הסביבה רק יוצרת אווירה.
-- **דמויות.** ‏69 (`characters/roster.ts`): ‏43 תושבי המרתף ו־26 אורחים, לכל אחד סגנון משחק וביוגרפיה מצחיקה בחמש שפות.
+- **דמויות.** ‏91 (`characters/roster.ts`): ‏53 תושבי המרתף ו־38 אורחים, לכל אחד סגנון משחק וביוגרפיה מצחיקה בחמש שפות. מתחת לעכבר הדיוקן גדל פי שניים; נגיעה פותחת את הכרטיס עם תמונה גדולה.
 - **שולחנות.** שניים, שלושה או ארבעה שחקנים; חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה.
 - **אפשרויות.** כל אפשרות בתפריט משחקת; איך — בהסברים בתפריט וב־`RULES.md`, ‏§9.
 - **שמירה:** אחרי כל מהלך, בכפתור «לשמור» וכשהדף מוסתר או נסגר; «להמשיך» בתפריט.
-- **בדיקות.** ‏`npm test` — ‏90 בדיקות. ‏`scripts/load/touch-play.mjs` משחק באצבע בטלפון ובטאבלט ובעכבר במחשב (`INPUT=mouse`) ובודק שכל כפתור וקלף נגישים ושום דבר לא מסתיר אותם.
+- **בדיקות.** ‏`npm test` — ‏93 בדיקות. ‏`scripts/load/touch-play.mjs` משחק באצבע בטלפון ובטאבלט ובעכבר במחשב (`INPUT=mouse`) ובודק שכל כפתור וקלף נגישים ושום דבר לא מסתיר אותם.
 
 [↑ חזרה לבחירת השפה](#top)
 
@@ -2115,20 +2142,29 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 | 09.11.2026 | Un botón «Guardar» con la hora y guardado al ocultarse la página (`pagehide`, `visibilitychange`); sin botón flotante «arriba» en las páginas de juego | Se juega de camino; el botón «arriba» tapaba las declaraciones en el móvil |
 | 09.11.2026 | Las páginas del sitio en cinco idiomas: claves `data-i18n` y `shell/i18n`, una sola elección de idioma con los juegos | La página de inicio solo estaba en inglés |
 | 09.11.2026 | 69 personajes: 31 nuevos de las imágenes de Alexey (enteras, solo reducidas), biografías en cinco idiomas; se dejó fuera la vista previa de un producto de pago | Petición de Alexey; una imagen con el texto «instant download» no da derecho a usarla |
+| 09.11.2026 | 91 personajes: otros 22 de las imágenes de Alexey, también enteras y con biografías en cinco idiomas; seis imágenes de rosas y flores sirvieron de modelo para las rosas del reverso | Petición de Alexey: el elenco crece, nadie se sustituye |
+| 09.11.2026 | Un reverso más rico (laca, damasco, triple marco de plata, rosas con espinas y gotas de sangre), pelo gastado y aros de vino de una copa en el tapete, un marco de retrato vacío con un monograma de plata | Terminar el concepto a petición de Alexey: «más caro», «un poco de desgaste», «marcas de copa» |
+| 09.11.2026 | La absenta del club (`Absinthe.tsx`): una botella cuadrada de vidrio grueso con ajenjo dentro, un grabado de Vincent con la oreja vendada en una etiqueta propia «L'Oreille coupée», copas Versalles con cuchara y azúcar de caña; la botella se vacía según avanza la pulya, las copas baza a baza (`drink.ts`, prueba `drink.test.ts`) | Idea de Alexey a partir de la absenta con Van Gogh; etiqueta propia en vez de una marca ajena |
+| 09.11.2026 | Los candelabros, la absenta y los murciélagos viven en un escenario pegado a la pantalla (`position: sticky`, `overflow: clip` en la guarida): los candelabros están en el borde inferior, los murciélagos bajan y suben por los márgenes en curva con el desplazamiento | Alexey: al desplazar se iban hacia arriba, «poco realista» |
+| 09.11.2026 | Bajo el ratón un retrato crece al doble sobre todo; un toque abre la ficha del personaje con una imagen grande | Alexey: «no se ve quién está dibujado»; dedo y ratón valen lo mismo |
+| 09.11.2026 | La pluma del escribano (Marck Script) en lugar del eslavo eclesiástico Ponomar y del escolar Segoe Print / Comic Sans: el título, los nombres, las preguntas, las notas y la hoja se escriben a mano, las placas pequeñas en versalitas grabadas; el tapete es el esmeralda botella oscuro del concepto | Alexey: «un cuento infantil», debe ser «más malvado y más duro», las notas «a mano, en cursiva, un poco más grandes» |
+| 09.11.2026 | La calavera del reverso como grabado: una calavera de vampiro anatómica (más estrecha que una cabeza de dibujo animado), cejas pesadas, brasas al fondo de las órbitas en lugar de ojos de neón, colmillos ensangrentados, sombreado de líneas con luz desde arriba a la izquierda; detrás, fémures cruzados | Alexey: «más malvado y más duro», «un cuento infantil» — y luego «sí, redibújala» |
 
 ### 19. La guarida, todas las opciones y el juego con el dedo (09.11.2026)
 
 - **El diseño** sigue el concepto `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (seis apartados y tres prompts para Midjourney):
-  - tapete esmeralda con damasco en relieve y luz de candelabros en las esquinas superiores;
+  - tapete esmeralda botella oscuro con damasco en relieve, pelo gastado y aros de vino de una copa;
   - marcos de los personajes, placas, botones y campos: plata ennegrecida sobre terciopelo;
   - la hoja es una página grande con una esquina chamuscada y una pluma de cuervo;
-  - candelabros, ventanas ojivales con luz de luna y murciélagos (`Lair.tsx`) están en los bordes y en el móvil se retiran.
+  - los candelabros con la absenta del club están en el borde inferior de la pantalla y se mueven con el desplazamiento, los murciélagos vuelan por los márgenes, las ventanas ojivales con luz de luna están en los muros (`Lair.tsx`, `Absinthe.tsx`); en el móvil todo se retira;
+  - la escritura es la pluma del escribano (Marck Script), las placas pequeñas son versalitas grabadas.
+  - el reverso es laca negro vino con damasco, rosas con espinas y sangre en las esquinas y, en el medallón, una calavera de vampiro grabada sobre una luna de sangre.
 - **La regla principal de la pantalla:** las cartas y la mesa son el centro; el entorno solo crea ambiente.
-- **Personajes.** 69 (`characters/roster.ts`): 43 habitantes de la cripta y 26 invitados, cada uno con su estilo de juego y una biografía divertida en cinco idiomas.
+- **Personajes.** 91 (`characters/roster.ts`): 53 habitantes de la cripta y 38 invitados, cada uno con su estilo de juego y una biografía divertida en cinco idiomas. Bajo el ratón el retrato crece al doble; un toque abre la ficha con una imagen grande.
 - **Mesas.** Dos, tres o cuatro jugadores; reglas de Sochi, Leningrado, Rostov y Clásica.
 - **Opciones.** Todas las del menú se juegan; cómo, en las explicaciones del menú y en `RULES.md`, §9.
 - **Guardado:** tras cada jugada, con el botón «Guardar» y al ocultarse o cerrarse la página; «Continuar» en el menú.
-- **Pruebas.** `npm test`: 90 pruebas. `scripts/load/touch-play.mjs` juega con el dedo en móvil y tableta y con ratón en el ordenador (`INPUT=mouse`) y comprueba que cada botón y carta se alcanza y nada los tapa.
+- **Pruebas.** `npm test`: 93 pruebas. `scripts/load/touch-play.mjs` juega con el dedo en móvil y tableta y con ratón en el ordenador (`INPUT=mouse`) y comprueba que cada botón y carta se alcanza y nada los tapa.
 
 [↑ Volver a los idiomas](#top)
 
@@ -2645,19 +2681,28 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 | 09.11.2026 | Un bouton « Enregistrer » avec l'heure, et un enregistrement quand la page se masque (`pagehide`, `visibilitychange`) ; pas de bouton flottant « haut » sur les pages de jeu | On joue en déplacement ; le bouton « haut » cachait les enchères sur téléphone |
 | 09.11.2026 | Les pages du site en cinq langues : clés `data-i18n` et `shell/i18n`, un seul choix de langue partagé avec les jeux | La page d'accueil n'était qu'en anglais |
 | 09.11.2026 | 69 personnages : 31 nouveaux d'après les images d'Alexey (entières, seulement réduites), biographies en cinq langues ; l'aperçu d'un produit payant est laissé de côté | Demande d'Alexey ; une image marquée « instant download » ne donne aucun droit d'usage |
+| 09.11.2026 | 91 personnages : 22 de plus d'après les images d'Alexey, entières elles aussi et avec des biographies en cinq langues ; six images de roses et de fleurs ont servi de modèle aux roses du dos des cartes | Demande d'Alexey : la troupe s'agrandit, personne n'est remplacé |
+| 09.11.2026 | Un dos plus riche (laque, damas, triple cadre d'argent, roses épineuses et gouttes de sang), velours usé et cernes de vin d'un gobelet sur le tapis, un cadre de portrait vide avec un monogramme d'argent | Fin du concept à la demande d'Alexey : « plus cher », « un peu d'usure », « des traces de gobelet » |
+| 09.11.2026 | L'absinthe du club (`Absinthe.tsx`) : une bouteille carrée en verre épais avec des brins de grande absinthe dedans, une gravure de Vincent à l'oreille bandée sur notre propre étiquette « L'Oreille coupée », des verres Versailles avec cuillère et sucre de canne ; la bouteille se vide au fil de la poule, les verres pli après pli (`drink.ts`, test `drink.test.ts`) | Idée d'Alexey d'après l'absinthe à Van Gogh ; notre propre étiquette plutôt que la marque d'un autre |
+| 09.11.2026 | Les candélabres, l'absinthe et les chauves-souris vivent sur une scène collée à l'écran (`position: sticky`, `overflow: clip` sur le repaire) : les candélabres se tiennent au bord inférieur, les chauves-souris descendent et remontent les marges en courbe avec le défilement | Alexey : au défilement, ils remontaient, « pas réaliste » |
+| 09.11.2026 | Sous la souris, un portrait double de taille par-dessus tout ; un toucher ouvre la fiche du personnage avec une grande image | Alexey : « on ne voit pas qui est dessiné » ; le doigt vaut la souris |
+| 09.11.2026 | La plume du scribe (Marck Script) au lieu du slavon d'église Ponomar et de l'écolier Segoe Print / Comic Sans : le titre, les noms, les questions, les notes et la feuille s'écrivent à la main, les petites plaques en capitales gravées ; le tapis est l'émeraude bouteille sombre du concept | Alexey : « un conte pour enfants », il faut « plus méchant et plus dur », les notes « à la main, en italique, un peu plus grandes » |
+| 09.11.2026 | Le crâne du dos des cartes en gravure : un crâne de vampire anatomique (plus étroit qu'une tête de dessin animé), arcades lourdes, braises au fond des orbites au lieu d'yeux néon, crocs ensanglantés, hachures éclairées d'en haut à gauche ; derrière lui, des fémurs croisés | Alexey : « plus méchant et plus dur », « un conte pour enfants » — puis « oui, redessine-le » |
 
 ### 19. Le repaire, toutes les options et le jeu au doigt (09.11.2026)
 
 - **Le design** suit le concept `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (six parties et trois prompts Midjourney) :
-  - tapis émeraude au damas gaufré, lumière des candélabres aux coins supérieurs ;
+  - tapis émeraude bouteille sombre au damas gaufré, au velours usé et aux cernes de vin d'un gobelet ;
   - cadres des personnages, plaques, boutons et champs — argent noirci sur velours ;
   - la feuille est une grande page au coin brûlé avec une plume de corbeau ;
-  - candélabres, fenêtres en ogive au clair de lune et chauves-souris (`Lair.tsx`) se tiennent aux bords et s'effacent sur téléphone.
+  - les candélabres avec l'absinthe du club se tiennent au bord inférieur de l'écran et suivent le défilement, les chauves-souris volent dans les marges, les fenêtres en ogive au clair de lune sont aux murs (`Lair.tsx`, `Absinthe.tsx`) ; sur téléphone, tout cela s'efface ;
+  - l'écriture est la plume du scribe (Marck Script), les petites plaques sont en capitales gravées.
+  - le dos des cartes est une laque noir-vin damassée, des roses épineuses et du sang aux coins et, dans le médaillon, un crâne de vampire gravé sur une lune de sang.
 - **La règle principale de l'écran :** les cartes et la table sont au centre, l'entourage ne fait que l'ambiance.
-- **Personnages.** 69 (`characters/roster.ts`) : 43 habitants de la crypte et 26 invités, chacun avec son style de jeu et une biographie drôle en cinq langues.
+- **Personnages.** 91 (`characters/roster.ts`) : 53 habitants de la crypte et 38 invités, chacun avec son style de jeu et une biographie drôle en cinq langues. Sous la souris, le portrait double de taille ; un toucher ouvre la fiche avec une grande image.
 - **Tables.** Deux, trois ou quatre joueurs ; règles de Sotchi, Leningrad, Rostov et Classique.
 - **Options.** Toutes celles du menu se jouent ; comment, dans les explications du menu et dans `RULES.md`, §9.
 - **Sauvegardes :** après chaque coup, avec le bouton « Enregistrer » et quand la page est masquée ou fermée ; « Continuer » dans le menu.
-- **Tests.** `npm test` — 90 tests. `scripts/load/touch-play.mjs` joue au doigt sur téléphone et tablette et à la souris sur ordinateur (`INPUT=mouse`) et vérifie que chaque bouton et chaque carte sont accessibles et que rien ne les cache.
+- **Tests.** `npm test` — 93 tests. `scripts/load/touch-play.mjs` joue au doigt sur téléphone et tablette et à la souris sur ordinateur (`INPUT=mouse`) et vérifie que chaque bouton et chaque carte sont accessibles et que rien ne les cache.
 
 [↑ Retour aux langues](#top)

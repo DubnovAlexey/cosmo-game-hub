@@ -13,16 +13,37 @@
     position: absolute;
     inset: 0;
     z-index: 0;
+    /* [EN] clip, not hidden: hidden would make the lair a scroll box and the stage could not stick to the screen.
+       [RU] clip, а не hidden: hidden сделал бы логово прокручиваемым, и сцена не прилипла бы к экрану. */
     overflow: hidden;
+    overflow: clip;
     pointer-events: none;
 }
+
+/* [EN] The stage sticks to the screen while the room scrolls under it; the floor with the candelabra stands at its
+        bottom edge and is lifted (JS, --lift) while the room has not yet reached the top of the screen.
+   [RU] Сцена прилипает к экрану, пока комната прокручивается под ней; пол с канделябрами стоит у её нижнего края и
+        приподнят (JS, --lift), пока комната ещё не дошла до верха экрана. */
+.stage {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: min(100vh, 100%);
+    height: min(100dvh, 100%);
+}
+.floor { position: absolute; inset: 0; transform: translateY(calc(-1 * var(--lift, 0px))); }
+/* [EN] Each bat flies along its curve (JS, --bat-left / --bat-right) and catches up with a soft glide.
+   [RU] Каждая мышь летит по своей кривой (JS, --bat-left / --bat-right) и догоняет плавным скольжением. */
+.flight { position: absolute; inset: 0; transition: transform 1.1s cubic-bezier(0.22, 0.8, 0.3, 1); }
+.flightLeft { transform: var(--bat-left, none); }
+.flightRight { transform: var(--bat-right, none); }
 
 /* ===== Candelabra / Канделябры ===== */
 /* [EN] They stand beside the upper half of the table; the felt (z-index 1) hides whatever slips behind it.
    [RU] Стоят у верхней половины стола; сукно (z-index 1) закрывает то, что заходит за него. */
 .candelabrum {
     position: absolute;
-    top: 250px;
+    bottom: 18px;
     width: var(--side);
     height: calc(var(--side) * 2.125);
     overflow: visible;
@@ -56,15 +77,17 @@
         правого, в том же масштабе. Жидкость медленно опускается к новому уровню, будто её отпивают. */
 .absinthe {
     position: absolute;
-    top: calc(250px + var(--side) * 1.5);
-    left: max(4px, calc(50% - 680px - var(--side) - 6px));
+    bottom: 2px;
+    /* [EN] Where the margin is wide, the set steps outwards so the candelabrum's feet stay in sight.
+       [RU] Где поле широкое, набор отступает наружу, чтобы лапы канделябра оставались видны. */
+    left: max(4px, calc(50% - 680px - var(--side) * 1.55 - 6px));
     width: var(--side);
     height: calc(var(--side) * 1.25);
     overflow: visible;
 }
 .absintheGlass {
     position: absolute;
-    top: calc(250px + var(--side) * 1.78);
+    bottom: 4px;
     right: max(4px, calc(50% - 680px - 6px - var(--side) * 0.475));
     width: calc(var(--side) * 0.475);
     height: calc(var(--side) * 0.725);
@@ -110,8 +133,9 @@
     filter: drop-shadow(0 0 7px rgba(170, 30, 50, 0.5)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.7));
     animation: hover 6.5s ease-in-out infinite;
 }
-.batLeft { left: max(10px, calc(50% - 680px - var(--side) * 0.95)); top: 96px; }
-.batRight { right: max(10px, calc(50% - 680px - var(--side) * 0.9)); top: 150px; width: 96px; height: 56px; animation-duration: 7.7s; animation-delay: -2s; }
+/* [EN] On a narrow margin the bats are smaller, so they fit it. [RU] На узком поле мыши меньше, чтобы в нём помещаться. */
+.batLeft { left: max(10px, calc(50% - 680px - var(--side) * 0.95)); top: 96px; width: clamp(72px, calc(var(--side) * 0.9 + 20px), 118px); height: auto; aspect-ratio: 120 / 70; }
+.batRight { right: max(10px, calc(50% - 680px - var(--side) * 0.9)); top: 150px; width: clamp(60px, calc(var(--side) * 0.75 + 16px), 96px); height: auto; aspect-ratio: 120 / 70; animation-duration: 7.7s; animation-delay: -2s; }
 
 .wingLeft, .wingRight { transform-box: view-box; }
 .wingLeft { transform-origin: 57px 32px; animation: flapLeft 0.34s ease-in-out infinite alternate; }
@@ -168,6 +192,8 @@
     .candelabrum, .absinthe, .absintheGlass { display: none; }
 }
 @media (max-width: 1279px) {
+    .stage { position: absolute; inset: 0; height: auto; }
+    .flight { transform: none; }
     .batRight { display: none; }
     .batLeft { left: 46%; top: 2px; width: 58px; height: 34px; }
     .cobweb { width: 96px; height: 96px; }
@@ -176,4 +202,5 @@
 @media (prefers-reduced-motion: reduce) {
     .flame, .flameCore, .glow, .skullEye, .moonbeam, .bat, .wingLeft, .wingRight, .eyes, .fangs, .fog, .absintheGlow { animation: none; }
     .level { transition: none; }
+    .flight { transform: none; transition: none; }
 }

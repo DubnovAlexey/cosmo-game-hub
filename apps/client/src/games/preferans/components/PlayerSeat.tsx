@@ -112,6 +112,7 @@ const Portrait: React.FC<{ id: CharacterId; name: string; thinking: boolean; ali
             </button>
             {open && (
                 <div id={bioId} className={`${styles.bio} ${alignRight ? styles.bioRight : ''}`} role="dialog" aria-label={t.portrait.about(name)}>
+                    <img className={styles.bioPicture} src={withBase(portraitPath(id))} alt="" decoding="async" draggable={false} />
                     <p className={styles.bioName}>{text.name}</p>
                     <p className={styles.bioTag}>{characterInfo(id).guest ? t.portrait.guest : t.portrait.dweller}</p>
                     <p className={styles.bioText}>{text.bio}</p>

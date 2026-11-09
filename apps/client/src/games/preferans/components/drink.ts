@@ -38,14 +38,18 @@ export interface DrinkInput {
     readonly closesAt: number;
 }
 
+/** [EN] From `full` down to `empty` as `part` goes 0 → 1, exact at both ends. [RU] От `full` до `empty`, пока `part` идёт 0 → 1, точно на обоих концах. */
+const pourOut = (full: number, empty: number, part: number): number => (part <= 0 ? full : part >= 1 ? empty : full - (full - empty) * part);
+
 export function drinkOf({ phase, tricks, deals, pool, closesAt }: DrinkInput): Drink {
     const share = closesAt > 0 ? Math.min(1, Math.max(0, pool / closesAt)) : 0;
     // [EN] The pool leads; pours alone may take only 60 % of the bottle. [RU] Ведёт пуля; одни розливы забирают не больше 60 % бутылки.
     const drunk = Math.max(share, 0.6 * (1 - Math.exp(-deals / POURS)));
-    const bottle = FRESH_BOTTLE - (FRESH_BOTTLE - LAST_DROP) * drunk;
     const sip = phase === 'done' ? 1 : phase === 'play' ? Math.min(1, tricks / TRICKS_PER_DEAL) : 0;
     // [EN] The finished deal is already on the sheet. [RU] Сыгранная раздача уже на листе.
     const current = phase === 'done' ? Math.max(0, deals - 1) : deals;
-    const glass = (part: number): number => FULL_GLASS - (FULL_GLASS - EMPTY_GLASS) * part;
-    return { bottle, glasses: [glass(sip), glass(((current % 2) + sip) / 2)] };
+    return {
+        bottle: pourOut(FRESH_BOTTLE, LAST_DROP, drunk),
+        glasses: [pourOut(FULL_GLASS, EMPTY_GLASS, sip), pourOut(FULL_GLASS, EMPTY_GLASS, ((current % 2) + sip) / 2)],
+    };
 }

@@ -14,13 +14,17 @@
             должно их затмевать: до 112 px в ширину, на 45% крупнее первоначальных (Алексей, 08.11 и 09.11). */
     --card-w: clamp(56px, 7.4vw, 112px);
     --card-h: calc(var(--card-w) * 1.42);
-    /* [EN] The lair's type (fonts are imported in PreferansGame.tsx): dripping blood for the title, the Church
-            Slavonic letters of an old grimoire for names, plaques and messages, a gothic-novel serif for the rest.
-            Hebrew falls back to a system serif (only the title font draws Hebrew).
-       [RU] Шрифты логова (подключены в PreferansGame.tsx): стекающая кровь для заголовка, церковнославянские буквы
-            старого гримуара для имён, табличек и сообщений, антиква готического романа для остального. Иврит берёт
-            системную антикву (иврит рисует только шрифт заголовка). */
-    --grimoire: 'Ponomar', 'Cormorant Garamond', Georgia, 'David', serif;
+    /* [EN] The lair's type (fonts are imported in PreferansGame.tsx): the club scribe's quill — a slanted calligraphic
+            hand — for the title, names, questions, notes and the score sheet (Alexey, 09.11.2026: "as if written by
+            hand, in italics, a bit larger"; the Church Slavonic letters read like a children's fairy tale); engraved
+            capitals of the gothic-novel serif for small plaques; the same serif for the rest. Hebrew falls back to a
+            system serif.
+       [RU] Шрифты логова (подключены в PreferansGame.tsx): перо писаря клуба — наклонный каллиграфический почерк —
+            для заголовка, имён, вопросов, заметок и листа пули (Алексей, 09.11.2026: «как будто от руки, курсивом,
+            чуть покрупнее»; церковнославянские буквы читались как детская сказка); гравированные капители антиквы
+            готического романа для маленьких табличек; та же антиква для остального. Иврит берёт системную антикву. */
+    --quill: 'Marck Script', 'Cormorant Garamond', Georgia, 'David', cursive;
+    --engraved: 700 0.8rem/1.2 'Cormorant Garamond', Georgia, 'David', serif;
     --print: 'Cormorant Garamond', Georgia, 'Times New Roman', 'David', serif;
     /* [EN] Blackened silver (DESIGN_CONCEPT_RU.md §0): highlight, body, shadow, depth, and the cast edge of every plaque,
             button and frame; velvet for what lies inside them. [RU] Черненое серебро (DESIGN_CONCEPT_RU.md §0): блик,
@@ -57,11 +61,11 @@
     --felt-base: #0b3d2a;
     --felt:
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0.26 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke-width='1'%3E%3Cg stroke='%23000' stroke-opacity='0.09' transform='translate(0.8 0.8)'%3E%3Cpath d='M4 96V46C4 24 24 9 24 9s20 15 20 37v50M52 96V46c0-22 20-37 20-37s20 15 20 37v50'/%3E%3Cpath d='M24 28c4 0 6 3 6 6s-2 6-6 6-6-3-6-6 2-6 6-6ZM72 28c4 0 6 3 6 6s-2 6-6 6-6-3-6-6 2-6 6-6Z'/%3E%3C/g%3E%3Cg stroke='%23fff' stroke-opacity='0.04'%3E%3Cpath d='M4 96V46C4 24 24 9 24 9s20 15 20 37v50M52 96V46c0-22 20-37 20-37s20 15 20 37v50'/%3E%3Cpath d='M24 28c4 0 6 3 6 6s-2 6-6 6-6-3-6-6 2-6 6-6ZM72 28c4 0 6 3 6 6s-2 6-6 6-6-3-6-6 2-6 6-6ZM24 25v18M15 34h18M72 25v18M63 34h18'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke-width='1'%3E%3Cg stroke='%23000' stroke-opacity='0.13' transform='translate(0.8 0.8)'%3E%3Cpath d='M4 96V46C4 24 24 9 24 9s20 15 20 37v50M52 96V46c0-22 20-37 20-37s20 15 20 37v50'/%3E%3Cpath d='M24 28c4 0 6 3 6 6s-2 6-6 6-6-3-6-6 2-6 6-6ZM72 28c4 0 6 3 6 6s-2 6-6 6-6-3-6-6 2-6 6-6Z'/%3E%3C/g%3E%3Cg stroke='%23fff' stroke-opacity='0.05'%3E%3Cpath d='M4 96V46C4 24 24 9 24 9s20 15 20 37v50M52 96V46c0-22 20-37 20-37s20 15 20 37v50'/%3E%3Cpath d='M24 28c4 0 6 3 6 6s-2 6-6 6-6-3-6-6 2-6 6-6ZM72 28c4 0 6 3 6 6s-2 6-6 6-6-3-6-6 2-6 6-6ZM24 25v18M15 34h18M72 25v18M63 34h18'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
         radial-gradient(ellipse 34% 30% at 3% 3%, rgba(255, 196, 120, 0.15), transparent 72%),
         radial-gradient(ellipse 34% 30% at 97% 3%, rgba(255, 196, 120, 0.15), transparent 72%),
         radial-gradient(ellipse at 50% 30%, rgba(255, 226, 158, 0.06), transparent 60%),
-        radial-gradient(ellipse at 50% 42%, #145f3f 0%, #0e4a31 42%, #093923 72%, #052116 100%);
+        radial-gradient(ellipse at 50% 42%, #0e4630 0%, #0b3d2a 40%, #082f20 70%, #041a11 100%);
     /* [EN] The rail around the felt: black lacquered ebony with an inlay of blackened silver and a seam of wine-red
             velvet, then the shadow on the crypt floor. [RU] Борт вокруг сукна: чёрное лакированное эбеновое дерево с
             инкрустацией черненого серебра и швом винного бархата, дальше тень на полу крипты. */
@@ -99,17 +103,17 @@
     margin: 0 auto 16px;
 }
 
-/* [EN] The title is the heading of an old grimoire: Church Slavonic letters cast in blackened silver, the initial
-        illuminated in blood-red lacquer with a silver rim (DESIGN_CONCEPT_RU.md §0 — no dripping horror letters).
-   [RU] Заголовок — заглавие старого гримуара: церковнославянские буквы, отлитые в черненом серебре, буквица
-        расписана кроваво-красным лаком с серебряным кантом (DESIGN_CONCEPT_RU.md §0 — без «стекающих» букв). */
+/* [EN] The title is the club's signature: the scribe's quill in blackened silver, the initial illuminated in
+        blood-red lacquer with a silver rim (DESIGN_CONCEPT_RU.md §0 — no dripping horror letters).
+   [RU] Заголовок — подпись клуба: перо писаря в черненом серебре, буквица расписана кроваво-красным лаком с
+        серебряным кантом (DESIGN_CONCEPT_RU.md §0 — без «стекающих» букв). */
 .title {
     margin: 0;
-    font-family: var(--grimoire), serif;
+    font-family: var(--quill);
     font-weight: 400;
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.1;
-    letter-spacing: 0.05em;
+    font-size: clamp(2.5rem, 4.8vw, 3.5rem);
+    line-height: 1.15;
+    letter-spacing: 0;
     background: linear-gradient(180deg, #f3f5f7 0%, #c3c8cf 34%, #6c737d 58%, #b9c0c9 82%, #8d939c 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -333,10 +337,10 @@
     font-size: calc(var(--card-w) * 0.62);
 }
 
-/* [EN] The back: necromancy and vampires (../assets/card-back.svg — a fanged skull on a blood moon, bones, bats,
-        dripping blood, a cemetery fence). One small picture with the card's own proportions.
-   [RU] Рубашка: некромантия и вампиры (../assets/card-back.svg — череп с клыками на кровавой луне, кости, летучие
-        мыши, стекающая кровь, кладбищенская ограда). Одна маленькая картинка в пропорциях карты. */
+/* [EN] The back: necromancy and vampires (../assets/card-back.svg — an engraved vampire skull on a blood moon, crossed
+        femurs, bats, thorned roses with blood). One small picture with the card's own proportions.
+   [RU] Рубашка: некромантия и вампиры (../assets/card-back.svg — гравированный череп вампира на кровавой луне, бедренные
+        кости крест-накрест, летучие мыши, розы с шипами и кровью). Одна маленькая картинка в пропорциях карты. */
 .cardBack {
     --card-frame: inset 0 0 0 1px rgba(216, 219, 224, 0.22);
     border: 1px solid rgba(144, 151, 161, 0.6);
@@ -378,10 +382,11 @@ button.card { cursor: pointer; }
     background: var(--velvet) padding-box, var(--silver-edge) border-box;
     box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55), inset 0 0 0 3px rgba(216, 219, 224, 0.14), 0 4px 10px rgba(0, 0, 0, 0.6);
     color: var(--bone);
-    font-family: var(--grimoire), serif;
+    font-family: var(--quill);
     font-weight: 400;
-    font-size: 1.12rem;
-    letter-spacing: 0.04em;
+    font-size: 1.36rem;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
     text-shadow: 0 1px 0 #000;
 }
 
@@ -400,11 +405,9 @@ button.card { cursor: pointer; }
     border-radius: 2px;
     background: var(--velvet) padding-box, var(--silver-edge) border-box;
     color: var(--bone);
-    font-family: var(--grimoire), serif;
-    font-weight: 400;
-    font-size: 1rem;
-    letter-spacing: 0.02em;
-    text-transform: lowercase;
+    font: var(--engraved);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     rotate: -2deg;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.55);
 }
@@ -427,9 +430,10 @@ button.card { cursor: pointer; }
     border-radius: 3px 12px 4px 12px;
     background: linear-gradient(180deg, #faf4e4, #e6d9bb);
     color: #2a1410;
-    font-family: var(--grimoire), serif;
+    font-family: var(--quill);
     font-weight: 400;
-    font-size: 1.05rem;
+    font-size: 1.22rem;
+    line-height: 1.15;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
     animation: pop 0.25s ease-out;
 }
@@ -466,9 +470,9 @@ button.card { cursor: pointer; }
     border-radius: 50%;
     background: radial-gradient(circle at 36% 30%, #f1f3f6 0%, #9097a1 48%, #3c4048 100%);
     color: #15171b;
-    font-family: var(--grimoire), serif;
-    font-weight: 400;
-    font-size: 1.05rem;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 700;
+    font-size: 1rem;
     line-height: 1;
     box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.35), 0 0 0 1px #15171b, 0 3px 6px rgba(0, 0, 0, 0.6);
 }
@@ -538,7 +542,7 @@ button.card { cursor: pointer; }
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-family: var(--grimoire), serif;
+    font-family: var(--quill);
     font-size: 3.2rem;
     line-height: 1;
     filter: drop-shadow(0 1px 0 #000);
@@ -577,6 +581,22 @@ button.card { cursor: pointer; }
     filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.75));
 }
 .portrait:hover, .portrait:focus-visible { transform: translateY(-2px); outline: none; box-shadow: var(--frame-light), 0 0 0 1px var(--candle), 0 12px 26px rgba(255, 140, 50, 0.4); }
+/* [EN] Under the mouse the portrait grows twofold over everything around it, so you can see who sits there (Alexey,
+        09.11.2026); a short delay keeps it still while the mouse only passes by. With the biography open it stays
+        small, the card shows it large. A finger has no hover: a tap opens the card with the large picture.
+   [RU] Под мышью портрет вырастает вдвое поверх всего вокруг, чтобы было видно, кто там сидит (Алексей, 09.11.2026);
+        короткая задержка не даёт ему дёргаться, когда мышь просто проходит мимо. Когда открыта биография, он
+        остаётся маленьким — крупно его показывает карточка. У пальца нет наведения: касание открывает карточку с
+        крупной картинкой. */
+@media (hover: hover) and (pointer: fine) {
+    .portrait { transform-origin: 50% 22%; transition: transform 0.32s cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 0.32s ease; }
+    .portrait:hover:not([aria-expanded='true']) {
+        z-index: 40;
+        transform: scale(2);
+        transition-delay: 0.12s;
+        box-shadow: var(--frame-light), 0 0 0 1px var(--candle), 0 20px 46px rgba(0, 0, 0, 0.85), 0 0 34px rgba(255, 140, 50, 0.35);
+    }
+}
 .portraitThinking { animation: portraitGlow 2.2s ease-in-out infinite; }
 @keyframes portraitGlow {
     0%, 100% { box-shadow: var(--frame-light), 0 0 0 1px rgba(255, 181, 74, 0.7), 0 0 18px rgba(255, 150, 60, 0.45); }
@@ -606,7 +626,17 @@ button.card { cursor: pointer; }
     animation: pop 0.2s ease-out;
 }
 .bioRight { left: auto; right: 0; }
-.bioName { margin: 0; font-family: var(--grimoire), serif; font-size: 1.45rem; font-weight: 400; color: #f3dada; text-shadow: 0 0 12px rgba(176, 16, 31, 0.65), 0 1px 0 #000; }
+.bioPicture {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 260px;
+    margin: 0 auto 10px;
+    border: 3px solid #0c070a;
+    box-shadow: 0 0 0 1px rgba(216, 219, 224, 0.35), 0 10px 24px rgba(0, 0, 0, 0.7);
+    filter: sepia(0.1) saturate(0.92) contrast(1.06);
+}
+.bioName { margin: 0; font-family: var(--quill); font-size: 1.75rem; font-weight: 400; color: #f3dada; text-shadow: 0 0 12px rgba(176, 16, 31, 0.65), 0 1px 0 #000; }
 .bioTag {
     display: inline-block;
     margin: 4px 0 8px;
@@ -708,13 +738,13 @@ button.card { cursor: pointer; }
     box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.6), inset 0 0 0 4px rgba(216, 219, 224, 0.3), 0 6px 14px rgba(0, 0, 0, 0.6);
     color: var(--bone);
     text-shadow: 0 1px 0 #000;
-    font-family: var(--grimoire), serif;
-    font-weight: 400;
-    font-size: 1.3rem;
-    letter-spacing: 0.04em;
+    font: var(--engraved);
+    font-size: 1.05rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
-.hint { margin: 0; color: #e3dccb; font-size: 1.02rem; font-style: italic; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); }
+.hint { margin: 0; color: #e3dccb; font-family: var(--quill); font-size: 1.28rem; line-height: 1.3; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); }
 
 /* [EN] The middle of the table only shows cards: it never catches a tap or a click meant for a hand next to it.
    [RU] Середина стола только показывает карты: она не перехватывает нажатие, предназначенное соседней руке. */
@@ -755,8 +785,8 @@ button.card { cursor: pointer; }
 
 /* ===== 6. Action panel / Панель решений ===== */
 /* [EN] The decision tray: dark velvet in a cast edge of blackened silver with filigree scrolls in two corners; the
-        question is written in the grimoire's letters. [RU] Лоток решений: тёмный бархат в литом канте черненого
-        серебра с филигранными завитками в двух углах; вопрос написан буквами гримуара. */
+        question is written by the scribe's quill. [RU] Лоток решений: тёмный бархат в литом канте черненого
+        серебра с филигранными завитками в двух углах; вопрос написан пером писаря. */
 .panel {
     --filigree: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23b9c0c9' stroke-width='1.3' stroke-linecap='round' stroke-opacity='0.75'%3E%3Cpath d='M3 37C3 18 18 3 37 3'/%3E%3Cpath d='M9 37C9 22 22 9 37 9' stroke-opacity='0.4'/%3E%3Cpath d='M3 22c5 0 8 3 8 7s-3 5-5 4M22 3c0 5 3 8 7 8s5-3 4-5'/%3E%3C/g%3E%3Ccircle cx='15' cy='15' r='2.2' fill='%238e0f1c' stroke='%23b9c0c9' stroke-width='0.8'/%3E%3C/svg%3E");
     position: relative;
@@ -774,7 +804,7 @@ button.card { cursor: pointer; }
 }
 .panel .row, .panel .bidGrid { padding-inline-start: 14px; }
 
-.panelTitle { margin: 0 0 10px; padding-inline-start: 14px; font-family: var(--grimoire), serif; font-size: 1.3rem; font-weight: 400; color: var(--bone); letter-spacing: 0.02em; text-shadow: 0 1px 0 #000; }
+.panelTitle { margin: 0 0 10px; padding-inline-start: 14px; font-family: var(--quill); font-size: 1.55rem; font-weight: 400; color: var(--bone); letter-spacing: 0.01em; text-shadow: 0 1px 0 #000; }
 
 .bidGrid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; max-width: 460px; }
 
@@ -814,14 +844,14 @@ button.card { cursor: pointer; }
 .buttonRed { color: #ff8a94; }
 .buttonPrimary.buttonRed { color: #ffe3e3; }
 
-.thinking { color: #ffcf7a; font-family: var(--grimoire), serif; font-weight: 400; text-shadow: 0 0 10px rgba(255, 150, 60, 0.45); animation: breathe 1.4s ease-in-out infinite; }
+.thinking { color: #ffcf7a; font-family: var(--quill); font-weight: 400; text-shadow: 0 0 10px rgba(255, 150, 60, 0.45); animation: breathe 1.4s ease-in-out infinite; }
 @keyframes breathe { 50% { opacity: 0.7; } }
 
 /* ===== 7. Deal list and rules (the sheet itself: ScoreSheet.module.css) / Список раздач и правила ===== */
 .log { margin: 12px 0 0; padding: 0; list-style: none; max-height: 260px; overflow-y: auto; }
 .log li { padding: 5px 0; border-bottom: 1px dashed rgba(245, 237, 214, 0.16); color: #dfe9e1; }
 .rules { margin-top: 12px; color: #dfe9e1; }
-.rules summary { cursor: pointer; font-weight: 700; color: var(--bone); font-variant: small-caps; letter-spacing: 0.04em; }
+.rules summary { cursor: pointer; font-family: var(--quill); font-weight: 400; font-size: 1.22rem; color: var(--bone); letter-spacing: 0.01em; }
 .rules ul { margin: 8px 0 0; padding-inline-start: 18px; }
 .rules li { margin: 4px 0; }
 
@@ -834,7 +864,7 @@ button.card { cursor: pointer; }
     gap: 10px 16px;
 }
 
-.resultText { margin: 0; color: var(--bone); font-family: var(--grimoire), serif; font-size: 1.2rem; }
+.resultText { margin: 0; color: var(--bone); font-family: var(--quill); font-size: 1.4rem; }
 
 /* ===== 9. Table menu: a page of a home notebook / Меню стола: страница домашней тетради ===== */
 /* [EN] The menu lies on the felt like a page torn from a squared school notebook: pen headings, the chosen value
@@ -861,7 +891,7 @@ button.card { cursor: pointer; }
     --ink-red: #a3242c;
     --pencil: #5b6472;
     --paper-text: #272c37;
-    --hand: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', 'Chalkboard SE', cursive;
+    --hand: var(--quill);
     --cell: 20px;
     --margin: 30px;
     position: relative;
@@ -885,7 +915,7 @@ button.card { cursor: pointer; }
 .setupTitle {
     margin: 0;
     color: var(--ink);
-    font: 700 clamp(1.45rem, 3.6vw, 1.9rem)/1.2 var(--hand), cursive;
+    font: 400 clamp(1.6rem, 3.9vw, 2.1rem)/1.2 var(--hand), cursive;
     text-decoration: underline;
     text-decoration-color: rgba(31, 58, 138, 0.45);
     text-decoration-thickness: 2px;
@@ -900,12 +930,12 @@ button.card { cursor: pointer; }
     border-radius: 0;
     background: transparent;
     color: var(--ink);
-    font: 700 0.95rem var(--hand), cursive;
+    font: 400 1.05rem var(--hand), cursive;
     cursor: pointer;
 }
 
 .setupSection { margin-bottom: 18px; }
-.setupLabel { margin: 0 0 4px; color: var(--ink); font: 700 1.08rem/1.35 var(--hand), cursive; }
+.setupLabel { margin: 0 0 4px; color: var(--ink); font: 400 1.2rem/1.35 var(--hand), cursive; }
 .setupNote { margin-inline-start: 6px; color: var(--pencil); font: italic 400 0.8rem Georgia, 'Times New Roman', serif; }
 .setupWide { width: 100%; margin-top: 4px; padding: 12px; }
 .setup .hint { margin: 6px 0 0; color: var(--pencil); font: italic 0.88rem/1.45 Georgia, 'Times New Roman', serif; text-shadow: none; }
@@ -921,7 +951,7 @@ button.card { cursor: pointer; }
     border-radius: 999px;
     background: transparent;
     color: var(--paper-text);
-    font: 700 1rem/1.2 var(--hand), cursive;
+    font: 400 1.12rem/1.2 var(--hand), cursive;
     cursor: pointer;
 }
 .choice::after {
@@ -942,7 +972,7 @@ button.card { cursor: pointer; }
 .choice small { margin-inline-start: 4px; color: var(--pencil); font: italic 600 0.7rem Georgia, 'Times New Roman', serif; }
 
 /* [EN] An option: a box drawn by hand, ticked by pen. [RU] Опция: квадратик от руки, галочка ручкой. */
-.toggle { display: flex; flex: 1; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; font: 600 1rem/1.3 var(--hand), cursive; }
+.toggle { display: flex; flex: 1; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; font: 400 1.12rem/1.3 var(--hand), cursive; }
 .toggle input {
     appearance: none;
     flex: none;
@@ -977,7 +1007,7 @@ button.card { cursor: pointer; }
     border-radius: 50% 46% 52% 48%;
     background: transparent;
     color: var(--ink);
-    font: 700 0.95rem/1 var(--hand), cursive;
+    font: 400 1.05rem/1 var(--hand), cursive;
     cursor: pointer;
 }
 /* [EN] Fingers need a bigger target than a mouse. [RU] Пальцу нужна цель крупнее, чем мыши. */
@@ -1031,7 +1061,7 @@ button.card { cursor: pointer; }
     border-radius: 6px 10px 7px 9px;
     background: rgba(255, 255, 255, 0.55);
     color: var(--ink);
-    font: 700 1rem/1.2 var(--hand), cursive;
+    font: 400 1.12rem/1.2 var(--hand), cursive;
     text-shadow: none;
     box-shadow: none;
 }

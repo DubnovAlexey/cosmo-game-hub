@@ -24,7 +24,7 @@ A web platform for classic logic games. Chess against the Stockfish engine and p
 - A game-over screen for victory, defeat and draw.
 - The finished game can be downloaded as a PGN file, the standard format of chess notation.
 - The engine runs in a Web Worker, so the board stays responsive while the computer thinks.
-- Preferans: Sochi, Leningrad, Rostov and Classic rules, two to four at the table, every table option of the menu; 69 characters as opponents, and they never look at hidden cards.
+- Preferans: Sochi, Leningrad, Rostov and Classic rules, two to four at the table, every table option of the menu; 91 characters as opponents, and they never look at hidden cards.
   - Table options: pool length, all-pass prices, half-whist, «здесь».
   - A score sheet with pool, mountain and whists.
   - The game is saved after every move.
@@ -147,7 +147,7 @@ To build the static site: `npm run build --workspace client` (the result goes to
 - Экран конца партии: победа, поражение, ничья.
 - Сыгранную партию можно скачать файлом PGN — это стандартный формат записи шахматных партий.
 - Движок работает в Web Worker, поэтому доска не замирает, пока компьютер думает.
-- Преферанс: Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом, все опции меню; 69 героев-соперников, которые никогда не подглядывают в чужие карты.
+- Преферанс: Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом, все опции меню; соперников — 91 герой, и никто из них никогда не подглядывает в чужие карты.
   - Настройки стола: длина пули, цены распасов, полвиста, «здесь».
   - Запись с пулей, горой и вистами.
   - Сохранение после каждого хода.
@@ -272,7 +272,7 @@ npm run dev --workspace client
 - מסך סיום משחק: ניצחון, הפסד או תיקו.
 - אפשר להוריד את המשחק כקובץ PGN, הפורמט המקובל לרישום משחקי שחמט.
 - המנוע רץ ב-Web Worker, ולכן הלוח לא נתקע בזמן שהמחשב חושב.
-- פרפרנס: חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן, כל אפשרויות התפריט; 69 דמויות כיריבים, שלעולם אינן מציצות בקלפים נסתרים.
+- פרפרנס: חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן, כל אפשרויות התפריט; 91 דמויות כיריבים, שלעולם אינן מציצות בקלפים נסתרים.
   - הגדרות שולחן: אורך הפולה, מחירי הראספסים, חצי ויסט, «здесь».
   - דף ניקוד עם פולה, הר וויסטים.
   - שמירה אחרי כל מהלך.
@@ -405,7 +405,7 @@ Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez 
 - Pantalla de fin de partida: victoria, derrota o tablas.
 - La partida terminada se puede descargar como archivo PGN, el formato estándar de notación de ajedrez.
 - El motor funciona en un Web Worker, así que el tablero sigue respondiendo mientras el ordenador piensa.
-- Preferans: reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa, todas las opciones del menú; 69 personajes como rivales, que nunca miran las cartas ocultas.
+- Preferans: reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa, todas las opciones del menú; 91 personajes como rivales, que nunca miran las cartas ocultas.
   - Opciones de mesa: longitud del pool, precios de las manos sin contrato («raspasy»), medio whist, «здесь».
   - Una hoja de puntuación con pool, montaña y whists.
   - La partida se guarda después de cada jugada.
@@ -528,7 +528,7 @@ Une plateforme web de jeux de logique classiques. On peut déjà jouer aux éche
 - Écran de fin de partie : victoire, défaite ou nulle.
 - La partie terminée peut être téléchargée au format PGN, la notation standard des échecs.
 - Le moteur tourne dans un Web Worker : l'échiquier reste réactif pendant que l'ordinateur réfléchit.
-- Préférence : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table, toutes les options du menu ; 69 personnages comme adversaires, qui ne regardent jamais les cartes cachées.
+- Préférence : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table, toutes les options du menu ; 91 personnages comme adversaires, qui ne regardent jamais les cartes cachées.
   - Options de table : longueur de la poule, prix des donnes sans contrat (« raspasy »), demi-whist, « здесь ».
   - Une feuille de marque avec poule, montagne et whists.
   - La partie est sauvegardée après chaque coup.

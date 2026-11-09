@@ -5,14 +5,20 @@
 //      bare their fangs, faint cobwebs and low fog. Pure decoration: hidden from screen readers, never catches a
 //      click, still when the system asks for less motion. Everything is drawn here, nothing is downloaded. The club's
 //      absinthe (Absinthe.tsx) stands in front of the candelabra and empties as the pool goes on (drink.ts).
+//      The candelabra, the absinthe and the bats live on a stage that sticks to the screen: the candelabra stay at
+//      the bottom edge while the page scrolls, the bats fly down the margins along a curve and back up (Alexey,
+//      09.11.2026); the windows, cobwebs and fog belong to the walls and scroll with the room.
 // [RU] ФАЙЛ: вампирская крипта вокруг карточного стола (DESIGN_CONCEPT_RU.md §6): два антикварных трёхрожковых
 //      канделябра из черненого серебра у стола (когтистые лапы, ствол с «яблоками», витые рожки, поддоны, свечи
 //      слоновой кости с оплывшим воском, живое пламя, которое никогда не мерцает в такт), над каждым — стрельчатое
 //      окно с холодным лунным светом, две летучие мыши под сводами (машут крыльями, моргают красными глазами,
 //      иногда скалят клыки), едва видная паутина и низкий туман. Чистое украшение: скрыто от экранного диктора, не
 //      ловит щелчки, замирает, когда система просит меньше движения. Всё нарисовано здесь, ничего не скачивается.
-//      Абсент клуба (Absinthe.tsx) стоит перед канделябрами и убывает по ходу пули (drink.ts).
-import React from 'react';
+//      Абсент клуба (Absinthe.tsx) стоит перед канделябрами и убывает по ходу пули (drink.ts). Канделябры, абсент и
+//      летучие мыши живут на сцене, прилипшей к экрану: канделябры стоят у нижнего края, пока страница прокручивается,
+//      мыши летят по полям вниз по кривой и обратно вверх (Алексей, 09.11.2026); окна, паутина и туман — часть стен
+//      и прокручиваются вместе с комнатой.
+import React, { useEffect, useRef } from 'react';
 import { AbsintheGlass, AbsintheSet } from './Absinthe';
 import type { Drink } from './drink';
 import styles from './Lair.module.css';
@@ -203,21 +209,89 @@ const Cobweb: React.FC<{ className: string }> = ({ className }) => (
     </svg>
 );
 
-export const Lair: React.FC<{ drink: Drink }> = ({ drink }) => (
-    <div className={styles.lair} aria-hidden="true">
-        <Cobweb className={styles.cobwebLeft} />
-        <Cobweb className={styles.cobwebRight} />
-        <LancetWindow side="left" />
-        <LancetWindow side="right" />
-        <div className={`${styles.moonbeam} ${styles.moonbeamLeft}`} />
-        <div className={`${styles.moonbeam} ${styles.moonbeamRight}`} />
-        <Candelabrum side="left" />
-        <Candelabrum side="right" />
-        <AbsintheSet bottle={drink.bottle} glass={drink.glasses[0]} />
-        <AbsintheGlass level={drink.glasses[1]} />
-        <Bat className={styles.batLeft} />
-        <Bat className={styles.batRight} />
-        <div className={styles.fog} />
-        <div className={`${styles.fog} ${styles.fogSecond}`} />
-    </div>
-);
+/** [EN] Only screens with room beside the table get the travelling stage (Lair.module.css hides it below). [RU] Сцена едет только там, где рядом со столом есть место. */
+const WIDE = '(min-width: 1280px)';
+
+/**
+ * [EN] Follows the scroll and writes three numbers on the lair: how far the floor must rise while the room has not yet
+ *      reached the top of the screen (so the candelabra stand fully visible at the bottom edge from the first moment),
+ *      and where each bat is on its curve. No React render per frame: only CSS variables change.
+ * [RU] Следит за прокруткой и пишет на логово три числа: насколько поднять пол, пока комната ещё не дошла до верха
+ *      экрана (чтобы канделябры с первого мгновения стояли у нижнего края целиком), и где каждая мышь на своей кривой.
+ *      Без отрисовки React на каждый кадр: меняются только переменные CSS.
+ */
+function useStage(lair: React.RefObject<HTMLDivElement | null>, stage: React.RefObject<HTMLDivElement | null>): void {
+    useEffect(() => {
+        const room = lair.current;
+        const scene = stage.current;
+        if (!room || !scene) return undefined;
+        const wide = window.matchMedia(WIDE);
+        let frame = 0;
+        const update = (): void => {
+            frame = 0;
+            if (!wide.matches) {
+                for (const name of ['--lift', '--bat-left', '--bat-right']) room.style.removeProperty(name);
+                return;
+            }
+            const view = window.innerHeight;
+            const box = room.getBoundingClientRect();
+            const lift = Math.max(0, scene.getBoundingClientRect().bottom - view);
+            const progress = Math.min(1, Math.max(0, -box.top / Math.max(1, box.height - view)));
+            // [EN] The bats keep above the candelabra. [RU] Мыши держатся выше канделябров.
+            const side = Math.min(160, Math.max(64, (window.innerWidth - 1360) / 2 - 10));
+            const floor = view - 18 - side * 2.125;
+            const drop = (top: number, height: number): number => Math.max(0, floor - top - height - 24) * progress;
+            const swing = (turns: number, phase: number, reach: number): number => Math.sin(progress * Math.PI * turns + phase) * side * reach;
+            // [EN] Where each bat rests (the same sums as in Lair.module.css): its swing never takes it past the screen edge.
+            // [RU] Где висит каждая мышь (те же суммы, что в Lair.module.css): взмах никогда не уносит её за край экрана.
+            const half = room.clientWidth / 2 - 680;
+            const leftX = Math.max(4 - Math.max(10, half - side * 0.95), swing(3, 0, 0.35));
+            const rightX = Math.min(Math.max(10, half - side * 0.9) - 4, -swing(2.5, 0.6, 0.3));
+            room.style.setProperty('--lift', `${lift.toFixed(1)}px`);
+            room.style.setProperty('--bat-left', `translate(${leftX.toFixed(1)}px, ${drop(96, 69).toFixed(1)}px)`);
+            room.style.setProperty('--bat-right', `translate(${rightX.toFixed(1)}px, ${(drop(150, 56) + Math.sin(progress * Math.PI * 2) * 18).toFixed(1)}px)`);
+        };
+        const schedule = (): void => { if (!frame) frame = requestAnimationFrame(update); };
+        update();
+        window.addEventListener('scroll', schedule, { passive: true });
+        window.addEventListener('resize', schedule);
+        wide.addEventListener('change', schedule);
+        const growth = new ResizeObserver(schedule);
+        growth.observe(room);
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener('scroll', schedule);
+            window.removeEventListener('resize', schedule);
+            wide.removeEventListener('change', schedule);
+            growth.disconnect();
+        };
+    }, [lair, stage]);
+}
+
+export const Lair: React.FC<{ drink: Drink }> = ({ drink }) => {
+    const lair = useRef<HTMLDivElement>(null);
+    const stage = useRef<HTMLDivElement>(null);
+    useStage(lair, stage);
+    return (
+        <div ref={lair} className={styles.lair} aria-hidden="true">
+            <Cobweb className={styles.cobwebLeft} />
+            <Cobweb className={styles.cobwebRight} />
+            <LancetWindow side="left" />
+            <LancetWindow side="right" />
+            <div className={`${styles.moonbeam} ${styles.moonbeamLeft}`} />
+            <div className={`${styles.moonbeam} ${styles.moonbeamRight}`} />
+            <div ref={stage} className={styles.stage}>
+                <div className={styles.floor}>
+                    <Candelabrum side="left" />
+                    <Candelabrum side="right" />
+                    <AbsintheSet bottle={drink.bottle} glass={drink.glasses[0]} />
+                    <AbsintheGlass level={drink.glasses[1]} />
+                </div>
+                <div className={`${styles.flight} ${styles.flightLeft}`}><Bat className={styles.batLeft} /></div>
+                <div className={`${styles.flight} ${styles.flightRight}`}><Bat className={styles.batRight} /></div>
+            </div>
+            <div className={styles.fog} />
+            <div className={`${styles.fog} ${styles.fogSecond}`} />
+        </div>
+    );
+};
