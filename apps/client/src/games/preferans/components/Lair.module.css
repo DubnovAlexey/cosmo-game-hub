@@ -21,7 +21,9 @@
 .candlesRight { right: max(8px, calc(50% - 640px - 150px)); }
 .onSkull { display: inline-flex; flex-direction: column; align-items: center; }
 
-.candle { position: relative; display: block; flex: none; width: var(--w); height: calc(var(--h) + 34px); }
+/* [EN] --w (width), --h (wax height) and --d (flicker delay) come per candle from Lair.tsx; these are the defaults.
+   [RU] --w (ширина), --h (высота воска) и --d (задержка мерцания) задаёт каждой свече Lair.tsx; здесь значения по умолчанию. */
+.candle { --w: 16px; --h: 90px; --d: 0s; position: relative; display: block; flex: none; width: var(--w); height: calc(var(--h) + 34px); }
 
 /* [EN] Bone-white wax lit from the flame, with blood-red drips running from the rim.
    [RU] Костяно-белый воск, освещённый пламенем, с кровавыми потёками от края. */
