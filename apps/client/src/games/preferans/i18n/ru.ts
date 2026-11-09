@@ -2,6 +2,8 @@
 // [RU] ФАЙЛ: русские тексты стола преферанса — родного языка игры. Объяснения опираются на исследование правил
 //      08.11.2026 (Кодекс 1996, pref-bridge, Gambler, preferans.games, ФСПР, Википедия).
 import type { ClosedReason, OptionId, Seat, VariantId } from '../engine/index.ts';
+import { ROSTER, isFemale, type Cast } from '../characters/roster.ts';
+import { CHARACTERS_RU } from './characters/ru.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {
@@ -140,13 +142,19 @@ const tricksWord = (count: number): string => {
     return 'взяток';
 };
 
-// [EN] Who sits where, in the forms the sentences need: you (polite «вы»), Orion (he), Vega (she).
-// [RU] Кто где сидит, в формах, которые нужны фразам: вы, Орион (он), Вега (она).
-const NAMES = ['Вы', 'Орион', 'Вега'] as const;
-const TO = ['Вам', 'Ориону', 'Веге'] as const;
-const FOR = ['себя', 'Ориона', 'Вегу'] as const;
-const by = <T>(seat: Seat, you: T, he: T, she: T): T => (seat === 0 ? you : seat === 1 ? he : she);
-const name = (seat: Seat): string => NAMES[seat];
+// [EN] Who sits where, in the forms the sentences need: you (polite «вы») and the opponents of this pool, dwellers
+//      of the lair who change from pool to pool (characters/roster.ts), each with a gender and own cases.
+// [RU] Кто где сидит, в формах, которые нужны фразам: вы (вежливое «вы») и соперники этой пули — обитатели логова,
+//      которые меняются от пули к пуле (characters/roster.ts), у каждого свой род и свои падежи.
+function seatsOf(cast: Cast) {
+    const NAMES = ['Вы', ...cast.map(id => CHARACTERS_RU[id].name)];
+    const TO = ['Вам', ...cast.map(id => CHARACTERS_RU[id].to)];
+    const FOR = ['себя', ...cast.map(id => CHARACTERS_RU[id].acc)];
+    const by = <T>(seat: Seat, you: T, he: T, she: T): T => (seat === 0 ? you : isFemale(cast[seat - 1]) ? she : he);
+    const name = (seat: Seat): string => NAMES[seat];
+    return { NAMES, TO, FOR, by, name };
+}
+const CHARACTER_TEXTS = Object.fromEntries(ROSTER.map(({ id }) => [id, { name: CHARACTERS_RU[id].name, bio: CHARACTERS_RU[id].bio }])) as Dictionary['characters'];
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {
@@ -159,14 +167,27 @@ const closed = (reason: ClosedReason): string => {
     }
 };
 
-const ru: Dictionary = {
+export default function ru(cast: Cast): Dictionary {
+    const { NAMES, TO, FOR, by, name } = seatsOf(cast);
+    return {
     language: 'ru',
     gameTitle: 'Преферанс',
     seatNames: NAMES,
+    characters: CHARACTER_TEXTS,
+    portrait: {
+        guest: 'гость', dweller: 'обитатель склепа', about: who => `${who} — биография`, close: 'Закрыть',
+        manner: {
+            bidding: 'Торговля', whist: 'Вист', misere: 'Мизер', pace: 'Думает',
+            bold: 'рискованно', even: 'ровно', careful: 'осторожно',
+            eager: 'охотно', calculated: 'по расчёту', cautious: 'неохотно',
+            loves: 'обожает', sometimes: 'иногда', cleanOnly: 'только чистый',
+            fast: 'быстро', moderate: 'в меру', slow: 'долго',
+        },
+    },
     header: {
         rules: variant => variant,
         pool: target => `пуля до ${target}`,
-        tagline: 'вы против двух ботов, которые никогда не подглядывают в чужие карты',
+        tagline: 'вы против обитателей склепа — в чужие карты они не подглядывают, клянутся могилой',
         tableSetup: 'Настройки стола',
         language: 'Язык',
     },
@@ -180,13 +201,13 @@ const ru: Dictionary = {
     },
     info: {
         auction: 'Торговля',
-        speaksFirst: seat => `${by(seat, 'Первое слово ваше', 'Орион говорит первым', 'Вега говорит первой')} · прикуп лежит рубашкой вверх`,
+        speaksFirst: seat => `${by(seat, 'Первое слово ваше', `${name(seat)} говорит первым`, `${name(seat)} говорит первой`)} · прикуп лежит рубашкой вверх`,
         allPass: 'Распасы',
         allPassHint: 'Возьмите как можно меньше взяток',
         allPassTalonHint: 'Возьмите как можно меньше взяток · первые две взятки задаёт прикуп',
         misere: seat => `${name(seat)} · мизер`,
         misereHint: seat => `${TO[seat]} нельзя брать ни одной взятки · ловящие откроют карты после первой взятки`,
-        takesTalon: seat => by(seat, 'Вы берёте прикуп', 'Орион берёт прикуп', 'Вега берёт прикуп'),
+        takesTalon: seat => (seat === 0 ? 'Вы берёте прикуп' : `${name(seat)} берёт прикуп`),
         discardHint: 'Две карты уходят в снос',
         needs: (seat, tricks) => `${TO[seat]} нужно ${tricks} ${tricksWord(tricks)}`,
         defendersDecide: 'Защита решает: вист или пас',
@@ -195,7 +216,7 @@ const ru: Dictionary = {
     seat: { tricks: count => `взяток: ${count}`, thinking: 'думает…' },
     table: { centre: 'Центр стола', talonOpen: 'Прикуп, открыт для всех', talonClosed: 'Прикуп, рубашкой вверх', talonLeads: 'Эту взятку задаёт карта прикупа' },
     actions: {
-        thinking: seat => `${by(seat, 'Вы думаете', 'Орион думает', 'Вега думает')}…`,
+        thinking: seat => `${seat === 0 ? 'Вы думаете' : `${name(seat)} думает`}…`,
         yourBid: 'Ваше слово: заявка или пас',
         someoneBids: (seat, bid, canHold) => `${name(seat)}: ${bid}${canHold ? ' — как старшая рука вы можете сказать «здесь»' : ''}`,
         pass: 'Пас',
@@ -206,14 +227,14 @@ const ru: Dictionary = {
         nameGame: bid => `Закажите игру: ${bid} или выше`,
         concede: tricks => `Уйти · без ${tricks === 2 ? 'двух' : 'трёх'}`,
         concedeHint: 'Висты никто не пишет; в гору идут уступленные взятки по цене уровня вашей заявки',
-        whistQuestion: (seat, contract) => `${by(seat, 'Вы играете', 'Орион играет', 'Вега играет')} ${contract}. Вист (защищаться и писать висты) или пас?`,
+        whistQuestion: (seat, contract) => `${seat === 0 ? 'Вы играете' : `${name(seat)} играет`} ${contract}. Вист (защищаться и писать висты) или пас?`,
         whist: 'Вист', halfWhist: 'Полвиста',
-        returnQuestion: seat => `${by(seat, 'Вы сказали', 'Орион сказал', 'Вега сказала')} «полвиста». Вернуть вист и играть?`,
+        returnQuestion: seat => `${by(seat, 'Вы сказали', `${name(seat)} сказал`, `${name(seat)} сказала`)} «полвиста». Вернуть вист и играть?`,
         takeBack: 'Вист', leaveHalf: 'Оставить полвиста',
         modeQuestion: 'Вы вистуете один. В светлую (обе руки защиты открыты, вы играете за обе) или втёмную?',
         open: 'В светлую', closed: 'Втёмную',
-        yourTurn: 'Ваш ход: выберите подсвеченную карту',
-        yourTurnFor: seat => `Ваш ход за ${FOR[seat]} (вист в светлую): выберите подсвеченную карту`,
+        yourTurn: 'Ваш ход — сыграйте одну из приподнятых карт',
+        yourTurnFor: seat => `Ваш ход за ${FOR[seat]} (вист в светлую) — сыграйте одну из приподнятых карт`,
         nextDeal: 'Следующая раздача',
     },
     results: {
@@ -238,15 +259,15 @@ const ru: Dictionary = {
         sumsToZero: 'вистов, в сумме ноль',
         deals: count => `Раздачи · ${count}`,
         deal: number => `Раздача ${number}`,
-        rulesTitle: 'Правила коротко (Сочинка)',
+        rulesTitle: variant => `Правила коротко (${variant})`,
         rules: [
             '32 карты, трое игроков, по десять карт и две в прикупе.',
             'Торговля от 6♠ до 10БК; мизер стоит между 8БК и 9♠ и разрешён только первым словом. Старшая рука может сказать «здесь».',
             'Выигравший торговлю берёт прикуп, сносит две карты и заказывает игру не ниже своей заявки.',
-            'Защитники говорят «вист» или «пас». Вистующие должны взять 4 взятки на шестерной, 2 на семерной, 1 на восьмерной и девятерной; десятерная только проверяется.',
+            'Защитники говорят «вист» или «пас». Вистующие должны взять 4 взятки на шестерной, 2 на семерной, 1 на восьмерной и девятерной.',
             'Ходят в масть; нет масти — козырем; нет и козыря — любой картой.',
-            'Сыгранная игра идёт в пулю; каждая недобранная взятка стоит цену игры в гору. Висты — цена игры за взятку.',
-            'Все спасовали — распасы: возьмите как можно меньше взяток. Первые две взятки задаёт прикуп.',
+            'Сыгранная игра идёт в пулю, недобор — в гору, взятки защиты — в висты; во что обходится каждая, решает вариант (ниже).',
+            'Все спасовали — распасы: возьмите как можно меньше взяток.',
         ],
         bandPool: name => `${name} · пуля`,
         bandMountain: name => `${name} · гора`,
@@ -278,14 +299,19 @@ const ru: Dictionary = {
             players: count => `${count} игрока`,
             pool: target => `пуля до ${target}`,
             allPass: prices => `распасы ${prices}`,
-            without: name => `без «${name}»`,
+            allPassWhists: 'распасы вистами',
+            without: option => `без «${option}»`,
             bots: { casual: 'обычные боты', strong: 'сильные боты' },
         },
         strength: { casual: 'Обычные · быстрые', strong: 'Сильные · думают дольше' },
+        opponents: 'Соперники',
+        opponentsNote: 'выберите портреты (до двух); без выбора решает склеп',
+        randomOpponents: 'Случайные',
+        champion: (who, female) => `${who} ${female ? 'выиграла' : 'выиграл'} прошлую пулю и займёт свободное место за столом.`,
     },
     explain: {
         players: {
-            3: { name: '3 · вы и 2 бота', what: 'Классический стол: по десять карт, две в прикупе.', how: 'Вы сидите внизу; Орион и Вега занимают другие места и никогда не смотрят в скрытые карты.', effect: 'Обычная игра. Все правила этого меню написаны для троих.' },
+            3: { name: '3 · вы и 2 бота', what: 'Классический стол: по десять карт, две в прикупе.', how: 'Вы сидите внизу; два обитателя склепа (каждую пулю новые) занимают другие места и никогда не смотрят в скрытые карты.', effect: 'Обычная игра. Все правила этого меню написаны для троих.' },
             2: { name: '2 · гусарик', what: 'Вы против одного бота, третья рука — «болван», который всегда пасует.', how: 'Защитник решает, вистовать ли, не видя болвана; вист всегда в светлую, и защитник играет за обе руки защиты.', effect: 'Быстрая и острая дуэль. Источники описывают её тремя разными способами, поэтому стол объявит точные правила.' },
             4: { name: '4 · сдающий на прикупе', what: 'За столом четверо; в своей раздаче сдающий карт не получает.', how: 'Сдающий всё равно пишет: консоляцию, если играющий сел, а на распасах прикуп — его рука.', effect: 'Каждый отдыхает каждую четвёртую раздачу. Спортивный преферанс (ФСПР) играют вчетвером.' },
         },
@@ -302,7 +328,7 @@ const ru: Dictionary = {
             how: '1 · 2 · 3 — обычное правило Сочинки: цена растёт и остаётся на 3. 1 · 2 · 4 растёт быстрее; «всегда 1» не растёт. Любая сыгранная игра сбрасывает цену.',
             effect: 'Дорогие распасы подряд подталкивают торговаться, а не пасовать.',
         },
-        progressionLabels: { '1-2-3': '1 · 2 · 3', '1-2-4': '1 · 2 · 4', flat: 'всегда 1' },
+        progressionLabel: prices => (prices.length === 1 ? `всегда ${prices[0]}` : prices.join(' · ')),
         bots: {
             name: 'Боты',
             what: 'Сколько думают боты. В скрытые карты они не смотрят ни на какой силе.',
@@ -312,6 +338,5 @@ const ru: Dictionary = {
         options: OPTIONS,
     },
     closed,
-};
-
-export default ru;
+    };
+}

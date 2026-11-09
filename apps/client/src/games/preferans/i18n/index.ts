@@ -5,12 +5,15 @@
 //      только те тексты, которые показывает. Остров передаёт загруженные тексты через контекст React,
 //      компоненты читают их через useTexts().
 import { createContext, useContext } from 'react';
-import type { Language } from '../../../shared/i18n/languages.ts';
-import type { Dictionary } from './types.ts';
+import type { Language } from '@shared/i18n/languages';
+import type { Dictionary, DictionaryFactory } from './types.ts';
 
-export type { Dictionary, Explained } from './types.ts';
+export type { Dictionary, DictionaryFactory, Explained } from './types.ts';
 
-const LOADERS: Readonly<Record<Language, () => Promise<{ default: Dictionary }>>> = {
+// [EN] A language file exports a function of the cast: the opponents change from pool to pool, and the sentences
+//      agree with them. [RU] Языковой файл отдаёт функцию от состава: соперники меняются от пули к пуле, и фразы
+//      согласуются с ними.
+const LOADERS: Readonly<Record<Language, () => Promise<{ default: DictionaryFactory }>>> = {
     ru: () => import('./ru.ts'),
     en: () => import('./en.ts'),
     he: () => import('./he.ts'),
@@ -18,10 +21,10 @@ const LOADERS: Readonly<Record<Language, () => Promise<{ default: Dictionary }>>
     fr: () => import('./fr.ts'),
 };
 
-const cache = new Map<Language, Promise<Dictionary>>();
+const cache = new Map<Language, Promise<DictionaryFactory>>();
 
 /** [EN] The texts of one language; each file is fetched once. [RU] Тексты одного языка; каждый файл грузится один раз. */
-export function loadDictionary(language: Language): Promise<Dictionary> {
+export function loadDictionary(language: Language): Promise<DictionaryFactory> {
     let pending = cache.get(language);
     if (!pending) {
         pending = LOADERS[language]().then(module => module.default);

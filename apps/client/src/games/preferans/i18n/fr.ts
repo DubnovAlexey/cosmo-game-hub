@@ -5,6 +5,8 @@
 //      «: ; ?» и внутри кавычек-ёлочек. Русская «пуля» происходит от французского «poule», поэтому здесь она
 //      просто «la poule»; русские термины остаются в «».
 import type { ClosedReason, OptionId, Seat, VariantId } from '../engine/index.ts';
+import type { Cast } from '../characters/roster.ts';
+import { CHARACTERS_FR } from './characters/fr.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {
@@ -137,11 +139,9 @@ const RANKS = ['Sept', 'Huit', 'Neuf', 'Dix', 'Valet', 'Dame', 'Roi', 'As'];
 const SUITS = ['pique', 'trèfle', 'carreau', 'cœur'];
 const tricksWord = (count: number): string => (count === 1 ? 'pli' : 'plis');
 
-// [EN] Who sits where: «vous» takes its own verb forms, Orion and Véga the third person.
-// [RU] Кто где сидит: у «vous» свои формы глагола, у Ориона и Веги — третье лицо.
-const NAMES = ['Vous', 'Orion', 'Véga'] as const;
+// [EN] Who sits where: «vous» takes its own verb forms, the opponents of this pool (characters/roster.ts) the third person.
+// [RU] Кто где сидит: у «vous» свои формы глагола, у соперников этой пули (characters/roster.ts) — третье лицо.
 const by = <T>(seat: Seat, you: T, other: T): T => (seat === 0 ? you : other);
-const name = (seat: Seat): string => NAMES[seat];
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {
@@ -154,14 +154,27 @@ const closed = (reason: ClosedReason): string => {
     }
 };
 
-const fr: Dictionary = {
+export default function fr(cast: Cast): Dictionary {
+    const NAMES = ['Vous', ...cast.map(id => CHARACTERS_FR[id].name)];
+    const name = (seat: Seat): string => NAMES[seat];
+    return {
     language: 'fr',
     gameTitle: 'Préférence',
     seatNames: NAMES,
+    characters: CHARACTERS_FR,
+    portrait: { guest: 'invité', dweller: 'habitant de la crypte', about: who => `${who} : une biographie`, close: 'Fermer',
+        manner: {
+            bidding: 'Enchères', whist: 'Whist', misere: 'Misère', pace: 'Réfléchit',
+            bold: 'avec audace', even: 'sans excès', careful: 'avec prudence',
+            eager: 'volontiers', calculated: 'par calcul', cautious: 'à contrecœur',
+            loves: 'l’adore', sometimes: 'parfois', cleanOnly: 'seulement propre',
+            fast: 'vite', moderate: 'posément', slow: 'longuement',
+        },
+    },
     header: {
         rules: variant => `règles de ${variant}`,
         pool: target => `poule de ${target}`,
-        tagline: 'vous contre deux bots qui ne regardent jamais les cartes cachées',
+        tagline: 'vous contre les habitants de la crypte, qui jurent sur leur tombe de ne jamais regarder les cartes cachées',
         tableSetup: 'Réglages de la table',
         language: 'Langue',
     },
@@ -207,8 +220,8 @@ const fr: Dictionary = {
         takeBack: 'Whist', leaveHalf: 'Laisser le demi-whist',
         modeQuestion: 'Vous défendez sans partenaire. Ouvert (les deux mains de la défense visibles, vous jouez les deux) ou fermé ?',
         open: 'Ouvert', closed: 'Fermé',
-        yourTurn: 'À vous de jouer : choisissez une carte en surbrillance',
-        yourTurnFor: seat => `À vous de jouer pour ${name(seat)} (whist ouvert) : choisissez une carte en surbrillance`,
+        yourTurn: 'À vous de jouer : jouez une des cartes levées',
+        yourTurnFor: seat => `À vous de jouer pour ${name(seat)} (whist ouvert) : jouez une des cartes levées`,
         nextDeal: 'Donne suivante',
     },
     results: {
@@ -233,15 +246,15 @@ const fr: Dictionary = {
         sumsToZero: 'whists, la somme fait zéro',
         deals: count => `Donnes · ${count}`,
         deal: number => `Donne ${number}`,
-        rulesTitle: 'Les règles en bref (Sotchi)',
+        rulesTitle: variant => `Les règles en bref (${variant})`,
         rules: [
             '32 cartes, trois joueurs, dix cartes chacun et deux au talon.',
             'Enchères de 6♠ à 10SA ; la misère se place entre 8SA et 9♠ et seulement comme première annonce. La main aînée peut tenir une annonce égale.',
             'Celui qui remporte les enchères prend le talon, écarte deux cartes et nomme le jeu final, égal ou plus haut.',
-            'Les défenseurs disent whist ou passe. Au whist, il faut faire 4 plis contre un six, 2 contre un sept, 1 contre un huit ou un neuf ; le dix est seulement vérifié.',
+            'Les défenseurs disent whist ou passe. Au whist, il faut faire 4 plis contre un six, 2 contre un sept, 1 contre un huit ou un neuf.',
             'On fournit la couleur ; sinon on coupe à l’atout ; sinon n’importe quelle carte.',
-            'Un jeu réussi va dans la poule ; chaque pli manquant coûte le prix du jeu en montagne. Les whists paient ce prix par pli.',
-            'Tout le monde a passé : passe générale, faites le moins de plis possible. Le talon fixe les deux premiers plis.',
+            'Un jeu réussi va dans la poule, les plis manquants en montagne, ceux de la défense en whists ; ce que vaut chacun dépend de la variante (ci-dessous).',
+            'Tout le monde a passé : passe générale, faites le moins de plis possible.',
         ],
         bandPool: owner => `${owner} · poule`,
         bandMountain: owner => `${owner} · montagne`,
@@ -273,14 +286,19 @@ const fr: Dictionary = {
             players: count => `${count} joueurs`,
             pool: target => `poule de ${target}`,
             allPass: prices => `passe générale ${prices}`,
+            allPassWhists: 'passe générale payée en whists',
             without: option => `sans « ${option} »`,
             bots: { casual: 'bots tranquilles', strong: 'bots forts' },
         },
         strength: { casual: 'Tranquilles · rapides', strong: 'Forts · réfléchissent plus' },
+        opponents: 'Adversaires',
+        opponentsNote: 'choisissez des portraits (deux au plus) ; sans choix, la crypte décide',
+        randomOpponents: 'Au hasard',
+        champion: who => `${who} a gagné la dernière poule et prend une place libre à table.`,
     },
     explain: {
         players: {
-            3: { name: '3 · vous + 2 bots', what: 'La table classique : dix cartes chacun, deux au talon.', how: 'Vous êtes en bas ; Orion et Véga occupent les autres places et ne regardent jamais les cartes cachées.', effect: 'Le jeu standard. Toutes les règles de ce menu sont écrites pour trois joueurs.' },
+            3: { name: '3 · vous + 2 bots', what: 'La table classique : dix cartes chacun, deux au talon.', how: 'Vous êtes en bas ; deux habitants de la crypte (nouveaux à chaque poule) occupent les autres places et ne regardent jamais les cartes cachées.', effect: 'Le jeu standard. Toutes les règles de ce menu sont écrites pour trois joueurs.' },
             2: { name: '2 · Goussarik', term: '«гусарик»', what: 'Vous contre un bot, avec une main morte qui passe toujours.', how: 'Le défenseur décide du whist sans voir la main morte ; le whist se joue toujours ouvert, et le défenseur joue les deux mains de la défense.', effect: 'Un duel plus rapide et plus tranchant. Les sources le décrivent de trois façons, donc la table fixera ses règles exactes.' },
             4: { name: '4 · le donneur se repose', term: '«сдающий на прикупе»', what: 'Quatre à table ; le donneur ne reçoit pas de cartes dans sa propre donne.', how: 'Le donneur marque quand même : il touche la consolation quand le déclarant chute, et en passe générale le talon est sa main.', effect: 'Chacun se repose une donne sur quatre. La fédération sportive (FSPR) joue à quatre.' },
         },
@@ -297,7 +315,7 @@ const fr: Dictionary = {
             how: '1 · 2 · 3 est la règle habituelle à Sotchi : le prix monte puis reste à 3. 1 · 2 · 4 monte plus vite ; « toujours 1 » ne monte jamais. Tout jeu joué remet le prix au départ.',
             effect: 'Une série chère de passes générales pousse à annoncer plutôt qu’à passer.',
         },
-        progressionLabels: { '1-2-3': '1 · 2 · 3', '1-2-4': '1 · 2 · 4', flat: 'toujours 1' },
+        progressionLabel: prices => (prices.length === 1 ? `toujours ${prices[0]}` : prices.join(' · ')),
         bots: {
             name: 'Bots',
             what: 'Le temps de réflexion des bots. Quelle que soit leur force, ils ne regardent jamais les cartes cachées.',
@@ -307,6 +325,5 @@ const fr: Dictionary = {
         options: OPTIONS,
     },
     closed,
-};
-
-export default fr;
+    };
+}

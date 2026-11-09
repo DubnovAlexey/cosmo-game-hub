@@ -1,0 +1,156 @@
+/* [EN] FILE: games/preferans/components/Lair.module.css — the vampire lair around the table (Lair.tsx): candles with
+        living flames, bats, cobwebs, fog. Only transforms and opacity move, so the browser animates them cheaply on
+        the compositor; on narrow screens the side candles step away and one small bat keeps watch from the top.
+   [RU] ФАЙЛ: вампирское логово вокруг стола (Lair.tsx) — свечи с живым пламенем, летучие мыши, паутина, туман.
+        Двигаются только transform и opacity, поэтому браузер анимирует их дёшево на композиторе; на узких экранах
+        боковые свечи уходят, а одна маленькая летучая мышь сторожит сверху. */
+
+.lair {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* ===== Candles / Свечи ===== */
+/* [EN] The groups stand outside the felt, at the height of the table; the felt (z-index 1) covers whatever overlaps.
+   [RU] Группы стоят вне сукна, на высоте стола; сукно (z-index 1) закрывает то, что заходит под него. */
+.candles { position: absolute; top: 230px; display: flex; align-items: flex-end; gap: 10px; }
+.candlesLeft { left: max(8px, calc(50% - 640px - 150px)); }
+.candlesRight { right: max(8px, calc(50% - 640px - 150px)); }
+.onSkull { display: inline-flex; flex-direction: column; align-items: center; }
+
+.candle { position: relative; display: block; flex: none; width: var(--w); height: calc(var(--h) + 34px); }
+
+/* [EN] Bone-white wax lit from the flame, with blood-red drips running from the rim.
+   [RU] Костяно-белый воск, освещённый пламенем, с кровавыми потёками от края. */
+.wax {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: var(--w);
+    height: var(--h);
+    border-radius: 3px 3px 2px 2px;
+    background:
+        radial-gradient(ellipse 2.2px 11px at 22% 0, #8e0f1c 96%, transparent 100%),
+        radial-gradient(ellipse 1.8px 18px at 64% 0, #7a0c18 96%, transparent 100%),
+        radial-gradient(ellipse 2px 7px at 86% 0, #8e0f1c 96%, transparent 100%),
+        linear-gradient(90deg, #a99c82 0%, #e9dfc8 30%, #f8f2e4 48%, #ddd0b4 72%, #8f8269 100%);
+    box-shadow: inset 0 7px 7px -5px rgba(255, 196, 110, 0.75), 0 6px 12px rgba(0, 0, 0, 0.6);
+}
+
+.wick { position: absolute; left: 50%; bottom: var(--h); width: 2px; height: 7px; translate: -50% 0; background: #1a120c; border-radius: 1px; }
+
+.flame {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--h) + 3px);
+    width: 12px;
+    height: 27px;
+    translate: -50% 0;
+    border-radius: 50% 50% 46% 46% / 64% 64% 36% 36%;
+    background: radial-gradient(ellipse at 50% 76%, #fffdf0 0%, #ffe08a 26%, #ff9a2e 54%, rgba(255, 70, 10, 0.25) 70%, transparent 78%);
+    transform-origin: 50% 92%;
+    animation: flicker 1.7s ease-in-out var(--d) infinite;
+}
+
+.glow {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--h) - 70px);
+    width: 190px;
+    height: 190px;
+    translate: -50% 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 168, 70, 0.32) 0%, rgba(255, 110, 40, 0.12) 38%, transparent 68%);
+    animation: glow 2.4s ease-in-out var(--d) infinite;
+}
+
+@keyframes flicker {
+    0%, 100% { transform: scale(1, 1) skewX(0deg); }
+    18% { transform: scale(0.93, 1.07) skewX(3deg); }
+    37% { transform: scale(1.05, 0.94) skewX(-2deg); }
+    55% { transform: scale(0.96, 1.1) skewX(2deg); }
+    74% { transform: scale(1.03, 0.96) skewX(-3deg); }
+    88% { transform: scale(0.98, 1.04) skewX(1deg); }
+}
+@keyframes glow { 0%, 100% { opacity: 0.82; } 35% { opacity: 1; } 60% { opacity: 0.7; } 80% { opacity: 0.95; } }
+
+/* [EN] The skull under one candle; its eyes smoulder. [RU] Череп под одной свечой; глаза тлеют. */
+.skull { display: block; width: 46px; height: 43px; margin-top: -4px; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.7)); }
+.skullEye { animation: smoulder 3.2s ease-in-out infinite; }
+@keyframes smoulder { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+
+/* ===== Bats / Летучие мыши ===== */
+/* [EN] Dark wings with a faint violet rim and a red backlight, so they stand out against the crypt wall.
+   [RU] Тёмные крылья с бледной фиолетовой кромкой и красной подсветкой сзади — чтобы выделялись на стене склепа. */
+.bat {
+    position: absolute;
+    width: 118px;
+    height: 69px;
+    fill: #1e1119;
+    stroke: rgba(190, 140, 175, 0.45);
+    stroke-width: 0.9;
+    overflow: visible;
+    filter: drop-shadow(0 0 7px rgba(170, 30, 50, 0.55)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.7));
+    animation: hover 6.5s ease-in-out infinite;
+}
+.batLeft { left: max(10px, calc(50% - 640px - 140px)); top: 96px; }
+.batRight { right: max(10px, calc(50% - 640px - 130px)); top: 156px; width: 96px; height: 56px; animation-duration: 7.7s; animation-delay: -2s; }
+
+.wingLeft, .wingRight { transform-box: view-box; }
+.wingLeft { transform-origin: 57px 32px; animation: flapLeft 0.34s ease-in-out infinite alternate; }
+.wingRight { transform-origin: 63px 32px; animation: flapRight 0.34s ease-in-out infinite alternate; }
+.batRight .wingLeft, .batRight .wingRight { animation-duration: 0.29s; }
+
+/* [EN] Red eyes that glow and now and then blink. [RU] Красные глаза светятся и иногда моргают. */
+.eyes { fill: #ff2a2a; filter: drop-shadow(0 0 2px #ff1a1a); transform-box: view-box; transform-origin: 60px 25.6px; animation: blink 4.6s ease-in-out infinite; }
+.batRight .eyes { animation-duration: 5.9s; animation-delay: -1.3s; }
+
+/* [EN] From time to time the mouth opens on two fangs. [RU] Время от времени пасть открывается на два клыка. */
+.fangs { opacity: 0; transform-box: view-box; transform-origin: 60px 30.5px; animation: snarl 7.4s ease-in-out infinite; }
+.batRight .fangs { animation-duration: 9.1s; animation-delay: -4s; }
+
+@keyframes hover {
+    0%, 100% { translate: 0 0; rotate: 0deg; }
+    25% { translate: 10px -7px; rotate: 3deg; }
+    50% { translate: 2px -13px; rotate: -2deg; }
+    75% { translate: -9px -5px; rotate: 2deg; }
+}
+@keyframes flapLeft { from { transform: rotate(-20deg) scaleY(1); } to { transform: rotate(14deg) scaleY(0.55); } }
+@keyframes flapRight { from { transform: rotate(20deg) scaleY(1); } to { transform: rotate(-14deg) scaleY(0.55); } }
+@keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 93%, 95% { transform: scaleY(0.08); } }
+@keyframes snarl { 0%, 78%, 100% { opacity: 0; transform: scaleY(0.2); } 82%, 93% { opacity: 1; transform: scaleY(1); } }
+
+/* ===== Cobwebs and fog / Паутина и туман ===== */
+.cobweb { position: absolute; top: 0; width: 150px; height: 150px; fill: none; stroke: rgba(225, 222, 235, 0.16); stroke-width: 1; }
+.cobwebLeft { left: 0; }
+.cobwebRight { right: 0; transform: scaleX(-1); }
+
+.fog {
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    bottom: -40px;
+    height: 260px;
+    background:
+        radial-gradient(ellipse 30% 45% at 20% 70%, rgba(170, 160, 185, 0.12), transparent 70%),
+        radial-gradient(ellipse 35% 50% at 60% 80%, rgba(150, 140, 170, 0.1), transparent 72%),
+        radial-gradient(ellipse 25% 40% at 90% 65%, rgba(170, 160, 185, 0.1), transparent 70%);
+    animation: drift 46s ease-in-out infinite alternate;
+}
+.fogSecond { bottom: -70px; opacity: 0.8; animation-duration: 63s; animation-direction: alternate-reverse; }
+@keyframes drift { from { transform: translateX(-6%); } to { transform: translateX(6%); } }
+
+/* [EN] Narrow screens: no room beside the table for candles; one small bat watches from the top edge.
+   [RU] Узкие экраны: рядом со столом нет места для свечей; одна маленькая летучая мышь сторожит у верхнего края. */
+@media (max-width: 1180px) {
+    .candles, .batRight { display: none; }
+    .batLeft { left: 46%; top: 2px; width: 58px; height: 34px; }
+    .cobweb { width: 96px; height: 96px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flame, .glow, .skullEye, .bat, .wingLeft, .wingRight, .eyes, .fangs, .fog { animation: none; }
+}

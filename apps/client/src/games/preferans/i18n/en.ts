@@ -3,6 +3,8 @@
 //      preferans.games, FSPR, Wikipedia).
 // [RU] ФАЙЛ: английские тексты стола преферанса.
 import type { ClosedReason, OptionId, Seat, VariantId } from '../engine/index.ts';
+import type { Cast } from '../characters/roster.ts';
+import { CHARACTERS_EN } from './characters/en.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {
@@ -135,11 +137,9 @@ const RANKS = ['Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace'];
 const SUITS = ['spades', 'clubs', 'diamonds', 'hearts'];
 const tricksWord = (count: number): string => (count === 1 ? 'trick' : 'tricks');
 
-// [EN] Who sits where: "you" takes its own verb forms, Orion and Vega the third person.
-// [RU] Кто где сидит: у «you» свои формы глагола, у Ориона и Веги — третье лицо.
-const NAMES = ['You', 'Orion', 'Vega'] as const;
+// [EN] Who sits where: "you" takes its own verb forms, the opponents of this pool (characters/roster.ts) the third person.
+// [RU] Кто где сидит: у «you» свои формы глагола, у соперников этой пули (characters/roster.ts) — третье лицо.
 const by = <T>(seat: Seat, you: T, other: T): T => (seat === 0 ? you : other);
-const name = (seat: Seat): string => NAMES[seat];
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {
@@ -152,14 +152,28 @@ const closed = (reason: ClosedReason): string => {
     }
 };
 
-const en: Dictionary = {
+export default function en(cast: Cast): Dictionary {
+    const NAMES = ['You', ...cast.map(id => CHARACTERS_EN[id].name)];
+    const name = (seat: Seat): string => NAMES[seat];
+    return {
     language: 'en',
     gameTitle: 'Preferans',
     seatNames: NAMES,
+    characters: CHARACTERS_EN,
+    portrait: {
+        guest: 'guest', dweller: 'dweller of the crypt', about: who => `${who}: a biography`, close: 'Close',
+        manner: {
+            bidding: 'Bidding', whist: 'Whist', misere: 'Misère', pace: 'Thinks',
+            bold: 'boldly', even: 'evenly', careful: 'carefully',
+            eager: 'eagerly', calculated: 'by calculation', cautious: 'reluctantly',
+            loves: 'loves it', sometimes: 'now and then', cleanOnly: 'only a clean one',
+            fast: 'fast', moderate: 'moderately', slow: 'long',
+        },
+    },
     header: {
         rules: variant => `${variant} rules`,
         pool: target => `pool ${target}`,
-        tagline: 'you against two bots that never peek at hidden cards',
+        tagline: 'you against the dwellers of the crypt, who swear on their graves never to peek at hidden cards',
         tableSetup: 'Table setup',
         language: 'Language',
     },
@@ -205,8 +219,8 @@ const en: Dictionary = {
         takeBack: 'Whist', leaveHalf: 'Leave the half-whist',
         modeQuestion: 'You defend alone. Open (both defending hands face up, you play both) or closed?',
         open: 'Open', closed: 'Closed',
-        yourTurn: 'Your turn: pick a highlighted card',
-        yourTurnFor: seat => `Your turn for ${name(seat)} (open whist): pick a highlighted card`,
+        yourTurn: 'Your turn — play one of the raised cards',
+        yourTurnFor: seat => `Your turn for ${name(seat)} (open whist) — play one of the raised cards`,
         nextDeal: 'Next deal',
     },
     results: {
@@ -231,15 +245,15 @@ const en: Dictionary = {
         sumsToZero: 'whists, sums to zero',
         deals: count => `Deals · ${count}`,
         deal: number => `Deal ${number}`,
-        rulesTitle: 'Rules in short (Sochi)',
+        rulesTitle: variant => `Rules in short (${variant})`,
         rules: [
             '32 cards, three players, ten cards each, two in the talon.',
             'Auction from 6♠ up to 10NT; misère sits between 8NT and 9♠ and only as your first bid. A senior hand may hold an equal bid.',
             'The winner takes the talon, discards two cards and names the final game, equal or higher.',
-            'Defenders say whist or pass. Whisters must take 4 tricks against a six, 2 against a seven, 1 against an eight or nine; a ten is only checked.',
+            'Defenders say whist or pass. Whisters must take 4 tricks against a six, 2 against a seven, 1 against an eight or nine.',
             'Follow suit; with none, play a trump; with neither, any card.',
-            'A made game goes to the pool; every missing trick costs the game price in the mountain. Whists pay the price per trick.',
-            'Everybody passed: all-pass, take as few tricks as you can. The talon leads the first two tricks.',
+            'A made game goes to the pool, missing tricks to the mountain, defensive tricks to the whists; what each costs depends on the variant (below).',
+            'Everybody passed: all-pass, take as few tricks as you can.',
         ],
         bandPool: name => `${name} · pool`,
         bandMountain: name => `${name} · mountain`,
@@ -271,14 +285,19 @@ const en: Dictionary = {
             players: count => `${count} players`,
             pool: target => `pool ${target}`,
             allPass: prices => `all-pass ${prices}`,
+            allPassWhists: 'all-pass paid in whists',
             without: name => `without «${name}»`,
             bots: { casual: 'casual bots', strong: 'strong bots' },
         },
         strength: { casual: 'Casual · quick', strong: 'Strong · thinks longer' },
+        opponents: 'Opponents',
+        opponentsNote: 'pick portraits (up to two); without a choice the crypt decides',
+        randomOpponents: 'Random',
+        champion: who => `${who} won the last pool and takes a free seat at the table.`,
     },
     explain: {
         players: {
-            3: { name: '3 · you + 2 bots', what: 'The classic table: ten cards each, two in the talon.', how: 'You sit at the bottom; Orion and Vega take the other seats and never look at hidden cards.', effect: 'The standard game. Every rule on this menu is written for three players.' },
+            3: { name: '3 · you + 2 bots', what: 'The classic table: ten cards each, two in the talon.', how: 'You sit at the bottom; two dwellers of the crypt (new ones every pool) take the other seats and never look at hidden cards.', effect: 'The standard game. Every rule on this menu is written for three players.' },
             2: { name: '2 · Gusarik', term: '«гусарик»', what: 'You against one bot, with a dummy hand that always passes.', how: 'The defender decides on whist without seeing the dummy; a whist is always played open, and the defender plays both defence hands.', effect: 'A quicker, sharper duel. Sources describe it in three different ways, so the table will state its exact rules.' },
             4: { name: '4 · dealer sits out', term: '«сдающий на прикупе»', what: 'Four at the table; the dealer gets no cards in his own deal.', how: 'The dealer still scores: he writes consolation when the declarer fails, and on all-pass the talon is his hand.', effect: 'Everyone rests every fourth deal. The sport federation (FSPR) plays four at a table.' },
         },
@@ -295,7 +314,7 @@ const en: Dictionary = {
             how: '1 · 2 · 3 is the usual Sochi rule: the price grows and then stays at 3. 1 · 2 · 4 grows faster; “1 every time” never grows. Any played game resets the price.',
             effect: 'An expensive all-pass series pushes players to bid instead of passing.',
         },
-        progressionLabels: { '1-2-3': '1 · 2 · 3', '1-2-4': '1 · 2 · 4', flat: '1 every time' },
+        progressionLabel: prices => (prices.length === 1 ? `${prices[0]} every time` : prices.join(' · ')),
         bots: {
             name: 'Bots',
             what: 'How long the bots think. They never look at hidden cards at any strength.',
@@ -305,6 +324,5 @@ const en: Dictionary = {
         options: OPTIONS,
     },
     closed,
-};
-
-export default en;
+    };
+}

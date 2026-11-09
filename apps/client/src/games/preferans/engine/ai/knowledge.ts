@@ -10,6 +10,9 @@
 import { cardsOf, countCards, setOf, suitOf, unionOf, withoutSet, type Card, type CardSet } from '../cards.ts';
 import { isHandVisible, type DealState } from '../deal.ts';
 import type { PlayedCard, Seat } from '../play.ts';
+// [EN] A relative path on purpose: Node runs the engine directly in the tests and knows no @shared alias.
+// [RU] Относительный путь нарочно: Node запускает движок прямо в тестах и не знает псевдонима @shared.
+// noinspection ES6PreferShortImport
 import { shuffled, type Random } from '../../../../shared/engine/random.ts';
 
 // BEGIN 1. Knowledge

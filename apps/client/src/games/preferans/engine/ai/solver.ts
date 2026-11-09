@@ -42,10 +42,10 @@ export function equivalentGroups(legal: CardSet, othersLive: CardSet): Card[][] 
     let group: Card[] | null = null;
     for (let rank = 0; rank < 8; rank += 1) {
       const bit = 1 << rank;
-      if (mine & bit) {
+      if ((mine & bit) !== 0) {
         if (!group) { group = []; groups.push(group); }
         group.push(suit * 8 + rank);
-      } else if (others & bit) {
+      } else if ((others & bit) !== 0) {
         group = null;
       }
     }
@@ -193,9 +193,9 @@ class Search {
       let inGroup = false;
       for (let rank = 0; rank < 8; rank += 1) {
         const bit = 1 << rank;
-        if (mine & bit) {
+        if ((mine & bit) !== 0) {
           if (!inGroup) { reps.push(suit * 8 + rank); inGroup = true; }
-        } else if (others & bit) {
+        } else if ((others & bit) !== 0) {
           inGroup = false;
         }
       }

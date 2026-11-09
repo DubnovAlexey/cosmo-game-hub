@@ -5,6 +5,7 @@
 //      сейчас, список раздач и коротко правила. На компьютере всё время лежит рядом со столом; на любом экране
 //      ещё и открывается крупно в окне.
 import React from 'react';
+import type { VariantId } from '../engine/index.ts';
 import type { DealLogEntry } from '../hooks/usePreferans';
 import { useTexts } from '../i18n/index.ts';
 import { resultText, signed } from './format';
@@ -20,16 +21,19 @@ interface ScoreSheetProps {
     names: readonly string[];
     poolTarget: number;
     poolTotal: number;
+    /** [EN] The rule variant of this table: its prices close the short rules. [RU] Вариант правил стола: его цены завершают краткие правила. */
+    variant: VariantId;
     titleId: string;
     large?: boolean;
     onExpand?: () => void;
     onClose?: () => void;
 }
 
-const tone =(value: number): string => (value > 0.05 ? styles.plus : value < -0.05 ? styles.minus : '');
+const tone = (value: number): string => (value > 0.05 ? styles.plus : value < -0.05 ? styles.minus : '');
 
-export const ScoreSheet: React.FC<ScoreSheetProps> = ({ history, balance, log, names, poolTarget, poolTotal, titleId, large = false, onExpand, onClose }) => {
+export const ScoreSheet: React.FC<ScoreSheetProps> = ({ history, balance, log, names, poolTarget, poolTotal, variant, titleId, large = false, onExpand, onClose }) => {
     const t = useTexts();
+    const rules = t.explain.variants[variant];
     return (
         <section className={`${styles.sheet} ${large ? styles.sheetLarge : ''}`} aria-labelledby={titleId}>
             <header className={styles.sheetHeader}>
@@ -62,8 +66,8 @@ export const ScoreSheet: React.FC<ScoreSheetProps> = ({ history, balance, log, n
             )}
 
             <details className={gameStyles.rules}>
-                <summary>{t.sheet.rulesTitle}</summary>
-                <ul>{t.sheet.rules.map(rule => <li key={rule}>{rule}</li>)}</ul>
+                <summary>{t.sheet.rulesTitle(rules.name)}</summary>
+                <ul>{[...t.sheet.rules, rules.how, rules.effect].map(rule => <li key={rule}>{rule}</li>)}</ul>
             </details>
         </section>
     );

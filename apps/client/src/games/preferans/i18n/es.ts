@@ -3,6 +3,8 @@
 // [RU] ФАЙЛ: испанские тексты стола преферанса. Русские термины остаются в «» — под ними игру знают везде;
 //      пуля сохраняет русское имя: «pulya».
 import type { ClosedReason, OptionId, Seat, VariantId } from '../engine/index.ts';
+import type { Cast } from '../characters/roster.ts';
+import { CHARACTERS_ES } from './characters/es.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {
@@ -135,11 +137,9 @@ const RANKS = ['Siete', 'Ocho', 'Nueve', 'Diez', 'Jota', 'Reina', 'Rey', 'As'];
 const SUITS = ['picas', 'tréboles', 'diamantes', 'corazones'];
 const tricksWord = (count: number): string => (count === 1 ? 'baza' : 'bazas');
 
-// [EN] Who sits where: «tú» takes its own verb forms, Orión and Vega the third person.
-// [RU] Кто где сидит: у «tú» свои формы глагола, у Ориона и Веги — третье лицо.
-const NAMES = ['Tú', 'Orión', 'Vega'] as const;
+// [EN] Who sits where: «tú» takes its own verb forms, the opponents of this pool (characters/roster.ts) the third person.
+// [RU] Кто где сидит: у «tú» свои формы глагола, у соперников этой пули (characters/roster.ts) — третье лицо.
 const by = <T>(seat: Seat, you: T, other: T): T => (seat === 0 ? you : other);
-const name = (seat: Seat): string => NAMES[seat];
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {
@@ -152,14 +152,28 @@ const closed = (reason: ClosedReason): string => {
     }
 };
 
-const es: Dictionary = {
+export default function es(cast: Cast): Dictionary {
+    const NAMES = ['Tú', ...cast.map(id => CHARACTERS_ES[id].name)];
+    const name = (seat: Seat): string => NAMES[seat];
+    return {
     language: 'es',
     gameTitle: 'Preferans',
     seatNames: NAMES,
+    characters: CHARACTERS_ES,
+    portrait: {
+        guest: 'invitado', dweller: 'habitante de la cripta', about: who => `${who}: biografía`, close: 'Cerrar',
+        manner: {
+            bidding: 'Subasta', whist: 'Whist', misere: 'Miseria', pace: 'Piensa',
+            bold: 'con audacia', even: 'con calma', careful: 'con cautela',
+            eager: 'con ganas', calculated: 'por cálculo', cautious: 'a disgusto',
+            loves: 'la adora', sometimes: 'a veces', cleanOnly: 'solo limpia',
+            fast: 'rápido', moderate: 'con mesura', slow: 'despacio',
+        },
+    },
     header: {
         rules: variant => `reglas de ${variant}`,
         pool: target => `pulya a ${target}`,
-        tagline: 'tú contra dos bots que nunca miran las cartas ocultas',
+        tagline: 'tú contra los habitantes de la cripta, que juran por su tumba no mirar nunca las cartas ocultas',
         tableSetup: 'Configurar la mesa',
         language: 'Idioma',
     },
@@ -205,8 +219,8 @@ const es: Dictionary = {
         takeBack: 'Whist', leaveHalf: 'Dejar el medio whist',
         modeQuestion: 'Defiendes en solitario. ¿Abierto (las dos manos de la defensa boca arriba, juegas las dos) o cerrado?',
         open: 'Abierto', closed: 'Cerrado',
-        yourTurn: 'Tu turno: elige una carta resaltada',
-        yourTurnFor: seat => `Tu turno por ${name(seat)} (whist abierto): elige una carta resaltada`,
+        yourTurn: 'Tu turno: juega una de las cartas levantadas',
+        yourTurnFor: seat => `Tu turno por ${name(seat)} (whist abierto): juega una de las cartas levantadas`,
         nextDeal: 'Siguiente reparto',
     },
     results: {
@@ -231,15 +245,15 @@ const es: Dictionary = {
         sumsToZero: 'whists, la suma es cero',
         deals: count => `Repartos · ${count}`,
         deal: number => `Reparto ${number}`,
-        rulesTitle: 'Reglas en breve (Sochi)',
+        rulesTitle: variant => `Reglas en breve (${variant})`,
         rules: [
             '32 cartas, tres jugadores, diez cartas cada uno y dos en el talón.',
             'Subasta de 6♠ a 10ST; la miseria va entre 8ST y 9♠ y solo como primera declaración. La mano mayor puede mantener una declaración igual.',
             'Quien gana la subasta toma el talón, descarta dos cartas y nombra el juego final, igual o más alto.',
-            'Los defensores dicen whist o paso. Quien hace whist debe ganar 4 bazas contra un seis, 2 contra un siete y 1 contra un ocho o un nueve; el diez solo se comprueba.',
+            'Los defensores dicen whist o paso. Quien hace whist debe ganar 4 bazas contra un seis, 2 contra un siete y 1 contra un ocho o un nueve.',
             'Hay que seguir el palo; si no se tiene, jugar triunfo; si tampoco, cualquier carta.',
-            'Un juego cumplido va a la pulya; cada baza que falta cuesta el precio del juego en la montaña. Los whists pagan ese precio por baza.',
-            'Si todos pasan, hay pase general: gana las menos bazas posibles. El talón marca las dos primeras bazas.',
+            'Un juego cumplido va a la pulya, las bazas que faltan a la montaña y las de la defensa a los whists; cuánto vale cada una depende de la variante (abajo).',
+            'Si todos pasan, hay pase general: gana las menos bazas posibles.',
         ],
         bandPool: owner => `${owner} · pulya`,
         bandMountain: owner => `${owner} · montaña`,
@@ -271,14 +285,19 @@ const es: Dictionary = {
             players: count => `${count} jugadores`,
             pool: target => `pulya a ${target}`,
             allPass: prices => `pase general ${prices}`,
+            allPassWhists: 'pase general pagado en whists',
             without: option => `sin «${option}»`,
             bots: { casual: 'bots normales', strong: 'bots fuertes' },
         },
         strength: { casual: 'Normales · rápidos', strong: 'Fuertes · piensan más' },
+        opponents: 'Rivales',
+        opponentsNote: 'elige retratos (hasta dos); sin elegir, decide la cripta',
+        randomOpponents: 'Al azar',
+        champion: who => `${who} ganó la última pulya y ocupa un sitio libre en la mesa.`,
     },
     explain: {
         players: {
-            3: { name: '3 · tú + 2 bots', what: 'La mesa clásica: diez cartas cada uno y dos en el talón.', how: 'Te sientas abajo; Orión y Vega ocupan los otros sitios y nunca miran las cartas ocultas.', effect: 'El juego estándar. Todas las reglas de este menú están escritas para tres jugadores.' },
+            3: { name: '3 · tú + 2 bots', what: 'La mesa clásica: diez cartas cada uno y dos en el talón.', how: 'Te sientas abajo; dos habitantes de la cripta (nuevos en cada pulya) ocupan los otros sitios y nunca miran las cartas ocultas.', effect: 'El juego estándar. Todas las reglas de este menú están escritas para tres jugadores.' },
             2: { name: '2 · Gusárik', term: '«гусарик»', what: 'Tú contra un bot, con una mano muerta que siempre pasa.', how: 'El defensor decide si hace whist sin ver la mano muerta; el whist siempre se juega abierto, y el defensor juega las dos manos de la defensa.', effect: 'Un duelo más rápido y más afilado. Las fuentes lo describen de tres maneras distintas, así que la mesa fijará sus reglas exactas.' },
             4: { name: '4 · el repartidor descansa', term: '«сдающий на прикупе»', what: 'Cuatro en la mesa; el repartidor no recibe cartas en su propio reparto.', how: 'El repartidor sigue anotando: cobra la consolación cuando el declarante falla, y en el pase general el talón es su mano.', effect: 'Cada uno descansa uno de cada cuatro repartos. La federación deportiva (FSPR) juega con cuatro en la mesa.' },
         },
@@ -295,7 +314,7 @@ const es: Dictionary = {
             how: '1 · 2 · 3 es la regla habitual de Sochi: el precio sube y luego se queda en 3. 1 · 2 · 4 sube más deprisa; «siempre 1» no sube nunca. Cualquier juego jugado devuelve el precio al principio.',
             effect: 'Una serie cara de pases generales empuja a declarar en vez de pasar.',
         },
-        progressionLabels: { '1-2-3': '1 · 2 · 3', '1-2-4': '1 · 2 · 4', flat: 'siempre 1' },
+        progressionLabel: prices => (prices.length === 1 ? `siempre ${prices[0]}` : prices.join(' · ')),
         bots: {
             name: 'Bots',
             what: 'Cuánto piensan los bots. Con cualquier fuerza, nunca miran las cartas ocultas.',
@@ -305,6 +324,5 @@ const es: Dictionary = {
         options: OPTIONS,
     },
     closed,
-};
-
-export default es;
+    };
+}

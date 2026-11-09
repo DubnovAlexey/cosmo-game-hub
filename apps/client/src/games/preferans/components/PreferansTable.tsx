@@ -15,7 +15,8 @@ import {
     HUMAN_SEAT, SAVE_ID, SAVE_VERSION, usePreferans,
     type PreferansResultSummary, type PreferansSave, type PreferansSettings,
 } from '../hooks/usePreferans';
-import { useTexts, type Dictionary } from '../i18n/index.ts';
+import { TextsContext, type Dictionary, type DictionaryFactory } from '../i18n/index.ts';
+import { Lair } from './Lair';
 import { ActionPanel } from './ActionPanel';
 import { PlayerSeat } from './PlayerSeat';
 import { ScoreSheet } from './ScoreSheet';
@@ -45,11 +46,11 @@ function tableInfo(deal: DealState, t: Dictionary): { headline: string; hint: st
 interface PreferansTableProps {
     language: Language;
     onLanguage: (language: Language) => void;
+    /** [EN] The current language, applied to the company at this table. [RU] Текущий язык, применяемый к компании за столом. */
+    texts: DictionaryFactory;
 }
 
-export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLanguage }) => {
-    const t = useTexts();
-    const names = t.seatNames;
+export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLanguage, texts }) => {
     const [setupOpen, setSetupOpen] = useState(true);
     const [tableStarted, setTableStarted] = useState(false);
     const [saved, setSaved] = useState(() => loadGame<PreferansSave>(SAVE_ID, SAVE_VERSION));
@@ -58,6 +59,9 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
     // [EN] The bots wait while the menu or the large sheet covers the table. [RU] Боты ждут, пока стол закрыт меню или крупной пулей.
     const game = usePreferans(!setupOpen && !sheetOpen);
     const { deal } = game;
+    // [EN] The sentences agree with the opponents of this pool. [RU] Фразы согласуются с соперниками этой пули.
+    const t = useMemo(() => texts(game.cast), [texts, game.cast]);
+    const names = t.seatNames;
     const [selected, setSelected] = useState<Card[]>([]);
     const history = useMemo(() => buildSheetHistory(game.log), [game.log]);
     const openSheet = useCallback(() => setSheetOpen(true), []);
@@ -101,6 +105,7 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
         <PlayerSeat
             key={seat}
             name={names[seat]}
+            character={seat === HUMAN_SEAT ? null : game.cast[seat - 1] ?? null}
             position={POSITIONS[seat]}
             hand={deal.hands[seat]}
             visible={isHandVisible(deal, seat, HUMAN_SEAT) || controlledSeat === seat}
@@ -117,7 +122,9 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
     );
 
     return (
-        <div id="preferans-room" className={styles.room} style={{ position: 'relative' }}>
+        <TextsContext.Provider value={t}>
+        <div id="preferans-room" className={styles.room}>
+            <Lair />
             <header className={styles.header}>
                 <div>
                     <h1 className={styles.title}>{t.gameTitle}</h1>
@@ -159,14 +166,14 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
                 </div>
 
                 <div className={sheetStyles.sideOnly}>
-                    <ScoreSheet history={history} balance={game.balance} log={game.log} names={names} titleId="preferans-sheet-side"
+                    <ScoreSheet history={history} balance={game.balance} log={game.log} names={names} variant={game.settings.table.variant} titleId="preferans-sheet-side"
                         poolTarget={poolTarget} poolTotal={game.poolTotal} onExpand={openSheet} />
                 </div>
             </div>
 
             {sheetOpen && (
                 <ScoreSheetDialog labelledBy="preferans-sheet-large" onClose={closeSheet}>
-                    <ScoreSheet history={history} balance={game.balance} log={game.log} names={names} titleId="preferans-sheet-large"
+                    <ScoreSheet history={history} balance={game.balance} log={game.log} names={names} variant={game.settings.table.variant} titleId="preferans-sheet-large"
                         poolTarget={poolTarget} poolTotal={game.poolTotal} large onClose={closeSheet} />
                 </ScoreSheetDialog>
             )}
@@ -185,5 +192,6 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
                     onContinue={continuePool} onStart={startPool} onClose={tableStarted ? () => setSetupOpen(false) : null} />
             )}
         </div>
+        </TextsContext.Provider>
     );
 };

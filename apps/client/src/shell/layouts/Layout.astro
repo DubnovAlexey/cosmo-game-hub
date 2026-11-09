@@ -11,6 +11,7 @@ import '../styles/global.css';
 // [RU] Импортируем UI-компоненты, используя псевдонимы путей
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { withBase } from '../utils/withBase';
 
 // [EN] Define the shape of our Props using a TypeScript interface
 // [RU] Определяем структуру наших Props с помощью интерфейса TypeScript
@@ -30,9 +31,12 @@ const {title} = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Cosmo Game Hub - Play and Learn">
 
-    <!-- [EN] FIX: Dynamic base-aware path for the favicon to prevent 404 errors on GitHub Pages -->
-    <!-- [RU] ИСПРАВЛЕНИЕ: Динамический путь с учетом базового URL для иконки, чтобы предотвратить 404 на GitHub Pages -->
-    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
+    <!-- [EN] The favicon: a red octahedron crystal, shaped like an eight-sided die. WebP 192 px for sharp screens and the
+         UNIVERSE planet, PNG 64 px for the tab. withBase keeps the path inside /cosmo-game-hub/ on GitHub Pages (no 404). -->
+    <!-- [RU] Фавикон: красный кристалл-октаэдр, похожий на восьмигранный игральный кубик. WebP 192 px для чётких экранов и
+         планеты в UNIVERSE, PNG 64 px для вкладки. withBase держит путь внутри /cosmo-game-hub/ на GitHub Pages (без 404). -->
+    <link rel="icon" type="image/webp" sizes="192x192" href={withBase('/favicon.webp')} />
+    <link rel="icon" type="image/png" sizes="64x64" href={withBase('/favicon.png')} />
 
     <!-- [EN] Dynamic title injection -->
     <!-- [RU] Динамическая вставка заголовка -->

@@ -1,0 +1,46 @@
+// [EN] FILE: games/preferans/i18n/characters/en.ts — the company of the lair in English: names and biographies.
+// [RU] ФАЙЛ: обитатели логова по-английски — имена и биографии.
+import type { CharacterId } from '../../characters/roster.ts';
+
+export interface CharacterText { readonly name: string; readonly bio: string }
+
+export const CHARACTERS_EN: Readonly<Record<CharacterId, CharacterText>> = {
+    upyr: { name: 'Grandpa Upyr', bio: 'Has guarded this graveyard since its very first grave. Grumbles that all-passes used to be scarier and pools longer.' },
+    sebastian: { name: 'Sebastian', bio: 'Lives behind a cathedral window and talks only to bats. Bids "six spades" as if preaching a sermon.' },
+    rosalind: { name: 'Rosalind', bio: 'Wears roses from her own grave in her hair. Smiles when you go two down — she uses it instead of lipstick.' },
+    ada: { name: 'Ada', bio: 'Sews dolls out of those who lose a pool to her. Says one of the dolls taught her preferans; the doll has been silent ever since.' },
+    vlad: { name: 'Count Vlad', bio: 'The oldest member of the club: has played misère since 1462. Comes only after sunset and whists strictly like a gentleman.' },
+    lucretia: { name: 'Lucretia', bio: 'Poisoned three pool partners but insists the talon did it. Drinks nothing but Bloody Mary — without Mary.' },
+    isolde: { name: 'Isolde', bio: 'A notary\'s secretary by day and by night too, only in the afterlife. Writes whists in a hand nobody dares to argue with.' },
+    tadeusz: { name: 'Tadeusz', bio: 'Always soaked: he left his umbrella somewhere in 1888. His smile makes partners give up their aces on their own.' },
+    gunther: { name: 'Günther', bio: 'The merriest vampire of the crypt: laughs at every failed game, his own most of all. His dentist has asked him three times to smile less.' },
+    koschei: { name: 'Koschei', bio: 'Deathless, so he can think forty years over a lead. Where he keeps his death is a secret; his trumps everyone knows: up his sleeve.' },
+    vurdalak: { name: 'Vurdalak', bio: 'Has not combed his hair since the century before last and does not intend to. Catches misères with an appetite that unsettles the declarer.' },
+    mortimer: { name: 'Mortimer', bio: 'Chief accountant of the underworld. Remembers every whist you wrote and settles the mountain to a third of a whist — to your regret.' },
+    abraxas: { name: 'Abraxas', bio: 'A seasoned necromancer who has read every book on preferans, including the ones not yet written. The all-seeing eye behind him is a hobby, not cheating.' },
+    netopyr: { name: 'Netopyr', bio: 'Half bat, half appetite. Hangs upside down and is sure he sees your cards from the other side.' },
+    greta: { name: 'Greta', bio: 'A model with no reflection, who has never seen her own make-up. Plays cold, catches misères hot.' },
+    morana: { name: 'Morana', bio: 'The Slavic goddess of winter and death. Brings a rose to every pool, in case somebody goes three down.' },
+    snezhana: { name: 'Snezhana', bio: 'Permafrost in the shape of a girl. The runes on her forehead say "whist" in seven dead languages.' },
+    carmilla: { name: 'Carmilla', bio: 'The crypt\'s most famous vampire and its least patient: she will bid up to a ten rather than sit through an all-pass.' },
+    balthazar: { name: 'Balthazar', bio: 'Carries a candle although he sees perfectly in the dark — it is scarier that way. Claims he once played Pushkin himself and won.' },
+    lorenzo: { name: 'Lorenzo', bio: 'A Venetian aristocrat in an immaculate suit; even his fangs are bespoke. Straightens his tie before every failed game — his or yours.' },
+    berta: { name: 'Bertha', bio: 'A guest from the neighbouring dimension, cook and alchemist. Her goggles hold two nebulae instead of lenses, so she sees the talon before anyone.' },
+    zhorzh: { name: 'Georges', bio: 'A zombie guest from Marseille. Has smoked the same cigar since 1923 and considers misère a diet.' },
+    mortus: { name: 'Brother Mortus', bio: 'A guest from the Monastery of the Eternal All-Pass. The wires on his head run straight to the accounts of the afterlife, so he meditates over every trick.' },
+    lyuska: { name: 'Lyuska', bio: 'An imp from the cauldron next door who dropped in for a game. Her grin scares even the vampires out of whisting against her.' },
+    mara: { name: 'Mara', bio: 'A guest from the reading room: borrowed "The Rules of Preferans" in 1891 and has not returned it. Pays the late fees in whists.' },
+    oktaedr: { name: 'Lich Octahedron', bio: 'A guest who keeps his soul in a crystal octahedron on his forehead — handy, always within reach. Counts tricks faster than you take them.' },
+    helga: { name: 'Helga', bio: 'A guest, system administrator of the other world. Her helmet whispers every layout to her, but she plays fair — almost always.' },
+    morg: { name: 'Doctor Morg', bio: 'A guest pathologist and collector: everyone who goes three down adds to the wall behind him.' },
+    agrippina: { name: 'Agrippina', bio: 'A guest coach of afterlife fitness who lifts tombstones every morning. Wears glasses to look serious and catches misères with one hand.' },
+    sergeant: { name: 'Sergeant Gasmask', bio: 'A guest from the sanitary service who came with his partner to disinfect the crypt and stayed for a pool. Breathes through a filter, so no all-pass scares him.' },
+    klyuv: { name: 'Maestro Beak', bio: 'A guest conductor from the orange dimension. Conducts the auction with a bony hand and pecks up every spare trick.' },
+    dlan: { name: 'The Hand', bio: 'A guest from the abyss who does not quite fit in it — only her hand sticks out. Deals the cards to herself and is very pleased with it.' },
+    edgar: { name: 'Waxen Edgar', bio: 'A guest from a wax museum who finds the candles a bit hot: he melts at every failed game. Consoles himself that he keeps his shape better than the whisters.' },
+    lilith: { name: 'Lilith', bio: 'A guest demoness with a ram\'s horns and a temper to match. Braids her hair from the pools she has won.' },
+    xenon: { name: 'Xenon', bio: 'A guest wearing Saturn\'s rings instead of a halo. Flew in for the talon and will not fly off until he has played a ten.' },
+    chuzhak: { name: 'The Stranger', bio: 'Night watchman of a space corridor. Never eats his partners — only their whists.' },
+    khitin: { name: 'Inspector Chitin', bio: 'A guest detective in a trench coat investigating where the ace of spades went. Suspects everyone, himself most of all.' },
+    semyonych: { name: 'Semyonych the Raccoon', bio: 'A guest from the bin next door. Washes every card before the game, so his deck is always damp and he is always ahead.' },
+};

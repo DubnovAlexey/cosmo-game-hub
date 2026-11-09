@@ -51,7 +51,7 @@ test('a new variant brings its own conventions and drops what does not fit', () 
   const rostov = chooseVariant(withExtras, 'rostov');
   assert.equal(isOn(rostov.config, 'talonLeads'), false, 'Rostov never opens the talon on all-pass');
   assert.ok(isOn(rostov.config, 'stalingrad') && isOn(rostov.config, 'concedeTwo'), 'extras that still fit stay');
-  assert.equal(isPlayable(rostov.config), false, 'the Rostov scoring is not in the engine yet');
+  assert.equal(isPlayable(rostov.config), true, 'Rostov is played since 09.11.2026');
   assert.equal(isOn(chooseVariant(withExtras, 'leningrad').config, 'tenChecked'), false, 'Leningrad whists the ten');
 });
 

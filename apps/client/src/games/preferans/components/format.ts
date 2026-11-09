@@ -6,7 +6,7 @@ import {
     NO_TRUMP, SUIT_SYMBOLS, bidOf, cardsOf, contractOf, otherSeats, rankOf, suitOf,
     type Bid, type Card, type CardSet, type DealResult, type DealState, type Seat,
 } from '../engine/index.ts';
-import { directionOf } from '../../../shared/i18n/languages.ts';
+import { directionOf } from '@shared/i18n/languages';
 import type { Dictionary } from '../i18n/index.ts';
 
 // [EN] Bids and signed numbers are notation and read left to right in every language. Inside Hebrew text they are

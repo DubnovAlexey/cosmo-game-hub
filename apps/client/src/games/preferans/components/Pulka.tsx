@@ -17,22 +17,34 @@ import styles from './ScoreSheet.module.css';
 
 // BEGIN 1. Geometry of the sheet (viewBox units)
 interface Rect { readonly x: number; readonly y: number; readonly w: number; readonly h: number }
-const CIRCLE = { x: 150, y: 96, r: 15 };
+// [EN] The sheet is drawn 20% taller than it is wide-proportioned (Alexey, 09.11: "stretch it down a little"): every
+//      height goes through Y, the writing keeps its size and gets more lines in every band; the circle stays round.
+// [RU] Лист расчерчен на 20% выше прежнего (Алексей, 09.11: «чуть-чуть растянул бы вниз»): каждая высота проходит
+//      через Y, почерк сохраняет размер и получает больше строк в каждой полосе; круг остаётся круглым.
+const SY = 1.2;
+const Y = (value: number): number => Math.round(value * SY * 10) / 10;
+const HEIGHT = Y(260);
+const CIRCLE = { x: 150, y: Y(96), r: 15 };
+const area = (x: number, y: number, w: number, h: number): Rect => ({ x, y: Y(y), w, h: Y(h) });
 /** [EN] Where the entries of every band are written. [RU] Где пишутся записи каждой полосы. */
 const AREA = {
-    leftWhistsTop: { x: 9, y: 9, w: 39, h: 100 },
-    leftWhistsBottom: { x: 9, y: 115, w: 39, h: 98 },
-    leftPool: { x: 53, y: 9, w: 27, h: 180 },
-    leftMountain: { x: 85, y: 9, w: 27, h: 154 },
-    rightMountain: { x: 189, y: 9, w: 27, h: 154 },
-    rightPool: { x: 221, y: 9, w: 27, h: 180 },
-    rightWhistsTop: { x: 253, y: 9, w: 39, h: 100 },
-    rightWhistsBottom: { x: 253, y: 115, w: 39, h: 98 },
-    bottomMountain: { x: 117, y: 168, w: 66, h: 22 },
-    bottomPool: { x: 85, y: 194, w: 130, h: 22 },
-    bottomWhistsLeft: { x: 53, y: 221, w: 94, h: 31 },
-    bottomWhistsRight: { x: 153, y: 221, w: 94, h: 31 },
+    leftWhistsTop: area(9, 9, 39, 100),
+    leftWhistsBottom: area(9, 115, 39, 98),
+    leftPool: area(53, 9, 27, 180),
+    leftMountain: area(85, 9, 27, 154),
+    rightMountain: area(189, 9, 27, 154),
+    rightPool: area(221, 9, 27, 180),
+    rightWhistsTop: area(253, 9, 39, 100),
+    rightWhistsBottom: area(253, 115, 39, 98),
+    bottomMountain: area(117, 168, 66, 22),
+    bottomPool: area(85, 194, 130, 22),
+    bottomWhistsLeft: area(53, 221, 94, 31),
+    bottomWhistsRight: area(153, 221, 94, 31),
 } satisfies Record<string, Rect>;
+/** [EN] A name as the pulka writes it: the last word ("Count Vlad" → "Vlad"). [RU] Имя, как его пишут в пуле: последнее слово. */
+const shortName = (name: string): string => name.trim().split(/\s+/).pop() ?? name;
+/** [EN] A long name is squeezed into its sector, as a hand writes tighter near a line. [RU] Длинное имя ужимается в свой сектор. */
+const fitName = (name: string, room: number): React.SVGProps<SVGTextElement> => (name.length * 5.2 > room ? { textLength: room, lengthAdjust: 'spacingAndGlyphs' } : {});
 
 /** [EN] A slightly uneven pen line. [RU] Чуть неровная линия ручкой. */
 const stroke = (x1: number, y1: number, x2: number, y2: number, seed: number): string => {
@@ -48,14 +60,14 @@ const roundStroke = (cx: number, cy: number, rx: number, ry: number): string =>
     + ` C${cx - rx} ${cy + ry + 1} ${cx + rx + 0.5} ${cy + ry} ${cx + rx - 0.4} ${cy - 2.5}`;
 
 const RULES: readonly string[] = [
-    stroke(5.5, 6, 294.5, 5.5, 1), stroke(294.5, 5, 295, 254, 2), stroke(295, 254.5, 5, 254, 3), stroke(5.5, 255, 6, 5.5, 4),
-    stroke(50, 6, 50, 218, 5), stroke(82, 6, 82, 192, 6), stroke(114, 6, 114, 166, 7),
-    stroke(250, 6, 250, 218, 8), stroke(218, 6, 218, 192, 9), stroke(186, 6, 186, 166, 10),
-    stroke(114, 166, 186, 166, 11), stroke(82, 192, 218, 192, 12), stroke(50, 218, 250, 218, 13),
-    stroke(114, 166, 6, 254, 14), stroke(186, 166, 294, 254, 15),
+    stroke(5.5, 6, 294.5, 5.5, 1), stroke(294.5, 5, 295, Y(254), 2), stroke(295, Y(254.5), 5, Y(254), 3), stroke(5.5, Y(255), 6, 5.5, 4),
+    stroke(50, 6, 50, Y(218), 5), stroke(82, 6, 82, Y(192), 6), stroke(114, 6, 114, Y(166), 7),
+    stroke(250, 6, 250, Y(218), 8), stroke(218, 6, 218, Y(192), 9), stroke(186, 6, 186, Y(166), 10),
+    stroke(114, Y(166), 186, Y(166), 11), stroke(82, Y(192), 218, Y(192), 12), stroke(50, Y(218), 250, Y(218), 13),
+    stroke(114, Y(166), 6, Y(254), 14), stroke(186, Y(166), 294, Y(254), 15),
     stroke(150, 6, 150, CIRCLE.y - CIRCLE.r, 16),
-    stroke(143.1, 109.3, 114, 166, 17), stroke(156.9, 109.3, 186, 166, 18),
-    stroke(6, 112, 50, 112, 19), stroke(250, 112, 294, 112, 20), stroke(150, 218, 150, 254, 21),
+    stroke(CIRCLE.x - 6.9, CIRCLE.y + 13.3, 114, Y(166), 17), stroke(CIRCLE.x + 6.9, CIRCLE.y + 13.3, 186, Y(166), 18),
+    stroke(6, Y(112), 50, Y(112), 19), stroke(250, Y(112), 294, Y(112), 20), stroke(150, Y(218), 150, Y(254), 21),
     roundStroke(CIRCLE.x, CIRCLE.y, CIRCLE.r, CIRCLE.r),
 ];
 // END 1
@@ -139,10 +151,12 @@ export const Pulka: React.FC<PulkaProps> = ({ history, names, poolTarget, balanc
     const { lastDeal } = history;
     const band = (kind: 'pool' | 'mountain', seat: number, area: Rect, seed: number) =>
         <BandInk band={history[kind][seat]} area={area} lastDeal={lastDeal} seed={seed} />;
-    const whists = (writer: number, target: number, area: Rect, seed: number) => (
+    // [EN] Whose whists these are: the first two letters of the name in pencil (Koschei and Carmilla both start with K).
+    // [RU] На кого эти висты: первые две буквы имени карандашом (Кощей и Кармилла оба начинаются на «К»).
+    const whists = (writer: number, target: number, box: Rect, seed: number) => (
         <>
-            <text className={styles.pencil} x={area.x + 1} y={area.y + 7}>{names[target].charAt(0)}</text>
-            <BandInk band={history.whists[writer][target]} area={{ ...area, x: area.x + 7, w: area.w - 7 }} lastDeal={lastDeal} seed={seed} />
+            <text className={styles.pencil} x={box.x + 1} y={box.y + 7}>{shortName(names[target]).slice(0, 2)}</text>
+            <BandInk band={history.whists[writer][target]} area={{ ...box, x: box.x + 10, w: box.w - 10 }} lastDeal={lastDeal} seed={seed} />
         </>
     );
     // [EN] Results by the circle, as on paper: left, right and below it. [RU] Итоги у круга, как на бумаге: слева, справа и под ним.
@@ -162,20 +176,20 @@ export const Pulka: React.FC<PulkaProps> = ({ history, names, poolTarget, balanc
     };
     return (
         <figure className={`${styles.paper} ${large ? styles.paperLarge : ''}`} dir="ltr">
-            <svg viewBox="0 0 300 260" role="img" aria-label={t.sheet.drawing(poolTarget)}>
+            <svg viewBox={`0 0 300 ${HEIGHT}`} role="img" aria-label={t.sheet.drawing(poolTarget)}>
                 <g className={styles.rules}>
                     {RULES.map((d, index) => <path key={index} d={d} pathLength={1} style={{ animationDelay: `${(index * 0.04).toFixed(2)}s` }} />)}
                 </g>
                 <g>
-                    <text className={styles.hand} x={132} y={22} textAnchor="middle">{names[1]}</text>
-                    <text className={styles.hand} x={168} y={22} textAnchor="middle">{names[2]}</text>
-                    <text className={styles.hand} x={150} y={160} textAnchor="middle">{names[0]}</text>
+                    <text className={styles.hand} x={132} y={Y(22)} textAnchor="middle" {...fitName(shortName(names[1]), 32)}>{shortName(names[1])}</text>
+                    <text className={styles.hand} x={168} y={Y(22)} textAnchor="middle" {...fitName(shortName(names[2]), 32)}>{shortName(names[2])}</text>
+                    <text className={styles.hand} x={150} y={Y(160)} textAnchor="middle" {...fitName(shortName(names[0]), 64)}>{shortName(names[0])}</text>
                     <g><title>{t.sheet.closesAt(poolTarget * 3)}</title>
                         <Ink text={String(poolTarget)} x={CIRCLE.x} y={CIRCLE.y - 6} size={12} seed={7} anchor="middle" />
                     </g>
-                    {result(1, 132, 48)}
-                    {result(2, 168, 48)}
-                    {result(0, 150, 128)}
+                    {result(1, 132, Y(48))}
+                    {result(2, 168, Y(48))}
+                    {result(0, 150, Y(128))}
 
                     {whists(1, 2, AREA.leftWhistsTop, 1)}
                     {whists(1, 0, AREA.leftWhistsBottom, 2)}

@@ -15,7 +15,7 @@ import { readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { performance } from 'node:perf_hooks';
-import { BASE, emulate, heapMb, launch, longTasks, open, sleep, stats } from './cdp.mjs';
+import { BASE, emulate, heapMb, launch, longTasks, open, stats } from './cdp.mjs';
 
 const arg = (name, fallback) => {
     const index = process.argv.indexOf(`--${name}`);

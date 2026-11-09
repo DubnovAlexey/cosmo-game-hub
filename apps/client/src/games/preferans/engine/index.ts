@@ -4,6 +4,9 @@
 //   code runs in the browser UI, in a Web Worker for the bots, in Node tests and could run on a server.
 // =====================================================================
 export * from './cards.ts';
+// [EN] A relative path on purpose: Node runs the engine directly in the tests and knows no @shared alias.
+// [RU] Относительный путь нарочно: Node запускает движок прямо в тестах и не знает псевдонима @shared.
+// noinspection ES6PreferShortImport
 export * from '../../../shared/engine/random.ts';
 export * from './bids.ts';
 export * from './rules.ts';

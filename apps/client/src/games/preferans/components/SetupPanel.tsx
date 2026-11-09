@@ -14,11 +14,13 @@ import type { GameResult, GameSaveState } from '@shared/utils/storageEngine';
 import { LanguageSwitch } from '@shared/components/LanguageSwitch';
 import type { Language } from '@shared/i18n/languages';
 import {
-    OPTIONS, PLAYER_CHOICES, POOL_CHOICES, PROGRESSION_CHOICES, VARIANT_CHOICES,
+    OPTIONS, PLAYER_CHOICES, POOL_CHOICES, PROGRESSION_CHOICES, VARIANT_CHOICES, allPassPrices, hasProgression,
     choosePlayers, choosePool, chooseProgression, chooseVariant, closedReason, isOn, isPlayable, normalizeTable, plainTable, toggleOption,
     type Change, type Choice, type OptionId, type OptionKind, type TableConfig,
 } from '../engine/index.ts';
-import type { BotStrength, PreferansResultSummary, PreferansSave, PreferansSettings } from '../hooks/usePreferans';
+import { championOf, type BotStrength, type PreferansResultSummary, type PreferansSave, type PreferansSettings } from '../hooks/usePreferans';
+import { ROSTER, isFemale, portraitPath, type CharacterId } from '../characters/roster.ts';
+import { withBase } from '@shell/utils/withBase';
 import { useTexts, type Dictionary, type Explained } from '../i18n/index.ts';
 import { signed } from './format';
 import styles from './Preferans.module.css';
@@ -120,11 +122,49 @@ const OptionRow: React.FC<{ id: OptionId; table: TableConfig; open: boolean; onI
     );
 };
 
+// [EN] Who will sit at the table: the whole company of the lair as small portraits pinned to the page. A click picks
+//      a character for the next free seat (two at most, in order); a second click lets it go. "Random" leaves both
+//      seats to the lair, and the winner of the last pool then keeps a seat (the note says who).
+// [RU] Кто сядет за стол: все обитатели логова маленькими портретами, приколотыми к странице. Нажатие сажает
+//      персонажа на следующее свободное место (не больше двух, по порядку); повторное — отпускает. «Случайные» отдаёт
+//      оба места логову, и тогда победитель прошлой пули сохраняет место (записка говорит, кто это).
+const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champion: CharacterId | null; onChange: (next: readonly (CharacterId | null)[]) => void }> = ({ value, champion, onChange }) => {
+    const t = useTexts();
+    const chosen = value.filter((id): id is CharacterId => id !== null);
+    const toggle = (id: CharacterId) => {
+        const next = chosen.includes(id) ? chosen.filter(other => other !== id) : [...chosen, id].slice(-2);
+        onChange([next[0] ?? null, next[1] ?? null]);
+    };
+    return (
+        <section className={`${styles.setupSection} ${styles.menuItem}`}>
+            <p className={styles.setupLabel}>{t.setup.opponents} <span className={styles.setupNote}>{t.setup.opponentsNote}</span></p>
+            <div className={styles.gallery} role="group" aria-label={t.setup.opponents}>
+                {ROSTER.map(({ id }) => {
+                    const seat = chosen.indexOf(id);
+                    return (
+                        <button key={id} type="button" className={`${styles.galleryItem} ${seat >= 0 ? styles.galleryOn : ''}`}
+                            aria-pressed={seat >= 0} title={t.characters[id].bio} onClick={() => toggle(id)}>
+                            <img src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" />
+                            <span>{t.characters[id].name}</span>
+                            {seat >= 0 && <b className={styles.galleryMark} aria-hidden="true">{seat + 1}</b>}
+                        </button>
+                    );
+                })}
+            </div>
+            <div className={styles.row}>
+                <button type="button" className={styles.button} disabled={chosen.length === 0} onClick={() => onChange([null, null])}>{t.setup.randomOpponents}</button>
+                {champion && chosen.length < 2 && <span className={styles.hint}>{t.setup.champion(t.characters[champion].name, isFemale(champion))}</span>}
+            </div>
+        </section>
+    );
+};
+
 /** [EN] The order, read back like a waiter does. [RU] Заказ, прочитанный вслух, как это делает официант. */
 function tableSummary(table: TableConfig, strength: BotStrength, t: Dictionary): string {
     const parts = [
-        t.setup.summary.players(table.players), t.explain.variants[table.variant].name,
-        t.setup.summary.pool(table.poolTarget), t.setup.summary.allPass(t.explain.progressionLabels[table.progression]),
+        t.setup.summary.players(table.players), t.explain.variants[table.variant].name, t.setup.summary.pool(table.poolTarget),
+        // [EN] Leningrad doubles the prices (2 · 4 · 6); Rostov pays all-pass in whists. [RU] Ленинградка удваивает цены; Ростовка платит вистами.
+        hasProgression(table) ? t.setup.summary.allPass(t.explain.progressionLabel(allPassPrices(table))) : t.setup.summary.allPassWhists,
     ];
     for (const spec of OPTIONS) {
         if (spec.kind === 'convention' && !isOn(table, spec.id) && closedReason(table, spec.id)?.kind !== 'variant') parts.push(t.setup.summary.without(t.explain.options[spec.id].name));
@@ -138,6 +178,8 @@ export const SetupPanel: React.FC<SetupPanelProps> = ({ initial, saved, results,
     const t = useTexts();
     const [table, setTable] = useState<TableConfig>(() => normalizeTable(initial.table));
     const [strength, setStrength] = useState<BotStrength>(initial.strength);
+    const [opponents, setOpponents] = useState<readonly (CharacterId | null)[]>(() => initial.opponents ?? [null, null]);
+    const champion = championOf(results);
     const [dropped, setDropped] = useState<readonly OptionId[]>([]);
     const [openInfo, setOpenInfo] = useState<string | null>(null);
     const info = (key: string) => ({ open: openInfo === key, onInfo: () => setOpenInfo(current => (current === key ? null : key)) });
@@ -172,7 +214,7 @@ export const SetupPanel: React.FC<SetupPanelProps> = ({ initial, saved, results,
                 )}
 
                 <section className={styles.setupSection}>
-                    <button type="button" className={`${styles.button} ${savedData ? '' : styles.buttonPrimary} ${styles.setupWide}`} onClick={() => onStart({ table: plainTable(), strength })}>
+                    <button type="button" className={`${styles.button} ${savedData ? '' : styles.buttonPrimary} ${styles.setupWide}`} onClick={() => onStart({ table: plainTable(), strength, opponents })}>
                         {t.setup.playPlain}
                     </button>
                     <p className={styles.hint}>{t.setup.playPlainHint}</p>
@@ -189,12 +231,16 @@ export const SetupPanel: React.FC<SetupPanelProps> = ({ initial, saved, results,
                 <ChoiceGroup id="preferans-info-pool" title={t.setup.pool} choices={POOL_CHOICES} value={table.poolTarget}
                     label={value => String(value)} hint={() => t.explain.pool.what}
                     info={<Explanation text={t.explain.pool} t={t} />} {...info('pool')} onChoose={value => apply(choosePool(table, value))} />
-                <ChoiceGroup id="preferans-info-progression" title={t.setup.progression} choices={PROGRESSION_CHOICES} value={table.progression}
-                    label={value => t.explain.progressionLabels[value]} hint={() => t.explain.progression.what}
-                    info={<Explanation text={t.explain.progression} t={t} />} {...info('progression')} onChoose={value => apply(chooseProgression(table, value))} />
+                {hasProgression(table) && (
+                    // [EN] Rostov has no all-pass progression: the group is not shown there. [RU] В Ростовке прогрессии распасов нет: группа не показывается.
+                    <ChoiceGroup id="preferans-info-progression" title={t.setup.progression} choices={PROGRESSION_CHOICES} value={table.progression}
+                        label={value => t.explain.progressionLabel(allPassPrices({ ...table, progression: value }))} hint={() => t.explain.progression.what}
+                        info={<Explanation text={t.explain.progression} t={t} />} {...info('progression')} onChoose={value => apply(chooseProgression(table, value))} />
+                )}
                 <ChoiceGroup id="preferans-info-bots" title={t.setup.bots} choices={STRENGTHS} value={strength}
                     label={value => t.setup.strength[value]} hint={() => t.explain.bots.what}
                     info={<Explanation text={t.explain.bots} t={t} />} {...info('bots')} onChoose={setStrength} />
+                <OpponentPicker value={opponents} champion={champion} onChange={setOpponents} />
 
                 <section className={styles.setupSection}>
                     <p className={styles.setupLabel}>{t.setup.conventions} <span className={styles.setupNote}>{t.setup.conventionsNote}</span></p>
@@ -210,7 +256,7 @@ export const SetupPanel: React.FC<SetupPanelProps> = ({ initial, saved, results,
                 )}
                 <p className={styles.order}><b>{t.setup.yourTable}</b> {tableSummary(table, strength, t)}</p>
                 <div className={styles.row}>
-                    <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} disabled={!isPlayable(table)} onClick={() => onStart({ table, strength })}>{t.setup.play}</button>
+                    <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} disabled={!isPlayable(table)} onClick={() => onStart({ table, strength, opponents })}>{t.setup.play}</button>
                     <button type="button" className={styles.button} onClick={() => apply({ config: plainTable(), dropped: [] })}>{t.setup.reset}</button>
                     {onClose && <button type="button" className={styles.button} onClick={onClose}>{t.setup.back}</button>}
                 </div>

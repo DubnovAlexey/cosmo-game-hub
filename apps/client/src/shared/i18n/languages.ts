@@ -45,13 +45,24 @@ export function pickLanguage({ saved, browser = [] }: Environment): Language {
   return 'en';
 }
 
+/** The saved choice; null without storage (private mode, blocked site data). */
+function savedChoice(): string | null {
+  try { return globalThis.localStorage?.getItem(LANGUAGE_KEY) ?? null; } catch { return null; }
+}
+
+/** The browser's languages, best first; empty outside a browser. */
+function browserLanguages(): readonly string[] {
+  try {
+    const browser = globalThis.navigator;
+    return browser?.languages ?? (browser?.language ? [browser.language] : []);
+  } catch {
+    return [];
+  }
+}
+
 /** Reads the browser; every access is guarded (no window, blocked storage). */
 export function detectLanguage(): Language {
-  let saved: string | null = null;
-  let browser: readonly string[] = [];
-  try { saved = globalThis.localStorage?.getItem(LANGUAGE_KEY) ?? null; } catch { saved = null; }
-  try { browser = globalThis.navigator?.languages ?? (globalThis.navigator?.language ? [globalThis.navigator.language] : []); } catch { browser = []; }
-  return pickLanguage({ saved, browser });
+  return pickLanguage({ saved: savedChoice(), browser: browserLanguages() });
 }
 
 export function rememberLanguage(language: Language): void {

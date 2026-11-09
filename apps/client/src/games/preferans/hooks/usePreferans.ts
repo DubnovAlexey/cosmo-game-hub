@@ -6,17 +6,19 @@
 //      ровно с того места, где её оставили (в автобусе, в дороге).
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-    SOCHI, ZERO_SCORE, addScores, applyAction, controllerOf, createRandom, customizeRules, newDeal, nextDeal, normalizeTable,
-    plainTable, settle, toRuleOptions,
+    ZERO_SCORE, addScores, applyAction, controllerOf, createRandom, newDeal, nextDeal, normalizeTable, plainTable, rulesForTable, settle,
     type Action, type DealResult, type DealScore, type DealState, type RuleSet, type Seat, type TableConfig,
 } from '../engine/index.ts';
 import type { BotRequest, BotResponse } from '../engine/worker.ts';
-import { addGameResult, saveGame } from '@shared/utils/storageEngine';
+import { DEFAULT_CAST, castForNewPool, characterInfo, isCharacterId, normalizeCast, type Cast, type CharacterId } from '../characters/roster.ts';
+import { addGameResult, loadGameResults, saveGame, type GameResult } from '@shared/utils/storageEngine';
 
-// [EN] The human always sits at the bottom (seat 0); seats 1 and 2 follow clockwise.
-// [RU] Человек всегда внизу (место 0), места 1 и 2 идут по часовой стрелке.
+// [EN] The human always sits at the bottom (seat 0); seats 1 and 2 follow clockwise. Who sits there changes from
+//      pool to pool: two dwellers of the lair (characters/roster.ts).
+// [RU] Человек всегда внизу (место 0), места 1 и 2 идут по часовой стрелке. Кто на них сидит, меняется от пули к
+//      пуле: два обитателя логова (characters/roster.ts).
 export const HUMAN_SEAT: Seat = 0;
-export const SEAT_NAMES: readonly string[] = ['You', 'Orion', 'Vega'];
+const OPPONENTS = 2;
 
 // [EN] Who decides for a seat. 'remote' is the extension point for online play.
 //      TODO(online): a remote seat receives its view of the deal and sends actions through a server that runs the
@@ -39,9 +41,27 @@ export interface PreferansSettings {
     /** [EN] What was chosen on the table menu (engine/tableOptions.ts). [RU] Что выбрано в меню стола. */
     readonly table: TableConfig;
     readonly strength: BotStrength;
+    /**
+     * [EN] Opponents picked on the menu, seat by seat; null or absent = the lair decides (the last winner stays).
+     * [RU] Соперники, выбранные в меню, по местам; null или нет — решает логово (победитель прошлой пули остаётся).
+     */
+    readonly opponents?: readonly (CharacterId | null)[];
 }
-export const DEFAULT_SETTINGS: PreferansSettings = { table: plainTable(), strength: 'strong' };
-export const rulesFor = (settings: PreferansSettings): RuleSet => customizeRules(SOCHI, toRuleOptions(settings.table));
+export const DEFAULT_SETTINGS: PreferansSettings = { table: plainTable(), strength: 'strong', opponents: [null, null] };
+
+/**
+ * [EN] Who won the last closed pool, if it was an opponent: the champion keeps the seat in the next pool.
+ * [RU] Кто выиграл последнюю закрытую пулю, если это был соперник: чемпион остаётся за столом в следующей пуле.
+ */
+export function championOf(results: readonly GameResult<PreferansResultSummary>[]): CharacterId | null {
+    const last = results[0]?.summary;
+    if (!last || !Array.isArray(last.balance) || !Array.isArray(last.names)) return null;
+    let best = 0;
+    last.balance.forEach((value, seat) => { if (value > last.balance[best]) best = seat; });
+    const id = last.names[best];
+    return best > 0 && last.balance[best] > 0.05 && isCharacterId(id) ? id : null;
+}
+export const rulesFor = (settings: PreferansSettings): RuleSet => rulesForTable(settings.table);
 
 export interface DealLogEntry {
     readonly number: number;
@@ -59,6 +79,8 @@ export interface PreferansSave {
     readonly deal: DealState;
     readonly sheet: DealScore;
     readonly log: readonly DealLogEntry[];
+    /** [EN] The opponents of this pool; absent in saves made before 09.11 (Vlad and Carmilla then). [RU] Соперники этой пули. */
+    readonly cast?: Cast;
 }
 export interface PreferansResultSummary {
     readonly balance: readonly number[];
@@ -84,6 +106,7 @@ export function usePreferans(active: boolean) {
     const [deal, setDeal] = useState<DealState>(() => firstDeal(DEFAULT_SETTINGS));
     const [sheet, setSheet] = useState<DealScore>(ZERO_SCORE);
     const [log, setLog] = useState<DealLogEntry[]>([]);
+    const [cast, setCast] = useState<Cast>(DEFAULT_CAST);
     const [thinking, setThinking] = useState(false);
     const workerRef = useRef<Worker | null>(null);
     const requestId = useRef(0);
@@ -110,7 +133,17 @@ export function usePreferans(active: boolean) {
     const askBot = useCallback((state: DealState): Promise<Action> => {
         requestId.current += 1;
         const id = requestId.current;
-        const request: BotRequest = { id, state, seed: (seed.current + id * 7919) >>> 0, ...STRENGTH[settings.strength] };
+        // [EN] The character who decides (in open whist the whister plays the passer's cards) brings its manner:
+        //      how boldly it bids and whists, and how long it thinks (effort scales the bot strength).
+        // [RU] Решающий персонаж (в висте в светлую вистующий играет и за пасовавшего) приносит свою манеру:
+        //      как смело заявляет и вистует и как долго думает (усердие масштабирует силу бота).
+        const controller = state.turn === null ? 1 : controllerOf(state, state.turn);
+        const who = characterInfo(cast[controller - 1] ?? DEFAULT_CAST[0]);
+        const base = STRENGTH[settings.strength];
+        const request: BotRequest = {
+            id, state, seed: (seed.current + id * 7919) >>> 0, style: who.style,
+            samples: Math.max(4, Math.round(base.samples * who.effort)), timeBudgetMs: Math.round(base.timeBudgetMs * who.effort),
+        };
         const worker = workerRef.current;
         if (!worker) {
             // [EN] No worker (very old browser): a lighter search on the main thread. Loaded only in that case,
@@ -133,7 +166,7 @@ export function usePreferans(active: boolean) {
             worker.addEventListener('message', onMessage);
             worker.postMessage(request);
         });
-    }, [settings.strength]);
+    }, [settings.strength, cast]);
 
     // [EN] Whenever a bot seat has to act, ask the worker and apply its answer after a short pause.
     // [RU] Когда ход за местом бота, спрашиваем воркер и применяем ответ после короткой паузы.
@@ -175,8 +208,8 @@ export function usePreferans(active: boolean) {
     // [RU] Сохраняется после каждого изменения пули; сохранение маленькое (около 10 КБ простых данных).
     useEffect(() => {
         if (!active) return;
-        saveGame<PreferansSave>(SAVE_ID, SAVE_VERSION, { settings, deal, sheet, log });
-    }, [active, settings, deal, sheet, log]);
+        saveGame<PreferansSave>(SAVE_ID, SAVE_VERSION, { settings, deal, sheet, log, cast });
+    }, [active, settings, deal, sheet, log, cast]);
 
     const isHumanTurn = deal.turn !== null && SEAT_KINDS[controllerOf(deal, deal.turn)] === 'human';
 
@@ -204,8 +237,8 @@ export function usePreferans(active: boolean) {
     useEffect(() => {
         if (!gameOver || resultSaved.current) return;
         resultSaved.current = true;
-        addGameResult<PreferansResultSummary>(SAVE_ID, { balance, deals: log.length, poolTarget, names: SEAT_NAMES });
-    }, [gameOver, balance, log.length, poolTarget]);
+        addGameResult<PreferansResultSummary>(SAVE_ID, { balance, deals: log.length, poolTarget, names: ['you', ...cast] });
+    }, [gameOver, balance, log.length, poolTarget, cast]);
 
     const startNextDeal = useCallback(() => {
         setDeal(current => (current.phase === 'done' ? nextDeal(current, { random: createRandom(freshSeed()) }) : current));
@@ -219,6 +252,10 @@ export function usePreferans(active: boolean) {
         setSettings(next);
         setSheet(ZERO_SCORE);
         setLog([]);
+        // [EN] A new pool, a new company: the opponents picked on the menu, the champion of the last pool, the rest new.
+        // [RU] Новая пуля — новая компания: выбранные в меню, чемпион прошлой пули, остальные — новые лица.
+        const champion = championOf(loadGameResults<PreferansResultSummary>(SAVE_ID));
+        setCast(current => castForNewPool(next.opponents ?? [], OPPONENTS, createRandom(seed.current ^ 0x5bd1e995), current, champion));
         setThinking(false);
         setDeal(firstDeal(next));
     }, []);
@@ -228,12 +265,15 @@ export function usePreferans(active: boolean) {
         const table = normalizeTable(save.settings.table); // a save is data from outside: made safe first
         recorded.current = save.deal.phase === 'done' ? save.deal : null; // its result is already on the sheet
         resultSaved.current = save.deal.phase === 'done' && save.sheet.pool.reduce((a, b) => a + b, 0) >= table.poolTarget * 3;
-        setSettings({ ...save.settings, table });
+        setSettings({ ...save.settings, table, opponents: save.settings.opponents ?? [null, null] });
         setSheet(save.sheet);
         setLog([...save.log]);
+        setCast(normalizeCast(save.cast, OPPONENTS));
         setThinking(false);
-        setDeal(save.deal);
+        // [EN] The rules follow from the table menu: rebuilt, so a pool saved before a rule field existed plays on.
+        // [RU] Правила следуют из меню стола: собираем заново, и пуля, сохранённая до нового поля правил, играется дальше.
+        setDeal({ ...save.deal, rules: rulesForTable(table) });
     }, []);
 
-    return { deal, settings, sheet, log, thinking, isHumanTurn, act, startNextDeal, restart, load, gameOver, balance, poolTotal };
+    return { deal, settings, sheet, log, cast, thinking, isHumanTurn, act, startNextDeal, restart, load, gameOver, balance, poolTotal };
 }

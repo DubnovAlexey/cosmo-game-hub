@@ -9,8 +9,23 @@
 
 /* ===== 1. Room, felt and layout / Комната, сукно и раскладка ===== */
 .room {
-    --card-w: clamp(44px, 6.4vw, 76px);
+    /* [EN] Cards 18% larger than at first (Alexey, 08.11). [RU] Карты на 18% крупнее первоначальных (Алексей, 08.11). */
+    --card-w: clamp(52px, 7.5vw, 90px);
     --card-h: calc(var(--card-w) * 1.42);
+    /* [EN] The lair's type (fonts are imported in PreferansGame.tsx): dripping blood for the title, the Church
+            Slavonic letters of an old grimoire for names, plaques and messages, a gothic-novel serif for the rest.
+            Hebrew falls back to a system serif (only the title font draws Hebrew).
+       [RU] Шрифты логова (подключены в PreferansGame.tsx): стекающая кровь для заголовка, церковнославянские буквы
+            старого гримуара для имён, табличек и сообщений, антиква готического романа для остального. Иврит берёт
+            системную антикву (иврит рисует только шрифт заголовка). */
+    --horror: 'Rubik Wet Paint', 'Ponomar', Georgia, serif;
+    --grimoire: 'Ponomar', 'Cormorant Garamond', Georgia, 'David', serif;
+    --print: 'Cormorant Garamond', Georgia, 'Times New Roman', 'David', serif;
+    --bone: #eee2c4;
+    --brass: #c9a35f;
+    --blood: #9b111e;
+    --blood-bright: #d1202f;
+    --candle: #ffb54a;
     --cyan: #5eead4;
     --violet: #a78bfa;
     --gold: #fbbf24;
@@ -29,24 +44,35 @@
         repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 4px),
         radial-gradient(ellipse at 50% 24%, rgba(255, 226, 158, 0.11), transparent 62%),
         radial-gradient(ellipse at 50% 40%, #187a4c 0%, #10603a 40%, #0b4a2c 72%, #07331e 100%);
-    /* [EN] The wooden rail around the felt: a light edge, walnut, a dark seam, and the shadow on the floor.
-       [RU] Деревянный бортик вокруг сукна: светлая кромка, орех, тёмный шов и тень на полу. */
-    --rail: 0 0 0 2px #7b4b29, 0 0 0 6px #553118, 0 0 0 7px #24130a, 0 22px 60px rgba(0, 0, 0, 0.6);
+    /* [EN] The rail around the felt: ebony with a dull bronze edge, a black seam and a thin line of old blood,
+            then the shadow on the crypt floor.
+       [RU] Бортик вокруг сукна: эбеновое дерево с тусклой бронзовой кромкой, чёрный шов и тонкая полоса
+            запёкшейся крови, дальше тень на полу склепа. */
+    --rail: 0 0 0 2px #5a3a22, 0 0 0 6px #1d0f0a, 0 0 0 7px #000, 0 0 0 9px rgba(155, 17, 30, 0.38), 0 22px 60px rgba(0, 0, 0, 0.75);
+    position: relative;
+    isolation: isolate;
     width: 100%;
     min-height: 100vh;
     padding: 18px clamp(10px, 2.5vw, 28px) 40px;
     color: var(--ink);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--print);
+    font-weight: 600;
+    /* [EN] A crypt instead of open space: dark stone blocks, a red haze behind the table, the light of the candles
+            on both sides. [RU] Склеп вместо космоса: тёмная каменная кладка, красная дымка за столом, свет свечей
+            по бокам. */
     background:
-        radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
-        radial-gradient(1px 1px at 72% 32%, rgba(255, 255, 255, 0.55) 50%, transparent 51%),
-        radial-gradient(1.5px 1.5px at 38% 78%, rgba(255, 255, 255, 0.5) 50%, transparent 51%),
-        radial-gradient(1px 1px at 88% 82%, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
-        radial-gradient(ellipse at 50% 35%, #24164a 0%, #0a0717 62%, #05040a 100%);
+        radial-gradient(ellipse 60% 45% at 50% 40%, rgba(130, 16, 28, 0.2), transparent 72%),
+        radial-gradient(ellipse 22% 38% at 5% 58%, rgba(255, 160, 60, 0.1), transparent 70%),
+        radial-gradient(ellipse 22% 38% at 95% 58%, rgba(255, 160, 60, 0.1), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.035' stroke-width='2'%3E%3Cpath d='M0 1H240M0 41H240M0 81H240'/%3E%3Cpath d='M72 1V41M168 1V41M28 41V81M118 41V81M206 41V81M88 81V120M182 81V120'/%3E%3C/g%3E%3Cg fill='%23000000' fill-opacity='0.16'%3E%3Crect x='2' y='3' width='68' height='36'/%3E%3Crect x='170' y='3' width='68' height='36'/%3E%3Crect x='30' y='43' width='86' height='36'/%3E%3Crect x='120' y='83' width='60' height='35'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.6 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"),
+        radial-gradient(ellipse at 50% 35%, #1b0f1a 0%, #0c070d 60%, #040304 100%);
     background-attachment: fixed;
 }
 
 .header {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -56,18 +82,23 @@
     margin: 0 auto 16px;
 }
 
+/* [EN] The title is written in blood that still runs down. [RU] Заголовок написан кровью, которая ещё стекает. */
 .title {
     margin: 0;
-    font-size: clamp(1.5rem, 3vw, 2.1rem);
-    letter-spacing: 0.22em;
+    font-family: var(--horror);
+    font-weight: 400;
+    font-size: clamp(1.9rem, 3.8vw, 2.8rem);
+    line-height: 1.15;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    background: linear-gradient(180deg, #ff5a5a 0%, #c1121f 42%, #6a0410 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 0 #1a0003) drop-shadow(0 0 14px rgba(209, 32, 47, 0.35));
 }
 
-.subtitle { margin: 2px 0 0; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.04em; }
+.subtitle { margin: 2px 0 0; color: #b9a98c; font-size: 0.98rem; font-style: italic; letter-spacing: 0.02em; }
 
 .settings { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); }
 .settings select {
@@ -84,8 +115,10 @@
         score sheet next to the cards. [RU] Одно сукно подо всем, что лежит на столе: игровая зона, панель решений
         и на компьютере пуля рядом с картами. */
 .layout {
+    position: relative;
+    z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-columns: minmax(0, 1fr) 340px;
     gap: 20px 26px;
     max-width: 1280px;
     margin: 0 auto;
@@ -110,9 +143,9 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
     grid-template-rows: auto minmax(calc(var(--card-h) * 2.3), auto) auto;
     grid-template-areas:
-        "left  info  right"
-        "left  trick right"
-        "hand  hand  hand";
+        "leftSeat info  rightSeat"
+        "leftSeat trick rightSeat"
+        "hand     hand  hand";
     gap: 14px;
     padding: clamp(14px, 2.4vw, 26px);
     border-radius: 30px;
@@ -122,8 +155,9 @@
     outline-offset: -7px;
 }
 
-.seatLeft { grid-area: left; }
-.seatRight { grid-area: right; }
+/* [EN] Area names avoid the words left/right, which CSS checkers read as keywords. [RU] Имена областей без слов left/right: проверщики CSS считают их ключевыми словами. */
+.seatLeft { grid-area: leftSeat; }
+.seatRight { grid-area: rightSeat; }
 .seatBottom { grid-area: hand; }
 .info { grid-area: info; }
 .trickZone { grid-area: trick; }
@@ -131,7 +165,7 @@
 /* [EN] Phones: the whole table must fit one screen — compact header, thinner rail padding, lower trick zone.
    [RU] Телефоны: весь стол должен помещаться на один экран — компактный заголовок, тоньше поля сукна, ниже зона взятки. */
 @media (max-width: 640px) {
-    .room { --card-w: clamp(38px, 10.5vw, 52px); padding-top: 10px; }
+    .room { --card-w: clamp(40px, 11.6vw, 58px); padding-top: 10px; }
     .header { margin-bottom: 10px; }
     .title { font-size: 1.25rem; letter-spacing: 0.16em; }
     .subtitle { display: none; }
@@ -140,10 +174,10 @@
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto auto minmax(calc(var(--card-h) * 1.75), auto) auto;
         grid-template-areas:
-            "left  right"
-            "info  info"
-            "trick trick"
-            "hand  hand";
+            "leftSeat rightSeat"
+            "info     info"
+            "trick    trick"
+            "hand     hand";
         gap: 8px;
         padding: 10px;
         border-radius: 20px;
@@ -173,7 +207,9 @@
     transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, filter 0.18s ease;
 }
 
-.cardSmall { --card-w: clamp(26px, 3.4vw, 40px); }
+/* [EN] A custom property is resolved where it is declared: a smaller card restates its height too.
+   [RU] Пользовательское свойство вычисляется там, где объявлено: уменьшенная карта заново задаёт и высоту. */
+.cardSmall { --card-w: clamp(30px, 4vw, 47px); --card-h: calc(var(--card-w) * 1.42); }
 
 .cardRed { color: #c8102e; }
 .cardBlack { color: #151826; }
@@ -207,8 +243,14 @@
 }
 
 button.card { cursor: pointer; }
+/* [EN] Cards you may play stand raised with a golden edge, so "your turn" is obvious at a glance; under the mouse they
+        rise further. The strip below a raised card stays part of it, so the card does not flicker at its lower edge.
+   [RU] Карты, которыми можно ходить, приподняты и обведены золотом: «ваш ход» видно сразу; под мышкой они
+        поднимаются выше. Полоска под приподнятой картой остаётся её частью, и карта не дрожит у нижнего края. */
+.card-playable { transform: translateY(-10px); box-shadow: 0 0 0 2px rgba(240, 200, 110, 0.95), 0 8px 18px rgba(240, 200, 110, 0.28); }
+.card-playable::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 22px; }
 .card-playable:hover,
-.card-playable:focus-visible { transform: translateY(-12px); box-shadow: 0 0 0 2px var(--cyan), 0 10px 22px rgba(94, 234, 212, 0.35); outline: none; }
+.card-playable:focus-visible { transform: translateY(-20px); box-shadow: 0 0 0 3px #f6d58a, 0 12px 26px rgba(246, 213, 138, 0.45); outline: none; z-index: 1; }
 .card-blocked { opacity: 0.5; filter: saturate(0.5); cursor: not-allowed !important; }
 .card-selected { transform: translateY(-18px); box-shadow: 0 0 0 3px var(--gold), 0 12px 24px rgba(251, 191, 36, 0.35); }
 
@@ -223,47 +265,251 @@ button.card { cursor: pointer; }
 
 .seatHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; }
 
+/* [EN] A name is a black lacquered plaque with a dull gold frame; whose turn it is glows like a candle.
+   [RU] Имя — чёрная лакированная табличка в тусклой золотой рамке; чей ход — та светится, как свеча. */
 .seatName {
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: rgba(3, 22, 13, 0.6);
-    border: 1px solid rgba(245, 222, 160, 0.28);
-    font-weight: 700;
-    font-size: 0.9rem;
+    padding: 3px 14px 5px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #1d1116 0%, #0a0507 100%);
+    border: 1px solid rgba(201, 163, 95, 0.75);
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.6), inset 0 0 0 3px rgba(201, 163, 95, 0.22), 0 3px 8px rgba(0, 0, 0, 0.55);
+    color: var(--bone);
+    font-family: var(--grimoire);
+    font-weight: 400;
+    font-size: 1.12rem;
     letter-spacing: 0.04em;
 }
 
-.seatTurn .seatName { border-color: var(--gold); box-shadow: 0 0 14px rgba(251, 191, 36, 0.45); }
-
-.badge {
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: rgba(245, 237, 214, 0.16);
-    color: #f5edd6;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+.seatTurn .seatName { border-color: var(--candle); animation: candleGlow 2.6s ease-in-out infinite; }
+@keyframes candleGlow {
+    0%, 100% { box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 14px rgba(255, 181, 74, 0.5); }
+    50% { box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 24px rgba(255, 120, 40, 0.75); }
 }
 
-.badgeDeclarer { background: rgba(251, 191, 36, 0.22); color: #fde68a; }
-.tricks { color: #c9d8cc; font-size: 0.78rem; }
+/* [EN] A role is a parchment tag pinned askew; the declarer's is a seal of blood-red wax.
+   [RU] Роль — пергаментная бирка, приколотая наискось; у играющего — печать из кроваво-красного сургуча. */
+.badge {
+    padding: 1px 10px 3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #f1e6cb, #d9c69c);
+    color: #3a1410;
+    font-family: var(--grimoire);
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    rotate: -2deg;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
 
+.badgeDeclarer {
+    border-radius: 999px 900px 999px 950px;
+    background: radial-gradient(circle at 38% 30%, #c8303f 0%, #8e0f1c 55%, #5a0711 100%);
+    color: #fbe9d4;
+    box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.35), 0 2px 5px rgba(0, 0, 0, 0.55);
+    rotate: 3deg;
+}
+
+/* [EN] The last word said, on a scrap of parchment. [RU] Последнее сказанное слово — на клочке пергамента. */
 .bubble {
     position: relative;
-    padding: 4px 10px;
-    border-radius: 10px;
-    background: #f8fafc;
-    color: #0f172a;
-    font-weight: 800;
-    font-size: 0.85rem;
+    padding: 2px 11px 4px;
+    border-radius: 3px 12px 4px 12px;
+    background: linear-gradient(180deg, #f6eedb, #e0d0a8);
+    color: #2a1410;
+    font-family: var(--grimoire);
+    font-weight: 400;
+    font-size: 1.05rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
     animation: pop 0.25s ease-out;
+}
+
+/* [EN] Won tricks lie next to the player as small squared stacks, each across the one before (like dominoes), so
+        anyone can count them at a glance; the wax seal says the number. A trick is three cards, so a stack shows two
+        edges under its back.
+   [RU] Взятки лежат возле игрока маленькими сложенными стопками, каждая поперёк предыдущей (как домино) — их видно
+        и можно пересчитать с одного взгляда; сургучная печать говорит число. Взятка — три карты, поэтому из-под
+        рубашки видны два края. */
+.pile { display: inline-flex; align-items: center; gap: 7px; }
+.pileCards { display: inline-flex; align-items: center; min-height: 28px; }
+.pileTrick { --pw: 15px; --ph: 22px; position: relative; flex: none; width: var(--pw); height: var(--ph); margin-left: -3px; }
+.pileTrick:first-child { margin-left: 0; }
+.pileTrick::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--pw);
+    height: var(--ph);
+    translate: -50% -50%;
+    border: 1px solid rgba(184, 155, 106, 0.7);
+    border-radius: 2px;
+    background: #0e0307 url('../assets/card-back.svg') center / 100% 100% no-repeat;
+    box-shadow: 1px 1px 0 #170709, 2px 2px 0 rgba(184, 155, 106, 0.45), 2px 3px 5px rgba(0, 0, 0, 0.6);
+    animation: pileIn 0.35s ease-out;
+}
+.pileAcross { width: var(--ph); }
+.pileAcross::before { rotate: 90deg; }
+.pileCount {
+    display: inline-grid;
+    place-items: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 4px;
+    border-radius: 50% 46% 52% 48%;
+    background: radial-gradient(circle at 38% 30%, #c8303f 0%, #8e0f1c 55%, #5a0711 100%);
+    color: #fbe9d4;
+    font-family: var(--grimoire);
+    font-weight: 400;
+    font-size: 1.05rem;
+    line-height: 1;
+    box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.35), 0 2px 5px rgba(0, 0, 0, 0.55);
+}
+.pileEmpty { opacity: 0.55; }
+@keyframes pileIn { from { opacity: 0; scale: 1.6; } }
+
+/* [EN] An opponent: the portrait beside the name, the right-hand opponent mirrored so both face the middle.
+   [RU] Соперник: портрет рядом с именем, правый соперник зеркально, чтобы оба смотрели к середине. */
+.seatTop { display: flex; align-items: center; gap: 12px; }
+.seatTopRight { flex-direction: row-reverse; }
+.seatInfo { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+/* [EN] The portrait in a gothic frame: dark bronze with a dull gold edge, bat wings above, a skull below. The picture
+        keeps its own shape and background — every guest is different.
+   [RU] Портрет в готической рамке: тёмная бронза с тусклой золотой кромкой, сверху крылья летучей мыши, снизу череп.
+        Картинка сохраняет свою форму и фон — все гости разные. */
+.portraitWrap { position: relative; flex: none; }
+.portrait {
+    position: relative;
+    display: block;
+    padding: 5px;
+    border: 0;
+    border-radius: 6px;
+    background: linear-gradient(145deg, #4a3520 0%, #140b07 38%, #5a4127 62%, #0d0705 100%);
+    box-shadow: inset 0 0 0 1px rgba(201, 163, 95, 0.85), inset 0 0 0 4px #0b0604, inset 0 0 0 5px rgba(201, 163, 95, 0.45),
+        0 8px 18px rgba(0, 0, 0, 0.65), 0 0 0 1px #000;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.portrait img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 150px;
+    max-height: 128px;
+    border-radius: 3px;
+    filter: sepia(0.12) saturate(0.92) contrast(1.06);
+}
+.portrait::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -15px;
+    width: 70px;
+    height: 22px;
+    translate: -50% 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 38'%3E%3Cpath fill='%23140b07' stroke='%23c9a35f' stroke-width='1.6' d='M60 30C52 14 34 6 4 10c10 5 13 12 11 19 8-5 15-2 17 6 6-7 13-6 17 0 3-5 7-8 11-5 4-3 8 0 11 5 4-6 11-7 17 0 2-8 9-11 17-6-2-7 1-14 11-19C86 6 68 14 60 30Z'/%3E%3Ccircle cx='55.5' cy='22' r='2' fill='%23ff2a2a'/%3E%3Ccircle cx='64.5' cy='22' r='2' fill='%23ff2a2a'/%3E%3C/svg%3E") center / contain no-repeat;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7));
+}
+.portrait::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -11px;
+    width: 20px;
+    height: 20px;
+    translate: -50% 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 60'%3E%3Cpath d='M32 2C16 2 6 13 6 27c0 8 4 13 9 16v9c0 3 2 5 5 5h24c3 0 5-2 5-5v-9c5-3 9-8 9-16C58 13 48 2 32 2Z' fill='%23d9ccb0' stroke='%235b4a33' stroke-width='2'/%3E%3Cellipse cx='21' cy='28' rx='7.5' ry='8.5' fill='%231a0d0b'/%3E%3Cellipse cx='43' cy='28' rx='7.5' ry='8.5' fill='%231a0d0b'/%3E%3Cpath d='M32 35l-4 8h8z' fill='%231a0d0b'/%3E%3C/svg%3E") center / contain no-repeat;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.7));
+}
+.portrait:hover, .portrait:focus-visible { transform: translateY(-2px); outline: none; box-shadow: inset 0 0 0 1px var(--candle), inset 0 0 0 4px #0b0604, inset 0 0 0 5px rgba(255, 181, 74, 0.6), 0 8px 22px rgba(255, 140, 50, 0.35); }
+.portraitThinking { animation: portraitGlow 2.2s ease-in-out infinite; }
+@keyframes portraitGlow {
+    0%, 100% { box-shadow: inset 0 0 0 1px var(--candle), inset 0 0 0 4px #0b0604, inset 0 0 0 5px rgba(255, 181, 74, 0.5), 0 0 18px rgba(255, 150, 60, 0.45); }
+    50% { box-shadow: inset 0 0 0 1px var(--candle), inset 0 0 0 4px #0b0604, inset 0 0 0 5px rgba(255, 181, 74, 0.8), 0 0 30px rgba(255, 110, 40, 0.7); }
+}
+
+/* [EN] The biography on a scrap of parchment. [RU] Биография на клочке пергамента. */
+.bio {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 16px);
+    left: 0;
+    width: min(300px, 78vw);
+    padding: 12px 16px 14px;
+    border: 1px solid #8a6a3a;
+    border-radius: 4px 14px 5px 12px;
+    background: linear-gradient(180deg, #f6eedb 0%, #e3d3ad 100%);
+    color: #2a1410;
+    font-family: var(--print);
+    font-size: 1.02rem;
+    line-height: 1.35;
+    text-align: start;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65);
+    animation: pop 0.2s ease-out;
+}
+.bioRight { left: auto; right: 0; }
+.bioName { margin: 0; font-family: var(--grimoire); font-size: 1.4rem; font-weight: 400; color: #5a0711; }
+.bioTag { margin: 0 0 6px; font-style: italic; color: #7a4a2a; }
+.bioText { margin: 0 0 8px; }
+.bioManner { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin: 0 0 10px; padding: 6px 0 0; border-top: 1px dashed rgba(122, 74, 42, 0.45); list-style: none; font-size: 0.92rem; }
+.bioManner b { color: #5a0711; font-weight: 700; }
+
+/* [EN] Opponents on the menu: small portraits pinned to the notebook page; the chosen ones circled in red pen with
+        their seat number. [RU] Соперники в меню: маленькие портреты, приколотые к странице тетради; выбранные
+        обведены красной ручкой с номером места. */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 10px 8px; max-height: 300px; margin: 6px 0 10px; padding: 6px 4px; overflow-y: auto; }
+.galleryItem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 4px 5px;
+    border: 1px solid rgba(91, 100, 114, 0.35);
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--paper-text);
+    font: 700 0.74rem/1.1 Georgia, 'Times New Roman', serif;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    rotate: -1.2deg;
+    transition: rotate 0.15s ease, box-shadow 0.15s ease;
+}
+.galleryItem:nth-child(even) { rotate: 1.4deg; }
+.galleryItem:nth-child(3n) { rotate: -0.4deg; }
+.galleryItem:hover, .galleryItem:focus-visible { rotate: 0deg; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28); outline: none; }
+.galleryItem img { display: block; width: 100%; height: 70px; object-fit: cover; border-radius: 1px; }
+.galleryOn { border: 2px solid var(--ink-red); box-shadow: 0 0 0 3px rgba(163, 36, 44, 0.18), 0 4px 10px rgba(0, 0, 0, 0.25); }
+.galleryMark {
+    position: absolute;
+    top: -8px;
+    right: -7px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--ink-red);
+    color: #fff;
+    font: 700 0.85rem/22px Georgia, serif;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .portrait { padding: 3px; }
+    .portrait img { max-width: 76px; max-height: 64px; }
+    .portrait::before { width: 44px; height: 14px; top: -10px; }
+    .portrait::after { width: 14px; height: 14px; bottom: -8px; }
+    .seatTop { gap: 6px; }
 }
 
 .hand { display: flex; justify-content: center; padding-top: 20px; }
 .hand > * + * { margin-left: calc(var(--card-w) * -0.34); }
 .handBots > * + * { margin-left: calc(var(--card-w) * -0.62); }
-.handOpenBot > * + * { margin-left: calc(var(--card-w) * -0.55); }
+/* [EN] An opponent's open hand lies a little smaller and tighter, so it never reaches the score sheet.
+   [RU] Открытая рука соперника лежит чуть мельче и плотнее, чтобы не доставать до пули. */
+.handOpenBot { --card-w: clamp(40px, 5.3vw, 66px); --card-h: calc(var(--card-w) * 1.42); }
+.handOpenBot > * + * { margin-left: calc(var(--card-w) * -0.6); }
 
 /* ===== 5. Trick, talon and info / Взятка, прикуп, сведения ===== */
 .info {
@@ -274,16 +520,21 @@ button.card { cursor: pointer; }
     text-align: center;
 }
 
+/* [EN] What is being played: a black plaque in a double bronze frame. [RU] Что играется: чёрная табличка в двойной бронзовой рамке. */
 .contract {
-    padding: 6px 16px;
-    border-radius: 12px;
-    background: rgba(3, 18, 10, 0.55);
-    border: 1px solid rgba(251, 191, 36, 0.35);
-    font-weight: 800;
-    letter-spacing: 0.06em;
+    padding: 4px 18px 6px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #1d1116 0%, #0a0507 100%);
+    border: 1px solid rgba(201, 163, 95, 0.8);
+    box-shadow: inset 0 0 0 3px #0a0507, inset 0 0 0 4px rgba(201, 163, 95, 0.4), 0 4px 12px rgba(0, 0, 0, 0.55);
+    color: var(--bone);
+    font-family: var(--grimoire);
+    font-weight: 400;
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
 }
 
-.hint { margin: 0; color: #d6e4d9; font-size: 0.82rem; }
+.hint { margin: 0; color: #e6d7b4; font-size: 1rem; font-style: italic; }
 
 .trickZone {
     position: relative;
@@ -298,6 +549,17 @@ button.card { cursor: pointer; }
 .slotTalonRest { transform: translate(-50%, -50%); }
 .trickWinner > * { box-shadow: 0 0 0 3px var(--gold), 0 0 26px rgba(251, 191, 36, 0.55); }
 
+/* [EN] A finished trick stays a moment with its winner glowing, then slides away to the winner's pile by itself:
+        nobody has to "take" it, and the middle of the table is free for the next lead.
+   [RU] Сыгранная взятка лежит мгновение с подсвеченным победителем, потом сама уезжает к нему в стопку: забирать
+        её не нужно, и середина стола свободна для следующего хода. */
+.trickCards { position: absolute; inset: 0; }
+.trickCollect { animation: collect 0.5s ease-in 1.05s forwards; }
+.collectBottom { --to-x: 0%; --to-y: 70%; }
+.collectLeft { --to-x: -70%; --to-y: -30%; }
+.collectRight { --to-x: 70%; --to-y: -30%; }
+@keyframes collect { to { translate: var(--to-x) var(--to-y); scale: 0.3; opacity: 0; } }
+
 .talon { display: flex; justify-content: center; gap: 8px; }
 
 @keyframes fromBottom { from { opacity: 0; transform: translate(-50%, 60%) scale(0.85); } }
@@ -306,43 +568,51 @@ button.card { cursor: pointer; }
 @keyframes pop { from { opacity: 0; transform: scale(0.7); } }
 
 /* ===== 6. Action panel / Панель решений ===== */
+/* [EN] The decision tray: dark leather in a dull gold line; the question is written in the grimoire's letters.
+   [RU] Лоток решений: тёмная кожа в тусклой золотой линии; вопрос написан буквами гримуара. */
 .panel {
     max-width: 1280px;
     margin: 16px auto 0;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: rgba(3, 20, 12, 0.58);
-    border: 1px solid rgba(245, 222, 160, 0.18);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 22px rgba(0, 0, 0, 0.35);
+    padding: 14px 18px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(34, 15, 18, 0.95), rgba(14, 7, 9, 0.97));
+    border: 1px solid rgba(201, 163, 95, 0.55);
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.35), inset 0 0 0 4px rgba(201, 163, 95, 0.16), 0 10px 26px rgba(0, 0, 0, 0.5);
 }
 
-.panelTitle { margin: 0 0 10px; font-size: 0.95rem; font-weight: 700; color: #f5edd6; letter-spacing: 0.03em; }
+.panelTitle { margin: 0 0 10px; font-family: var(--grimoire); font-size: 1.3rem; font-weight: 400; color: var(--bone); letter-spacing: 0.02em; }
 
 .bidGrid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; max-width: 460px; }
 
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
+/* [EN] Buttons are tokens of old bone; the main choice is pressed in blood-red wax.
+   [RU] Кнопки — жетоны из старой кости; главный выбор оттиснут в кроваво-красном сургуче. */
 .button {
-    min-height: 36px;
-    padding: 8px 14px;
-    border: 1px solid rgba(245, 222, 160, 0.4);
-    border-radius: 9px;
-    background: linear-gradient(180deg, rgba(16, 46, 32, 0.96), rgba(6, 26, 17, 0.96));
-    color: var(--ink);
+    min-height: 38px;
+    padding: 6px 14px 7px;
+    border: 1px solid #8a6a3a;
+    border-radius: 5px;
+    background: linear-gradient(180deg, #f6ecd6 0%, #dfcca3 100%);
+    color: #24140c;
+    font-family: var(--print);
     font-weight: 700;
-    font-size: 0.88rem;
+    font-size: 1.05rem;
+    line-height: 1.15;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.3), 0 2px 5px rgba(0, 0, 0, 0.5);
     cursor: pointer;
     transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
 }
 
 .button:hover:not(:disabled),
-.button:focus-visible { transform: translateY(-1px); border-color: var(--cream); box-shadow: 0 0 14px rgba(245, 222, 160, 0.3); outline: none; }
-.button:disabled { opacity: 0.32; cursor: not-allowed; }
-.buttonPrimary { border-color: rgba(251, 191, 36, 0.7); background: linear-gradient(180deg, #7c4a03, #4a2c02); }
-.buttonRed { color: #fecdd3; }
+.button:focus-visible { transform: translateY(-1px); border-color: var(--candle); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.3), 0 0 16px rgba(255, 181, 74, 0.5); outline: none; }
+.button:disabled { opacity: 0.36; cursor: not-allowed; }
+.buttonPrimary { border-color: #3d050c; background: radial-gradient(circle at 40% 28%, #c8303f 0%, #8e0f1c 60%, #5a0711 100%); color: #fbe9d4; }
+.buttonRed { color: #a1121f; }
+.buttonPrimary.buttonRed { color: #ffd9d9; }
 
-.thinking { color: var(--gold); font-weight: 700; animation: breathe 1.4s ease-in-out infinite; }
-@keyframes breathe { 50% { opacity: 0.45; } }
+.thinking { color: #ffcf7a; font-family: var(--grimoire); font-weight: 400; text-shadow: 0 0 10px rgba(255, 150, 60, 0.45); animation: breathe 1.4s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: 0.7; } }
 
 /* ===== 7. Deal list and rules (the sheet itself: ScoreSheet.module.css) / Список раздач и правила ===== */
 .log { margin: 12px 0 0; padding: 0; list-style: none; max-height: 260px; overflow-y: auto; }
@@ -361,7 +631,7 @@ button.card { cursor: pointer; }
     gap: 10px 16px;
 }
 
-.resultText { margin: 0; font-size: 0.95rem; }
+.resultText { margin: 0; color: var(--bone); font-family: var(--grimoire); font-size: 1.2rem; }
 
 /* ===== 9. Table menu: a page of a home notebook / Меню стола: страница домашней тетради ===== */
 /* [EN] The menu lies on the felt like a page torn from a squared school notebook: pen headings, the chosen value
@@ -582,5 +852,8 @@ button.card { cursor: pointer; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .card, .trickSlot, .bubble, .thinking, .choice::after { transition: none; animation: none; }
+    .card, .trickSlot, .bubble, .thinking, .choice::after, .seatTurn .seatName, .pileTrick::before { transition: none; animation: none; }
+    /* [EN] Without motion a finished trick simply fades. [RU] Без движения сыгранная взятка просто гаснет. */
+    .trickCollect { animation: collectFade 0.01s linear 1.2s forwards; }
 }
+@keyframes collectFade { to { opacity: 0; } }

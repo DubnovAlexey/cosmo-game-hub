@@ -13,7 +13,7 @@ import { NO_TRUMP, type Strain } from '../bids.ts';
 function ranksDesc(hand: CardSet, suit: Suit): number[] {
   const bits = suitRanks(hand, suit);
   const ranks: number[] = [];
-  for (let rank = 7; rank >= 0; rank -= 1) if (bits & (1 << rank)) ranks.push(rank);
+  for (let rank = 7; rank >= 0; rank -= 1) if ((bits & (1 << rank)) !== 0) ranks.push(rank);
   return ranks;
 }
 /** Sure winners from the top: A = 1, A K = 2, A K Q = 3 … */

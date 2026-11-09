@@ -9,31 +9,61 @@ import { legalBids } from '../bidding.ts';
 import { MISERE, gameBid, contractOf, type Bid, type Level, type Strain } from '../bids.ts';
 import { cardsOf, rankOf, removeCard, suitOf, suitSet, type Card, type CardSet } from '../cards.ts';
 import { controllerOf, legalActions, legalPlays, ledSuitOf, type Action, type DealState } from '../deal.ts';
-import type { Seat } from '../play.ts';
+import { otherSeats, type Seat } from '../play.ts';
+// [EN] A relative path on purpose: Node runs the engine directly in the tests and knows no @shared alias.
+// [RU] Относительный путь нарочно: Node запускает движок прямо в тестах и не знает псевдонима @shared.
+// noinspection ES6PreferShortImport
 import { createRandom, type Random } from '../../../../shared/engine/random.ts';
 import { bestStrain, estimateDeclarerTricks, estimateDefenderTricks, misereRisk } from './evaluate.ts';
 import { knowledgeOf, sampleHands } from './knowledge.ts';
 import { scoreMoves } from './solver.ts';
 
 // BEGIN 1. Options
+/**
+ * A character's manner at the table (the dwellers of the lair differ, characters/roster.ts). Small shifts of the
+ * same sound heuristics, so every style still plays legal, sensible preferans.
+ */
+export interface BotStyle {
+  /** Added to the bidding estimate: a bold bidder (+0.4) bids lighter hands, a careful one (−0.2) wants more. */
+  readonly boldness: number;
+  /** Multiplies the whist thresholds: 0.8 whists eagerly, 1.2 only with a sure defence. */
+  readonly whistCaution: number;
+  /** The highest misère risk (evaluate.ts: dangerous cards) still bid: 0 = only a clean misère. */
+  readonly misereNerve: number;
+}
+export const NEUTRAL_STYLE: BotStyle = Object.freeze({ boldness: 0, whistCaution: 1, misereNerve: 0 });
+
 export interface BotOptions {
   readonly random?: Random;
   /** Deals sampled per card decision. */
   readonly samples?: number;
   /** Sampling stops after this many milliseconds (at least three samples are solved). */
   readonly timeBudgetMs?: number;
+  /** The manner of the character at this seat; neutral when absent. */
+  readonly style?: BotStyle;
 }
-/** Two talon cards improve a hand by about half a trick on average. */
-const TALON_BONUS = 0.6;
+/**
+ * What the two talon cards add to the estimate before the talon. Measured on 08.11.2026 (4500 hands, talon taken,
+ * best discard, double-dummy play): an estimate of 5.0 ends with 6.2 tricks on average and makes six in 72% of deals.
+ * The earlier 0.6 bid only 13% of hands although 38% make six, so two deals in three went to all-pass.
+ */
+const TALON_BONUS = 1.0;
+/**
+ * Both others have passed: a pass now means all-pass, which costs the strongest hand most, so it bids a bit lighter.
+ * With both bonuses, 300 deals of three bots: all-pass 33% (it was 63%), games 67%, played games made 68%.
+ */
+const LAST_CHANCE_BONUS = 0.6;
 // END 1
 
 // BEGIN 2. Bidding
-function chooseBid(state: DealState, seat: Seat): Action {
+function chooseBid(state: DealState, seat: Seat, style: BotStyle): Action {
   const hand = state.hands[seat];
-  const legal = legalBids(state.bidding, state.rules);
-  if (legal.includes(MISERE) && misereRisk(hand) === 0) return { type: 'bid', seat, bid: MISERE };
+  const bidding = state.bidding;
+  const legal = legalBids(bidding, state.rules);
+  if (legal.includes(MISERE) && misereRisk(hand) <= style.misereNerve) return { type: 'bid', seat, bid: MISERE };
   const best = bestStrain(hand);
-  const level = Math.min(10, Math.floor(best.tricks + TALON_BONUS));
+  const lastChance = bidding.highest === null && otherSeats(seat).every(other => bidding.passed[other]);
+  const level = Math.min(10, Math.floor(best.tricks + TALON_BONUS + (lastChance ? LAST_CHANCE_BONUS : 0) + style.boldness));
   const cheapest = legal.find(bid => bid !== MISERE);
   if (level < 6 || cheapest === undefined) return { type: 'pass', seat };
   return cheapest <= gameBid(level as Level, best.strain) ? { type: 'bid', seat, bid: cheapest } : { type: 'pass', seat };
@@ -59,8 +89,7 @@ function chooseDiscard(state: DealState, seat: Seat): Action {
 
 function chooseContract(state: DealState, seat: Seat): Action {
   const hand = state.hands[seat];
-  const minimum = state.winningBid ?? 0;
-  let best: Bid = minimum;
+  let best: Bid = state.winningBid ?? 0;
   let bestMargin = -Infinity;
   for (const action of legalActions(state)) {
     if (action.type !== 'declare') continue;
@@ -86,9 +115,10 @@ function whistObligation(state: DealState): { obligation: number; level: number 
   return { obligation: state.rules.whistObligation[level as Level], level };
 }
 
-function chooseWhist(state: DealState, seat: Seat): Action {
+function chooseWhist(state: DealState, seat: Seat, style: BotStyle): Action {
   const whist = state.whist;
-  const expected = estimateDefenderTricks(state.hands[seat], state.trump);
+  // [EN] An eager whister sees a little more in its hand, a cautious one a little less. [RU] Охотник вистовать видит в руке чуть больше, осторожный — чуть меньше.
+  const expected = estimateDefenderTricks(state.hands[seat], state.trump) / style.whistCaution;
   const { obligation, level } = whistObligation(state);
   const legal = legalActions(state).map(action => (action.type === 'whist' ? action.call : null));
   // A forced call (Stalingrad: only «вист» on a six of spades) needs no thinking.
@@ -176,11 +206,12 @@ export function chooseAction(state: DealState, options: BotOptions = {}): Action
 function decide(state: DealState, options: BotOptions): Action {
   const seat = state.turn;
   if (seat === null) throw new Error('The deal is over: nobody has to act');
+  const style = options.style ?? NEUTRAL_STYLE;
   switch (state.phase) {
-    case 'bidding': return chooseBid(state, seat);
+    case 'bidding': return chooseBid(state, seat, style);
     case 'discard': return chooseDiscard(state, seat);
     case 'declare': return chooseContract(state, seat);
-    case 'whist': return chooseWhist(state, seat);
+    case 'whist': return chooseWhist(state, seat, style);
     case 'whistReturn': {
       const { obligation } = whistObligation(state);
       return { type: 'returnWhist', seat, accept: estimateDefenderTricks(state.hands[seat], state.trump) >= obligation * 0.75 };

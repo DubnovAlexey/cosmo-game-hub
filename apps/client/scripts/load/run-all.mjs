@@ -13,11 +13,18 @@ import { BASE } from './cdp.mjs';
 
 const quick = process.argv.includes('--quick');
 const here = fileURLToPath(new URL('.', import.meta.url));
-try {
-    const response = await fetch(`${BASE}/`);
-    if (!response.ok) throw new Error(String(response.status));
-} catch (error) {
-    console.error(`The site is not served at ${BASE} (${error.message}). Build it and start: astro preview --port 4324`);
+/** [EN] Why the site cannot be tested, or null when it answers. [RU] Почему сайт нельзя проверить, или null, если он отвечает. */
+async function siteProblem() {
+    try {
+        const response = await fetch(`${BASE}/`);
+        return response.ok ? null : `HTTP ${response.status}`;
+    } catch (error) {
+        return error.message;
+    }
+}
+const problem = await siteProblem();
+if (problem) {
+    console.error(`The site is not served at ${BASE} (${problem}). Build it and start: astro preview --port 4324`);
     process.exit(2);
 }
 

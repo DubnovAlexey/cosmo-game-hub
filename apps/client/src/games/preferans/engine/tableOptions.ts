@@ -10,7 +10,7 @@
 //   can validate a table on the future game server.
 // SECTIONS: 1 catalog; 2 configuration; 3 availability; 4 changes; 5 rule options for the engine.
 // =====================================================================
-import type { RuleOptions } from './rules.ts';
+import { LENINGRAD, ROSTOV, SOCHI, customizeRules, type RuleOptions, type RuleSet } from './rules.ts';
 
 // BEGIN 1. Catalog
 export type PlayerCount = 2 | 3 | 4;
@@ -28,7 +28,7 @@ export const PLAYER_CHOICES: readonly Choice<PlayerCount>[] = [
   { value: 3, ready: true }, { value: 2, ready: false }, { value: 4, ready: false },
 ];
 export const VARIANT_CHOICES: readonly Choice<VariantId>[] = [
-  { value: 'sochi', ready: true }, { value: 'leningrad', ready: false }, { value: 'rostov', ready: false }, { value: 'classic', ready: false },
+  { value: 'sochi', ready: true }, { value: 'leningrad', ready: true }, { value: 'rostov', ready: true }, { value: 'classic', ready: false },
 ];
 export const POOL_CHOICES: readonly Choice<number>[] = [{ value: 10, ready: true }, { value: 20, ready: true }, { value: 30, ready: true }];
 export const PROGRESSIONS: Readonly<Record<ProgressionId, readonly number[]>> = { '1-2-3': [1, 2, 3], '1-2-4': [1, 2, 4], flat: [1] };
@@ -209,9 +209,24 @@ export function normalizeTable(input: Partial<TableConfig> | null | undefined): 
 // END 4
 
 // BEGIN 5. Rule options for the engine
+/** The rule set each variant starts from (Classic is not playable yet and falls back to Sochi). */
+const VARIANT_RULES: Readonly<Record<VariantId, RuleSet>> = { sochi: SOCHI, leningrad: LENINGRAD, rostov: ROSTOV, classic: SOCHI };
+
+/** Rostov pays all-pass in whists without progression, so the all-pass prices are not a choice there. */
+export const hasProgression = (config: TableConfig): boolean => config.variant !== 'rostov';
+
+/** The prices of all-pass tricks in a row at this table: the progression times the variant's scale (Leningrad 2 · 4 · 6). */
+export function allPassPrices(config: TableConfig): readonly number[] {
+  const base = VARIANT_RULES[config.variant];
+  return (hasProgression(config) ? PROGRESSIONS[config.progression] : base.raspasyProgression).map(price => price * base.raspasyScale);
+}
+
+/** The rules the engine plays by at this table. */
+export const rulesForTable = (config: TableConfig): RuleSet => customizeRules(VARIANT_RULES[config.variant], toRuleOptions(config));
+
 export function toRuleOptions(config: TableConfig): RuleOptions {
   return {
-    raspasyProgression: PROGRESSIONS[config.progression],
+    raspasyProgression: hasProgression(config) ? PROGRESSIONS[config.progression] : undefined,
     seniorHold: isOn(config, 'seniorHold'),
     halfWhist: isOn(config, 'halfWhist'),
     tenIsChecked: isOn(config, 'tenChecked'),

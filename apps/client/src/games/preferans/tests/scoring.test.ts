@@ -1,7 +1,9 @@
 // Sochi scoring of single deals (examples from rulespal.com/preference/rulebook) and the final settlement.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SOCHI, addScores, scoreGame, scoreMisere, scoreRaspasy, settle, ZERO_SCORE } from '../engine/index.ts';
+import {
+  LENINGRAD, ROSTOV, SOCHI, addScores, allPassPrices, plainTable, rulesForTable, scoreGame, scoreMisere, scoreRaspasy, settle, ZERO_SCORE,
+} from '../engine/index.ts';
 
 test('a made six: 2 to the pool; the single whister writes whists for all defensive tricks and answers for the obligation', () => {
   const score = scoreGame({ declarer: 0, level: 6, tricks: [7, 3, 0], whisters: [1], halfWhister: null, played: true }, SOCHI);
@@ -51,6 +53,35 @@ test('misère and all-pass', () => {
   assert.deepEqual(first.mountain, [0, 4, 6]);
   assert.deepEqual(scoreRaspasy([0, 4, 6], 1, SOCHI).mountain, [0, 8, 12]);
   assert.deepEqual(scoreRaspasy([0, 4, 6], 7, SOCHI).mountain, [0, 12, 18], 'the progression stops at 3');
+});
+
+test('Leningrad: doubled whists and mountain, gentleman whist, half-responsible whister (pref-bridge examples)', () => {
+  // [EN] A six one down, one whister, five defensive tricks: the defence writes 5 × 4 + 2 × 4 = 28 and shares it.
+  // [RU] Шестерная без одной, один вистующий, пять взяток защиты: защита пишет 5 × 4 + 2 × 4 = 28 и делит пополам.
+  const down = scoreGame({ declarer: 0, level: 6, tricks: [5, 5, 0], whisters: [1], halfWhister: null, played: true }, LENINGRAD);
+  assert.equal(down.mountain[0], 4, 'one undertrick at the doubled price');
+  assert.deepEqual([down.whists[1][0], down.whists[2][0]], [14, 14]);
+  const short = scoreGame({ declarer: 0, level: 6, tricks: [7, 3, 0], whisters: [1], halfWhister: null, played: true }, LENINGRAD);
+  assert.equal(short.whists[1][0], 12, 'whists doubled: 3 tricks × 4');
+  assert.equal(short.mountain[1], 2, 'the missing trick costs the plain price: half of the doubled scale');
+  assert.deepEqual(scoreMisere(1, [3, 2, 5], LENINGRAD).mountain, [0, 40, 0], 'a failed misère costs 20 a trick');
+  assert.deepEqual(scoreRaspasy([0, 4, 6], 0, LENINGRAD).mountain, [0, 8, 12], 'all-pass tricks cost 2');
+  assert.deepEqual(allPassPrices({ ...plainTable(), variant: 'leningrad' }), [2, 4, 6]);
+  assert.equal(rulesForTable({ ...plainTable(), variant: 'leningrad' }).whistsPerPoint, 20);
+});
+
+test('Rostov: half-price whister, fixed consolation, all-pass in whists without mountain', () => {
+  const short = scoreGame({ declarer: 0, level: 6, tricks: [7, 3, 0], whisters: [1], halfWhister: null, played: true }, ROSTOV);
+  assert.equal(short.mountain[1], 1, 'the missing trick costs half the price of a six');
+  const down = scoreGame({ declarer: 0, level: 7, tricks: [5, 5, 0], whisters: [1], halfWhister: null, played: true }, ROSTOV);
+  assert.equal(down.mountain[0], 8);
+  assert.deepEqual([down.whists[1][0], down.whists[2][0]], [30, 30], '(4 × 5 + 2 × 10 × 2) shared by both defenders');
+  const allPass = scoreRaspasy([1, 4, 5], 0, ROSTOV);
+  assert.deepEqual(allPass.mountain, [0, 0, 0], 'no mountain on a Rostov all-pass');
+  assert.deepEqual(allPass.whists[0], [0, 20, 25], 'the fewest tricks write 5 whists per trick of each opponent');
+  const tie = scoreRaspasy([3, 3, 4], 0, ROSTOV);
+  assert.deepEqual([tie.whists[0][2], tie.whists[1][2], tie.whists[0][1]], [10, 10, 0], 'two with the fewest share the whists on the third');
+  assert.deepEqual(scoreRaspasy([0, 5, 5], 3, ROSTOV).pool, [1, 0, 0], 'no tricks: one point into the pool, no progression');
 });
 
 test('the final settlement sums to zero and turns mountain into whists', () => {

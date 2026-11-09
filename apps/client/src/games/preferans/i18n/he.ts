@@ -1,12 +1,14 @@
 // [EN] FILE: games/preferans/i18n/he.ts — Hebrew texts of the preferans table (right-to-left; the island sets
 //      dir="rtl", the table and the score sheet stay left-to-right). Instructions use the plural imperative, the
-//      usual gender-neutral form of Hebrew interfaces; sentences about Orion (he) and Vega (she) agree with them.
+//      usual gender-neutral form of Hebrew interfaces; sentences about an opponent agree with his or her gender.
 //      The Russian terms stay in «».
 // [RU] ФАЙЛ: тексты стола преферанса на иврите (справа налево; остров ставит dir="rtl", стол и лист пули
 //      остаются слева направо). Указания — в повелительном наклонении множественного числа, обычной
-//      нейтральной форме интерфейсов на иврите; фразы об Орионе (он) и Веге (она) согласуются с ними.
+//      нейтральной форме интерфейсов на иврите; фразы о сопернике согласуются с его или её родом.
 //      Русские термины остаются в «».
 import type { ClosedReason, OptionId, Seat, VariantId } from '../engine/index.ts';
+import { isFemale, type Cast } from '../characters/roster.ts';
+import { CHARACTERS_HE } from './characters/he.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {
@@ -139,12 +141,17 @@ const RANKS = ['שבע', 'שמונה', 'תשע', 'עשר', 'נסיך', 'מלכה
 const SUITS = ['עלה', 'תלתן', 'יהלום', 'לב'];
 const tricksText = (count: number): string => (count === 1 ? 'לקיחה אחת' : `${count} לקיחות`);
 
-// [EN] Who sits where: you (neutral phrasing), Orion (he), Vega (she); TO is "to whom".
-// [RU] Кто где сидит: вы (нейтральные обороты), Орион (он), Вега (она); TO — «кому».
-const NAMES = ['את/ה', 'אוריון', 'וגה'] as const;
-const TO = ['לך', 'לאוריון', 'לוגה'] as const;
-const by = <T>(seat: Seat, you: T, he: T, she: T): T => (seat === 0 ? you : seat === 1 ? he : she);
-const name = (seat: Seat): string => NAMES[seat];
+// [EN] Who sits where: you (neutral phrasing) and the opponents of this pool, who change (characters/roster.ts):
+//      names from the cast, verbs by each one's gender; TO is "to whom" (ל + name).
+// [RU] Кто где сидит: вы (нейтральные обороты) и соперники этой пули, которые меняются (characters/roster.ts):
+//      имена из состава, глаголы по роду каждого; TO — «кому» (ל + имя).
+function seatsOf(cast: Cast) {
+    const NAMES = ['את/ה', ...cast.map(id => CHARACTERS_HE[id].name)];
+    const TO = ['לך', ...cast.map(id => `ל${CHARACTERS_HE[id].name}`)];
+    const by = <T>(seat: Seat, you: T, he: T, she: T): T => (seat === 0 ? you : isFemale(cast[seat - 1]) ? she : he);
+    const name = (seat: Seat): string => NAMES[seat];
+    return { NAMES, TO, by, name };
+}
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {
@@ -157,14 +164,27 @@ const closed = (reason: ClosedReason): string => {
     }
 };
 
-const he: Dictionary = {
+export default function he(cast: Cast): Dictionary {
+    const { NAMES, TO, by, name } = seatsOf(cast);
+    return {
     language: 'he',
     gameTitle: 'פרפרנס',
     seatNames: NAMES,
+    characters: CHARACTERS_HE,
+    portrait: {
+        guest: 'אורח/ת', dweller: 'יושב/ת המרתף', about: who => `${who}: ביוגרפיה`, close: 'סגירה',
+        manner: {
+            bidding: 'מכרז', whist: 'ויסט', misere: 'מיזר', pace: 'קצב',
+            bold: 'נועז', even: 'מאוזן', careful: 'זהיר',
+            eager: 'ברצון', calculated: 'בחישוב', cautious: 'בחשש',
+            loves: 'אוהב/ת', sometimes: 'לפעמים', cleanOnly: 'רק נקי',
+            fast: 'מהיר', moderate: 'מתון', slow: 'איטי',
+        },
+    },
     header: {
         rules: variant => `חוקי ${variant}`,
         pool: target => `פוליה עד ${target}`,
-        tagline: 'את/ה נגד שני בוטים שאף פעם לא מציצים בקלפים מוסתרים',
+        tagline: 'את/ה נגד יושבי המרתף, שנשבעים בקבר שלהם לעולם לא להציץ בקלפים מוסתרים',
         tableSetup: 'הגדרות השולחן',
         language: 'שפה',
     },
@@ -178,13 +198,13 @@ const he: Dictionary = {
     },
     info: {
         auction: 'מכרז',
-        speaksFirst: seat => `${by(seat, 'התור הראשון שלך', 'אוריון פותח', 'וגה פותחת')} · הקופה מחכה הפוכה`,
+        speaksFirst: seat => `${by(seat, 'התור הראשון שלך', `${name(seat)} פותח`, `${name(seat)} פותחת`)} · הקופה מחכה הפוכה`,
         allPass: 'פאס כללי',
         allPassHint: 'קחו כמה שפחות לקיחות',
         allPassTalonHint: 'קחו כמה שפחות לקיחות · הקופה קובעת את שתי הלקיחות הראשונות',
         misere: seat => `${name(seat)} · מיזר`,
         misereHint: seat => `אסור ${TO[seat]} לקחת אף לקיחה · התופסים חושפים את הקלפים אחרי הלקיחה הראשונה`,
-        takesTalon: seat => by(seat, 'הקופה שלך', 'אוריון לוקח את הקופה', 'וגה לוקחת את הקופה'),
+        takesTalon: seat => by(seat, 'הקופה שלך', `${name(seat)} לוקח את הקופה`, `${name(seat)} לוקחת את הקופה`),
         discardHint: 'שני קלפים יוצאים להשלכה',
         needs: (seat, tricks) => `${tricks === 1 ? 'דרושה' : 'דרושות'} ${TO[seat]} ${tricksText(tricks)}`,
         defendersDecide: 'ההגנה מחליטה: ויסט או פאס',
@@ -193,7 +213,7 @@ const he: Dictionary = {
     seat: { tricks: count => `לקיחות: ${count}`, thinking: 'במחשבה…' },
     table: { centre: 'מרכז השולחן', talonOpen: 'הקופה, גלויה לכולם', talonClosed: 'הקופה, הפוכה', talonLeads: 'קלף מהקופה קובע את הלקיחה הזו' },
     actions: {
-        thinking: seat => by(seat, 'במחשבה…', 'אוריון חושב…', 'וגה חושבת…'),
+        thinking: seat => by(seat, 'במחשבה…', `${name(seat)} חושב…`, `${name(seat)} חושבת…`),
         yourBid: 'תורך: הכריזו משחק או פאס',
         someoneBids: (seat, bid, canHold) => `${name(seat)}: ${bid}${canHold ? ' — כיד בכירה אפשר לומר "כאן"' : ''}`,
         pass: 'פאס',
@@ -204,14 +224,14 @@ const he: Dictionary = {
         nameGame: bid => `קבעו את המשחק: ${bid} או גבוה יותר`,
         concede: tricks => `לפרוש · מינוס ${tricks === 2 ? 'שתיים' : 'שלוש'}`,
         concedeHint: 'אף אחד לא רושם ויסטים; הלקיחות שוויתרתם עליהן נרשמות בהר שלכם במחיר רמת ההכרזה',
-        whistQuestion: (seat, contract) => `${by(seat, 'את/ה משחק/ת', 'אוריון משחק', 'וגה משחקת')} ${contract}. ויסט (להגן ולרשום) או פאס?`,
+        whistQuestion: (seat, contract) => `${by(seat, 'את/ה משחק/ת', `${name(seat)} משחק`, `${name(seat)} משחקת`)} ${contract}. ויסט (להגן ולרשום) או פאס?`,
         whist: 'ויסט', halfWhist: 'חצי ויסט',
-        returnQuestion: seat => `${by(seat, 'אמרת', 'אוריון אמר', 'וגה אמרה')} "חצי ויסט". להחזיר את הוויסט ולהגן?`,
+        returnQuestion: seat => `${by(seat, 'אמרת', `${name(seat)} אמר`, `${name(seat)} אמרה`)} "חצי ויסט". להחזיר את הוויסט ולהגן?`,
         takeBack: 'ויסט', leaveHalf: 'להשאיר חצי ויסט',
         modeQuestion: 'ההגנה כולה עליך. פתוח (שתי ידי ההגנה גלויות ומשחקים את שתיהן) או סגור?',
         open: 'פתוח', closed: 'סגור',
-        yourTurn: 'תורך: בחרו קלף מסומן',
-        yourTurnFor: seat => `תורך לשחק בשביל ${name(seat)} (ויסט פתוח): בחרו קלף מסומן`,
+        yourTurn: 'תורך — שחקו אחד מהקלפים המורמים',
+        yourTurnFor: seat => `תורך לשחק בשביל ${name(seat)} (ויסט פתוח) — שחקו אחד מהקלפים המורמים`,
         nextDeal: 'החלוקה הבאה',
     },
     results: {
@@ -236,15 +256,15 @@ const he: Dictionary = {
         sumsToZero: 'ויסטים, הסכום אפס',
         deals: count => `חלוקות · ${count}`,
         deal: number => `חלוקה ${number}`,
-        rulesTitle: 'החוקים בקצרה (סוצ׳י)',
+        rulesTitle: variant => `החוקים בקצרה (${variant})`,
         rules: [
             '32 קלפים, שלושה שחקנים, עשרה קלפים לכל אחד ושניים בקופה.',
             'המכרז מ־6♠ עד 10ל״ש; המיזר נמצא בין 8ל״ש ל־9♠ ומותר רק כהכרזה ראשונה. היד הבכירה יכולה להחזיק הכרזה שווה.',
             'מי שזוכה במכרז לוקח את הקופה, משליך שני קלפים וקובע את המשחק הסופי, שווה או גבוה יותר.',
-            'המגינים אומרים ויסט או פאס. מי שאומר ויסט חייב לקחת 4 לקיחות מול שש, 2 מול שבע, 1 מול שמונה או תשע; עשר רק נבדק.',
+            'המגינים אומרים ויסט או פאס. מי שאומר ויסט חייב לקחת 4 לקיחות מול שש, 2 מול שבע, 1 מול שמונה או תשע.',
             'חייבים לשרת את הסדרה; אין — משחקים שליט; אין גם שליט — כל קלף.',
-            'משחק שבוצע נרשם בפוליה; כל לקיחה חסרה עולה את מחיר המשחק בהר. ויסטים משלמים את המחיר הזה לכל לקיחה.',
-            'כולם אמרו פאס — פאס כללי: קחו כמה שפחות לקיחות. הקופה קובעת את שתי הלקיחות הראשונות.',
+            'משחק שבוצע נרשם בפוליה, לקיחות חסרות בהר ולקיחות ההגנה בוויסטים; כמה עולה כל אחת — לפי הגרסה (למטה).',
+            'כולם אמרו פאס — פאס כללי: קחו כמה שפחות לקיחות.',
         ],
         bandPool: owner => `${owner} · פוליה`,
         bandMountain: owner => `${owner} · הר`,
@@ -276,14 +296,19 @@ const he: Dictionary = {
             players: count => `${count} שחקנים`,
             pool: target => `פוליה עד ${target}`,
             allPass: prices => `פאס כללי ${prices}`,
+            allPassWhists: 'פאס כללי בתשלום ויסטים',
             without: option => `בלי "${option}"`,
             bots: { casual: 'בוטים רגילים', strong: 'בוטים חזקים' },
         },
         strength: { casual: 'רגילים · מהירים', strong: 'חזקים · חושבים יותר' },
+        opponents: 'יריבים',
+        opponentsNote: 'בחרו דיוקנאות (עד שניים); בלי בחירה — המרתף מחליט',
+        randomOpponents: 'אקראיים',
+        champion: (who, female) => `${who} ${female ? 'ניצחה' : 'ניצח'} בפוליה הקודמת ${female ? 'ותתפוס' : 'ויתפוס'} מקום פנוי ליד השולחן.`,
     },
     explain: {
         players: {
-            3: { name: '3 · את/ה + 2 בוטים', what: 'השולחן הקלאסי: עשרה קלפים לכל אחד, שניים בקופה.', how: 'המקום שלך למטה; אוריון ווגה יושבים בשאר המקומות ואף פעם לא מסתכלים בקלפים מוסתרים.', effect: 'המשחק הרגיל. כל החוקים בתפריט הזה כתובים לשלושה שחקנים.' },
+            3: { name: '3 · את/ה + 2 בוטים', what: 'השולחן הקלאסי: עשרה קלפים לכל אחד, שניים בקופה.', how: 'המקום שלך למטה; שני יושבי מרתף (חדשים בכל פוליה) תופסים את שאר המקומות ואף פעם לא מסתכלים בקלפים מוסתרים.', effect: 'המשחק הרגיל. כל החוקים בתפריט הזה כתובים לשלושה שחקנים.' },
             2: { name: '2 · גוסריק', term: '«гусарик»', what: 'את/ה נגד בוט אחד, עם יד מתה שתמיד אומרת פאס.', how: 'המגן מחליט על ויסט בלי לראות את היד המתה; ויסט תמיד משוחק פתוח, והמגן משחק את שתי ידי ההגנה.', effect: 'דו־קרב מהיר וחד יותר. המקורות מתארים אותו בשלוש דרכים שונות, ולכן השולחן יקבע את החוקים המדויקים.' },
             4: { name: '4 · המחלק על הקופה', term: '«сдающий на прикупе»', what: 'ארבעה ליד השולחן; המחלק לא מקבל קלפים בחלוקה שלו.', how: 'המחלק עדיין רושם: הוא מקבל פיצוי כשהמכריז נכשל, ובפאס כללי הקופה היא היד שלו.', effect: 'כל אחד נח בכל חלוקה רביעית. איגוד הספורט (FSPR) משחק בארבעה.' },
         },
@@ -300,7 +325,7 @@ const he: Dictionary = {
             how: '1 · 2 · 3 הוא הכלל הרגיל בסוצ׳י: המחיר עולה ואז נשאר על 3. 1 · 2 · 4 עולה מהר יותר; "תמיד 1" לא עולה אף פעם. כל משחק ששוחק מחזיר את המחיר להתחלה.',
             effect: 'רצף יקר של פאסים כלליים דוחף להכריז במקום לומר פאס.',
         },
-        progressionLabels: { '1-2-3': '1 · 2 · 3', '1-2-4': '1 · 2 · 4', flat: 'תמיד 1' },
+        progressionLabel: prices => (prices.length === 1 ? `תמיד ${prices[0]}` : prices.join(' · ')),
         bots: {
             name: 'בוטים',
             what: 'כמה זמן הבוטים חושבים. בשום רמה הם לא מסתכלים בקלפים מוסתרים.',
@@ -310,6 +335,5 @@ const he: Dictionary = {
         options: OPTIONS,
     },
     closed,
-};
-
-export default he;
+    };
+}
