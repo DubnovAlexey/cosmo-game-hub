@@ -1,9 +1,10 @@
 // =====================================================================
 // FILE: apps/client/src/games/preferans/characters/roster.ts
-// PURPOSE: who sits at the table against you. The lair has twenty dwellers (vampires, ghouls, a necromancer…) and
-//   eighteen guests from the neighbouring worlds (an alchemist, a zombie from Marseille, aliens, a raccoon…); every
-//   new pool seats a different company. Pictures: Alexey's own collection (Desktop «Favicon», 08–09.11.2026), whole,
-//   with their backgrounds, in public/games/preferans/portraits.
+// PURPOSE: who sits at the table against you. The lair has forty-three dwellers (vampires, ghouls, necromancers, a
+//   masked empress, a weeping queen…) and twenty-six guests from the neighbouring worlds (an alchemist, a zombie from
+//   Marseille, aliens, a raccoon, a ronin from an old print, a neon vampire…); every new pool seats a different
+//   company. Pictures: Alexey's own collection (Desktop «Favicon», 08–09.11.2026; some from StockCake, free to use),
+//   whole, with their backgrounds, only scaled down, in public/games/preferans/portraits.
 //   Names and biographies live in the languages (i18n/characters/*.ts); here only what does not depend on language.
 //   Pure data without React and without pictures, so the Node tests use it too.
 // =====================================================================
@@ -15,7 +16,14 @@ export type CharacterId =
   | 'upyr' | 'sebastian' | 'rosalind' | 'ada' | 'vlad' | 'lucretia' | 'isolde' | 'tadeusz' | 'gunther' | 'koschei'
   | 'vurdalak' | 'mortimer' | 'abraxas' | 'netopyr' | 'greta' | 'morana' | 'snezhana' | 'carmilla' | 'balthazar' | 'lorenzo'
   | 'berta' | 'zhorzh' | 'mortus' | 'lyuska' | 'mara' | 'oktaedr' | 'helga' | 'morg'
-  | 'agrippina' | 'sergeant' | 'klyuv' | 'dlan' | 'edgar' | 'lilith' | 'xenon' | 'chuzhak' | 'khitin' | 'semyonych';
+  | 'agrippina' | 'sergeant' | 'klyuv' | 'dlan' | 'edgar' | 'lilith' | 'xenon' | 'chuzhak' | 'khitin' | 'semyonych'
+  /** The second company (09.11.2026): 23 dwellers and 8 guests. */
+  | 'vual' | 'beatrice' | 'morwenna' | 'irma' | 'ivy' | 'lamplighter' | 'albina' | 'lacrima' | 'sangria' | 'selena'
+  | 'skuka' | 'mgla' | 'valentin' | 'pietro' | 'kenji' | 'octavian' | 'benedict' | 'akvarella' | 'skvoznyak' | 'melisande'
+  | 'belladonna' | 'cassandra' | 'tobias' | 'kage' | 'florian' | 'neon' | 'glyuk' | 'astral' | 'herbarium' | 'deco'
+  | 'bes'
+  /** The dummy of a game for two: never picked as an opponent, it sits in the third seat. */
+  | 'dummy';
 
 export interface CharacterInfo {
   readonly id: CharacterId;
@@ -61,6 +69,29 @@ export const ROSTER: readonly CharacterInfo[] = Object.freeze([
   dweller('carmilla', true, [0.5, 0.9, 1, 0.8]),
   dweller('balthazar', false, [0.25, 1, 1, 1]),
   dweller('lorenzo', false, [0.1, 0.95, 0, 1.1]),
+  dweller('vual', true, [0.3, 0.95, 0, 1.1]),
+  dweller('beatrice', true, [0, 1.0, 1, 1.0]),
+  dweller('morwenna', true, [-0.15, 1.05, 0, 1.25]),
+  dweller('irma', true, [0.2, 0.82, 0, 1.0]),
+  dweller('ivy', false, [-0.25, 1.1, 0, 1.4]),
+  dweller('lamplighter', false, [0.4, 0.9, 1, 1.0]),
+  dweller('albina', true, [0.25, 0.85, 0, 0.9]),
+  dweller('lacrima', true, [-0.1, 1.05, 0, 1.1]),
+  dweller('sangria', true, [0.3, 0.9, 1, 0.9]),
+  dweller('selena', true, [0, 1.0, 0, 1.2]),
+  dweller('skuka', true, [-0.05, 1.0, 2, 1.0]),
+  dweller('mgla', true, [0.35, 0.85, 1, 0.8]),
+  dweller('valentin', false, [0.3, 0.9, 0, 0.8]),
+  dweller('pietro', false, [0.4, 0.8, 1, 0.75]),
+  dweller('kenji', false, [0, 1.0, 0, 1.3]),
+  dweller('octavian', false, [-0.1, 1.05, 2, 1.2]),
+  dweller('benedict', false, [0.25, 0.9, 1, 0.9]),
+  dweller('akvarella', true, [0.15, 0.9, 0, 1.0]),
+  dweller('skvoznyak', false, [-0.15, 1.1, 0, 1.2]),
+  dweller('melisande', true, [-0.05, 1.0, 0, 1.1]),
+  dweller('belladonna', true, [0.15, 0.85, 0, 1.0]),
+  dweller('cassandra', true, [0.1, 0.9, 1, 1.0]),
+  dweller('tobias', false, [0.2, 0.95, 1, 0.85]),
   guest('berta', true, [0.3, 1, 0, 1]),
   guest('zhorzh', false, [0, 1, 2, 0.8]),
   guest('mortus', false, [-0.2, 1.1, 0, 1.4]),
@@ -79,14 +110,25 @@ export const ROSTER: readonly CharacterInfo[] = Object.freeze([
   guest('chuzhak', false, [0.1, 0.8, 0, 0.9]),
   guest('khitin', false, [-0.1, 1.1, 0, 1.3]),
   guest('semyonych', false, [0.15, 0.9, 2, 0.8]),
+  guest('kage', false, [0.1, 1.0, 0, 1.2]),
+  guest('florian', false, [0.05, 0.95, 1, 1.1]),
+  guest('neon', false, [0.45, 0.85, 0, 0.7]),
+  guest('glyuk', false, [0.3, 0.9, 0, 0.7]),
+  guest('astral', false, [-0.1, 1.05, 1, 1.4]),
+  guest('herbarium', false, [-0.3, 1.15, 0, 1.1]),
+  guest('deco', false, [0.2, 0.95, 1, 1.0]),
+  guest('bes', false, [0.5, 0.85, 0, 0.7]),
 ]);
-const BY_ID = new Map<CharacterId, CharacterInfo>(ROSTER.map(character => [character.id, character]));
+/** The dummy («болван») of a game for two: a scarecrow skeleton drawn for the game (portraits/dummy.svg). */
+export const DUMMY: CharacterInfo = character('dummy', false, true, [0, 1, 0, 1]);
+const BY_ID = new Map<CharacterId, CharacterInfo>([...ROSTER, DUMMY].map(entry => [entry.id, entry]));
 
-export const isCharacterId = (value: unknown): value is CharacterId => typeof value === 'string' && BY_ID.has(value as CharacterId);
+/** A character who can sit at the table as an opponent (the dummy is not one). */
+export const isCharacterId = (value: unknown): value is CharacterId => typeof value === 'string' && value !== 'dummy' && BY_ID.has(value as CharacterId);
 export const characterInfo = (id: CharacterId): CharacterInfo => BY_ID.get(id) ?? ROSTER[0];
 export const isFemale = (id: CharacterId): boolean => characterInfo(id).female;
 /** Where the picture lies in the site (relative to the base URL). */
-export const portraitPath = (id: CharacterId): string => `games/preferans/portraits/${id}.webp`;
+export const portraitPath = (id: CharacterId): string => (id === 'dummy' ? 'games/preferans/portraits/dummy.svg' : `games/preferans/portraits/${id}.webp`);
 // END 1
 
 // BEGIN 2. Who plays this pool

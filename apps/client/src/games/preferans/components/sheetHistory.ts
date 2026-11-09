@@ -36,7 +36,7 @@ export function buildSheetHistory(log: readonly DealLogEntry[], players = 3): Sh
         band.push({ deal, total: round(before + delta) });
     };
     for (const entry of log) {
-        const score = entry.result.score;
+        const score = entry.score ?? entry.result.score;
         for (const seat of seats) {
             write(pool[seat], entry.number, score.pool[seat]);
             write(mountain[seat], entry.number, score.mountain[seat]);

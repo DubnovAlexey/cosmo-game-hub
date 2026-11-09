@@ -128,16 +128,16 @@ const OptionRow: React.FC<{ id: OptionId; table: TableConfig; open: boolean; onI
 // [RU] Кто сядет за стол: все обитатели логова маленькими портретами, приколотыми к странице. Нажатие сажает
 //      персонажа на следующее свободное место (не больше двух, по порядку); повторное — отпускает. «Случайные» отдаёт
 //      оба места логову, и тогда победитель прошлой пули сохраняет место (записка говорит, кто это).
-const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champion: CharacterId | null; onChange: (next: readonly (CharacterId | null)[]) => void }> = ({ value, champion, onChange }) => {
+const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champion: CharacterId | null; onChange: (next: readonly (CharacterId | null)[]) => void; max: number }> = ({ value, champion, onChange, max }) => {
     const t = useTexts();
     const chosen = value.filter((id): id is CharacterId => id !== null);
     const toggle = (id: CharacterId) => {
-        const next = chosen.includes(id) ? chosen.filter(other => other !== id) : [...chosen, id].slice(-2);
-        onChange([next[0] ?? null, next[1] ?? null]);
+        const next = chosen.includes(id) ? chosen.filter(other => other !== id) : [...chosen, id].slice(-max);
+        onChange(Array.from({ length: max }, (_, index) => next[index] ?? null));
     };
     return (
         <section className={`${styles.setupSection} ${styles.menuItem}`}>
-            <p className={styles.setupLabel}>{t.setup.opponents} <span className={styles.setupNote}>{t.setup.opponentsNote}</span></p>
+            <p className={styles.setupLabel}>{t.setup.opponents} <span className={styles.setupNote}>{t.setup.opponentsNote(max)}</span></p>
             <div className={styles.gallery} role="group" aria-label={t.setup.opponents}>
                 {ROSTER.map(({ id }) => {
                     const seat = chosen.indexOf(id);
@@ -152,8 +152,8 @@ const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champio
                 })}
             </div>
             <div className={styles.row}>
-                <button type="button" className={styles.button} disabled={chosen.length === 0} onClick={() => onChange([null, null])}>{t.setup.randomOpponents}</button>
-                {champion && chosen.length < 2 && <span className={styles.hint}>{t.setup.champion(t.characters[champion].name, isFemale(champion))}</span>}
+                <button type="button" className={styles.button} disabled={chosen.length === 0} onClick={() => onChange(Array.from({ length: max }, () => null))}>{t.setup.randomOpponents}</button>
+                {champion && chosen.length < max && <span className={styles.hint}>{t.setup.champion(t.characters[champion].name, isFemale(champion))}</span>}
             </div>
         </section>
     );
@@ -206,7 +206,7 @@ export const SetupPanel: React.FC<SetupPanelProps> = ({ initial, saved, results,
                 {savedData && (
                     <section className={styles.setupSection}>
                         <p className={styles.setupLabel}>{t.setup.savedPool}</p>
-                        <p className={styles.hint}>{t.setup.savedLine(savedData.log.length + (savedData.deal.phase === 'done' ? 0 : 1), savedPool, savedData.settings.table.poolTarget * 3, when(saved!.timestamp, language))}</p>
+                        <p className={styles.hint}>{t.setup.savedLine(savedData.log.length + (savedData.deal.phase === 'done' ? 0 : 1), savedPool, savedData.settings.table.poolTarget * (savedData.settings.table.players === 4 ? 4 : 3), when(saved!.timestamp, language))}</p>
                         <button type="button" className={`${styles.button} ${styles.buttonPrimary} ${styles.setupWide}`} onClick={() => onContinue(savedData)}>
                             {t.setup.continueSaved}
                         </button>
@@ -240,7 +240,7 @@ export const SetupPanel: React.FC<SetupPanelProps> = ({ initial, saved, results,
                 <ChoiceGroup id="preferans-info-bots" title={t.setup.bots} choices={STRENGTHS} value={strength}
                     label={value => t.setup.strength[value]} hint={() => t.explain.bots.what}
                     info={<Explanation text={t.explain.bots} t={t} />} {...info('bots')} onChoose={setStrength} />
-                <OpponentPicker value={opponents} champion={champion} onChange={setOpponents} />
+                <OpponentPicker value={opponents} champion={champion} onChange={setOpponents} max={table.players - 1} />
 
                 <section className={styles.setupSection}>
                     <p className={styles.setupLabel}>{t.setup.conventions} <span className={styles.setupNote}>{t.setup.conventionsNote}</span></p>

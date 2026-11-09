@@ -4,7 +4,7 @@
 // [RU] ФАЙЛ: французские тексты стола преферанса. Французская типографика: неразрывный пробел ( ) перед
 //      «: ; ?» и внутри кавычек-ёлочек. Русская «пуля» происходит от французского «poule», поэтому здесь она
 //      просто «la poule»; русские термины остаются в «».
-import type { ClosedReason, OptionId, Seat, VariantId } from '../engine/index.ts';
+import type { ClosedReason, OptionId, VariantId } from '../engine/index.ts';
 import type { Cast } from '../characters/roster.ts';
 import { CHARACTERS_FR } from './characters/fr.ts';
 import type { Dictionary, Explained } from './types.ts';
@@ -30,9 +30,9 @@ const VARIANTS: Readonly<Record<VariantId, Explained>> = {
     },
     classic: {
         name: 'Classique', term: '«Классика»',
-        what: 'La variante la plus ancienne, entretenue par les bandes d’étudiants.',
-        how: 'Annonces à l’aveugle et bombes : après une passe générale à l’aveugle, le jeu suivant vaut double ou plus.',
-        effect: 'De grands écarts au score.',
+        what: 'La variante la plus ancienne, gardée par les bandes d’étudiants : prix et whist de Sotchi, passe générale 1 · 2 · 4.',
+        how: 'Seule ici existent les annonces à l’aveugle et les bombes (à activer dans les extras) : un jeu à l’aveugle coûte double, un jeu sur bombes deux, quatre ou huit fois plus.',
+        effect: 'De grands écarts au score : une donne peut décider la poule.',
     },
 };
 
@@ -81,56 +81,56 @@ const OPTIONS: Readonly<Record<OptionId, Explained>> = {
     },
     whistPassHalf: {
         name: 'Whist · passe · demi-whist', term: '«вист–пас–полвиста»',
-        what: 'Le défenseur qui a dit whist peut passer au demi-whist quand l’autre défenseur passe.',
-        how: 'C’est une extension du demi-whist, il faut donc l’activer.',
-        effect: 'Un défenseur sans partenaire peut prendre un demi-whist sûr au lieu de défendre seul.',
+        what: 'Celui qui a dit whist peut passer au demi-whist si l’autre défenseur a passé.',
+        how: 'Seulement sur six et sept : au lieu de jouer seul, il prend le demi-whist — le jeu compte comme réussi sans être joué et il inscrit des whists pour la moitié de l’obligation. Nécessite le demi-whist ; jamais à deux, où le whist avec le Mort est toujours ouvert d’emblée.',
+        effect: 'Un défenseur seul prend un demi-whist sûr au lieu d’affronter seul le déclarant.',
     },
     misereNoTalon: {
         name: 'Misère sans talon', term: '«мизер без прикупа»',
-        what: 'Une misère annoncée sans prendre le talon ; elle se place au-dessus des neuf.',
-        how: 'Les sources divergent sur ce qui la surpasse, donc la table fixera une seule règle.',
-        effect: 'Une misère plus haute, sans aide ni danger du talon.',
+        what: 'Une misère annoncée sans prendre le talon ; aux enchères elle passe au-dessus des neuf.',
+        how: 'Seul un dix la bat (les sources divergent ; notre table s’en tient à cela). Qui a annoncé une misère ordinaire peut monter jusqu’à elle. Elle se joue avec vos dix cartes, le talon reste fermé ; elle se compte comme une misère.',
+        effect: 'Une misère de rang supérieur : sans l’aide du talon, mais sans carte dangereuse venue de lui.',
     },
     darkBids: {
         name: 'Annonces à l’aveugle', term: '«тёмные заявки»',
-        what: 'Enchérir avant de regarder ses cartes : « passe à l’aveugle », « six à l’aveugle ».',
-        how: 'Elles font partie de la Classique : les annonces à l’aveugle se surenchérissent sur leur propre échelle.',
-        effect: 'Gains et pertes d’un jeu à l’aveugle sont doublés.',
+        what: 'Une parole avant de regarder ses cartes : « passe à l’aveugle » ou « six à l’aveugle », « sept à l’aveugle »…',
+        how: 'Seulement comme premier mot de la donne, cartes fermées. Un niveau à l’aveugle passe au-dessus de toute enchère visible de ce niveau (« six à l’aveugle » bat 6SA mais pas 7♠) ; la couleur se choisit après le talon. Après une annonce à l’aveugle, on ne peut que monter à l’aveugle ou passer.',
+        effect: 'Un jeu à l’aveugle coûte double : poule, montagne et whists. Une passe générale où quelqu’un a passé à l’aveugle coûte double aussi.',
     },
     bombs: {
         name: 'Bombes', term: '«бомбы»',
-        what: 'Après une passe générale à l’aveugle, les joueurs qui ont passé à l’aveugle reçoivent une bombe.',
-        how: 'Le jeu suivant sur une bombe vaut double ; une deuxième bombe ×4, une troisième ×8. Un jeu réussi retire la bombe, un jeu chuté la laisse. Il faut les annonces à l’aveugle.',
-        effect: 'De grands écarts : un seul jeu peut décider de la poule.',
+        what: 'Après une passe générale, chacun de ceux qui ont dit « passe à l’aveugle » reçoit une bombe.',
+        how: 'Son prochain jeu ou sa prochaine misère coûte double, sur deux bombes quatre fois, sur trois (« sapin ») huit fois plus. Réussi, les bombes s’éteignent ; chuté, elles restent pour le jeu suivant. Nécessite les annonces à l’aveugle.',
+        effect: 'De grands écarts : un seul jeu sur bombes peut décider la poule.',
     },
     paidTalon: {
         name: 'Talon payant', term: '«платный прикуп»',
-        what: 'Les levées sûres trouvées dans le talon se paient : un as, ou le roi et la dame d’une même couleur, comptent pour un pli ; as et roi pour deux ; deux as pour trois.',
-        how: 'Chaque levée sûre se paie au prix du jeu aux adversaires du déclarant (les sources diffèrent sur les détails).',
+        what: 'Le déclarant paie les plis rapides du talon : un as, ou un roi et une dame de même couleur — un pli ; as et roi de même couleur — deux ; deux as — trois.',
+        how: 'Chaque pli rapide coûte le prix du jeu en whists : à trois, chaque défenseur en inscrit la moitié sur le déclarant ; à quatre, le donneur inscrit toute la prime (FSPR).',
         effect: 'Un talon chanceux coûte quelque chose au déclarant.',
     },
     americanHelp: {
         name: 'Aide', term: '«помощь»',
-        what: 'Quand votre poule est pleine, les points gagnés au-delà de l’objectif vont dans la poule de l’adversaire qui a la plus grande.',
-        how: 'Pour chacun de ces points, vous inscrivez 10 whists sur lui. On l’utilise là où chacun ferme sa propre poule (Sotchi, Rostov).',
-        effect: 'La poule se ferme plus tôt et aucun point n’est perdu.',
+        what: 'Quand votre poule est fermée, les points au-delà de l’objectif vont dans la poule de l’adversaire dont la poule est la plus grande sans être fermée.',
+        how: 'À égalité, on aide le joueur de gauche. Pour chaque point donné, vous inscrivez 10 whists sur lui. Se joue là où chacun ferme sa propre poule (Sotchi, Rostov, Classique).',
+        effect: 'La poule se ferme plus vite et les points en trop ne se perdent pas.',
     },
     dealerWhists: {
         name: 'Le donneur fait whist pour ceux qui passent',
-        what: 'À quatre, quand les deux défenseurs passent, le donneur peut regarder les cartes d’un défenseur et faire whist à sa place.',
-        how: 'À quatre joueurs seulement ; les sources diffèrent sur les jeux concernés.',
+        what: 'À quatre : si les deux défenseurs passent, le donneur peut prendre la main de l’un d’eux et faire le whist lui-même.',
+        how: 'Le donneur regarde les cartes d’un défenseur et décide : whist — il joue ces cartes fermées et inscrit tout ce qu’aurait inscrit ce défenseur ; passe — le jeu compte.',
         effect: 'Moins de jeux gratuits pour le déclarant.',
     },
     misereHalves: {
         name: 'Misère à moitié', term: '«мизер пополам»',
-        what: 'Le déclarant peut inviter le donneur à partager une misère.',
-        how: 'Prime et pénalité sont partagées par moitié. À quatre joueurs seulement.',
-        effect: 'Moins de risque sur une misère douteuse.',
+        what: 'À quatre, le déclarant d’une misère peut appeler le donneur pour la partager à moitié.',
+        how: 'La décision se prend juste après les enchères, avant le talon. La poule d’une misère nette ou la montagne d’une misère prise se partage à parts égales entre le déclarant et le donneur.',
+        effect: 'Moins de risque sur une misère douteuse — et un gain plus petit.',
     },
     teeth: {
         name: 'Dents', term: '«зубы»',
-        what: 'Une marque sur la feuille vers le joueur qui vous a fait chuter.',
-        how: 'Elle ne change rien au score : c’est la promesse de lui rendre la pareille.',
+        what: 'Une marque sur la feuille en direction de celui qui vous a fait chuter.',
+        how: 'Quand vous chutez contre un whist, une dent apparaît sous la poule en direction de chaque défenseur. Cela ne change pas le score : c’est la promesse de le faire chuter à son tour.',
         effect: 'Folklore de table : seulement une marque sur la feuille.',
     },
 };
@@ -141,7 +141,7 @@ const tricksWord = (count: number): string => (count === 1 ? 'pli' : 'plis');
 
 // [EN] Who sits where: «vous» takes its own verb forms, the opponents of this pool (characters/roster.ts) the third person.
 // [RU] Кто где сидит: у «vous» свои формы глагола, у соперников этой пули (characters/roster.ts) — третье лицо.
-const by = <T>(seat: Seat, you: T, other: T): T => (seat === 0 ? you : other);
+const by = <T>(seat: number, you: T, other: T): T => (seat === 0 ? you : other);
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {
@@ -156,7 +156,7 @@ const closed = (reason: ClosedReason): string => {
 
 export default function fr(cast: Cast): Dictionary {
     const NAMES = ['Vous', ...cast.map(id => CHARACTERS_FR[id].name)];
-    const name = (seat: Seat): string => NAMES[seat];
+    const name = (seat: number): string => NAMES[seat];
     return {
     language: 'fr',
     gameTitle: 'Préférence',
@@ -199,7 +199,7 @@ export default function fr(cast: Cast): Dictionary {
         needs: (seat, tricks) => `${by(seat, 'Vous devez', `${name(seat)} doit`)} faire ${tricks} ${tricksWord(tricks)}`,
         defendersDecide: 'La défense décide : whist ou passe',
     },
-    roles: { allPass: 'Passe générale', misere: 'Misère', declarer: 'Joue', catcher: 'Chasse', checks: 'Vérifie', whist: 'Whist', halfWhist: 'Demi-whist', pass: 'Passe' },
+    roles: { allPass: 'Passe générale', misere: 'Misère', declarer: 'Joue', catcher: 'Chasse', checks: 'Vérifie', whist: 'Whist', halfWhist: 'Demi-whist', pass: 'Passe', onTalon: 'au talon' },
     seat: { tricks: count => `plis ${count}`, thinking: 'réfléchit…' },
     table: { centre: 'Centre de la table', talonOpen: 'Talon, visible de tous', talonClosed: 'Talon, face cachée', talonLeads: 'Une carte du talon fixe ce pli' },
     actions: {
@@ -234,11 +234,39 @@ export default function fr(cast: Cast): Dictionary {
         made: (seat, contract, tricks, defence) => `${name(seat)} · ${contract} · réussi avec ${tricks} · défense ${defence}`,
         down: (seat, contract, under, tricks) => `${name(seat)} · ${contract} · ${under} de chute (${tricks} ${tricksWord(tricks)})`,
         poolClosed: 'La poule est fermée.',
+        redeal: 'Tout le monde passe : on redistribue',
         whists: 'whists',
+    },
+    extra: {
+        save: 'Enregistrer',
+        savedAt: time => `enregistré à ${time}`,
+        misereNoTalon: 'Misère sans talon',
+        misereNoTalonButton: 'Misère sans talon — sans prendre le talon, aucun pli',
+        dark: level => `${level} à l’aveugle`,
+        darkPass: 'Passe à l’aveugle',
+        darkRow: 'À l’aveugle, sans regarder ses cartes',
+        lookAtCards: 'Regarder les cartes',
+        darkQuestion: 'Vos cartes sont encore fermées\u00a0: vous pouvez parler à l’aveugle — le jeu et les whists coûtent double — ou regarder d’abord',
+        darkOnly: 'Vous avez annoncé à l’aveugle sans voir vos cartes\u00a0: vous ne pouvez que monter à l’aveugle, ou passer',
+        cardsClosed: 'cartes fermées',
+        shareQuestion: 'Appeler le donneur pour partager la misère à moitié\u00a0? La poule ou la montagne se partage à parts égales',
+        share: 'À moitié avec le donneur',
+        playAlone: 'Jouer seul',
+        dealerQuestion: 'Les deux défenseurs ont passé. Prendre la main de l’un d’eux et faire le whist vous-même\u00a0?',
+        dealerHand: seat => `Main\u00a0: ${name(seat)}`,
+        dealerWhistQuestion: seat => `Whist avec la main de ${name(seat)}\u00a0? L’obligation est pour vous`,
+        bombs: count => `bombes\u00a0: ${count}`,
+        teeth: 'Dents',
+        tooth: (from, to, count) => `${from} → ${to}${count > 1 ? ` ×${count}` : ''}`,
+        results: {
+            dark: 'à l’aveugle', times: factor => `×${factor}`, bombs: 'sur bombes', darkAllPass: 'passe générale à l’aveugle',
+            bombsEarned: names => `bombe\u00a0: ${names}`, shared: 'à moitié avec le donneur',
+            dealerWhisted: seat => `whist du donneur\u00a0: ${name(seat)}`, premium: whists => `talon payant\u00a0: ${whists} whists`, noTalon: 'sans talon',
+        },
     },
     sheet: {
         title: 'Feuille de marque',
-        meta: (target, total) => `poule de ${target} · ${total} sur ${target * 3}`,
+        meta: (target, total, max) => `poule de ${target} · ${total} sur ${max}`,
         openLarge: 'Ouvrir la feuille en grand',
         close: 'Fermer la feuille',
         legend: { mountain: 'montagne · au centre', pool: 'poule · au milieu', whists: 'whists · au bord' },
@@ -292,14 +320,14 @@ export default function fr(cast: Cast): Dictionary {
         },
         strength: { casual: 'Tranquilles · rapides', strong: 'Forts · réfléchissent plus' },
         opponents: 'Adversaires',
-        opponentsNote: 'choisissez des portraits (deux au plus) ; sans choix, la crypte décide',
+        opponentsNote: max => (max === 1 ? 'choisissez un portrait ; sans choix, la crypte décide' : `choisissez des portraits (${max === 2 ? 'deux' : 'trois'} au plus) ; sans choix, la crypte décide`),
         randomOpponents: 'Au hasard',
         champion: who => `${who} a gagné la dernière poule et prend une place libre à table.`,
     },
     explain: {
         players: {
             3: { name: '3 · vous + 2 bots', what: 'La table classique : dix cartes chacun, deux au talon.', how: 'Vous êtes en bas ; deux habitants de la crypte (nouveaux à chaque poule) occupent les autres places et ne regardent jamais les cartes cachées.', effect: 'Le jeu standard. Toutes les règles de ce menu sont écrites pour trois joueurs.' },
-            2: { name: '2 · Goussarik', term: '«гусарик»', what: 'Vous contre un bot, avec une main morte qui passe toujours.', how: 'Le défenseur décide du whist sans voir la main morte ; le whist se joue toujours ouvert, et le défenseur joue les deux mains de la défense.', effect: 'Un duel plus rapide et plus tranchant. Les sources le décrivent de trois façons, donc la table fixera ses règles exactes.' },
+            2: { name: '2 · duel avec le mort', what: 'Vous contre un adversaire ; la troisième main est le mort, un épouvantail squelette qui passe toujours.', how: 'Le défenseur décide du whist sans voir le mort ; le whist est toujours ouvert et le défenseur joue les deux mains. Tout le monde passe : on redistribue.', effect: 'Un duel rapide et tranchant. Le défenseur inscrit les whists du mort ; à la fin la montagne n’est pas partagée : la différence des montagnes × 10 whists.' },
             4: { name: '4 · le donneur se repose', term: '«сдающий на прикупе»', what: 'Quatre à table ; le donneur ne reçoit pas de cartes dans sa propre donne.', how: 'Le donneur marque quand même : il touche la consolation quand le déclarant chute, et en passe générale le talon est sa main.', effect: 'Chacun se repose une donne sur quatre. La fédération sportive (FSPR) joue à quatre.' },
         },
         variants: VARIANTS,

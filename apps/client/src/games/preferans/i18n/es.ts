@@ -2,7 +2,7 @@
 //      because that is how players everywhere know them; the pool keeps its Russian name, «pulya».
 // [RU] ФАЙЛ: испанские тексты стола преферанса. Русские термины остаются в «» — под ними игру знают везде;
 //      пуля сохраняет русское имя: «pulya».
-import type { ClosedReason, OptionId, Seat, VariantId } from '../engine/index.ts';
+import type { ClosedReason, OptionId, VariantId } from '../engine/index.ts';
 import type { Cast } from '../characters/roster.ts';
 import { CHARACTERS_ES } from './characters/es.ts';
 import type { Dictionary, Explained } from './types.ts';
@@ -28,9 +28,9 @@ const VARIANTS: Readonly<Record<VariantId, Explained>> = {
     },
     classic: {
         name: 'Clásica', term: '«Классика»',
-        what: 'La variante más antigua, que siguen jugando los grupos de estudiantes.',
-        how: 'Declaraciones a ciegas y bombas: tras un pase general a ciegas, el juego siguiente vale el doble o más.',
-        effect: 'Grandes vaivenes en el marcador.',
+        what: 'La variante más antigua, conservada por grupos de estudiantes: precios y whist de Sochi, pase general 1 · 2 · 4.',
+        how: 'Solo aquí hay declaraciones a ciegas y bombas (se activan en los extras): un juego a ciegas cuesta el doble, un juego sobre bombas dos, cuatro u ocho veces más.',
+        effect: 'Grandes vaivenes en el marcador: un reparto puede decidir la pulya.',
     },
 };
 
@@ -79,57 +79,57 @@ const OPTIONS: Readonly<Record<OptionId, Explained>> = {
     },
     whistPassHalf: {
         name: 'Whist · paso · medio whist', term: '«вист–пас–полвиста»',
-        what: 'El defensor que dijo whist puede cambiar a medio whist cuando el otro defensor pasa.',
-        how: 'Amplía el medio whist, así que necesita el medio whist activado.',
-        effect: 'Un defensor solo puede quedarse con un medio whist seguro en vez de defender en solitario.',
+        what: 'Quien dijo whist puede pasar a medio whist si el otro defensor pasó.',
+        how: 'Solo en seis y siete: en vez de jugar solo toma medio whist; el juego cuenta como ganado sin jugarse y él anota whists por la mitad de la obligación. Requiere medio whist activado; no existe entre dos, donde el whist con el Muerto es siempre abierto de inmediato.',
+        effect: 'Un defensor solitario toma un medio whist seguro en vez de enfrentarse solo al declarante.',
     },
     misereNoTalon: {
         name: 'Miseria sin talón', term: '«мизер без прикупа»',
-        what: 'Una miseria declarada sin tomar el talón; está por encima de los nueves.',
-        how: 'Las fuentes no coinciden en qué la supera, así que la mesa fijará una sola regla.',
-        effect: 'Una miseria más alta, sin ayuda ni peligro del talón.',
+        what: 'Una miseria declarada sin tomar el talón; en la subasta está por encima de los nueves.',
+        how: 'Solo un diez la supera (las fuentes difieren; nuestra mesa sigue esta regla). Quien declaró miseria normal puede subir a ella. Se juega con tus diez cartas, el talón queda cerrado; se puntúa como la miseria.',
+        effect: 'Una miseria de rango mayor: sin la ayuda del talón, pero también sin una carta peligrosa de él.',
     },
     darkBids: {
         name: 'Declaraciones a ciegas', term: '«тёмные заявки»',
-        what: 'Pujar antes de mirar tus cartas: «paso a ciegas», «seis a ciegas».',
-        how: 'Forma parte de la Clásica: las declaraciones a ciegas se superan en una escala propia.',
-        effect: 'Las ganancias y las pérdidas de un juego a ciegas se duplican.',
+        what: 'Una palabra antes de mirar las cartas: «paso a ciegas» o «seis a ciegas», «siete a ciegas»…',
+        how: 'Solo como primera palabra del reparto, con las cartas cerradas. Un nivel a ciegas está por encima de toda declaración visible de ese nivel («seis a ciegas» supera 6ST pero no 7♠); el palo se elige tras el talón. Tras declarar a ciegas solo se puede subir a ciegas o pasar.',
+        effect: 'Un juego a ciegas cuesta el doble: pulya, montaña y whists. Un pase general en el que alguien pasó a ciegas también cuesta el doble.',
     },
     bombs: {
         name: 'Bombas', term: '«бомбы»',
-        what: 'Tras un pase general a ciegas, los jugadores que pasaron a ciegas reciben una bomba.',
-        how: 'El siguiente juego con bomba vale el doble; una segunda bomba, ×4; una tercera, ×8. Un juego cumplido quita la bomba; uno fallado la deja. Necesita las declaraciones a ciegas.',
-        effect: 'Grandes vaivenes: un solo juego puede decidir la pulya.',
+        what: 'Tras un pase general, cada uno que dijo «paso a ciegas» recibe una bomba.',
+        how: 'Su próximo juego o miseria cuesta el doble, con dos bombas cuatro veces, con tres («árbol») ocho veces más. Si lo gana, las bombas se queman; si falla, se quedan para el próximo juego. Requiere declaraciones a ciegas.',
+        effect: 'Grandes vaivenes: un juego sobre bombas puede decidir la pulya.',
     },
     paidTalon: {
         name: 'Talón de pago', term: '«платный прикуп»',
-        what: 'Las bazas rápidas que aparecen en el talón se pagan: un as, o el rey y la dama de un mismo palo, cuentan como una baza; as y rey, como dos; dos ases, como tres.',
-        how: 'Cada baza rápida se paga al precio del juego a los rivales del declarante (las fuentes difieren en los detalles).',
+        what: 'El declarante paga las bazas rápidas del talón: un as, o rey y dama del mismo palo, una baza; as y rey del mismo palo, dos; dos ases, tres.',
+        how: 'Cada baza rápida cuesta el precio del juego en whists: entre tres cada defensor anota la mitad sobre el declarante; entre cuatro el repartidor anota toda la prima (FSPR).',
         effect: 'Un talón afortunado le cuesta algo al declarante.',
     },
     americanHelp: {
         name: 'Ayuda', term: '«помощь»',
-        what: 'Cuando tu pulya está llena, los puntos que ganas por encima del objetivo van a la pulya del rival que la tenga más grande.',
-        how: 'Por cada uno de esos puntos le anotas 10 whists. Se usa donde cada jugador cierra su propia pulya (Sochi, Rostov).',
-        effect: 'La pulya se cierra antes y no se pierde ningún punto.',
+        what: 'Cuando tu pulya está cerrada, los puntos por encima del objetivo van a la pulya del rival con la pulya más grande aún no cerrada.',
+        how: 'En empate se ayuda al de tu izquierda. Por cada punto cedido anotas 10 whists sobre él. Se juega donde cada uno cierra su propia pulya (Sochi, Rostov, Clásica).',
+        effect: 'La pulya se cierra antes y los puntos sobrantes no se pierden.',
     },
     dealerWhists: {
         name: 'El repartidor hace whist por los que pasan',
-        what: 'En una mesa de cuatro, cuando los dos defensores pasan, el repartidor puede mirar las cartas de un defensor y hacer whist en su lugar.',
-        how: 'Solo con cuatro jugadores; las fuentes difieren en a qué juegos se aplica.',
+        what: 'Entre cuatro: si ambos defensores pasan, el repartidor puede tomar la mano de uno de ellos y hacer whist él mismo.',
+        how: 'El repartidor mira las cartas de un defensor y decide: whist, y juega esas cartas cerradas anotando todo lo que anotaría ese defensor; o paso, y el juego cuenta.',
         effect: 'Menos juegos gratis para el declarante.',
     },
     misereHalves: {
         name: 'Miseria a medias', term: '«мизер пополам»',
-        what: 'El declarante puede invitar al repartidor a compartir una miseria.',
-        how: 'El premio y la penalización se reparten a la mitad. Solo con cuatro jugadores.',
-        effect: 'Menos riesgo en una miseria dudosa.',
+        what: 'Entre cuatro, el declarante de miseria puede llamar al repartidor para compartirla a medias.',
+        how: 'Se decide justo tras la subasta, antes del talón. La pulya por una miseria limpia o la montaña por una cazada se reparte a partes iguales entre el declarante y el repartidor.',
+        effect: 'Menos riesgo en una miseria dudosa, y menos ganancia.',
     },
     teeth: {
         name: 'Dientes', term: '«зубы»',
-        what: 'Una marca en la hoja hacia el jugador que te hizo caer.',
-        how: 'No cambia nada en el marcador: es la promesa de devolvérsela cuando puedas.',
-        effect: 'Folclore de mesa: solo se muestra en la hoja.',
+        what: 'Una marca en la hoja hacia quien te hizo caer.',
+        how: 'Cuando caes contra un whist, bajo la pulya aparece un diente hacia cada defensor que hizo whist. No cambia el marcador: es la promesa de hacerle caer a su vez.',
+        effect: 'Folclore de mesa: solo una marca en la hoja.',
     },
 };
 
@@ -139,7 +139,7 @@ const tricksWord = (count: number): string => (count === 1 ? 'baza' : 'bazas');
 
 // [EN] Who sits where: «tú» takes its own verb forms, the opponents of this pool (characters/roster.ts) the third person.
 // [RU] Кто где сидит: у «tú» свои формы глагола, у соперников этой пули (characters/roster.ts) — третье лицо.
-const by = <T>(seat: Seat, you: T, other: T): T => (seat === 0 ? you : other);
+const by = <T>(seat: number, you: T, other: T): T => (seat === 0 ? you : other);
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {
@@ -154,7 +154,7 @@ const closed = (reason: ClosedReason): string => {
 
 export default function es(cast: Cast): Dictionary {
     const NAMES = ['Tú', ...cast.map(id => CHARACTERS_ES[id].name)];
-    const name = (seat: Seat): string => NAMES[seat];
+    const name = (seat: number): string => NAMES[seat];
     return {
     language: 'es',
     gameTitle: 'Preferans',
@@ -198,7 +198,7 @@ export default function es(cast: Cast): Dictionary {
         needs: (seat, tricks) => `${by(seat, 'Necesitas', `${name(seat)} necesita`)} ${tricks} ${tricksWord(tricks)}`,
         defendersDecide: 'Deciden los defensores: whist o paso',
     },
-    roles: { allPass: 'Pase general', misere: 'Miseria', declarer: 'Declarante', catcher: 'Caza', checks: 'Comprueba', whist: 'Whist', halfWhist: 'Medio whist', pass: 'Paso' },
+    roles: { allPass: 'Pase general', misere: 'Miseria', declarer: 'Declarante', catcher: 'Caza', checks: 'Comprueba', whist: 'Whist', halfWhist: 'Medio whist', pass: 'Paso', onTalon: 'en el talón' },
     seat: { tricks: count => `bazas ${count}`, thinking: 'pensando…' },
     table: { centre: 'Centro de la mesa', talonOpen: 'Talón, a la vista de todos', talonClosed: 'Talón, boca abajo', talonLeads: 'Una carta del talón marca esta baza' },
     actions: {
@@ -233,11 +233,39 @@ export default function es(cast: Cast): Dictionary {
         made: (seat, contract, tricks, defence) => `${name(seat)} · ${contract} · cumplido con ${tricks} · defensa ${defence}`,
         down: (seat, contract, under, tricks) => `${name(seat)} · ${contract} · ${under} de menos (${tricks} ${tricksWord(tricks)})`,
         poolClosed: 'La pulya está cerrada.',
+        redeal: 'Todos pasan: se reparte de nuevo',
         whists: 'whists',
+    },
+    extra: {
+        save: 'Guardar',
+        savedAt: time => `guardado a las ${time}`,
+        misereNoTalon: 'Miseria sin talón',
+        misereNoTalonButton: 'Miseria sin talón: sin tomar el talón, ni una baza',
+        dark: level => `${level} a ciegas`,
+        darkPass: 'Paso a ciegas',
+        darkRow: 'A ciegas, sin mirar las cartas',
+        lookAtCards: 'Mirar las cartas',
+        darkQuestion: 'Tus cartas siguen cerradas: puedes hablar a ciegas (el juego y los whists cuestan el doble) o mirar primero',
+        darkOnly: 'Declaraste a ciegas y no has visto tus cartas: solo puedes subir a ciegas o pasar',
+        cardsClosed: 'cartas cerradas',
+        shareQuestion: '¿Llamar al repartidor para compartir la miseria a medias? La pulya o la montaña se reparten a partes iguales',
+        share: 'A medias con el repartidor',
+        playAlone: 'Jugar solo',
+        dealerQuestion: 'Ambos defensores pasaron. ¿Tomar la mano de uno de ellos y hacer whist tú mismo?',
+        dealerHand: seat => `Mano: ${name(seat)}`,
+        dealerWhistQuestion: seat => `¿Whist con la mano de ${name(seat)}? La obligación es tuya`,
+        bombs: count => `bombas: ${count}`,
+        teeth: 'Dientes',
+        tooth: (from, to, count) => `${from} → ${to}${count > 1 ? ` ×${count}` : ''}`,
+        results: {
+            dark: 'a ciegas', times: factor => `×${factor}`, bombs: 'sobre bombas', darkAllPass: 'pase general a ciegas',
+            bombsEarned: names => `bomba: ${names}`, shared: 'a medias con el repartidor',
+            dealerWhisted: seat => `el repartidor hizo whist: ${name(seat)}`, premium: whists => `talón pagado: ${whists} whists`, noTalon: 'sin talón',
+        },
     },
     sheet: {
         title: 'Hoja de la pulya',
-        meta: (target, total) => `pulya a ${target} · ${total} de ${target * 3}`,
+        meta: (target, total, max) => `pulya a ${target} · ${total} de ${max}`,
         openLarge: 'Abrir la hoja en grande',
         close: 'Cerrar la hoja',
         legend: { mountain: 'montaña · al centro', pool: 'pulya · en medio', whists: 'whists · al borde' },
@@ -291,14 +319,14 @@ export default function es(cast: Cast): Dictionary {
         },
         strength: { casual: 'Normales · rápidos', strong: 'Fuertes · piensan más' },
         opponents: 'Rivales',
-        opponentsNote: 'elige retratos (hasta dos); sin elegir, decide la cripta',
+        opponentsNote: max => (max === 1 ? 'elige un retrato; sin elegir, decide la cripta' : `elige retratos (hasta ${max === 2 ? 'dos' : 'tres'}); sin elegir, decide la cripta`),
         randomOpponents: 'Al azar',
         champion: who => `${who} ganó la última pulya y ocupa un sitio libre en la mesa.`,
     },
     explain: {
         players: {
             3: { name: '3 · tú + 2 bots', what: 'La mesa clásica: diez cartas cada uno y dos en el talón.', how: 'Te sientas abajo; dos habitantes de la cripta (nuevos en cada pulya) ocupan los otros sitios y nunca miran las cartas ocultas.', effect: 'El juego estándar. Todas las reglas de este menú están escritas para tres jugadores.' },
-            2: { name: '2 · Gusárik', term: '«гусарик»', what: 'Tú contra un bot, con una mano muerta que siempre pasa.', how: 'El defensor decide si hace whist sin ver la mano muerta; el whist siempre se juega abierto, y el defensor juega las dos manos de la defensa.', effect: 'Un duelo más rápido y más afilado. Las fuentes lo describen de tres maneras distintas, así que la mesa fijará sus reglas exactas.' },
+            2: { name: '2 · duelo con muerto', what: 'Tú contra un rival; la tercera mano es el muerto, un esqueleto espantapájaros que siempre pasa.', how: 'El defensor decide si hace whist sin ver al muerto; el whist es siempre abierto y el defensor juega las dos manos. Si todos pasan, se reparte de nuevo.', effect: 'Un duelo rápido y afilado. Los whists del muerto los apunta su defensor; al final la montaña no se divide: la diferencia de montañas × 10 whists.' },
             4: { name: '4 · el repartidor descansa', term: '«сдающий на прикупе»', what: 'Cuatro en la mesa; el repartidor no recibe cartas en su propio reparto.', how: 'El repartidor sigue anotando: cobra la consolación cuando el declarante falla, y en el pase general el talón es su mano.', effect: 'Cada uno descansa uno de cada cuatro repartos. La federación deportiva (FSPR) juega con cuatro en la mesa.' },
         },
         variants: VARIANTS,

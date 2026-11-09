@@ -16,12 +16,14 @@ import { isFresh, type Band, type SheetHistory } from './sheetHistory';
 import styles from './ScoreSheet.module.css';
 
 // BEGIN 1. Geometry of the sheet (viewBox units)
-interface Rect { readonly x: number; readonly y: number; readonly w: number; readonly h: number }
-// [EN] The sheet is drawn 20% taller than it is wide-proportioned (Alexey, 09.11: "stretch it down a little"): every
-//      height goes through Y, the writing keeps its size and gets more lines in every band; the circle stays round.
-// [RU] Лист расчерчен на 20% выше прежнего (Алексей, 09.11: «чуть-чуть растянул бы вниз»): каждая высота проходит
-//      через Y, почерк сохраняет размер и получает больше строк в каждой полосе; круг остаётся круглым.
-const SY = 1.2;
+export interface Rect { readonly x: number; readonly y: number; readonly w: number; readonly h: number }
+// [EN] The sheet is drawn 45% taller than at first, close to a real sheet of paper (Alexey, 09.11: "stretch it down",
+//      then "the pulka is smallish, empty space under it"): every height goes through Y, the writing keeps its size
+//      and gets more lines in every band; the circle stays round.
+// [RU] Лист расчерчен на 45% выше первоначального, почти как настоящий лист бумаги (Алексей, 09.11: «растянул бы
+//      вниз», затем «пулька мелковата, под ней пустое место»): каждая высота проходит через Y, почерк сохраняет
+//      размер и получает больше строк в каждой полосе; круг остаётся круглым.
+const SY = 1.45;
 const Y = (value: number): number => Math.round(value * SY * 10) / 10;
 const HEIGHT = Y(260);
 const CIRCLE = { x: 150, y: Y(96), r: 15 };
@@ -42,12 +44,12 @@ const AREA = {
     bottomWhistsRight: area(153, 221, 94, 31),
 } satisfies Record<string, Rect>;
 /** [EN] A name as the pulka writes it: the last word ("Count Vlad" → "Vlad"). [RU] Имя, как его пишут в пуле: последнее слово. */
-const shortName = (name: string): string => name.trim().split(/\s+/).pop() ?? name;
+export const shortName = (name: string): string => name.trim().split(/\s+/).pop() ?? name;
 /** [EN] A long name is squeezed into its sector, as a hand writes tighter near a line. [RU] Длинное имя ужимается в свой сектор. */
-const fitName = (name: string, room: number): React.SVGProps<SVGTextElement> => (name.length * 5.2 > room ? { textLength: room, lengthAdjust: 'spacingAndGlyphs' } : {});
+export const fitName = (name: string, room: number): React.SVGProps<SVGTextElement> => (name.length * 5.2 > room ? { textLength: room, lengthAdjust: 'spacingAndGlyphs' } : {});
 
 /** [EN] A slightly uneven pen line. [RU] Чуть неровная линия ручкой. */
-const stroke = (x1: number, y1: number, x2: number, y2: number, seed: number): string => {
+export const stroke = (x1: number, y1: number, x2: number, y2: number, seed: number): string => {
     const bend = Math.sin(seed * 91.7) * 1.3;
     const nx = -(y2 - y1);
     const ny = x2 - x1;
@@ -55,7 +57,7 @@ const stroke = (x1: number, y1: number, x2: number, y2: number, seed: number): s
     return `M${x1} ${y1} Q${((x1 + x2) / 2 + (nx / length) * bend).toFixed(1)} ${((y1 + y2) / 2 + (ny / length) * bend).toFixed(1)} ${x2} ${y2}`;
 };
 /** [EN] A hand-drawn circle that overlaps a little where the pen started. [RU] Нарисованный от руки круг с небольшим нахлёстом. */
-const roundStroke = (cx: number, cy: number, rx: number, ry: number): string =>
+export const roundStroke = (cx: number, cy: number, rx: number, ry: number): string =>
     `M${cx + rx} ${cy - 1} C${cx + rx} ${cy - ry - 1} ${cx - rx} ${cy - ry} ${cx - rx} ${cy + 0.5}`
     + ` C${cx - rx} ${cy + ry + 1} ${cx + rx + 0.5} ${cy + ry} ${cx + rx - 0.4} ${cy - 2.5}`;
 
@@ -88,7 +90,7 @@ interface InkProps {
 }
 
 // [EN] One handwritten text; with `write` its strokes appear one after another. [RU] Один рукописный текст; с `write` штрихи появляются один за другим.
-const Ink: React.FC<InkProps> = ({ text, x, y, size, seed, latest = false, write = false, anchor = 'start' }) => {
+export const Ink: React.FC<InkProps> = ({ text, x, y, size, seed, latest = false, write = false, anchor = 'start' }) => {
     const { glyphs, width } = layoutInk(text, seed);
     const scale = size / GLYPH_HEIGHT;
     const left = anchor === 'middle' ? x - (width * scale) / 2 : x;
@@ -103,11 +105,11 @@ const Ink: React.FC<InkProps> = ({ text, x, y, size, seed, latest = false, write
     );
 };
 
-const show = (value: number): string => String(Math.round(value * 10) / 10);
+export const show = (value: number): string => String(Math.round(value * 10) / 10);
 
 // [EN] The running totals of one band, wrapped like handwriting; when the band is full the oldest lines go.
 // [RU] Нарастающие итоги одной полосы с переносом, как пишут от руки; когда полоса полна, старые строки уходят.
-const BandInk: React.FC<{ band: Band; area: Rect; lastDeal: number; seed: number }> = ({ band, area, lastDeal, seed }) => {
+export const BandInk: React.FC<{ band: Band; area: Rect; lastDeal: number; seed: number }> = ({ band, area, lastDeal, seed }) => {
     if (band.length === 0) return null;
     const entries = band.map(entry => show(entry.total));
     const scale = ENTRY_SIZE / GLYPH_HEIGHT;
@@ -134,7 +136,7 @@ const BandInk: React.FC<{ band: Band; area: Rect; lastDeal: number; seed: number
 };
 // END 2
 
-interface PulkaProps {
+export interface PulkaProps {
     history: SheetHistory;
     names: readonly string[];
     poolTarget: number;
@@ -143,9 +145,40 @@ interface PulkaProps {
     large?: boolean;
 }
 
-const signed = (value: number): string => `${value > 0.05 ? '+' : ''}${Math.round(value * 10) / 10}`;
+export const signedInk = (value: number): string => `${value > 0.05 ? '+' : ''}${Math.round(value * 10) / 10}`;
 
-// BEGIN 3. The sheet
+// BEGIN 3. The quill
+// [EN] A raven-feather quill with a blackened silver nib lies across the lower corner of the sheet, half on the paper,
+//      half on the cloth; its soft shadow falls down and to the left, away from the candles (DESIGN_CONCEPT_RU.md §2).
+//      Keyed by the last written deal, it twitches once whenever a new number is written.
+// [RU] Перо из воронова крыла с наконечником черненого серебра лежит наискось у нижнего угла листа — наполовину на
+//      бумаге, наполовину на сукне; мягкая тень падает вниз и влево, от свечей (DESIGN_CONCEPT_RU.md §2). Ключ —
+//      последняя записанная раздача: перо вздрагивает, когда пишется новое число.
+export const Quill: React.FC<{ lastDeal: number; id: string }> = ({ lastDeal, id }) => (
+    <svg key={lastDeal} className={styles.quill} viewBox="0 0 160 40" aria-hidden="true">
+        <defs>
+            <linearGradient id={`${id}-vane`} x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stopColor="#36425c" />
+                <stop offset="0.5" stopColor="#0b0d12" />
+                <stop offset="1" stopColor="#222b3d" />
+            </linearGradient>
+            <linearGradient id={`${id}-nib`} x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stopColor="#e3e6ea" />
+                <stop offset="0.55" stopColor="#7c838d" />
+                <stop offset="1" stopColor="#23262b" />
+            </linearGradient>
+        </defs>
+        <path d="M156 19C128 1 76 2 34 16c28-3 82-4 122 3Z" fill={`url(#${id}-vane)`} />
+        <path d="M156 19c-26 17-78 17-118 4 28 2 80 2 118-4Z" fill={`url(#${id}-vane)`} opacity={0.92} />
+        <path d="M62 12l-7-6M84 9l-6-6M106 8l-5-6M128 10l-4-6M72 27l-7 6M95 29l-6 6M118 28l-5 6M140 24l-4 5" stroke="#4a5876" strokeWidth={0.8} />
+        <path d="M16 20.5L156 19" stroke="#d3d9e2" strokeWidth={1.2} strokeLinecap="round" opacity={0.85} />
+        <path d="M1 20.5L16 16.8 23 20.5 16 24.2Z" fill={`url(#${id}-nib)`} stroke="#15171b" strokeWidth={0.5} />
+        <path d="M2.5 20.5H14" stroke="#15171b" strokeWidth={0.6} />
+    </svg>
+);
+// END 3
+
+// BEGIN 4. The sheet
 export const Pulka: React.FC<PulkaProps> = ({ history, names, poolTarget, balance, large = false }) => {
     const t = useTexts();
     const { lastDeal } = history;
@@ -161,10 +194,10 @@ export const Pulka: React.FC<PulkaProps> = ({ history, names, poolTarget, balanc
     );
     // [EN] Results by the circle, as on paper: left, right and below it. [RU] Итоги у круга, как на бумаге: слева, справа и под ним.
     const result = (seat: number, x: number, y: number) => balance && (
-        <g key={`${seat}-${signed(balance[seat])}`}>
+        <g key={`${seat}-${signedInk(balance[seat])}`}>
             <title>{t.sheet.resultTitle(names[seat])}</title>
             <path className={styles.ring} d={roundStroke(x, y + 5, 15, 8)} pathLength={1} />
-            <Ink text={signed(balance[seat])} x={x} y={y} size={9} seed={seat + 40} anchor="middle"
+            <Ink text={signedInk(balance[seat])} x={x} y={y} size={9} seed={seat + 40} anchor="middle"
                 latest={balance[seat] < -0.05} write />
         </g>
     );
@@ -206,7 +239,8 @@ export const Pulka: React.FC<PulkaProps> = ({ history, names, poolTarget, balanc
                 </g>
             </svg>
             <figcaption className={styles.srOnly}>{[0, 1, 2].map(spoken).join('. ')}</figcaption>
+            <Quill lastDeal={lastDeal} id={large ? 'quill-large' : 'quill'} />
         </figure>
     );
 };
-// END 3
+// END 4

@@ -10,7 +10,7 @@ import { ChessGame } from '@games/chess';
 
 <!-- [EN] Use the Layout component to wrap our page and set metadata -->
 <!-- [RU] Используем компонент Layout для обертки нашей страницы и установки метаданных -->
-<Layout title="Chess | Cosmo Game Hub">
+<Layout title="Chess | Cosmo Game Hub" titleKey="title.chess" scrollToTop={false}>
 
     <!-- [EN] CRITICAL: Render ChessGame strictly on the client side -->
     <!-- [EN] This prevents Node.js from crashing when trying to execute stockfish.js during SSR -->

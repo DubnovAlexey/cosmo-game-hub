@@ -50,7 +50,7 @@ export const games: Game[] = [
     },
     {
         title: "Preferans",
-        description: "Classic Eastern European trick-taking card game featuring complex bidding and strategy. Sochi rules against two fair bots.",
+        description: "The classic card game of bidding and whist: Sochi, Leningrad, Rostov and Classic rules, two to four at the table, against fair bots with characters in a vampire lair.",
         badge: "New",
         gameUrl: "/games/preferans",
         // [EN] A score sheet on green felt, drawn by apps/client/scripts/preferans-cover.mjs.

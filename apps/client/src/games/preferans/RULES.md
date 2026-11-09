@@ -88,9 +88,10 @@ The rules as the Cosmo Game Hub table plays them: Sochi, plus what the table men
 ### 9. Что меняется в меню стола
 
 - **Настройки варианта** (включены по умолчанию, можно снять): «здесь», полвиста, десятерная проверяется, заход с прикупа.
-- **Добавки**: Сталинград; уход без двух или без трёх (только одно из двух).
-- **Скоро**: вист–пас–полвиста, мизер без прикупа, тёмные заявки и бомбы, платный прикуп, «помощь», правила стола на четверых, «зубы».
-- **Скоро**: варианты Ленинградка, Ростовка, Классика; игра вдвоём («гусарик») и вчетвером (сдающий сидит на прикупе).
+- **Добавки:** Сталинград; уход без двух или без трёх (только одно из двух); вист–пас–полвиста (одинокий вистующий на шестерной или семерной берёт полвиста вместо игры); мизер без прикупа (старше девятерных, перебивается только десятерной, играется своими десятью картами); платный прикуп (быстрые взятки в прикупе: туз или король с дамой одной масти — 1, туз с королём одной масти — 2, два туза — 3, каждая стоит цену игры в вистах); американская помощь (очки сверх цели уходят в пулю соперника с самой большой незакрытой пулей, 10 вистов за очко); зубы (пометка на листе в сторону того, кто подсадил, на счёт не влияет).
+- **Классика** (сочинские цены, распасы 1 · 2 · 4): тёмные заявки — первым словом, не глядя в карты, «пас втёмную» или уровень втёмную, тёмная игра и распасы после тёмного паса стоят вдвое; бомбы — тёмный пас на распасах даёт бомбу, следующая игра или мизер на одной бомбе ×2, на двух ×4, на трёх ×8, сыграл — бомбы сгорают, сел — остаются.
+- **Вчетвером** сдающий сидит на прикупе, на распасах прикуп — его рука. Добавки: вист сдающего (оба защитника спасовали — сдающий берёт руку одного из них и вистует ею сам) и мизер пополам (играющий зовёт сдающего, пуля или гора делится поровну).
+- **Вдвоём** третья рука — болван: он всегда пасует, одинокий защитник вистует в светлую и играет за болвана, общий пас — пересдача.
 
 ### 10. Словарик
 
@@ -189,9 +190,10 @@ Preferans is a Russian card game for three: first an auction over how many trick
 ### 9. What the table menu changes
 
 - **Conventions of the variant** (on by default, can be switched off): "here", half-whist, the ten is checked, the talon leads.
-- **Extras:** Stalingrad; conceding two down or three down (only one of the two).
-- **Coming soon:** whist–pass–half-whist, misère without the talon, dark bids and bombs, paid talon, "help", four-player table rules, "teeth".
-- **Coming soon:** the Leningrad, Rostov and Classic variants; two players (Gusarik) and four (the dealer sits out).
+- **Extras:** Stalingrad; conceding two down or three down (only one of the two); whist–pass–half-whist (a lone whister on a six or a seven takes half-whist instead of playing); misère without the talon (above the nines, beaten only by a ten, played with your own ten cards); paid talon (quick tricks in the talon: an ace or a king and queen of a suit — 1, ace and king of a suit — 2, two aces — 3, each costing the price of the game in whists); American help (points above the target go into the biggest pool still short of it, 10 whists a point); teeth (a mark on the sheet towards whoever set you down, no effect on the score).
+- **Classic** (Sochi prices, all-pass 1 · 2 · 4): dark bids — as your first word, before looking at the cards, "pass in the dark" or a level in the dark; a dark game, and an all-pass after a dark pass, cost double. Bombs — a dark pass at an all-pass gives a bomb; the next game or misère on one bomb costs ×2, on two ×4, on three ×8; made, the bombs burn out, failed, they stay.
+- **At four** the dealer sits out, and on all-pass the talon is his hand. Extras: the dealer's whist (both defenders passed — the dealer takes one of their hands and whists with it himself) and shared misère (the declarer calls the dealer; the pool or the mountain is split equally).
+- **At two** the third hand is the dummy: it always passes, a lone defender whists open and plays the dummy's cards, and an all-pass means a new deal.
 
 ### 10. Glossary
 
@@ -295,10 +297,11 @@ Preferans is a Russian card game for three: first an auction over how many trick
 
 ### 9. מה משנה תפריט השולחן
 
-- **המוסכמות של הגרסה** (פעילות כברירת מחדל, אפשר לכבות): "כאן", חצי ויסט, העשר נבדק, הקופה פותחת.
-- **תוספות:** סטלינגרד; פרישה במינוס שתיים או שלוש (רק אחת מהשתיים).
-- **בקרוב:** ויסט–פאס–חצי ויסט, מיזר בלי קופה, הכרזות עיוורות ופצצות, קופה בתשלום, "עזרה", חוקי שולחן לארבעה, "שיניים".
-- **בקרוב:** הגרסאות לנינגרד, רוסטוב וקלאסיקה; שני שחקנים (גוסריק) וארבעה (המחלק על הקופה).
+- **מוסכמות הווריאנט** (מופעלות כברירת מחדל, אפשר לכבות): "כאן", חצי ויסט, העשר נבדקת, הקופה פותחת.
+- **תוספות:** סטלינגרד; ויתור בשתיים או בשלוש (רק אחד מהשניים); ויסט–פאס–חצי ויסט (ויסטר בודד בשש או בשבע לוקח חצי ויסט במקום לשחק); מיזר בלי קופה (מעל התשיעיות, רק עשר עוקפת אותו, משחקים בעשרת הקלפים שלכם); קופה בתשלום (לקיחות מהירות בקופה: אס, או מלך ומלכה מאותה סדרה — 1, אס ומלך מאותה סדרה — 2, שני אסים — 3, כל אחת במחיר המשחק בוויסטים); עזרה אמריקאית (נקודות מעבר ליעד עוברות לפוליה הגדולה ביותר שעוד לא נסגרה, 10 ויסטים לנקודה); שיניים (סימן על הדף לכיוון מי שהפיל אתכם, בלי השפעה על הניקוד).
+- **קלאסיקה** (מחירי סוצ׳י, פאס כללי 1 · 2 · 4): הכרזות בעיוורון — כמילה הראשונה, לפני שמסתכלים בקלפים, "פאס בעיוורון" או רמה בעיוורון; משחק בעיוורון, ופאס כללי אחרי פאס בעיוורון, עולים כפול. פצצות — פאס בעיוורון בפאס כללי נותן פצצה; המשחק או המיזר הבא על פצצה אחת ‎×2, על שתיים ‎×4, על שלוש ‎×8; הצליח — הפצצות נשרפות, נפל — הן נשארות.
+- **בארבעה** המחלק יושב על הקופה, ובפאס כללי הקופה היא היד שלו. תוספות: ויסט המחלק (שני המגינים אמרו פאס — המחלק לוקח את היד של אחד מהם ומשחק בה ויסט בעצמו) ומיזר חצי־חצי (השחקן קורא למחלק; הפוליה או ההר מתחלקים שווה בשווה).
+- **בשניים** היד השלישית היא הדחליל: הוא תמיד אומר פאס, מגן בודד משחק ויסט גלוי ומשחק בקלפי הדחליל, ופאס כללי פירושו חלוקה חדשה.
 
 ### 10. מילון קטן
 
@@ -398,10 +401,11 @@ El preferans es un juego de cartas ruso para tres: primero una subasta sobre cu�
 
 ### 9. Qué cambia el menú de la mesa
 
-- **Convenciones de la variante** (activadas por defecto, se pueden quitar): «aquí», medio whist, el diez se comprueba, sale el talón.
-- **Extras:** Stalingrado; rendirse con dos o con tres de menos (solo una de las dos).
-- **Próximamente:** whist–paso–medio whist, miseria sin talón, declaraciones a ciegas y bombas, talón de pago, «ayuda», reglas de mesa para cuatro, «dientes».
-- **Próximamente:** las variantes Leningrado, Rostov y Clásica; dos jugadores (Gusárik) y cuatro (el repartidor descansa).
+- **Convenciones de la variante** (activadas por defecto, se pueden quitar): «aquí», medio whist, el diez se comprueba, el talón abre.
+- **Extras:** Stalingrado; abandonar con dos o con tres de menos (solo una de las dos); whist–paso–medio whist (un defensor solitario en seis o siete toma medio whist en vez de jugar); miseria sin talón (por encima de los nueves, solo la supera un diez, se juega con tus diez cartas); talón pagado (bazas rápidas en el talón: un as, o rey y dama del mismo palo — 1, as y rey del mismo palo — 2, dos ases — 3, cada una al precio del juego en whists); ayuda americana (los puntos por encima del objetivo van a la pulya más grande aún sin cerrar, 10 whists por punto); dientes (una marca en la hoja hacia quien te hizo caer, sin efecto en el marcador).
+- **Clásica** (precios de Sochi, pase general 1 · 2 · 4): declaraciones a ciegas — como primera palabra, sin mirar las cartas, «paso a ciegas» o un nivel a ciegas; un juego a ciegas, y un pase general tras un paso a ciegas, cuestan el doble. Bombas — un paso a ciegas en un pase general da una bomba; el siguiente juego o miseria sobre una bomba vale ×2, sobre dos ×4, sobre tres ×8; si se gana, las bombas se queman; si se falla, se quedan.
+- **Entre cuatro** el repartidor descansa en el talón, y en el pase general el talón es su mano. Extras: el whist del repartidor (ambos defensores pasan: el repartidor toma la mano de uno y hace whist con ella) y la miseria a medias (el declarante llama al repartidor; la pulya o la montaña se reparten a partes iguales).
+- **Entre dos** la tercera mano es el Muerto: siempre pasa, un defensor solitario hace whist abierto y juega las cartas del Muerto, y un pase general significa repartir de nuevo.
 
 ### 10. Glosario
 
@@ -499,10 +503,11 @@ Le préférence est un jeu de cartes russe à trois : d’abord des enchères su
 
 ### 9. Ce que change le menu de la table
 
-- **Conventions de la variante** (activées par défaut, on peut les retirer) : «&nbsp;ici&nbsp;», demi-whist, le dix est vérifié, le talon entame.
-- **Extras :** Stalingrad ; abandon à deux ou à trois de chute (un seul des deux).
-- **Bientôt :** whist–passe–demi-whist, misère sans talon, annonces à l’aveugle et bombes, talon payant, «&nbsp;aide&nbsp;», règles de table à quatre, «&nbsp;dents&nbsp;».
-- **Bientôt :** les variantes Léningrad, Rostov et Classique ; deux joueurs (Goussarik) et quatre (le donneur se repose).
+- **Conventions de la variante** (actives par défaut, désactivables) : « ici », demi-whist, le dix est vérifié, le talon entame.
+- **Extras :** Stalingrad ; abandon à moins deux ou à moins trois (l’un des deux seulement) ; whist–passe–demi-whist (un défenseur seul sur un six ou un sept prend le demi-whist au lieu de jouer) ; misère sans talon (au-dessus des neuf, battue seulement par un dix, jouée avec vos dix cartes) ; talon payant (plis rapides du talon : un as, ou un roi et une dame de même couleur — 1, as et roi de même couleur — 2, deux as — 3, chacun au prix du jeu en whists) ; aide américaine (les points au-delà de l’objectif vont dans la plus grande poule pas encore fermée, 10 whists par point) ; dents (une marque sur la feuille vers celui qui vous a fait chuter, sans effet sur le score).
+- **Classique** (prix de Sotchi, passe générale 1 · 2 · 4) : annonces à l’aveugle — comme premier mot, sans regarder ses cartes, « passe à l’aveugle » ou un niveau à l’aveugle ; un jeu à l’aveugle, et une passe générale après une passe à l’aveugle, coûtent double. Bombes — une passe à l’aveugle lors d’une passe générale donne une bombe ; le jeu ou la misère suivants sur une bombe valent ×2, sur deux ×4, sur trois ×8 ; réussi, les bombes s’éteignent, chuté, elles restent.
+- **À quatre** le donneur reste au talon, et en passe générale le talon est sa main. Extras : le whist du donneur (les deux défenseurs ont passé — le donneur prend la main de l’un d’eux et fait le whist lui-même) et la misère partagée (le déclarant appelle le donneur ; la poule ou la montagne se partage à parts égales).
+- **À deux** la troisième main est le Mort : il passe toujours, un défenseur seul fait le whist ouvert et joue les cartes du Mort, et une passe générale signifie une nouvelle donne.
 
 ### 10. Petit lexique
 

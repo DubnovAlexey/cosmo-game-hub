@@ -6,7 +6,8 @@
 // SECTIONS: 1 options; 2 bidding; 3 discard and contract; 4 whist; 5 card play; 6 entry point.
 // =====================================================================
 import { legalBids } from '../bidding.ts';
-import { MISERE, gameBid, contractOf, type Bid, type Level, type Strain } from '../bids.ts';
+import { MISERE, MISERE_NO_TALON, darkBid, gameBid, contractOf, isDarkBid, type Bid, type Level, type Strain } from '../bids.ts';
+import { canPassDark, isFirstCall } from '../bidding.ts';
 import { cardsOf, rankOf, removeCard, suitOf, suitSet, type Card, type CardSet } from '../cards.ts';
 import { controllerOf, legalActions, legalPlays, ledSuitOf, type Action, type DealState } from '../deal.ts';
 import { otherSeats, type Seat } from '../play.ts';
@@ -56,15 +57,31 @@ const LAST_CHANCE_BONUS = 0.6;
 // END 1
 
 // BEGIN 2. Bidding
-function chooseBid(state: DealState, seat: Seat, style: BotStyle): Action {
-  const hand = state.hands[seat];
+function chooseBid(state: DealState, seat: Seat, style: BotStyle, random?: Random): Action {
   const bidding = state.bidding;
   const legal = legalBids(bidding, state.rules);
+  // [EN] Dark calls are decided before looking at the cards, so they never read the hand: a little chance, more for
+  //      a bold character and where dark passes earn bombs. A dark bidder then only passes.
+  // [RU] Тёмные слова решаются до взгляда в карты, поэтому руку не читают: небольшой шанс, больше у смелого персонажа
+  //      и там, где тёмный пас приносит бомбы. Сказавший втёмную дальше только пасует.
+  const own = bidding.lastBid[seat];
+  if (own !== null && isDarkBid(own)) return { type: 'pass', seat };
+  if (state.rules.darkBids && isFirstCall(bidding, seat) && random) {
+    const bold = Math.max(0, style.boldness);
+    const roll = random();
+    const passChance = (state.rules.bombs ? 0.1 : 0.05) + 0.1 * bold;
+    if (canPassDark(bidding, state.rules) && roll < passChance) return { type: 'pass', seat, dark: true };
+    const dark = legal.find(bid => isDarkBid(bid));
+    if (dark !== undefined && dark === darkBid(6) && roll < passChance + 0.02 + 0.06 * bold) return { type: 'bid', seat, bid: dark };
+  }
+  const hand = state.hands[seat];
   if (legal.includes(MISERE) && misereRisk(hand) <= style.misereNerve) return { type: 'bid', seat, bid: MISERE };
+  // [EN] Without the talon only a hand that needs no help: beats the nines, scores like misère. [RU] Без прикупа — только рука, которой помощь не нужна.
+  if (legal.includes(MISERE_NO_TALON) && !legal.includes(MISERE) && misereRisk(hand) <= 0) return { type: 'bid', seat, bid: MISERE_NO_TALON };
   const best = bestStrain(hand);
   const lastChance = bidding.highest === null && otherSeats(seat).every(other => bidding.passed[other]);
   const level = Math.min(10, Math.floor(best.tricks + TALON_BONUS + (lastChance ? LAST_CHANCE_BONUS : 0) + style.boldness));
-  const cheapest = legal.find(bid => bid !== MISERE);
+  const cheapest = legal.find(bid => bid !== MISERE && bid !== MISERE_NO_TALON && !isDarkBid(bid));
   if (level < 6 || cheapest === undefined) return { type: 'pass', seat };
   return cheapest <= gameBid(level as Level, best.strain) ? { type: 'bid', seat, bid: cheapest } : { type: 'pass', seat };
 }
@@ -208,7 +225,11 @@ function decide(state: DealState, options: BotOptions): Action {
   if (seat === null) throw new Error('The deal is over: nobody has to act');
   const style = options.style ?? NEUTRAL_STYLE;
   switch (state.phase) {
-    case 'bidding': return chooseBid(state, seat, style);
+    case 'bidding': return chooseBid(state, seat, style, options.random);
+    case 'misereShare': {
+      // [EN] Four at the table: a misère with any risk is shared with the dealer. [RU] Вчетвером мизер с риском делят со сдающим.
+      return { type: 'shareMisere', seat, share: misereRisk(state.hands[seat]) > style.misereNerve * 0.5 };
+    }
     case 'discard': return chooseDiscard(state, seat);
     case 'declare': return chooseContract(state, seat);
     case 'whist': return chooseWhist(state, seat, style);
@@ -216,7 +237,24 @@ function decide(state: DealState, options: BotOptions): Action {
       const { obligation } = whistObligation(state);
       return { type: 'returnWhist', seat, accept: estimateDefenderTricks(state.hands[seat], state.trump) >= obligation * 0.75 };
     }
-    case 'whistMode': return { type: 'whistMode', seat, open: true };
+    case 'whistMode': {
+      // [EN] Whist–pass–half: a lone whister who expects less than the obligation takes the sure half instead.
+      // [RU] Вист — пас — полвиста: одинокий вистующий, ожидающий меньше обязательства, берёт верные полвиста.
+      const { obligation } = whistObligation(state);
+      const canHalf = legalActions(state).some(action => action.type === 'takeHalf');
+      if (canHalf && estimateDefenderTricks(state.hands[seat], state.trump) / style.whistCaution < obligation * 0.9) return { type: 'takeHalf', seat };
+      return { type: 'whistMode', seat, open: true };
+    }
+    case 'dealerWhist': {
+      // [EN] The dealer looks at the first defender's hand and whists with it when it holds the obligation.
+      // [RU] Сдающий смотрит руку первого защитника и вистует ею, если она тянет обязательство.
+      const whist = state.whist;
+      if (!whist) return { type: 'dealerWhist', seat, whist: false };
+      const look = whist.dealerLook;
+      if (look === null || look === undefined) return { type: 'dealerLook', seat, defender: whist.order[0] };
+      const { obligation } = whistObligation(state);
+      return { type: 'dealerWhist', seat, whist: estimateDefenderTricks(state.hands[look], state.trump) / style.whistCaution >= obligation * 0.8 };
+    }
     case 'play': return { type: 'play', seat, card: choosePlay(state, seat, options) };
     default: throw new Error(`No decision in phase ${state.phase}`);
   }

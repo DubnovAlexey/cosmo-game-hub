@@ -9,7 +9,7 @@
 //      characters/roster.ts), поэтому языковой файл — функция от состава: он согласует глаголы с «вы» и с родом
 //      каждого соперника, например «Вы берёте прикуп», «Кармилла сказала», «Кощей сказал».
 import type { BotStrength } from '../hooks/usePreferans';
-import type { ClosedReason, OptionId, PlayerCount, Seat, VariantId } from '../engine/index.ts';
+import type { ClosedReason, OptionId, PlayerCount, VariantId } from '../engine/index.ts';
 import type { Cast, CharacterId } from '../characters/roster.ts';
 import type { Language } from '@shared/i18n/languages';
 
@@ -66,27 +66,29 @@ export interface Dictionary {
     };
     readonly info: {
         readonly auction: string;
-        readonly speaksFirst: (seat: Seat) => string;
+        readonly speaksFirst: (seat: number) => string;
         readonly allPass: string;
         readonly allPassHint: string;
         readonly allPassTalonHint: string;
-        readonly misere: (seat: Seat) => string;
-        readonly misereHint: (seat: Seat) => string;
-        readonly takesTalon: (seat: Seat) => string;
+        readonly misere: (seat: number) => string;
+        readonly misereHint: (seat: number) => string;
+        readonly takesTalon: (seat: number) => string;
         readonly discardHint: string;
-        readonly needs: (seat: Seat, tricks: number) => string;
+        readonly needs: (seat: number, tricks: number) => string;
         readonly defendersDecide: string;
     };
     readonly roles: {
         readonly allPass: string; readonly misere: string; readonly declarer: string; readonly catcher: string;
         readonly checks: string; readonly whist: string; readonly halfWhist: string; readonly pass: string;
+        /** [EN] The dealer who sits out at a table of four. [RU] Сдающий, который вчетвером сидит на прикупе. */
+        readonly onTalon: string;
     };
     readonly seat: { readonly tricks: (count: number) => string; readonly thinking: string };
     readonly table: { readonly centre: string; readonly talonOpen: string; readonly talonClosed: string; readonly talonLeads: string };
     readonly actions: {
-        readonly thinking: (seat: Seat) => string;
+        readonly thinking: (seat: number) => string;
         readonly yourBid: string;
-        readonly someoneBids: (seat: Seat, bid: string, canHold: boolean) => string;
+        readonly someoneBids: (seat: number, bid: string, canHold: boolean) => string;
         readonly pass: string;
         readonly discardMisere: string;
         readonly discardGame: string;
@@ -95,34 +97,73 @@ export interface Dictionary {
         readonly nameGame: (bid: string) => string;
         readonly concede: (tricks: number) => string;
         readonly concedeHint: string;
-        readonly whistQuestion: (seat: Seat, contract: string) => string;
+        readonly whistQuestion: (seat: number, contract: string) => string;
         readonly whist: string;
         readonly halfWhist: string;
-        readonly returnQuestion: (seat: Seat) => string;
+        readonly returnQuestion: (seat: number) => string;
         readonly takeBack: string;
         readonly leaveHalf: string;
         readonly modeQuestion: string;
         readonly open: string;
         readonly closed: string;
         readonly yourTurn: string;
-        readonly yourTurnFor: (seat: Seat) => string;
+        readonly yourTurnFor: (seat: number) => string;
         readonly nextDeal: string;
     };
     readonly results: {
         readonly allPass: (scores: string) => string;
-        readonly misereClean: (seat: Seat) => string;
-        readonly misereCaught: (seat: Seat, tricks: number) => string;
-        readonly conceded: (seat: Seat, contract: string, tricks: number) => string;
-        readonly halfWhistCounted: (seat: Seat, contract: string) => string;
-        readonly nobodyWhisted: (seat: Seat, contract: string) => string;
-        readonly made: (seat: Seat, contract: string, tricks: number, defence: number) => string;
-        readonly down: (seat: Seat, contract: string, under: number, tricks: number) => string;
+        readonly misereClean: (seat: number) => string;
+        readonly misereCaught: (seat: number, tricks: number) => string;
+        readonly conceded: (seat: number, contract: string, tricks: number) => string;
+        readonly halfWhistCounted: (seat: number, contract: string) => string;
+        readonly nobodyWhisted: (seat: number, contract: string) => string;
+        readonly made: (seat: number, contract: string, tricks: number, defence: number) => string;
+        readonly down: (seat: number, contract: string, under: number, tricks: number) => string;
         readonly poolClosed: string;
+        /** [EN] Two at the table, everybody passed: a new deal. [RU] Вдвоём все спасовали — пересдача. */
+        readonly redeal: string;
         readonly whists: string;
+    };
+    /** [EN] Texts of the table options played since 09.11.2026: dark calls, bombs, shared misère, the dealer's whist,
+     *       teeth, notes of a deal's result. Seats are table players. [RU] Тексты опций стола, которые играются с
+     *       09.11.2026: тёмные заявки, бомбы, мизер пополам, вист сдающего, зубы, пометки итога раздачи. */
+    readonly extra: {
+        /** [EN] Save the pool now, and when it was saved. [RU] Сохранить пулю сейчас и когда она сохранилась. */
+        readonly save: string;
+        readonly savedAt: (time: string) => string;
+        readonly misereNoTalon: string;
+        readonly misereNoTalonButton: string;
+        readonly dark: (level: number) => string;
+        readonly darkPass: string;
+        readonly darkRow: string;
+        readonly lookAtCards: string;
+        readonly darkQuestion: string;
+        readonly darkOnly: string;
+        readonly cardsClosed: string;
+        readonly shareQuestion: string;
+        readonly share: string;
+        readonly playAlone: string;
+        readonly dealerQuestion: string;
+        readonly dealerHand: (seat: number) => string;
+        readonly dealerWhistQuestion: (seat: number) => string;
+        readonly bombs: (count: number) => string;
+        readonly teeth: string;
+        readonly tooth: (from: string, to: string, count: number) => string;
+        readonly results: {
+            readonly dark: string;
+            readonly times: (factor: number) => string;
+            readonly bombs: string;
+            readonly darkAllPass: string;
+            readonly bombsEarned: (names: string) => string;
+            readonly shared: string;
+            readonly dealerWhisted: (seat: number) => string;
+            readonly premium: (whists: number) => string;
+            readonly noTalon: string;
+        };
     };
     readonly sheet: {
         readonly title: string;
-        readonly meta: (target: number, total: number) => string;
+        readonly meta: (target: number, total: number, max: number) => string;
         readonly openLarge: string;
         readonly close: string;
         readonly legend: { readonly mountain: string; readonly pool: string; readonly whists: string };
@@ -181,7 +222,8 @@ export interface Dictionary {
         };
         readonly strength: Readonly<Record<BotStrength, string>>;
         readonly opponents: string;
-        readonly opponentsNote: string;
+        /** [EN] How many portraits may be picked (1–3). [RU] Сколько портретов можно выбрать (1–3). */
+        readonly opponentsNote: (max: number) => string;
         readonly randomOpponents: string;
         /** [EN] The winner of the last pool keeps a free seat. [RU] Победитель прошлой пули сохраняет свободное место. */
         readonly champion: (name: string, female: boolean) => string;

@@ -26,9 +26,16 @@ test('like a menu: «two down» and «three down» cannot be ordered together', 
   assert.deepEqual(toRuleOptions(table).concedeTricks, 3);
 });
 
-test('options the engine does not play yet are closed as not ready', () => {
-  assert.deepEqual(closedReason(plainTable(), 'bombs'), { kind: 'notReady' });
-  assert.equal(toggleOption(plainTable(), 'bombs').config.options.includes('bombs'), false);
+test('every option is played since 09.11.2026; Classic brings dark calls and bombs', () => {
+  assert.deepEqual(OPTIONS.filter(spec => !spec.ready).map(spec => spec.id), []);
+  assert.deepEqual(closedReason(plainTable(), 'bombs'), { kind: 'variant', variants: ['classic'] });
+  let classic = chooseVariant(plainTable(), 'classic').config;
+  assert.deepEqual(closedReason(classic, 'bombs'), { kind: 'requires', option: 'darkBids' });
+  classic = toggleOption(toggleOption(classic, 'darkBids').config, 'bombs').config;
+  assert.ok(isOn(classic, 'bombs') && isPlayable(classic));
+  assert.equal(toRuleOptions(classic).bombs, true);
+  // [EN] The dealer's options need a dealer who sits out. [RU] Опциям сдающего нужен сдающий на прикупе.
+  assert.deepEqual(closedReason(plainTable(), 'dealerWhists'), { kind: 'players', players: [4] });
 });
 
 test('requirements, variants and player counts close an option, in a fixed order', () => {
@@ -67,5 +74,12 @@ test('the engine receives exactly the chosen rules', () => {
   const table = toggleOption(toggleOption(plainTable(), 'halfWhist').config, 'stalingrad').config;
   assert.deepEqual(toRuleOptions({ ...table, progression: 'flat' }), {
     raspasyProgression: [1], seniorHold: true, halfWhist: false, tenIsChecked: true, raspasyTalonLeads: true, stalingrad: true, concedeTricks: 0,
+    talonTakesTricks: false, dummySeat: null,
+    whistPassHalf: false, misereNoTalon: false, darkBids: false, bombs: false, paidTalon: false, americanHelp: false,
+    dealerWhists: false, misereHalves: false, teeth: false,
   });
+  // [EN] Four at the table: on all-pass the open talon is the dealer's hand. [RU] Вчетвером на распасах открытый прикуп — рука сдающего.
+  assert.equal(toRuleOptions({ ...table, players: 4 }).talonTakesTricks, true);
+  // [EN] Two at the table: the third seat is the dummy. [RU] Вдвоём третье место занимает болван.
+  assert.equal(toRuleOptions({ ...table, players: 2 }).dummySeat, 2);
 });

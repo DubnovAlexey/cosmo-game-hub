@@ -1,11 +1,15 @@
-/* [EN] FILE: games/preferans/components/Lair.module.css — the vampire lair around the table (Lair.tsx): candles with
-        living flames, bats, cobwebs, fog. Only transforms and opacity move, so the browser animates them cheaply on
-        the compositor; on narrow screens the side candles step away and one small bat keeps watch from the top.
-   [RU] ФАЙЛ: вампирское логово вокруг стола (Lair.tsx) — свечи с живым пламенем, летучие мыши, паутина, туман.
-        Двигаются только transform и opacity, поэтому браузер анимирует их дёшево на композиторе; на узких экранах
-        боковые свечи уходят, а одна маленькая летучая мышь сторожит сверху. */
+/* [EN] FILE: games/preferans/components/Lair.module.css — the crypt around the table (Lair.tsx, DESIGN_CONCEPT_RU.md §6):
+        candelabra with living flames, lancet windows with moonlight, bats, cobwebs, fog. Only transforms and opacity
+        move, so the browser animates them cheaply on the compositor. The side pieces grow with the free margin beside
+        the table (--side); where there is none they step away and one small bat keeps watch from the top.
+   [RU] ФАЙЛ: крипта вокруг стола (Lair.tsx, DESIGN_CONCEPT_RU.md §6) — канделябры с живым пламенем, стрельчатые окна
+        с лунным светом, летучие мыши, паутина, туман. Двигаются только transform и opacity, поэтому браузер анимирует
+        их дёшево на композиторе. Боковые предметы растут вместе со свободным полем у стола (--side); где поля нет,
+        они уходят, а одна маленькая летучая мышь сторожит сверху. */
 
 .lair {
+    /* [EN] The free margin beside the 1360 px table, minus a breath of air. [RU] Свободное поле у стола шириной 1360 px, минус воздух. */
+    --side: clamp(64px, calc((100vw - 1360px) / 2 - 10px), 160px);
     position: absolute;
     inset: 0;
     z-index: 0;
@@ -13,93 +17,77 @@
     pointer-events: none;
 }
 
-/* ===== Candles / Свечи ===== */
-/* [EN] The groups stand outside the felt, at the height of the table; the felt (z-index 1) covers whatever overlaps.
-   [RU] Группы стоят вне сукна, на высоте стола; сукно (z-index 1) закрывает то, что заходит под него. */
-.candles { position: absolute; top: 230px; display: flex; align-items: flex-end; gap: 10px; }
-.candlesLeft { left: max(8px, calc(50% - 640px - 150px)); }
-.candlesRight { right: max(8px, calc(50% - 640px - 150px)); }
-.onSkull { display: inline-flex; flex-direction: column; align-items: center; }
-
-/* [EN] --w (width), --h (wax height) and --d (flicker delay) come per candle from Lair.tsx; these are the defaults.
-   [RU] --w (ширина), --h (высота воска) и --d (задержка мерцания) задаёт каждой свече Lair.tsx; здесь значения по умолчанию. */
-.candle { --w: 16px; --h: 90px; --d: 0s; position: relative; display: block; flex: none; width: var(--w); height: calc(var(--h) + 34px); }
-
-/* [EN] Bone-white wax lit from the flame, with blood-red drips running from the rim.
-   [RU] Костяно-белый воск, освещённый пламенем, с кровавыми потёками от края. */
-.wax {
+/* ===== Candelabra / Канделябры ===== */
+/* [EN] They stand beside the upper half of the table; the felt (z-index 1) hides whatever slips behind it.
+   [RU] Стоят у верхней половины стола; сукно (z-index 1) закрывает то, что заходит за него. */
+.candelabrum {
     position: absolute;
-    left: 0;
-    bottom: 0;
-    width: var(--w);
-    height: var(--h);
-    border-radius: 3px 3px 2px 2px;
-    background:
-        radial-gradient(ellipse 2.2px 11px at 22% 0, #8e0f1c 96%, transparent 100%),
-        radial-gradient(ellipse 1.8px 18px at 64% 0, #7a0c18 96%, transparent 100%),
-        radial-gradient(ellipse 2px 7px at 86% 0, #8e0f1c 96%, transparent 100%),
-        linear-gradient(90deg, #a99c82 0%, #e9dfc8 30%, #f8f2e4 48%, #ddd0b4 72%, #8f8269 100%);
-    box-shadow: inset 0 7px 7px -5px rgba(255, 196, 110, 0.75), 0 6px 12px rgba(0, 0, 0, 0.6);
+    top: 250px;
+    width: var(--side);
+    height: calc(var(--side) * 2.125);
+    overflow: visible;
+    filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.75));
 }
+.candelabrumLeft { left: max(4px, calc(50% - 680px - var(--side) - 6px)); }
+.candelabrumRight { right: max(4px, calc(50% - 680px - var(--side) - 6px)); }
 
-.wick { position: absolute; left: 50%; bottom: var(--h); width: 2px; height: 7px; translate: -50% 0; background: #1a120c; border-radius: 1px; }
-
-.flame {
-    position: absolute;
-    left: 50%;
-    bottom: calc(var(--h) + 3px);
-    width: 12px;
-    height: 27px;
-    translate: -50% 0;
-    border-radius: 50% 50% 46% 46% / 64% 64% 36% 36%;
-    background: radial-gradient(ellipse at 50% 76%, #fffdf0 0%, #ffe08a 26%, #ff9a2e 54%, rgba(255, 70, 10, 0.25) 70%, transparent 78%);
-    transform-origin: 50% 92%;
-    animation: flicker 1.7s ease-in-out var(--d) infinite;
-}
-
-.glow {
-    position: absolute;
-    left: 50%;
-    bottom: calc(var(--h) - 70px);
-    width: 190px;
-    height: 190px;
-    translate: -50% 0;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 168, 70, 0.32) 0%, rgba(255, 110, 40, 0.12) 38%, transparent 68%);
-    animation: glow 2.4s ease-in-out var(--d) infinite;
-}
+/* [EN] Each flame flickers in its own rhythm (delays from Lair.tsx); the halo breathes with it.
+   [RU] Каждое пламя мерцает в своём ритме (задержки из Lair.tsx); ореол дышит вместе с ним. */
+.flame, .flameCore { transform-box: fill-box; transform-origin: 50% 100%; animation: flicker 1.7s ease-in-out infinite; }
+.flameCore { opacity: 0.9; animation-duration: 1.3s; }
+.glow { animation: glow 2.4s ease-in-out infinite; }
 
 @keyframes flicker {
     0%, 100% { transform: scale(1, 1) skewX(0deg); }
-    18% { transform: scale(0.93, 1.07) skewX(3deg); }
-    37% { transform: scale(1.05, 0.94) skewX(-2deg); }
-    55% { transform: scale(0.96, 1.1) skewX(2deg); }
-    74% { transform: scale(1.03, 0.96) skewX(-3deg); }
+    18% { transform: scale(0.92, 1.08) skewX(3deg); }
+    37% { transform: scale(1.05, 0.93) skewX(-2deg); }
+    55% { transform: scale(0.95, 1.11) skewX(2deg); }
+    74% { transform: scale(1.03, 0.95) skewX(-3deg); }
     88% { transform: scale(0.98, 1.04) skewX(1deg); }
 }
-@keyframes glow { 0%, 100% { opacity: 0.82; } 35% { opacity: 1; } 60% { opacity: 0.7; } 80% { opacity: 0.95; } }
+@keyframes glow { 0%, 100% { opacity: 0.8; } 35% { opacity: 1; } 60% { opacity: 0.68; } 80% { opacity: 0.95; } }
 
-/* [EN] The skull under one candle; its eyes smoulder. [RU] Череп под одной свечой; глаза тлеют. */
-.skull { display: block; width: 46px; height: 43px; margin-top: -4px; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.7)); }
-.skullEye { animation: smoulder 3.2s ease-in-out infinite; }
-@keyframes smoulder { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+.skullEye { animation: smoulder 3.6s ease-in-out infinite; }
+@keyframes smoulder { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.85; } }
+
+/* ===== Windows and moonlight / Окна и лунный свет ===== */
+/* [EN] High on the crypt wall, cold silver-blue against the warm candles. [RU] Высоко на стене крипты, холодные
+   серебристо-голубые против тёплых свечей. */
+.window { position: absolute; top: 14px; width: calc(var(--side) * 0.74); height: calc(var(--side) * 1.48); opacity: 0.6; }
+.windowLeft { left: max(4px, calc(50% - 680px - var(--side) * 0.87 - 6px)); }
+.windowRight { right: max(4px, calc(50% - 680px - var(--side) * 0.87 - 6px)); }
+
+.moonbeam {
+    position: absolute;
+    top: calc(14px + var(--side) * 0.5);
+    width: calc(var(--side) * 1.1);
+    height: 560px;
+    background: linear-gradient(180deg, rgba(174, 191, 214, 0.12) 0%, rgba(174, 191, 214, 0.05) 45%, transparent 100%);
+    clip-path: polygon(34% 0, 66% 0, 100% 100%, 0 100%);
+    filter: blur(5px);
+    animation: moon 9s ease-in-out infinite alternate;
+}
+.moonbeamLeft { left: max(4px, calc(50% - 680px - var(--side) * 1.05)); transform: skewX(10deg); }
+.moonbeamRight { right: max(4px, calc(50% - 680px - var(--side) * 1.05)); transform: skewX(-10deg); animation-delay: -4s; }
+@keyframes moon { from { opacity: 0.65; } to { opacity: 1; } }
 
 /* ===== Bats / Летучие мыши ===== */
-/* [EN] Dark wings with a faint violet rim and a red backlight, so they stand out against the crypt wall.
-   [RU] Тёмные крылья с бледной фиолетовой кромкой и красной подсветкой сзади — чтобы выделялись на стене склепа. */
+/* [EN] Silhouettes under the vaults with a faint violet rim and a red backlight, so they stand out against the wall
+        and pass in front of the moonlit windows. [RU] Силуэты под сводами с бледной фиолетовой кромкой и красной
+        подсветкой — чтобы выделялись на стене и пролетали на фоне лунных окон. */
 .bat {
     position: absolute;
     width: 118px;
     height: 69px;
-    fill: #1e1119;
-    stroke: rgba(190, 140, 175, 0.45);
+    fill: #1a0f16;
+    stroke: rgba(190, 140, 175, 0.42);
     stroke-width: 0.9;
     overflow: visible;
-    filter: drop-shadow(0 0 7px rgba(170, 30, 50, 0.55)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.7));
+    filter: drop-shadow(0 0 7px rgba(170, 30, 50, 0.5)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.7));
     animation: hover 6.5s ease-in-out infinite;
 }
-.batLeft { left: max(10px, calc(50% - 640px - 140px)); top: 96px; }
-.batRight { right: max(10px, calc(50% - 640px - 130px)); top: 156px; width: 96px; height: 56px; animation-duration: 7.7s; animation-delay: -2s; }
+.batLeft { left: max(10px, calc(50% - 680px - var(--side) * 0.95)); top: 96px; }
+.batRight { right: max(10px, calc(50% - 680px - var(--side) * 0.9)); top: 150px; width: 96px; height: 56px; animation-duration: 7.7s; animation-delay: -2s; }
 
 .wingLeft, .wingRight { transform-box: view-box; }
 .wingLeft { transform-origin: 57px 32px; animation: flapLeft 0.34s ease-in-out infinite alternate; }
@@ -126,7 +114,7 @@
 @keyframes snarl { 0%, 78%, 100% { opacity: 0; transform: scaleY(0.2); } 82%, 93% { opacity: 1; transform: scaleY(1); } }
 
 /* ===== Cobwebs and fog / Паутина и туман ===== */
-.cobweb { position: absolute; top: 0; width: 150px; height: 150px; fill: none; stroke: rgba(225, 222, 235, 0.16); stroke-width: 1; }
+.cobweb { position: absolute; top: 0; width: 150px; height: 150px; fill: none; stroke: rgba(225, 222, 235, 0.12); stroke-width: 1; }
 .cobwebLeft { left: 0; }
 .cobwebRight { right: 0; transform: scaleX(-1); }
 
@@ -145,14 +133,22 @@
 .fogSecond { bottom: -70px; opacity: 0.8; animation-duration: 63s; animation-direction: alternate-reverse; }
 @keyframes drift { from { transform: translateX(-6%); } to { transform: translateX(6%); } }
 
-/* [EN] Narrow screens: no room beside the table for candles; one small bat watches from the top edge.
-   [RU] Узкие экраны: рядом со столом нет места для свечей; одна маленькая летучая мышь сторожит у верхнего края. */
-@media (max-width: 1180px) {
-    .candles, .batRight { display: none; }
+/* [EN] The windows need a wide margin; without one the candelabra still peek from behind the table corners.
+   [RU] Окнам нужно широкое поле; без него канделябры всё ещё выглядывают из-за углов стола. */
+@media (max-width: 1579px) {
+    .window, .moonbeam { display: none; }
+}
+/* [EN] Narrow screens: no room beside the table; one small bat watches from the top edge.
+   [RU] Узкие экраны: рядом со столом нет места; одна маленькая летучая мышь сторожит у верхнего края. */
+@media (max-width: 1359px) {
+    .candelabrum { display: none; }
+}
+@media (max-width: 1279px) {
+    .batRight { display: none; }
     .batLeft { left: 46%; top: 2px; width: 58px; height: 34px; }
     .cobweb { width: 96px; height: 96px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .flame, .glow, .skullEye, .bat, .wingLeft, .wingRight, .eyes, .fangs, .fog { animation: none; }
+    .flame, .flameCore, .glow, .skullEye, .moonbeam, .bat, .wingLeft, .wingRight, .eyes, .fangs, .fog { animation: none; }
 }

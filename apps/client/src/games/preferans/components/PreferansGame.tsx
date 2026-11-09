@@ -5,13 +5,14 @@
 //      тексты только этого языка, ставит направление текста (иврит — справа налево) и рисует стол. Смена языка
 //      меняет только тексты: пуля продолжается.
 import React, { useEffect, useState } from 'react';
-// [EN] The lair's three fonts, bundled with the game (no font service): dripping «Rubik Wet Paint» for the title,
-//      the Church Slavonic «Ponomar» of an old grimoire for names, plaques and messages, «Cormorant Garamond» of a
-//      gothic novel for the small print. Each file is a per-alphabet subset; the browser loads only those it needs.
-// [RU] Три шрифта логова, в сборке игры (без сервиса шрифтов): стекающий «Rubik Wet Paint» для заголовка,
-//      церковнославянский «Ponomar» старого гримуара для имён, табличек и сообщений, «Cormorant Garamond» готического
-//      романа для мелкого текста. Каждый файл — подмножество одного алфавита; браузер грузит только нужные.
-import '@fontsource/rubik-wet-paint/400.css';
+// [EN] The lair's two fonts, bundled with the game (no font service): the Church Slavonic «Ponomar» of an old grimoire
+//      for the title, names, plaques and messages, «Cormorant Garamond» of a gothic novel for the small print. Each file
+//      is a per-alphabet subset; the browser loads only those it needs. (The dripping «Rubik Wet Paint» title left on
+//      09.11.2026 with the lair redesign — DESIGN_CONCEPT_RU.md bans cheap horror letters.)
+// [RU] Два шрифта логова, в сборке игры (без сервиса шрифтов): церковнославянский «Ponomar» старого гримуара для
+//      заголовка, имён, табличек и сообщений, «Cormorant Garamond» готического романа для мелкого текста. Каждый файл —
+//      подмножество одного алфавита; браузер грузит только нужные. (Стекающий заголовок «Rubik Wet Paint» ушёл 09.11.2026
+//      с новым логовом — DESIGN_CONCEPT_RU.md запрещает дешёвые «страшные» буквы.)
 import '@fontsource/ponomar/400.css';
 import '@fontsource/cormorant-garamond/600.css';
 import '@fontsource/cormorant-garamond/700.css';

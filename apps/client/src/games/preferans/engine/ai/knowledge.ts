@@ -62,6 +62,9 @@ export function knowledgeOf(state: DealState, seat: Seat): Knowledge {
   } else if (state.declarer !== null && state.discards.length > 0) {
     if (seat === state.declarer) knownDead = unionOf(knownDead, setOf(state.discards));
     else deadCount = state.discards.length;
+  } else if (state.mode === 'misere') {
+    // [EN] Misère without the talon: nobody has seen it, both cards are out of play. [RU] Мизер без прикупа: прикуп никто не видел, обе карты вне игры.
+    deadCount = state.talon.length;
   }
   let visible = unionOf(played, knownDead);
   for (const hand of known) visible = unionOf(visible, hand);

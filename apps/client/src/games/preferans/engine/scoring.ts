@@ -19,6 +19,7 @@
 // SECTIONS: 1 score shape; 2 game; 3 misère; 4 all-pass; 5 sheet arithmetic.
 // =====================================================================
 import type { Level } from './bids.ts';
+import { rankOf, suitOf, type Card } from './cards.ts';
 import { otherSeats, type Seat } from './play.ts';
 import type { RuleSet } from './rules.ts';
 
@@ -146,6 +147,42 @@ export function scoreRaspasy(tricks: readonly number[], round: number, rules: Ru
 }
 // END 4
 
+// BEGIN 4b. Paid talon and stakes
+const ACE = 7;
+const KING = 6;
+const QUEEN = 5;
+/**
+ * Quick tricks in the talon (paid talon, en-Wikipedia, ФСПР section 6): two aces 3, ace and king of a suit 2, an ace
+ * or a marriage (king and queen of a suit) 1, otherwise 0.
+ */
+export function talonQuickTricks(talon: readonly Card[]): number {
+  if (talon.length !== 2) return 0;
+  const [a, b] = talon;
+  const aces = talon.filter(card => rankOf(card) === ACE).length;
+  if (aces === 2) return 3;
+  const sameSuit = suitOf(a) === suitOf(b);
+  const ranks = [rankOf(a), rankOf(b)];
+  if (aces === 1) return sameSuit && ranks.includes(KING) ? 2 : 1;
+  return sameSuit && ranks.includes(KING) && ranks.includes(QUEEN) ? 1 : 0;
+}
+
+/** Every number of a deal's score times `factor` (a dark game, bombs). */
+export function scaleScore(score: DealScore, factor: number): DealScore {
+  return {
+    pool: score.pool.map(value => value * factor),
+    mountain: score.mountain.map(value => value * factor),
+    whists: score.whists.map(row => row.map(value => value * factor)),
+  };
+}
+
+/** The paid talon premium: each defender writes half of `premium` whists on the declarer. */
+export function withTalonPremium(score: DealScore, declarer: Seat, premium: number): DealScore {
+  const whists = score.whists.map(row => row.slice());
+  for (const defender of otherSeats(declarer)) whists[defender][declarer] += premium / 2;
+  return { ...score, whists };
+}
+// END 4b
+
 // BEGIN 5. Sheet arithmetic
 export function addScores(a: DealScore, b: DealScore): DealScore {
   return {
@@ -163,17 +200,20 @@ export const ZERO_SCORE: DealScore = Object.freeze(emptyScore());
  * as mountain («недописанная пуля»); a common pool (Leningrad) moves twice the distance from the average pool.
  */
 export function settle(sheet: DealScore, rules: RuleSet, poolTarget?: number): number[] {
-  const averagePool = (sheet.pool[0] + sheet.pool[1] + sheet.pool[2]) / 3;
+  // [EN] Any number of players: three, or four with the dealer on the talon. [RU] Любое число игроков: трое или четверо.
+  const players = sheet.pool.length;
+  const sum = (values: readonly number[]): number => values.reduce((total, value) => total + value, 0);
+  const averagePool = sum(sheet.pool) / players;
   const closing = (seat: number): number => {
     if (poolTarget === undefined) return 0;
     return rules.poolEnd === 'common' ? 2 * (averagePool - sheet.pool[seat]) : Math.max(0, poolTarget - sheet.pool[seat]);
   };
   const mountain = sheet.mountain.map((value, seat) => value + closing(seat));
-  const average = (mountain[0] + mountain[1] + mountain[2]) / 3;
-  return [0, 1, 2].map(seat => {
+  const average = sum(mountain) / players;
+  return mountain.map((own, seat) => {
     let net = 0;
-    for (let other = 0; other < 3; other += 1) net += sheet.whists[seat][other] - sheet.whists[other][seat];
-    return net + rules.whistsPerPoint * (average - mountain[seat]);
+    for (let other = 0; other < players; other += 1) net += sheet.whists[seat][other] - sheet.whists[other][seat];
+    return net + rules.whistsPerPoint * (average - own);
   });
 }
 // END 5

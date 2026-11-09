@@ -5,7 +5,7 @@ import Layout from '@shell/layouts/Layout.astro';
 import { PreferansGame } from '@games/preferans';
 ---
 
-<Layout title="Preferans | Cosmo Game Hub">
+<Layout title="Preferans | Cosmo Game Hub" titleKey="title.preferans" scrollToTop={false}>
     <!-- [EN] client:only — the game and its Web Worker bots run only in the browser. -->
     <!-- [RU] client:only — игра и её боты в Web Worker работают только в браузере. -->
     <PreferansGame client:only="react" />

@@ -20,7 +20,7 @@ Cosmo Game Hub — статический сайт на Astro (GitHub Pages) с 
 
 Что должна обеспечить архитектура:
 - **Много игр, один разработчик.** Игру находят, читают, меняют, переносят или удаляют в одном месте.
-- **Телефон в первую очередь.** Играют коротко и в дороге. Страницы лёгкие, стол помещается на один экран, партия переживает закрытие вкладки.
+- **Телефон, планшет и компьютер на равных.** Играют и пальцем в дороге, и мышью дома — оба способа проверяются одинаково (решение Алексея, 09.11.2026). Страницы лёгкие, элементы не перекрывают друг друга, партия сохраняется после каждого хода, по кнопке «Сохранить» и при сворачивании страницы.
 - **Честные сильные боты сейчас, игра по сети потом.**
   - Боты пользуются тем же кодом правил, что и интерфейс, и видят только то, что видно с их места.
   - Позже этот же код запустит сервер, который будет судить партии между людьми.
@@ -455,20 +455,17 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 
 ### 17. Открытые задачи
 
-- **Преферанс** (по итогам исследования правил, 08.11.2026):
-  - варианты Ленинградка/Питер, Ростовская и Классика (с бомбами);
-  - договорные правила: выход из распасов, ответственность виста, мизер без прикупа, вист–пас–полвиста («Сталинград» и уход уже есть);
+- **Преферанс:**
   - вычитка переводов на иврит, испанский и французский носителями языка;
-  - игра на двоих (гусарик с болваном) и вчетвером (сдающий на прикупе);
-  - «помощь» при переполнении пули;
-  - калибровка торговли ботов;
+  - калибровка торговли ботов и решений сдающего (вист сдающего, мизер пополам);
   - точное решение 66 раскладов в открытом висте и на мизере;
+  - фоны и рамки по промптам из `DESIGN_CONCEPT_RU.md`, если Алексей их сгенерирует;
   - игра по сети.
 - **Шахматы:**
   - сборка Stockfish на WebAssembly вместо нынешней asm.js (Stockfish 10, один поток): в разы быстрее и сильнее; решить вопросы лицензии GPL и размера файла;
   - сохранение и продолжение;
+  - пять языков интерфейса, как в преферансе и на страницах хаба;
   - игра по сети в реальном времени и по переписке.
-- **Оболочка и шахматы:** пять языков интерфейса, как в преферансе.
 - **Инструменты:**
   - проверка границ импорта (ESLint `no-restricted-imports`);
   - `npm test` в CI перед публикацией;
@@ -509,6 +506,31 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 | 08.11.2026 | Таблица позиций решателя — числовые массивы с отметкой поколения вместо словаря со строковыми ключами; перебор ходов без лишних выделений | В 3,5–4 раза быстрее при точно тех же ответах (сверено на 400 полных раскладах); таблица на 16 МБ создаётся один раз и только там, где решают |
 | 08.11.2026 | Жёсткие пределы на ход бота по часам и запасной ход младшей картой | Медленное устройство не может «повиснуть» на трудной раздаче; пределы по часам работают на любом процессоре |
 | 08.11.2026 | Нагрузочные проверки в репозитории (`apps/client/scripts/load/`, `npm run load`), без пакетов, через протокол DevTools | Просьба Алексея проверить, что движки быстрые и не виснут; проверку можно повторить после каждого изменения |
+| 09.11.2026 | Игра вдвоём (гусарик с болваном) и вчетвером (сдающий на прикупе) — слой стола `engine/table.ts` над раздачей на три места | Раздача остаётся одной на любой стол; стол переводит места раздачи в игроков и дописывает то, что пишет только сдающий |
+| 09.11.2026 | Все опции «скоро» играются: вист–пас–полвиста, мизер без прикупа, тёмные заявки и бомбы (Классика), платный прикуп, американская помощь, вист сдающего и мизер пополам вчетвером, зубы | Просьба Алексея; правила — данные (`rules.ts`), у каждой опции тест (`options-extra.test.ts`) |
+| 09.11.2026 | Новые заявки получают номера после классических (мизер без прикупа — 26, тёмные — 106…110), место в торговле даёт `bidRank` | Номера старых заявок и сохранённые пули не меняются |
+| 09.11.2026 | Бомбы живут на уровне стола (хук), раздача получает их по местам и умножает счёт (`stakesOf`) | Бомбы переходят из раздачи в раздачу, как прогрессия распасов |
+| 09.11.2026 | Логово по концепту `DESIGN_CONCEPT_RU.md`: черненое серебро, бархат, канделябры, окна с луной, перо у пули; карты до 112 px | «Игра главная, остальное — атмосфера»; ТЗ Алексея с промптом |
+| 09.11.2026 | Взятки лежат на столе отдельными стопками рубашкой вверх, крест-накрест, по пять в ряд | Просьба Алексея: посчитать взятки каждого одним взглядом |
+| 09.11.2026 | Веер карт — ячейки шириной с шаг, которые сжимаются по колонке; центр стола не ловит нажатия; карта не поднимается над соседями | Проверка касаниями нашла руку партнёра под центром стола и карты, закрытые соседней |
+| 09.11.2026 | Палец и мышь проверяются одинаково: `scripts/load/touch-play.mjs` — касания CDP на телефоне и планшете, тот же сценарий мышью на компьютере, `elementFromPoint` для каждой кнопки и карты | Решение Алексея: «равноценный сценарий… проверять одинаково» |
+| 09.11.2026 | Кнопка «Сохранить» с временем и сохранение при скрытии страницы (`pagehide`, `visibilitychange`); на страницах игр нет плавающей кнопки «наверх» | Играют в дороге; кнопка «наверх» закрывала заявки на телефоне |
+| 09.11.2026 | Страницы хаба на пяти языках: ключи `data-i18n` и `shell/i18n`, общий выбор языка с играми | Главная была только по-английски |
+| 09.11.2026 | 69 героев: 31 новый из картинок Алексея (целиком, только уменьшение), биографии на пяти языках; превью платной картинки не взято | Просьба Алексея; на картинке с надписью «instant download» нет права на использование |
+
+### 19. Логово, все опции и игра пальцем (09.11.2026)
+
+- **Дизайн** собран по концепту `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (шесть разделов и три промпта для Midjourney):
+  - изумрудное сукно с тиснёным дамаском и светом канделябров у верхних углов;
+  - литые рамки героев, таблички, кнопки и поля — черненое серебро на бархате;
+  - пуля — крупный лист с обожжённым углом и пером из воронова крыла;
+  - канделябры, стрельчатые окна с луной и летучие мыши (`Lair.tsx`) стоят по краям, на телефоне уходят.
+- **Главное правило экрана:** карты и стол — центр внимания, окружение только создаёт атмосферу.
+- **Герои.** 69 персонажей (`characters/roster.ts`): 43 обитателя склепа и 26 гостей, у каждого стиль игры и смешная биография на пяти языках.
+- **Столы.** Вдвоём, втроём и вчетвером; варианты Сочинка, Ленинградка, Ростовка и Классика.
+- **Опции.** Все из меню играются; правила каждой — в объяснениях меню и в `RULES.md`, §9.
+- **Сохранения:** после каждого хода, по кнопке «Сохранить» и при скрытии или закрытии страницы; в меню — «Продолжить».
+- **Проверки.** `npm test` — 90 тестов. `scripts/load/touch-play.mjs` играет пальцем на телефоне и планшете и мышью на компьютере (`INPUT=mouse`) и проверяет, что каждая кнопка и карта доступна и ничто её не закрывает.
 
 [↑ К выбору языка](#top)
 
@@ -528,7 +550,7 @@ Cosmo Game Hub is a static Astro site on GitHub Pages with a collection of class
 
 What the architecture must provide:
 - **Many games, one developer.** A game is found, read, changed, moved or removed in one place.
-- **Phone first.** People play in short sessions, on the way. Pages are light, the table fits one screen, and a game survives closing the tab.
+- **Phone, tablet and computer on equal terms.** People play by finger on the way and with a mouse at home — both are tested the same way (Alexey's decision, 09.11.2026). Pages are light, controls never cover each other, and a game is saved after every move, with the «Save» button and when the page is hidden.
 - **Fair, strong bots now; online play later.**
   - The bots use the same rules code as the UI and see only what their seat can see.
   - Later the same code will run on a server that referees games between people.
@@ -963,20 +985,17 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 
 ### 17. Open tasks
 
-- **Preferans** (from the rules research, 08.11.2026):
-  - the Leningrad/Piter, Rostov and Classic (with bombs) variants;
-  - house rules: exits from all-pass, whist responsibility, misère without the talon, whist–pass–half-whist (Stalingrad and conceding are in);
-  - native speakers to proofread the Hebrew, Spanish and French texts;
-  - two players (Gusarik with a dummy) and four (the dealer sits out on the talon);
-  - «помощь» when a pool overflows;
-  - calibrating the bots' bidding;
-  - exact solving of the 66 layouts in open whist and on misère;
+- **Preferans:**
+  - native speakers proofread the Hebrew, Spanish and French translations;
+  - calibrate the bots' bidding and the dealer's decisions (the dealer's whist, shared misère);
+  - solve the 66 positions of open whist and misère exactly;
+  - backgrounds and frames from the prompts of `DESIGN_CONCEPT_RU.md`, if Alexey generates them;
   - online play.
 - **Chess:**
-  - a WebAssembly build of Stockfish instead of today's asm.js (Stockfish 10, one thread): several times faster and stronger; settle the GPL licence and the file size;
+  - a WebAssembly build of Stockfish instead of today's asm.js (Stockfish 10, one thread): several times faster and stronger; settle the GPL license and the file size;
   - save and resume;
+  - five UI languages, as in preferans and on the hub's pages;
   - online play in real time and by correspondence.
-- **The shell and chess:** five UI languages, as in preferans.
 - **Tooling:**
   - an import-boundary check (ESLint `no-restricted-imports`);
   - `npm test` in CI before publishing;
@@ -1017,6 +1036,31 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 | 08.11.2026 | The solver's position table is typed arrays with a generation stamp instead of a string-keyed Map; move generation without extra allocations | 3.5–4 times faster with exactly the same answers (checked on 400 full deals); the 16 MB table is created once, only where solving happens |
 | 08.11.2026 | Hard wall-clock limits on a bot's move, and a fallback lowest card | A slow device cannot hang on a hard deal; wall-clock limits work on any CPU |
 | 08.11.2026 | Load tests in the repository (`apps/client/scripts/load/`, `npm run load`), no packages, over the DevTools protocol | Alexey asked to make sure the engines are fast and never hang; the check can be rerun after every change |
+| 09.11.2026 | Two at the table (Gusarik with a dummy) and four (the dealer sits out) — a table layer `engine/table.ts` over the three-seat deal | One deal for every table; the table maps deal seats to players and adds what only the dealer writes |
+| 09.11.2026 | Every «coming soon» option plays: whist–pass–half-whist, misère without the talon, dark bids and bombs (Classic), paid talon, American help, the dealer's whist and shared misère at four, teeth | Alexey's request; rules are data (`rules.ts`), every option has a test (`options-extra.test.ts`) |
+| 09.11.2026 | New bids are numbered after the classic ones (misère without the talon 26, dark bids 106…110); `bidRank` gives their place in the auction | The numbers of old bids and saved pools never change |
+| 09.11.2026 | Bombs live at the table level (the hook); a deal gets them by seat and multiplies the score (`stakesOf`) | Bombs carry over from deal to deal, like the all-pass progression |
+| 09.11.2026 | The lair after the concept `DESIGN_CONCEPT_RU.md`: blackened silver, velvet, candelabra, moonlit windows, a quill by the sheet; cards up to 112 px | "The game is the main thing, the rest is atmosphere"; Alexey's brief with the prompt |
+| 09.11.2026 | Won tricks lie on the table as separate stacks face down, crosswise, five to a row | Alexey's request: count everyone's tricks at a glance |
+| 09.11.2026 | A fan of cards is slots as wide as the step that shrink to the column; the middle of the table catches no taps; no card is lifted over its neighbours | The touch check found the partner's hand under the middle of the table and cards covered by their neighbour |
+| 09.11.2026 | Finger and mouse are tested alike: `scripts/load/touch-play.mjs` — CDP touch on phones and tablets, the same scenario with a mouse on a computer, `elementFromPoint` for every button and card | Alexey's decision: "an equal scenario… test them the same way" |
+| 09.11.2026 | A «Save» button with the time, and a save when the page hides (`pagehide`, `visibilitychange`); no floating «to top» button on game pages | People play on the way; the «to top» button covered the bids on a phone |
+| 09.11.2026 | The hub's pages in five languages: `data-i18n` keys and `shell/i18n`, one language choice shared with the games | The home page was English only |
+| 09.11.2026 | 69 characters: 31 new from Alexey's pictures (whole, only scaled down), biographies in five languages; a paid product preview left out | Alexey's request; a picture captioned "instant download" comes with no right to use it |
+
+### 19. The lair, every option and playing by finger (09.11.2026)
+
+- **The design** follows the concept `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (six sections and three Midjourney prompts):
+  - emerald felt with an embossed damask and candlelight at the upper corners;
+  - cast frames of the characters, plaques, buttons and fields — blackened silver on velvet;
+  - the score sheet is a big page with a scorched corner and a raven-feather quill;
+  - candelabra, lancet windows with moonlight and bats (`Lair.tsx`) stand at the edges and step away on phones.
+- **The screen's main rule:** the cards and the table are the focus, the surroundings only set the mood.
+- **Characters.** 69 of them (`characters/roster.ts`): 43 dwellers of the crypt and 26 guests, each with a playing style and a funny biography in five languages.
+- **Tables.** Two, three or four players; Sochi, Leningrad, Rostov and Classic rules.
+- **Options.** Every one on the menu plays; how, in the menu's explanations and in `RULES.md`, §9.
+- **Saves:** after every move, with the «Save» button and when the page is hidden or closed; «Continue» on the menu.
+- **Checks.** `npm test` — 90 tests. `scripts/load/touch-play.mjs` plays by finger on phones and tablets and with a mouse on a computer (`INPUT=mouse`) and checks that every button and card can be reached and nothing covers it.
 
 [↑ Back to the languages](#top)
 
@@ -1038,7 +1082,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 
 מה הארכיטקטורה צריכה להבטיח:
 - **הרבה משחקים, מפתח אחד.** משחק נמצא, נקרא, משתנה, עובר מקום או נמחק במקום אחד.
-- **קודם כול הטלפון.** משחקים בהפסקות קצרות ובדרכים. הדפים קלים, השולחן נכנס במסך אחד, והמשחק שורד את סגירת הלשונית.
+- **טלפון, טאבלט ומחשב באותה מידה.** משחקים באצבע בדרכים ובעכבר בבית — שתי הדרכים נבדקות באותו אופן (החלטה של אלכסיי, 09.11.2026). הדפים קלים, הפקדים אף פעם לא מסתירים זה את זה, והמשחק נשמר אחרי כל מהלך, בכפתור «לשמור» וכשהדף מוסתר.
 - **בוטים הוגנים וחזקים עכשיו, משחק ברשת בהמשך.**
   - הבוטים משתמשים באותו קוד חוקים כמו הממשק, ורואים רק את מה שנראה מהמקום שלהם.
   - בהמשך אותו קוד ירוץ בשרת שישפוט משחקים בין אנשים.
@@ -1477,20 +1521,17 @@ cosmo-game-hub/
 
 ### 17. משימות פתוחות
 
-- **פרפרנס** (לפי מחקר החוקים מ-08.11.2026):
-  - הגרסאות לנינגרד/פיטר, רוסטוב וקלאסיקה (עם "פצצות");
-  - חוקי בית: יציאה מראספסים, אחריות הוויסט, מיזר בלי טאלון, ויסט–פס–חצי ויסט (סטלינגרד והוויתור כבר קיימים);
-  - לבקש מדוברי השפות לעבור על התרגומים לעברית, לספרדית ולצרפתית;
-  - שני שחקנים (גוסריק עם "דמה") וארבעה (המחלק יושב בחוץ, "על הטאלון");
-  - «помощь» כשפולה עולה על גדותיה;
-  - כיול ההכרזות של הבוטים;
-  - פתרון מדויק של 66 הפיזורים בוויסט פתוח ובמיזר;
+- **פרפרנס:**
+  - הגהה של התרגומים לעברית, לספרדית ולצרפתית בידי דוברי השפה;
+  - כיול המכרז של הבוטים והחלטות המחלק (ויסט המחלק, מיזר חצי־חצי);
+  - פתרון מדויק של 66 פריסות בוויסט גלוי ובמיזר;
+  - רקעים ומסגרות לפי הפרומפטים מ־`DESIGN_CONCEPT_RU.md`, אם אלכסיי ייצר אותם;
   - משחק ברשת.
 - **שחמט:**
   - בנייה של Stockfish ב-WebAssembly במקום asm.js של היום (Stockfish 10, תהליכון אחד): מהירה וחזקה פי כמה; להסדיר את רישיון GPL ואת גודל הקובץ;
   - שמירה והמשך;
+  - חמש שפות ממשק, כמו בפרפרנס ובדפי האתר;
   - משחק ברשת בזמן אמת ובהתכתבות.
-- **המעטפת והשחמט:** חמש שפות ממשק, כמו בפרפרנס.
 - **כלים:**
   - בדיקה של גבולות הייבוא (ESLint `no-restricted-imports`);
   - הרצת `npm test` ב-CI לפני פרסום;
@@ -1531,6 +1572,31 @@ cosmo-game-hub/
 | 08.11.2026 | טבלת המצבים של הפותר היא מערכים מספריים עם חותמת דור במקום מילון עם מפתחות מחרוזת; יצירת מסעים בלי הקצאות מיותרות | מהיר פי 3.5–4 עם אותן תשובות בדיוק (נבדק על 400 חלוקות מלאות); הטבלה של 16 MB נוצרת פעם אחת ורק במקום שבו פותרים |
 | 08.11.2026 | מגבלות קשיחות לפי שעון על מסע של בוט, וקלף נמוך כחלופה | מכשיר איטי לא יכול להיתקע על חלוקה קשה; מגבלות לפי שעון עובדות בכל מעבד |
 | 08.11.2026 | בדיקות עומס במאגר (`apps/client/scripts/load/`, ‏`npm run load`), בלי חבילות, דרך פרוטוקול DevTools | אלכסיי ביקש לוודא שהמנועים מהירים ולא נתקעים; אפשר לחזור על הבדיקה אחרי כל שינוי |
+| 09.11.2026 | משחק בשניים (גוסריק עם דחליל) ובארבעה (המחלק יושב על הקופה) — שכבת שולחן `engine/table.ts` מעל חלוקה לשלושה מקומות | חלוקה אחת לכל שולחן; השולחן ממפה מקומות לשחקנים ומוסיף את מה שרק המחלק רושם |
+| 09.11.2026 | כל האפשרויות «בקרוב» משחקות: ויסט–פאס–חצי ויסט, מיזר בלי קופה, הכרזות בעיוורון ופצצות (קלאסיקה), קופה בתשלום, עזרה אמריקאית, ויסט המחלק ומיזר חצי־חצי בארבעה, שיניים | בקשה של אלכסיי; החוקים הם נתונים (`rules.ts`), לכל אפשרות בדיקה (`options-extra.test.ts`) |
+| 09.11.2026 | הכרזות חדשות ממוספרות אחרי הקלאסיות (מיזר בלי קופה 26, בעיוורון 106…110); `bidRank` נותן את מקומן במכרז | המספרים של ההכרזות הישנות והפוליות השמורות לא משתנים |
+| 09.11.2026 | הפצצות חיות ברמת השולחן (ה־hook); החלוקה מקבלת אותן לפי מקום ומכפילה את הניקוד (`stakesOf`) | פצצות עוברות מחלוקה לחלוקה, כמו המדרגה של הפאס הכללי |
+| 09.11.2026 | המאורה לפי הקונספט `DESIGN_CONCEPT_RU.md`: כסף מושחר, קטיפה, מנורות, חלונות באור ירח, נוצה ליד הפוליה; קלפים עד 112 פיקסלים | "המשחק הוא העיקר, השאר אווירה"; הבריף של אלכסיי עם הפרומפט |
+| 09.11.2026 | הלקיחות נשארות על השולחן כערימות נפרדות עם הגב למעלה, לסירוגין לאורך ולרוחב, חמש בשורה | בקשה של אלכסיי: לספור את הלקיחות של כל אחד במבט |
+| 09.11.2026 | מניפת הקלפים — תאים ברוחב הצעד שמתכווצים לפי העמודה; מרכז השולחן לא תופס נגיעות; קלף לא עולה מעל שכניו | בדיקת המגע מצאה את יד השותף מתחת למרכז השולחן וקלפים שהשכן הסתיר |
+| 09.11.2026 | אצבע ועכבר נבדקים באותו אופן: `scripts/load/touch-play.mjs` — מגע CDP בטלפון ובטאבלט, אותו תרחיש בעכבר במחשב, `elementFromPoint` לכל כפתור וקלף | החלטה של אלכסיי: "תרחיש שווה ערך… לבדוק באותו אופן" |
+| 09.11.2026 | כפתור «לשמור» עם השעה, ושמירה כשהדף מוסתר (`pagehide`, `visibilitychange`); בדפי המשחקים אין כפתור צף «למעלה» | משחקים בדרכים; כפתור «למעלה» הסתיר את ההכרזות בטלפון |
+| 09.11.2026 | דפי האתר בחמש שפות: מפתחות `data-i18n` ו־`shell/i18n`, בחירת שפה אחת עם המשחקים | דף הבית היה רק באנגלית |
+| 09.11.2026 | ‏69 דמויות: 31 חדשות מהתמונות של אלכסיי (שלמות, רק הקטנה), ביוגרפיות בחמש שפות; תצוגה של מוצר בתשלום לא נלקחה | בקשה של אלכסיי; לתמונה עם הכיתוב "instant download" אין זכות שימוש |
+
+### 19. המאורה, כל האפשרויות ומשחק באצבע (09.11.2026)
+
+- **העיצוב** בנוי לפי הקונספט `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (שישה פרקים ושלושה פרומפטים ל־Midjourney):
+  - לבד אזמרגד עם דמשק מוטבע ואור נרות בפינות העליונות;
+  - מסגרות הדמויות, השלטים, הכפתורים והשדות — כסף מושחר על קטיפה;
+  - דף הניקוד הוא דף גדול עם פינה חרוכה ונוצת עורב;
+  - מנורות, חלונות גותיים באור ירח ועטלפים (`Lair.tsx`) עומדים בשוליים, ובטלפון נעלמים.
+- **הכלל הראשי של המסך:** הקלפים והשולחן במרכז, הסביבה רק יוצרת אווירה.
+- **דמויות.** ‏69 (`characters/roster.ts`): ‏43 תושבי המרתף ו־26 אורחים, לכל אחד סגנון משחק וביוגרפיה מצחיקה בחמש שפות.
+- **שולחנות.** שניים, שלושה או ארבעה שחקנים; חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה.
+- **אפשרויות.** כל אפשרות בתפריט משחקת; איך — בהסברים בתפריט וב־`RULES.md`, ‏§9.
+- **שמירה:** אחרי כל מהלך, בכפתור «לשמור» וכשהדף מוסתר או נסגר; «להמשיך» בתפריט.
+- **בדיקות.** ‏`npm test` — ‏90 בדיקות. ‏`scripts/load/touch-play.mjs` משחק באצבע בטלפון ובטאבלט ובעכבר במחשב (`INPUT=mouse`) ובודק שכל כפתור וקלף נגישים ושום דבר לא מסתיר אותם.
 
 [↑ חזרה לבחירת השפה](#top)
 
@@ -1552,7 +1618,7 @@ Cosmo Game Hub es un sitio estático de Astro en GitHub Pages con una colección
 
 Qué debe garantizar la arquitectura:
 - **Muchos juegos, un solo desarrollador.** Un juego se encuentra, se lee, se cambia, se mueve o se elimina en un solo lugar.
-- **Primero el móvil.** Se juega en ratos cortos, de camino. Las páginas son ligeras, la mesa cabe en una pantalla y la partida sobrevive al cierre de la pestaña.
+- **Móvil, tableta y ordenador por igual.** Se juega con el dedo de camino y con el ratón en casa; las dos formas se prueban igual (decisión de Alexey, 09.11.2026). Las páginas son ligeras, los controles nunca se tapan entre sí y la partida se guarda tras cada jugada, con el botón «Guardar» y cuando la página se oculta.
 - **Bots honestos y fuertes ahora; juego en línea después.**
   - Los bots usan el mismo código de reglas que la interfaz y solo ven lo que se ve desde su asiento.
   - Más adelante, ese mismo código se ejecutará en un servidor que arbitrará partidas entre personas.
@@ -1987,20 +2053,17 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 
 ### 17. Tareas abiertas
 
-- **Preferans** (según la investigación de reglas del 08.11.2026):
-  - las variantes Leningrado/Píter, Rostov y Clásica (con bombas);
-  - reglas de la casa: salidas de los raspasy, responsabilidad del whist, misère sin talón, whist–pase–medio whist (Stalingrado y la rendición ya están);
-  - que hablantes nativos revisen los textos en hebreo, español y francés;
-  - dos jugadores (Gusarik con muerto) y cuatro (el repartidor se queda fuera, «en el talón»);
-  - «помощь» cuando un pool se desborda;
-  - calibrar la subasta de los bots;
-  - resolver exactamente las 66 distribuciones en el whist abierto y en el misère;
+- **Preferans:**
+  - revisión de las traducciones al hebreo, español y francés por hablantes nativos;
+  - calibrar la subasta de los bots y las decisiones del repartidor (su whist, la miseria a medias);
+  - resolver con exactitud las 66 posiciones de whist abierto y miseria;
+  - fondos y marcos con los prompts de `DESIGN_CONCEPT_RU.md`, si Alexey los genera;
   - juego en línea.
 - **Ajedrez:**
   - una compilación de Stockfish en WebAssembly en lugar del asm.js actual (Stockfish 10, un hilo): varias veces más rápida y fuerte; resolver la licencia GPL y el tamaño del archivo;
   - guardar y continuar;
+  - cinco idiomas de interfaz, como en el preferans y en las páginas del sitio;
   - juego en línea en tiempo real y por correspondencia.
-- **El sitio y el ajedrez:** cinco idiomas de interfaz, como en el preferans.
 - **Herramientas:**
   - una comprobación de los límites de importación (ESLint `no-restricted-imports`);
   - `npm test` en CI antes de publicar;
@@ -2041,6 +2104,31 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 | 08.11.2026 | La tabla de posiciones del solver son arrays numéricos con un sello de generación en lugar de un Map con claves de texto; la generación de jugadas sin asignaciones de más | De 3,5 a 4 veces más rápido con exactamente las mismas respuestas (comprobado en 400 repartos completos); la tabla de 16 MB se crea una vez y solo donde se resuelve |
 | 08.11.2026 | Límites duros por reloj en la jugada de un bot y una carta baja de reserva | Un dispositivo lento no puede quedarse colgado en un reparto difícil; los límites por reloj funcionan en cualquier CPU |
 | 08.11.2026 | Pruebas de carga en el repositorio (`apps/client/scripts/load/`, `npm run load`), sin paquetes, mediante el protocolo DevTools | Alexey pidió asegurarse de que los motores son rápidos y no se cuelgan; la prueba se puede repetir tras cada cambio |
+| 09.11.2026 | Entre dos (gusarik con el Muerto) y entre cuatro (el repartidor descansa en el talón): una capa de mesa `engine/table.ts` sobre el reparto de tres asientos | Un solo reparto para cualquier mesa; la mesa traduce asientos a jugadores y añade lo que solo anota el repartidor |
+| 09.11.2026 | Todas las opciones «próximamente» se juegan: whist–paso–medio whist, miseria sin talón, declaraciones a ciegas y bombas (Clásica), talón pagado, ayuda americana, el whist del repartidor y la miseria a medias entre cuatro, dientes | Petición de Alexey; las reglas son datos (`rules.ts`), cada opción tiene su prueba (`options-extra.test.ts`) |
+| 09.11.2026 | Las declaraciones nuevas se numeran tras las clásicas (miseria sin talón 26, a ciegas 106…110); `bidRank` les da su lugar en la subasta | Los números de las declaraciones antiguas y las pulyas guardadas no cambian |
+| 09.11.2026 | Las bombas viven a nivel de mesa (el hook); el reparto las recibe por asiento y multiplica la puntuación (`stakesOf`) | Las bombas pasan de un reparto a otro, como la progresión del pase general |
+| 09.11.2026 | La guarida según el concepto `DESIGN_CONCEPT_RU.md`: plata ennegrecida, terciopelo, candelabros, ventanas con luna, una pluma junto a la hoja; cartas de hasta 112 px | «El juego es lo principal; lo demás, ambiente»; el encargo de Alexey con el prompt |
+| 09.11.2026 | Las bazas quedan en la mesa como montones separados boca abajo, cruzados, de cinco en fila | Petición de Alexey: contar las bazas de cada uno de un vistazo |
+| 09.11.2026 | El abanico de cartas son celdas del ancho del paso que se encogen según la columna; el centro de la mesa no recoge toques; ninguna carta se eleva sobre sus vecinas | La prueba táctil encontró la mano del compañero bajo el centro de la mesa y cartas tapadas por su vecina |
+| 09.11.2026 | El dedo y el ratón se prueban igual: `scripts/load/touch-play.mjs` — toques CDP en móvil y tableta, el mismo guion con ratón en el ordenador, `elementFromPoint` para cada botón y carta | Decisión de Alexey: «un escenario equivalente… probarlos igual» |
+| 09.11.2026 | Un botón «Guardar» con la hora y guardado al ocultarse la página (`pagehide`, `visibilitychange`); sin botón flotante «arriba» en las páginas de juego | Se juega de camino; el botón «arriba» tapaba las declaraciones en el móvil |
+| 09.11.2026 | Las páginas del sitio en cinco idiomas: claves `data-i18n` y `shell/i18n`, una sola elección de idioma con los juegos | La página de inicio solo estaba en inglés |
+| 09.11.2026 | 69 personajes: 31 nuevos de las imágenes de Alexey (enteras, solo reducidas), biografías en cinco idiomas; se dejó fuera la vista previa de un producto de pago | Petición de Alexey; una imagen con el texto «instant download» no da derecho a usarla |
+
+### 19. La guarida, todas las opciones y el juego con el dedo (09.11.2026)
+
+- **El diseño** sigue el concepto `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (seis apartados y tres prompts para Midjourney):
+  - tapete esmeralda con damasco en relieve y luz de candelabros en las esquinas superiores;
+  - marcos de los personajes, placas, botones y campos: plata ennegrecida sobre terciopelo;
+  - la hoja es una página grande con una esquina chamuscada y una pluma de cuervo;
+  - candelabros, ventanas ojivales con luz de luna y murciélagos (`Lair.tsx`) están en los bordes y en el móvil se retiran.
+- **La regla principal de la pantalla:** las cartas y la mesa son el centro; el entorno solo crea ambiente.
+- **Personajes.** 69 (`characters/roster.ts`): 43 habitantes de la cripta y 26 invitados, cada uno con su estilo de juego y una biografía divertida en cinco idiomas.
+- **Mesas.** Dos, tres o cuatro jugadores; reglas de Sochi, Leningrado, Rostov y Clásica.
+- **Opciones.** Todas las del menú se juegan; cómo, en las explicaciones del menú y en `RULES.md`, §9.
+- **Guardado:** tras cada jugada, con el botón «Guardar» y al ocultarse o cerrarse la página; «Continuar» en el menú.
+- **Pruebas.** `npm test`: 90 pruebas. `scripts/load/touch-play.mjs` juega con el dedo en móvil y tableta y con ratón en el ordenador (`INPUT=mouse`) y comprueba que cada botón y carta se alcanza y nada los tapa.
 
 [↑ Volver a los idiomas](#top)
 
@@ -2060,7 +2148,7 @@ Cosmo Game Hub est un site statique Astro hébergé sur GitHub Pages, avec une c
 
 Ce que l'architecture doit garantir :
 - **Beaucoup de jeux, un seul développeur.** Un jeu se trouve, se lit, se modifie, se déplace ou se supprime à un seul endroit.
-- **Le téléphone d'abord.** On joue par petites sessions, en déplacement. Les pages sont légères, la table tient sur un écran et une partie survit à la fermeture de l'onglet.
+- **Téléphone, tablette et ordinateur à égalité.** On joue du doigt en déplacement et à la souris chez soi — les deux sont testés de la même façon (décision d'Alexey, 09.11.2026). Les pages sont légères, les commandes ne se cachent jamais les unes les autres, et une partie est enregistrée après chaque coup, avec le bouton « Enregistrer » et quand la page est masquée.
 - **Des bots honnêtes et forts maintenant, le jeu en ligne plus tard.**
   - Les bots utilisent le même code de règles que l'interface et ne voient que ce qui est visible depuis leur place.
   - Plus tard, ce même code tournera sur un serveur qui arbitrera les parties entre personnes.
@@ -2495,20 +2583,17 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 
 ### 17. Tâches ouvertes
 
-- **Préférence** (d'après la recherche sur les règles du 08.11.2026) :
-  - les variantes Leningrad/Piter, Rostov et Classique (avec bombes) ;
-  - les règles maison : sorties des raspasy, responsabilité du whist, misère sans talon, whist–passe–demi-whist (Stalingrad et l'abandon sont faits) ;
-  - faire relire les textes en hébreu, espagnol et français par des locuteurs natifs ;
-  - deux joueurs (Gusarik avec un mort) et quatre (le donneur reste « sur le talon ») ;
-  - « помощь » quand une poule déborde ;
-  - le calibrage des enchères des bots ;
-  - la résolution exacte des 66 répartitions au whist ouvert et sur la misère ;
+- **Préférence :**
+  - relecture des traductions en hébreu, espagnol et français par des locuteurs natifs ;
+  - calibrer les enchères des bots et les décisions du donneur (son whist, la misère partagée) ;
+  - résoudre exactement les 66 positions du whist ouvert et de la misère ;
+  - fonds et cadres d'après les prompts de `DESIGN_CONCEPT_RU.md`, si Alexey les génère ;
   - le jeu en ligne.
 - **Échecs :**
   - une construction de Stockfish en WebAssembly au lieu de l'asm.js actuel (Stockfish 10, un seul fil) : plusieurs fois plus rapide et plus fort ; régler la licence GPL et la taille du fichier ;
   - sauvegarder et reprendre ;
+  - cinq langues d'interface, comme pour la préférence et les pages du site ;
   - le jeu en ligne en temps réel et par correspondance.
-- **Le site et les échecs :** cinq langues d'interface, comme pour la préférence.
 - **Outillage :**
   - une vérification des frontières d'import (ESLint `no-restricted-imports`) ;
   - `npm test` en CI avant publication ;
@@ -2549,5 +2634,30 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 | 08.11.2026 | La table des positions du solveur est faite de tableaux numériques avec un tampon de génération au lieu d'une Map à clés textuelles ; la génération des coups sans allocations superflues | 3,5 à 4 fois plus rapide avec exactement les mêmes réponses (vérifié sur 400 donnes complètes) ; la table de 16 Mo est créée une seule fois, et seulement là où l'on résout |
 | 08.11.2026 | Des limites strictes à l'horloge sur le coup d'un bot, et une petite carte de secours | Un appareil lent ne peut pas se bloquer sur une donne difficile ; les limites à l'horloge marchent sur n'importe quel processeur |
 | 08.11.2026 | Les tests de charge dans le dépôt (`apps/client/scripts/load/`, `npm run load`), sans paquets, via le protocole DevTools | Alexey a demandé de vérifier que les moteurs sont rapides et ne se bloquent jamais ; le test se relance après chaque modification |
+| 09.11.2026 | À deux (gusarik avec le Mort) et à quatre (le donneur reste au talon) : une couche de table `engine/table.ts` au-dessus de la donne à trois places | Une seule donne pour toute table ; la table traduit les places en joueurs et ajoute ce que seul le donneur inscrit |
+| 09.11.2026 | Toutes les options « bientôt » se jouent : whist–passe–demi-whist, misère sans talon, annonces à l'aveugle et bombes (Classique), talon payant, aide américaine, le whist du donneur et la misère partagée à quatre, dents | Demande d'Alexey ; les règles sont des données (`rules.ts`), chaque option a son test (`options-extra.test.ts`) |
+| 09.11.2026 | Les nouvelles enchères sont numérotées après les classiques (misère sans talon 26, à l'aveugle 106…110) ; `bidRank` leur donne leur place aux enchères | Les numéros des anciennes enchères et des poules sauvegardées ne changent pas |
+| 09.11.2026 | Les bombes vivent au niveau de la table (le hook) ; la donne les reçoit par place et multiplie le score (`stakesOf`) | Les bombes passent d'une donne à l'autre, comme la progression de la passe générale |
+| 09.11.2026 | Le repaire selon le concept `DESIGN_CONCEPT_RU.md` : argent noirci, velours, candélabres, fenêtres au clair de lune, une plume près de la feuille ; cartes jusqu'à 112 px | « Le jeu est l'essentiel, le reste est ambiance » ; le brief d'Alexey avec le prompt |
+| 09.11.2026 | Les plis restent sur la table en piles séparées face cachée, croisées, cinq par rang | Demande d'Alexey : compter les plis de chacun d'un coup d'œil |
+| 09.11.2026 | L'éventail de cartes est fait de cases larges d'un pas qui se resserrent selon la colonne ; le centre de la table n'attrape aucun toucher ; aucune carte ne monte au-dessus de ses voisines | Le test tactile a trouvé la main du partenaire sous le centre de la table et des cartes cachées par leur voisine |
+| 09.11.2026 | Le doigt et la souris sont testés pareil : `scripts/load/touch-play.mjs` — touchers CDP sur téléphone et tablette, le même scénario à la souris sur ordinateur, `elementFromPoint` pour chaque bouton et carte | Décision d'Alexey : « un scénario équivalent… les tester de la même façon » |
+| 09.11.2026 | Un bouton « Enregistrer » avec l'heure, et un enregistrement quand la page se masque (`pagehide`, `visibilitychange`) ; pas de bouton flottant « haut » sur les pages de jeu | On joue en déplacement ; le bouton « haut » cachait les enchères sur téléphone |
+| 09.11.2026 | Les pages du site en cinq langues : clés `data-i18n` et `shell/i18n`, un seul choix de langue partagé avec les jeux | La page d'accueil n'était qu'en anglais |
+| 09.11.2026 | 69 personnages : 31 nouveaux d'après les images d'Alexey (entières, seulement réduites), biographies en cinq langues ; l'aperçu d'un produit payant est laissé de côté | Demande d'Alexey ; une image marquée « instant download » ne donne aucun droit d'usage |
+
+### 19. Le repaire, toutes les options et le jeu au doigt (09.11.2026)
+
+- **Le design** suit le concept `apps/client/src/games/preferans/DESIGN_CONCEPT_RU.md` (six parties et trois prompts Midjourney) :
+  - tapis émeraude au damas gaufré, lumière des candélabres aux coins supérieurs ;
+  - cadres des personnages, plaques, boutons et champs — argent noirci sur velours ;
+  - la feuille est une grande page au coin brûlé avec une plume de corbeau ;
+  - candélabres, fenêtres en ogive au clair de lune et chauves-souris (`Lair.tsx`) se tiennent aux bords et s'effacent sur téléphone.
+- **La règle principale de l'écran :** les cartes et la table sont au centre, l'entourage ne fait que l'ambiance.
+- **Personnages.** 69 (`characters/roster.ts`) : 43 habitants de la crypte et 26 invités, chacun avec son style de jeu et une biographie drôle en cinq langues.
+- **Tables.** Deux, trois ou quatre joueurs ; règles de Sotchi, Leningrad, Rostov et Classique.
+- **Options.** Toutes celles du menu se jouent ; comment, dans les explications du menu et dans `RULES.md`, §9.
+- **Sauvegardes :** après chaque coup, avec le bouton « Enregistrer » et quand la page est masquée ou fermée ; « Continuer » dans le menu.
+- **Tests.** `npm test` — 90 tests. `scripts/load/touch-play.mjs` joue au doigt sur téléphone et tablette et à la souris sur ordinateur (`INPUT=mouse`) et vérifie que chaque bouton et chaque carte sont accessibles et que rien ne les cache.
 
 [↑ Retour aux langues](#top)

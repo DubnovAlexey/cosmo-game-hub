@@ -12,12 +12,12 @@ import GameCard from '@shell/components/GameCard.astro';
 import { games } from '@shell/data/mockGames';
 ---
 
-<Layout title="Games | Cosmo Game Hub">
+<Layout title="Games | Cosmo Game Hub" titleKey="title.games">
 
     <div class="container mx-auto px-6 py-12">
 
-        <h1 class="text-4xl font-bold text-blue-400 mb-8 text-center">
-            Our Games Collection
+        <h1 class="text-4xl font-bold text-blue-400 mb-8 text-center" data-i18n="games.title">
+            Our games collection
         </h1>
 
         <!-- CSS Grid container for responsive card layout -->
@@ -41,8 +41,8 @@ import { games } from '@shell/data/mockGames';
             <!-- Future Game Placeholder -->
             <!-- Карточка-заглушка для будущих игр -->
             <article class="bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-700 flex flex-col items-center justify-center p-6 text-center opacity-70">
-                <h3 class="text-xl font-bold text-gray-400">Coming Soon</h3>
-                <p class="text-gray-500 mt-2">More classic logic games are on the way!</p>
+                <h3 class="text-xl font-bold text-gray-400" data-i18n="games.soonTitle">Coming soon</h3>
+                <p class="text-gray-500 mt-2" data-i18n="games.soonText">More classic logic games are on the way!</p>
             </article>
 
         </div>

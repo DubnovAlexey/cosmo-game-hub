@@ -10,7 +10,7 @@
 //   can validate a table on the future game server.
 // SECTIONS: 1 catalog; 2 configuration; 3 availability; 4 changes; 5 rule options for the engine.
 // =====================================================================
-import { LENINGRAD, ROSTOV, SOCHI, customizeRules, type RuleOptions, type RuleSet } from './rules.ts';
+import { CLASSIC, LENINGRAD, ROSTOV, SOCHI, customizeRules, type RuleOptions, type RuleSet } from './rules.ts';
 
 // BEGIN 1. Catalog
 export type PlayerCount = 2 | 3 | 4;
@@ -25,10 +25,10 @@ export type OptionId =
 export interface Choice<T> { readonly value: T; readonly ready: boolean }
 
 export const PLAYER_CHOICES: readonly Choice<PlayerCount>[] = [
-  { value: 3, ready: true }, { value: 2, ready: false }, { value: 4, ready: false },
+  { value: 3, ready: true }, { value: 2, ready: true }, { value: 4, ready: true },
 ];
 export const VARIANT_CHOICES: readonly Choice<VariantId>[] = [
-  { value: 'sochi', ready: true }, { value: 'leningrad', ready: true }, { value: 'rostov', ready: true }, { value: 'classic', ready: false },
+  { value: 'sochi', ready: true }, { value: 'leningrad', ready: true }, { value: 'rostov', ready: true }, { value: 'classic', ready: true },
 ];
 export const POOL_CHOICES: readonly Choice<number>[] = [{ value: 10, ready: true }, { value: 20, ready: true }, { value: 30, ready: true }];
 export const PROGRESSIONS: Readonly<Record<ProgressionId, readonly number[]>> = { '1-2-3': [1, 2, 3], '1-2-4': [1, 2, 4], flat: [1] };
@@ -58,21 +58,24 @@ const OPTION_LIST: OptionSpec[] = [
   { id: 'tenChecked', kind: 'convention', ready: true },
   // Rostov never opens the talon on all-pass.
   { id: 'talonLeads', kind: 'convention', ready: true, variants: ['sochi', 'leningrad', 'classic'] },
-  { id: 'stalingrad', kind: 'extra', ready: true },
+  // The dummy of a game for two never whists, so Stalingrad (both defenders must whist) needs three or four.
+  { id: 'stalingrad', kind: 'extra', ready: true, players: [3, 4] },
   // Two values of one house rule: a table concedes two down or three down, never both.
   { id: 'concedeTwo', kind: 'extra', ready: true, conflicts: ['concedeThree'] },
   { id: 'concedeThree', kind: 'extra', ready: true, conflicts: ['concedeTwo'] },
-  { id: 'whistPassHalf', kind: 'extra', ready: false, requires: ['halfWhist'] },
-  { id: 'misereNoTalon', kind: 'extra', ready: false },
-  { id: 'darkBids', kind: 'extra', ready: false, variants: ['classic'] },
+  // A lone whister of a table for two plays at once (the dummy's whist is always open), so there is nothing to switch.
+  { id: 'whistPassHalf', kind: 'extra', ready: true, requires: ['halfWhist'], players: [3, 4] },
+  { id: 'misereNoTalon', kind: 'extra', ready: true },
+  // The dummy of a game for two would have to «pass in the dark» every deal: dark calls need three or four.
+  { id: 'darkBids', kind: 'extra', ready: true, variants: ['classic'], players: [3, 4] },
   // Bombs are born from dark passes, so they need dark bids.
-  { id: 'bombs', kind: 'extra', ready: false, requires: ['darkBids'], variants: ['classic'] },
-  { id: 'paidTalon', kind: 'extra', ready: false },
+  { id: 'bombs', kind: 'extra', ready: true, requires: ['darkBids'], variants: ['classic'], players: [3, 4] },
+  { id: 'paidTalon', kind: 'extra', ready: true },
   // A pool played to a common total (Leningrad) has nobody to help.
-  { id: 'americanHelp', kind: 'extra', ready: false, variants: ['sochi', 'rostov'] },
-  { id: 'dealerWhists', kind: 'extra', ready: false, players: [4] },
-  { id: 'misereHalves', kind: 'extra', ready: false, players: [4] },
-  { id: 'teeth', kind: 'extra', ready: false },
+  { id: 'americanHelp', kind: 'extra', ready: true, variants: ['sochi', 'rostov', 'classic'] },
+  { id: 'dealerWhists', kind: 'extra', ready: true, players: [4] },
+  { id: 'misereHalves', kind: 'extra', ready: true, players: [4] },
+  { id: 'teeth', kind: 'extra', ready: true },
 ];
 export const OPTIONS: readonly OptionSpec[] = Object.freeze(OPTION_LIST);
 const SPECS = new Map<OptionId, OptionSpec>(OPTIONS.map(spec => [spec.id, spec]));
@@ -209,8 +212,8 @@ export function normalizeTable(input: Partial<TableConfig> | null | undefined): 
 // END 4
 
 // BEGIN 5. Rule options for the engine
-/** The rule set each variant starts from (Classic is not playable yet and falls back to Sochi). */
-const VARIANT_RULES: Readonly<Record<VariantId, RuleSet>> = { sochi: SOCHI, leningrad: LENINGRAD, rostov: ROSTOV, classic: SOCHI };
+/** The rule set each variant starts from. */
+const VARIANT_RULES: Readonly<Record<VariantId, RuleSet>> = { sochi: SOCHI, leningrad: LENINGRAD, rostov: ROSTOV, classic: CLASSIC };
 
 /** Rostov pays all-pass in whists without progression, so the all-pass prices are not a choice there. */
 export const hasProgression = (config: TableConfig): boolean => config.variant !== 'rostov';
@@ -233,6 +236,19 @@ export function toRuleOptions(config: TableConfig): RuleOptions {
     raspasyTalonLeads: isOn(config, 'talonLeads'),
     stalingrad: isOn(config, 'stalingrad'),
     concedeTricks: isOn(config, 'concedeThree') ? 3 : isOn(config, 'concedeTwo') ? 2 : 0,
+    // [EN] Four at the table: on all-pass the open talon is the dealer's hand. [RU] Вчетвером на распасах открытый прикуп — рука сдающего.
+    talonTakesTricks: config.players === 4 && isOn(config, 'talonLeads'),
+    // [EN] Two at the table: the third hand is the dummy (deal seat 2). [RU] Вдвоём третья рука — болван (место раздачи 2).
+    dummySeat: config.players === 2 ? 2 : null,
+    whistPassHalf: isOn(config, 'whistPassHalf'),
+    misereNoTalon: isOn(config, 'misereNoTalon'),
+    darkBids: isOn(config, 'darkBids'),
+    bombs: isOn(config, 'bombs'),
+    paidTalon: isOn(config, 'paidTalon'),
+    americanHelp: isOn(config, 'americanHelp'),
+    dealerWhists: isOn(config, 'dealerWhists'),
+    misereHalves: isOn(config, 'misereHalves'),
+    teeth: isOn(config, 'teeth'),
   };
 }
 // END 5

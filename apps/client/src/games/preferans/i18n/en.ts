@@ -2,7 +2,7 @@
 //      Sources of the explanations: the rules research of 08.11.2026 (Кодекс 1996, pref-bridge, Gambler,
 //      preferans.games, FSPR, Wikipedia).
 // [RU] ФАЙЛ: английские тексты стола преферанса.
-import type { ClosedReason, OptionId, Seat, VariantId } from '../engine/index.ts';
+import type { ClosedReason, OptionId, VariantId } from '../engine/index.ts';
 import type { Cast } from '../characters/roster.ts';
 import { CHARACTERS_EN } from './characters/en.ts';
 import type { Dictionary, Explained } from './types.ts';
@@ -28,9 +28,9 @@ const VARIANTS: Readonly<Record<VariantId, Explained>> = {
     },
     classic: {
         name: 'Classic', term: '«Классика»',
-        what: 'The oldest variant, kept alive by student companies.',
-        how: 'Dark bids and bombs: after a dark all-pass the next game costs double or more.',
-        effect: 'Big swings in the score.',
+        what: 'The oldest variant, kept alive by student companies: Sochi prices and whist, all-pass 1 · 2 · 4.',
+        how: 'Only here are dark bids and bombs (switch them on among the extras): a dark game costs double, a game on bombs two, four or eight times as much.',
+        effect: 'Big swings in the score: one deal can decide the pool.',
     },
 };
 
@@ -79,57 +79,57 @@ const OPTIONS: Readonly<Record<OptionId, Explained>> = {
     },
     whistPassHalf: {
         name: 'Whist · pass · half-whist', term: '«вист–пас–полвиста»',
-        what: 'The defender who said whist may switch to half-whist after the other defender passes.',
-        how: 'It extends half-whist, so it needs half-whist on.',
-        effect: 'A lone defender can take a safe half-whist instead of defending alone.',
+        what: 'A whister may switch to half-whist when the other defender has passed.',
+        how: 'Only on six and seven: instead of playing alone he takes half-whist — the game counts as made without play and he writes whists for half the obligation. Needs half-whist on; never at a table of two, where the whist with the dummy is always open at once.',
+        effect: 'A lone whister takes a sure half-whist instead of facing the declarer alone.',
     },
     misereNoTalon: {
         name: 'Misère without the talon', term: '«мизер без прикупа»',
-        what: 'A misère declared without taking the talon; it ranks above the nines.',
-        how: 'Sources disagree on what overcalls it, so the table will fix one rule.',
-        effect: 'A higher misère with neither help nor danger from the talon.',
+        what: 'A misère bid without taking the talon; in the auction it ranks above the nines.',
+        how: 'Only a ten beats it (sources differ; our table keeps to this). A player who bid ordinary misère may raise to it. Played with your own ten cards, the talon stays closed; scored like misère.',
+        effect: 'A higher-ranking misère: no help from the talon, but no dangerous card from it either.',
     },
     darkBids: {
         name: 'Dark bids', term: '«тёмные заявки»',
-        what: 'Bidding before looking at your cards: “pass in the dark”, “six in the dark”.',
-        how: 'Part of Classic: dark bids are overcalled on a ladder of their own.',
-        effect: 'Wins and losses on a dark game are doubled.',
+        what: 'A word before looking at your cards: "pass in the dark" or "six in the dark", "seven in the dark"…',
+        how: 'Only as your first word in a deal, while your cards are closed. A dark level ranks above every light bid of that level ("six dark" beats 6NT but not 7♠); the suit is chosen after the talon. After a dark bid you can only raise in the dark or pass.',
+        effect: 'A dark game costs double: pool, mountain and whists. An all-pass where someone passed in the dark costs double too.',
     },
     bombs: {
         name: 'Bombs', term: '«бомбы»',
-        what: 'After a dark all-pass, the players who passed in the dark get a bomb.',
-        how: 'The next game on a bomb costs double; a second bomb ×4, a third ×8. A made game removes the bomb, a failed one leaves it. Needs dark bids.',
-        effect: 'Big swings: one game can decide the pool.',
+        what: 'After an all-pass everyone who said "pass in the dark" gets a bomb.',
+        how: 'His next game or misère costs double, on two bombs four times, on three (a "tree") eight times as much. Made — the bombs burn out; failed — they stay for the next game. Needs dark bids.',
+        effect: 'Big swings: one game on bombs can decide the pool.',
     },
     paidTalon: {
         name: 'Paid talon', term: '«платный прикуп»',
-        what: 'Quick tricks found in the talon are paid for: an ace or a king and queen of one suit count as one trick, ace and king as two, two aces as three.',
-        how: 'Each quick trick is paid at the game price to the declarer\'s opponents (sources differ in the details).',
+        what: 'The declarer pays for quick tricks in the talon: an ace, or a king and queen of a suit — one trick; ace and king of a suit — two; two aces — three.',
+        how: 'Each quick trick costs the price of the game in whists: at three each defender writes half of it on the declarer, at four the dealer writes the whole premium (FSPR).',
         effect: 'A lucky talon costs the declarer something.',
     },
     americanHelp: {
         name: 'Help', term: '«помощь»',
-        what: 'When your pool is full, points you earn above the target go into the pool of the opponent with the larger pool.',
-        how: 'You write 10 whists on him for every such point. Used where each player closes his own pool (Sochi, Rostov).',
-        effect: 'The pool closes sooner and no points are lost.',
+        what: 'When your pool is closed, points above the target go into the pool of the opponent with the biggest pool not yet closed.',
+        how: 'A tie helps the player on your left. For every point given you write 10 whists on him. Played where everyone closes his own pool (Sochi, Rostov, Classic).',
+        effect: 'The pool closes faster and extra points are not lost.',
     },
     dealerWhists: {
         name: 'Dealer whists for the passers',
-        what: 'At a table of four, when both defenders pass, the dealer may look at one defender\'s cards and whist instead.',
-        how: 'Four players only; sources differ on which games it applies to.',
+        what: 'At four: when both defenders pass, the dealer may take one of their hands and whist himself.',
+        how: 'The dealer looks at one defender\'s cards and decides: whist — he plays those cards closed and writes everything that defender would; pass — the game counts.',
         effect: 'Fewer free games for the declarer.',
     },
     misereHalves: {
         name: 'Misère half-and-half', term: '«мизер пополам»',
-        what: 'The declarer may invite the dealer to share a misère.',
-        how: 'Premium and penalty are split in half. Four players only.',
-        effect: 'Less risk on a doubtful misère.',
+        what: 'At four the misère declarer may call the dealer to share it half and half.',
+        how: 'Decided right after the auction, before the talon. The pool for a clean misère or the mountain for a caught one is split equally between the declarer and the dealer.',
+        effect: 'Less risk on a doubtful misère — and a smaller win.',
     },
     teeth: {
         name: 'Teeth', term: '«зубы»',
-        what: 'A mark on the sheet towards the player who set you.',
-        how: 'It changes nothing in the score — it is a promise to set him back when you can.',
-        effect: 'Table folklore: shown on the sheet only.',
+        what: 'A mark on the sheet towards whoever set you down.',
+        how: 'When you go down against a whist, a tooth appears under the sheet towards each whister. It does not change the score — it is a promise to set him down in return.',
+        effect: 'Table folklore: only a mark on the sheet.',
     },
 };
 
@@ -139,7 +139,7 @@ const tricksWord = (count: number): string => (count === 1 ? 'trick' : 'tricks')
 
 // [EN] Who sits where: "you" takes its own verb forms, the opponents of this pool (characters/roster.ts) the third person.
 // [RU] Кто где сидит: у «you» свои формы глагола, у соперников этой пули (characters/roster.ts) — третье лицо.
-const by = <T>(seat: Seat, you: T, other: T): T => (seat === 0 ? you : other);
+const by = <T>(seat: number, you: T, other: T): T => (seat === 0 ? you : other);
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {
@@ -154,7 +154,7 @@ const closed = (reason: ClosedReason): string => {
 
 export default function en(cast: Cast): Dictionary {
     const NAMES = ['You', ...cast.map(id => CHARACTERS_EN[id].name)];
-    const name = (seat: Seat): string => NAMES[seat];
+    const name = (seat: number): string => NAMES[seat];
     return {
     language: 'en',
     gameTitle: 'Preferans',
@@ -198,7 +198,7 @@ export default function en(cast: Cast): Dictionary {
         needs: (seat, tricks) => `${name(seat)} ${by(seat, 'need', 'needs')} ${tricks} ${tricksWord(tricks)}`,
         defendersDecide: 'Defenders decide: whist or pass',
     },
-    roles: { allPass: 'All-pass', misere: 'Misère', declarer: 'Declarer', catcher: 'Catcher', checks: 'Checks', whist: 'Whist', halfWhist: 'Half-whist', pass: 'Pass' },
+    roles: { allPass: 'All-pass', misere: 'Misère', declarer: 'Declarer', catcher: 'Catcher', checks: 'Checks', whist: 'Whist', halfWhist: 'Half-whist', pass: 'Pass', onTalon: 'on the talon' },
     seat: { tricks: count => `tricks ${count}`, thinking: 'thinking…' },
     table: { centre: 'Table centre', talonOpen: 'Talon, shown to everybody', talonClosed: 'Talon, face down', talonLeads: 'Talon card leads this trick' },
     actions: {
@@ -233,11 +233,39 @@ export default function en(cast: Cast): Dictionary {
         made: (seat, contract, tricks, defence) => `${name(seat)} · ${contract} · made with ${tricks} · defence ${defence}`,
         down: (seat, contract, under, tricks) => `${name(seat)} · ${contract} · down ${under} (${tricks} ${tricksWord(tricks)})`,
         poolClosed: 'The pool is closed.',
+        redeal: 'Everybody passed — a new deal',
         whists: 'whists',
+    },
+    extra: {
+        save: 'Save',
+        savedAt: time => `saved at ${time}`,
+        misereNoTalon: 'Misère without the talon',
+        misereNoTalonButton: 'Misère without the talon — no talon, not a single trick',
+        dark: level => `${level} dark`,
+        darkPass: 'Pass in the dark',
+        darkRow: 'In the dark, without looking at the cards',
+        lookAtCards: 'Look at the cards',
+        darkQuestion: 'Your cards are still closed: you may speak in the dark — the game and the whists cost double — or look first',
+        darkOnly: 'You bid in the dark and have not seen your cards: you can only raise in the dark, or pass',
+        cardsClosed: 'cards closed',
+        shareQuestion: 'Call the dealer to share the misère half and half? The pool or the mountain is split equally',
+        share: 'Half with the dealer',
+        playAlone: 'Play alone',
+        dealerQuestion: 'Both defenders passed. Take one of their hands and whist yourself?',
+        dealerHand: seat => `Hand: ${name(seat)}`,
+        dealerWhistQuestion: seat => `Whist with the hand of ${name(seat)}? The obligation is yours`,
+        bombs: count => `bombs: ${count}`,
+        teeth: 'Teeth',
+        tooth: (from, to, count) => `${from} → ${to}${count > 1 ? ` ×${count}` : ''}`,
+        results: {
+            dark: 'in the dark', times: factor => `×${factor}`, bombs: 'on bombs', darkAllPass: 'dark all-pass',
+            bombsEarned: names => `bomb: ${names}`, shared: 'half with the dealer',
+            dealerWhisted: seat => `the dealer whisted — ${name(seat)}`, premium: whists => `paid talon: ${whists} whists`, noTalon: 'without the talon',
+        },
     },
     sheet: {
         title: 'Score sheet',
-        meta: (target, total) => `pool to ${target} · ${total} of ${target * 3}`,
+        meta: (target, total, max) => `pool to ${target} · ${total} of ${max}`,
         openLarge: 'Open the score sheet large',
         close: 'Close the score sheet',
         legend: { mountain: 'mountain · inner', pool: 'pool · middle', whists: 'whists · outer' },
@@ -291,14 +319,14 @@ export default function en(cast: Cast): Dictionary {
         },
         strength: { casual: 'Casual · quick', strong: 'Strong · thinks longer' },
         opponents: 'Opponents',
-        opponentsNote: 'pick portraits (up to two); without a choice the crypt decides',
+        opponentsNote: max => (max === 1 ? 'pick a portrait; without a choice the crypt decides' : `pick portraits (up to ${max === 2 ? 'two' : 'three'}); without a choice the crypt decides`),
         randomOpponents: 'Random',
         champion: who => `${who} won the last pool and takes a free seat at the table.`,
     },
     explain: {
         players: {
             3: { name: '3 · you + 2 bots', what: 'The classic table: ten cards each, two in the talon.', how: 'You sit at the bottom; two dwellers of the crypt (new ones every pool) take the other seats and never look at hidden cards.', effect: 'The standard game. Every rule on this menu is written for three players.' },
-            2: { name: '2 · Gusarik', term: '«гусарик»', what: 'You against one bot, with a dummy hand that always passes.', how: 'The defender decides on whist without seeing the dummy; a whist is always played open, and the defender plays both defence hands.', effect: 'A quicker, sharper duel. Sources describe it in three different ways, so the table will state its exact rules.' },
+            2: { name: '2 · duel with a dummy', what: 'You against one opponent; the third hand is the dummy, a scarecrow skeleton that always passes.', how: 'The defender decides to whist without seeing the dummy; the whist is always open and the defender plays both hands. Everybody passed — a new deal.', effect: 'A quick, sharp duel. The defender writes the whists of the dummy; at the end the mountain is not divided: the difference of mountains × 10 whists.' },
             4: { name: '4 · dealer sits out', term: '«сдающий на прикупе»', what: 'Four at the table; the dealer gets no cards in his own deal.', how: 'The dealer still scores: he writes consolation when the declarer fails, and on all-pass the talon is his hand.', effect: 'Everyone rests every fourth deal. The sport federation (FSPR) plays four at a table.' },
         },
         variants: VARIANTS,

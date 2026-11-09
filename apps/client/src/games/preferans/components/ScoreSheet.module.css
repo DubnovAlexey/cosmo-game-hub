@@ -23,7 +23,7 @@
     --ink: #1f3a8a;
     --ink-red: #b3262e;
     --pencil: #4b5563;
-    --muted: #b4c8b9;
+    --muted: #b3b9c2;
     position: sticky;
     top: 12px;
     color: #f3ecd8;
@@ -32,41 +32,67 @@
 .sheetLarge { position: static; padding: clamp(14px, 3vw, 22px); font-size: 0.92rem; }
 
 .sheetHeader { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.sheetHeader h2 { margin: 0; color: #fde68a; font: 700 1.15rem/1.1 var(--hand), cursive; letter-spacing: 0.02em; }
-.sheetMeta { flex: 1; color: var(--muted); font-size: 0.75rem; }
+/* [EN] The words around the paper are engraved in old silver on the cloth. [RU] Подписи вокруг листа — гравировка старым серебром по сукну. */
+.sheetHeader h2 { margin: 0; color: #eadfc6; font: 400 1.45rem/1.1 'Ponomar', 'Cormorant Garamond', Georgia, serif; letter-spacing: 0.04em; text-shadow: 0 1px 0 #000, 0 0 10px rgba(176, 16, 31, 0.35); }
+.sheetMeta { flex: 1; color: var(--muted); font-size: 0.8rem; font-variant: small-caps; letter-spacing: 0.04em; }
 
 .iconButton {
     display: grid;
     place-items: center;
     width: 36px;
     height: 36px;
-    border: 1px solid rgba(245, 222, 160, 0.32);
-    border-radius: 10px;
-    background: rgba(3, 20, 12, 0.55);
-    color: #f3ecd8;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #2a1720 0%, #150b10 100%) padding-box,
+        linear-gradient(135deg, #e3e6ea 0%, #7c838d 20%, #2b2e34 46%, #a3aab3 68%, #3c4048 86%, #8d939c 100%) border-box;
+    color: #eadfc6;
     font-size: 1rem;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.4), 0 3px 7px rgba(0, 0, 0, 0.5);
     cursor: pointer;
 }
-.iconButton:hover, .iconButton:focus-visible { border-color: #fde68a; box-shadow: 0 0 12px rgba(253, 230, 138, 0.35); outline: none; }
+.iconButton:hover, .iconButton:focus-visible { box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.4), 0 0 14px rgba(255, 181, 74, 0.45); outline: none; }
 
 /* ===== 3. The paper / Бумага ===== */
-/* [EN] An ordinary sheet of paper — white with the faintest touch of cream — put down a little crooked on the green
-        felt, with faint fibres and a soft shadow, like on a real table. Only the felt is green.
-   [RU] Обычный лист бумаги — белый с едва заметной кремовостью — положенный чуть криво на зелёное сукно, с
-        лёгкими волокнами и мягкой тенью, как на настоящем столе. Зелёное только сукно. */
+/* [EN] Heavy handmade paper — white with the faintest touch of cream (Alexey's choice, not yellow parchment) — put
+        down a little crooked on the green felt. Its age shows only at the edges: a darker rim, a few spots of foxing,
+        one corner scorched by a candle; the middle stays clean for the numbers (DESIGN_CONCEPT_RU.md §2).
+   [RU] Тяжёлая бумага ручной выделки — белая с едва заметной кремовостью (выбор Алексея, не жёлтый пергамент) —
+        положенная чуть криво на зелёное сукно. Возраст виден только по краям: темнее кромка, редкие пятнышки
+        времени, один угол обожжён свечой; середина чистая для цифр (DESIGN_CONCEPT_RU.md §2). */
 .paper {
     --paper: #fbf7ec;
+    position: relative;
     margin: 0 4px;
     padding: 2px;
-    border-radius: 3px;
+    border-radius: 2px 5px 3px 6px / 5px 2px 6px 3px;
     background-color: var(--paper);
     background-image:
+        radial-gradient(circle at 0% 100%, rgba(70, 36, 12, 0.5) 0%, rgba(110, 66, 26, 0.28) 4%, rgba(150, 100, 50, 0.1) 9%, transparent 15%),
+        radial-gradient(circle 3px at 88% 12%, rgba(160, 110, 50, 0.16), transparent 100%),
+        radial-gradient(circle 2px at 12% 64%, rgba(160, 110, 50, 0.14), transparent 100%),
+        radial-gradient(circle 4px at 72% 82%, rgba(160, 110, 50, 0.1), transparent 100%),
         radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.7), transparent 60%),
         radial-gradient(ellipse at 80% 90%, rgba(150, 120, 70, 0.07), transparent 55%),
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.38 0 0 0 0 0.26 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23f)'/%3E%3C/svg%3E");
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 26px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 22px rgba(120, 88, 48, 0.2), inset 0 0 3px rgba(120, 88, 48, 0.25), 0 1px 2px rgba(0, 0, 0, 0.35), 0 14px 28px rgba(0, 0, 0, 0.55);
     transform: rotate(-1.4deg);
 }
+/* [EN] The quill across the lower right corner (Pulka.tsx); it twitches once when a number is written.
+   [RU] Перо наискось у нижнего правого угла (Pulka.tsx); вздрагивает, когда пишется число. */
+.quill {
+    position: absolute;
+    right: -22px;
+    bottom: 7%;
+    width: 46%;
+    height: auto;
+    rotate: -26deg;
+    transform-origin: 8% 52%;
+    filter: drop-shadow(-5px 7px 4px rgba(0, 0, 0, 0.45));
+    pointer-events: none;
+    animation: quillWrite 0.9s ease-in-out 0.2s;
+}
+.paper svg.quill { width: 46%; }
+@keyframes quillWrite { 0%, 100% { transform: none; } 30% { transform: rotate(-4deg) translate(-3px, -2px); } 60% { transform: rotate(2deg); } }
 .paperLarge { margin: 6px 10px 4px; transform: rotate(-0.8deg); }
 .paper svg { display: block; width: 100%; height: auto; }
 
@@ -95,20 +121,24 @@
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ===== 4. Legend, balance, deals / Легенда, итог, раздачи ===== */
-.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 12px 0 0; color: var(--muted); font-size: 0.72rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 14px 0 0; color: var(--muted); font-size: 0.8rem; font-variant: small-caps; letter-spacing: 0.03em; }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .dotPool, .dotMountain, .dotWhists { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 50%; }
 .dotPool { background: #5eead4; }
 .dotMountain { background: #fda4af; }
 .dotWhists { background: #c4b5fd; }
 
-.balance { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 8px 0 0; font-size: 0.8rem; }
+.balance { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 8px 0 0; font-size: 0.92rem; }
 .balanceUnit { color: var(--muted); }
 .plus { color: #86efac; }
 .minus { color: #fda4af; }
 
+/* [EN] Teeth: who promised to pay whom back, a fang before each. [RU] Зубы: кто кому обещал отплатить, перед каждым — клык. */
+.teeth { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 8px 0 0; font-size: 0.88rem; }
+.tooth::before { content: '▾'; margin-inline-end: 4px; color: #eadfc6; font-size: 0.8em; }
+
 .deals { margin-top: 10px; }
-.deals summary { cursor: pointer; color: #fde68a; font-weight: 700; }
+.deals summary { cursor: pointer; color: #eadfc6; font-weight: 700; font-variant: small-caps; letter-spacing: 0.04em; }
 
 /* ===== 5. Strip for small screens / Полоса для маленьких экранов ===== */
 /* [EN] A paper note with the score: who has how much, written by hand. [RU] Бумажная записка со счётом: у кого сколько, от руки. */
@@ -175,5 +205,6 @@
 
 @media (prefers-reduced-motion: reduce) {
     .rules path, .write { animation: none; stroke-dashoffset: 0; }
+    .quill { animation: none; }
     .chipFresh, .dialog { animation: none; }
 }

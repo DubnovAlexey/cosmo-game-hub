@@ -13,6 +13,7 @@ const currentPath = Astro.url.pathname;
 // только в astro.config.mjs выставлен `base: '/cosmo-game-hub'` для GitHub Pages — иначе жёстко
 // прописанные href вида href="/games" будут вести в корень домена и дадут 404.
 import { withBase, isNavigationPathActive } from '../utils/withBase';
+import { LANGUAGES } from '@shared/i18n/languages';
 
 // Один pathname-контракт для подсветки и aria-current, включая production URL со слешем.
 const gamesActive = isNavigationPathActive(currentPath, withBase('/games'), true);
@@ -54,7 +55,7 @@ const aboutActive = isNavigationPathActive(currentPath, withBase('/about'));
                                 gamesActive ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
                             ]}
                     >
-                        Games
+                        <span data-i18n="nav.games">Games</span>
                     </a>
                 </li>
 
@@ -67,7 +68,7 @@ const aboutActive = isNavigationPathActive(currentPath, withBase('/about'));
                                 leaderboardActive ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
                             ]}
                     >
-                        Leaderboard
+                        <span data-i18n="nav.leaderboard">Leaderboard</span>
                     </a>
                 </li>
 
@@ -80,7 +81,7 @@ const aboutActive = isNavigationPathActive(currentPath, withBase('/about'));
                                 aboutActive ? "text-blue-400 font-bold border-b-2 border-blue-400 pb-1" : "text-gray-300 hover:text-white"
                             ]}
                     >
-                        About
+                        <span data-i18n="nav.about">About</span>
                     </a>
                 </li>
 
@@ -91,14 +92,24 @@ const aboutActive = isNavigationPathActive(currentPath, withBase('/about'));
         <!-- Действия аутентификации пользователя -->
         <!-- [EN] Player accounts are not built yet: the button is honestly disabled instead of doing nothing on click -->
         <!-- [RU] Аккаунтов игроков пока нет: кнопка честно выключена, а не молчит при нажатии -->
-        <div class="w-full md:w-auto flex justify-center">
+        <div class="w-full md:w-auto flex flex-wrap justify-center items-center gap-3">
+            <!-- [EN] The site language: the same choice as inside the games (five languages, Hebrew right to left).
+                 [RU] Язык сайта: тот же выбор, что внутри игр (пять языков, иврит справа налево). -->
+            <label class="flex items-center gap-2 text-gray-300">
+                <span aria-hidden="true">🌐</span>
+                <span class="sr-only" data-i18n="nav.language">Language</span>
+                <select data-language-switch class="bg-gray-700 text-white border border-gray-600 rounded-lg px-3 min-h-[44px] cursor-pointer">
+                    {LANGUAGES.map(language => <option value={language.code} lang={language.code} dir={language.dir}>{language.name}</option>)}
+                </select>
+            </label>
             <button
                     type="button"
                     disabled
                     title="Player accounts are coming soon"
-                    class="bg-gray-700 text-gray-400 px-8 py-2 rounded-lg font-semibold w-full md:w-auto cursor-not-allowed"
+                    data-i18n-title="nav.loginTitle"
+                    class="bg-gray-700 text-gray-400 px-8 rounded-lg font-semibold min-h-[44px] cursor-not-allowed"
             >
-                Login · soon
+                <span data-i18n="nav.login">Login · soon</span>
             </button>
         </div>
 

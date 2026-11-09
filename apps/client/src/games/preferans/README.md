@@ -6,7 +6,7 @@
 
 ## English
 
-You against two bots at one table, Sochi rules («Сочинка»).
+You against bots with characters in a vampire lair: two at the table (with a dummy), three, or four (the dealer sits out), by Sochi, Leningrad, Rostov or Classic rules.
 
 - **Fair bots.** They never look at hidden cards and decide from what their seat can know.
 - **Saved after every move.** The pool continues where you stopped.
@@ -18,7 +18,10 @@ You against two bots at one table, Sochi rules («Сочинка»).
 - **The score sheet is always in sight**, drawn like the paper sheet on a real table.
   - Mountain, pool and whists are written as running totals, and each player's result sits by the centre circle.
   - On a phone, a strip above the table keeps the score and opens the sheet large.
-- **A real card table.** Deep green felt in a wooden rail carries the cards, the action panel and the score sheet: a white sheet with a touch of cream where the lines are drawn in pencil and the numbers write themselves in pen. The menu is a page of a squared school notebook, and the card backs show necromancy and vampires.
+- **A lair around a real table.** Emerald felt with an embossed damask; cast frames, plaques and buttons of blackened silver on velvet; candelabra with living flames, lancet windows with moonlight, bats with red eyes. The cards are large (up to 112 px): the game is the focus, the rest sets the mood. The score sheet is a big page with a scorched corner and a raven-feather quill; won tricks stay on the table as separate stacks laid crosswise. The concept and the Midjourney prompts: [DESIGN_CONCEPT_RU.md](DESIGN_CONCEPT_RU.md) (in Russian).
+- **69 characters.** The opponents change from pool to pool and the winner stays; each has a portrait in a silver frame, a funny biography and a playing style of their own. You can pick them on the menu.
+- **Every menu option plays:** whist–pass–half-whist, misère without the talon, dark bids and bombs, paid talon, American help, the dealer's whist and shared misère at four, teeth.
+- **Finger and mouse alike.** The table is tested by touch on phones and tablets and with a mouse on a computer; the pool is saved after every move, with the «Save» button and when the page is hidden.
 - **Five languages** (RU, EN, HE, ES, FR), switched in the header or in the menu. Hebrew reads right to left, while the table and the sheet keep their layout.
 
 ### Rules in short (Sochi, as implemented)
@@ -90,7 +93,7 @@ The rules stay in TypeScript: they are one source of truth for the UI, the worke
 
 ## Русский
 
-Вы против двух ботов за одним столом, правила Сочинки.
+Вы против ботов с характерами в вампирском логове: вдвоём (с болваном), втроём или вчетвером (сдающий сидит на прикупе), по правилам Сочинки, Ленинградки, Ростовки или Классики.
 
 - **Честные боты.** Они никогда не подглядывают в чужие карты и решают по тому, что можно знать с их места.
 - **Сохранение после каждого хода.** Пуля продолжается с того места, где вы остановились.
@@ -102,7 +105,10 @@ The rules stay in TypeScript: they are one source of truth for the UI, the worke
 - **Лист пули всегда перед глазами** и нарисован как бумажный лист на настоящем столе.
   - Гора, пуля и висты пишутся нарастающим итогом, а итог каждого игрока стоит у центрального круга.
   - На телефоне над столом идёт полоса со счётом, которая открывает лист крупно.
-- **Настоящий карточный стол.** Глубокое зелёное сукно в деревянном бортике, на нём карты, панель решений и пуля: белый лист с лёгкой кремовостью, линии проведены карандашом, цифры сами пишутся ручкой. Меню — страница школьной тетради в клетку, рубашки карт — некромантия и вампиры.
+- **Логово вокруг настоящего стола.** Изумрудное сукно с тиснёным дамаском; литые рамки, таблички и кнопки черненого серебра на бархате; канделябры с живым пламенем, стрельчатые окна с луной, летучие мыши с красными глазами. Карты крупные (до 112 px): игра в центре внимания, остальное создаёт атмосферу. Пуля — большой лист с обожжённым углом и пером из воронова крыла; взятки лежат на столе отдельными стопками крест-накрест. Замысел и промпты для Midjourney — в [DESIGN_CONCEPT_RU.md](DESIGN_CONCEPT_RU.md).
+- **69 героев.** Соперники меняются от пули к пуле, победитель остаётся; у каждого портрет в серебряной рамке, смешная биография и свой стиль игры. Соперников можно выбрать в меню.
+- **Все опции меню играются:** вист–пас–полвиста, мизер без прикупа, тёмные заявки и бомбы, платный прикуп, американская помощь, вист сдающего и мизер пополам вчетвером, зубы.
+- **Пальцем и мышью одинаково.** Стол проверяется касаниями на телефоне и планшете и мышью на компьютере; пуля сохраняется после каждого хода, по кнопке «Сохранить» и при сворачивании страницы.
 - **Пять языков** (RU, EN, HE, ES, FR): переключаются в шапке или в меню. Иврит читается справа налево, а стол и пуля сохраняют свою раскладку.
 
 ### Правила коротко (Сочинка, как сделано)
@@ -176,7 +182,7 @@ The rules stay in TypeScript: they are one source of truth for the UI, the worke
 
 ## עברית
 
-אתם מול שני בוטים בשולחן אחד, לפי חוקי סוצ'י («Сочинка»).
+אתם מול בוטים עם אופי במאורת ערפדים: שניים ליד השולחן (עם דחליל), שלושה או ארבעה (המחלק יושב על הקופה), לפי חוקי סוצ׳י, לנינגרד, רוסטוב או קלאסיקה.
 
 - **בוטים הוגנים.** הם לעולם אינם מציצים בקלפים נסתרים, ומחליטים לפי מה שאפשר לדעת מהמקום שלהם.
 - **שמירה אחרי כל מהלך.** הפוליה ממשיכה מהמקום שבו עצרתם.
@@ -188,7 +194,10 @@ The rules stay in TypeScript: they are one source of truth for the UI, the worke
 - **דף הניקוד תמיד מול העיניים**, מצויר כמו דף הנייר על שולחן אמיתי.
   - ההר, הפוליה והוויסטים נרשמים כסכומים מצטברים, והתוצאה של כל שחקן מופיעה ליד העיגול שבמרכז.
   - בטלפון יש מעל השולחן רצועה עם הניקוד, ונגיעה בה פותחת את הדף בגדול.
-- **שולחן קלפים אמיתי.** לבד ירוק עמוק במסגרת עץ נושא את הקלפים, את לוח הפעולות ואת דף הניקוד: דף לבן עם נגיעה של שמנת, הקווים בעיפרון והמספרים נכתבים מעצמם בעט. התפריט הוא דף ממחברת משבצות, וגב הקלפים — נקרומנטיה, מאגיה שחורה וערפדים.
+- **מאורה סביב שולחן אמיתי.** לבד אזמרגד עם דמשק מוטבע; מסגרות, שלטים וכפתורים מכסף מושחר על קטיפה; מנורות עם להבה חיה, חלונות גותיים באור ירח, עטלפים עם עיניים אדומות. הקלפים גדולים (עד 112 פיקסלים): המשחק במרכז, והשאר יוצר אווירה. דף הניקוד גדול, עם פינה חרוכה ונוצת עורב; הלקיחות נשארות על השולחן כערימות נפרדות, אחת לאורך ואחת לרוחב. הרעיון והפרומפטים ל־Midjourney: [DESIGN_CONCEPT_RU.md](DESIGN_CONCEPT_RU.md) (ברוסית).
+- **69 דמויות.** היריבים מתחלפים מפוליה לפוליה והמנצח נשאר; לכל אחד דיוקן במסגרת כסף, ביוגרפיה מצחיקה וסגנון משחק משלו. אפשר לבחור אותם בתפריט.
+- **כל אפשרויות התפריט משחקות:** ויסט–פאס–חצי ויסט, מיזר בלי קופה, הכרזות בעיוורון ופצצות, קופה בתשלום, עזרה אמריקאית, ויסט המחלק ומיזר חצי־חצי בארבעה, שיניים.
+- **באצבע ובעכבר באותה מידה.** השולחן נבדק במגע בטלפון ובטאבלט ובעכבר במחשב; הפוליה נשמרת אחרי כל מהלך, בכפתור «לשמור» וכשהדף מוסתר.
 - **חמש שפות** (רוסית, אנגלית, עברית, ספרדית, צרפתית), מתחלפות בכותרת או בתפריט. העברית נקראת מימין לשמאל, והשולחן והדף שומרים על הפריסה שלהם.
 
 ### החוקים בקצרה (סוצ'י, כפי שמומשו)
@@ -262,7 +271,7 @@ The rules stay in TypeScript: they are one source of truth for the UI, the worke
 
 ## Español
 
-Tú contra dos bots en una mesa, con las reglas de Sochi («Сочинка»).
+Tú contra bots con carácter en una guarida de vampiros: dos en la mesa (con el Muerto), tres o cuatro (el repartidor descansa en el talón), con las reglas de Sochi, Leningrado, Rostov o la Clásica.
 
 - **Bots honestos.** Nunca miran las cartas ocultas y deciden con lo que se puede saber desde su asiento.
 - **Guardado tras cada jugada.** La pulya continúa donde la dejaste.
@@ -274,7 +283,10 @@ Tú contra dos bots en una mesa, con las reglas de Sochi («Сочинка»).
 - **La hoja de puntuación siempre está a la vista**, dibujada como la hoja de papel de una mesa de verdad.
   - Montaña, pulya y whists se anotan como totales acumulados, y el resultado de cada jugador está junto al círculo central.
   - En el móvil, una franja encima de la mesa muestra la puntuación y abre la hoja en grande.
-- **Una mesa de cartas de verdad.** Un tapete verde profundo con borde de madera lleva las cartas, el panel de acciones y la hoja: una hoja blanca con un toque de crema, con las líneas a lápiz y los números que se escriben solos con pluma. El menú es una página de un cuaderno escolar cuadriculado, y el reverso de las cartas muestra nigromancia, magia negra y vampiros.
+- **Una guarida alrededor de una mesa de verdad.** Tapete esmeralda con damasco en relieve; marcos, placas y botones de plata ennegrecida sobre terciopelo; candelabros con llama viva, ventanas ojivales con luz de luna, murciélagos de ojos rojos. Las cartas son grandes (hasta 112 px): el juego es el centro y lo demás crea ambiente. La hoja es una página grande con una esquina chamuscada y una pluma de cuervo; las bazas quedan en la mesa como montones separados, cruzados. La idea y los prompts para Midjourney: [DESIGN_CONCEPT_RU.md](DESIGN_CONCEPT_RU.md) (en ruso).
+- **69 personajes.** Los rivales cambian de una pulya a otra y el ganador se queda; cada uno tiene retrato en marco de plata, una biografía divertida y su propio estilo de juego. Se pueden elegir en el menú.
+- **Todas las opciones del menú se juegan:** whist–paso–medio whist, miseria sin talón, declaraciones a ciegas y bombas, talón pagado, ayuda americana, el whist del repartidor y la miseria a medias entre cuatro, dientes.
+- **Con el dedo y con el ratón por igual.** La mesa se prueba al tacto en móviles y tabletas y con ratón en el ordenador; la pulya se guarda tras cada jugada, con el botón «Guardar» y cuando la página se oculta.
 - **Cinco idiomas** (RU, EN, HE, ES, FR), que se cambian en la cabecera o en el menú. El hebreo se lee de derecha a izquierda, y la mesa y la hoja mantienen su disposición.
 
 ### Reglas en breve (Sochi, tal como están hechas)
@@ -346,7 +358,7 @@ Las reglas siguen en TypeScript: son una única fuente de verdad para la interfa
 
 ## Français
 
-Vous contre deux bots à une table, aux règles de Sotchi (« Сочинка »).
+Vous contre des bots pleins de caractère dans un repaire de vampires : à deux (avec le Mort), à trois ou à quatre (le donneur reste au talon), aux règles de Sotchi, Leningrad, Rostov ou Classique.
 
 - **Des bots honnêtes.** Ils ne regardent jamais les cartes cachées et décident d'après ce que leur place peut savoir.
 - **Sauvegarde après chaque coup.** La poule reprend là où vous vous êtes arrêté.
@@ -358,7 +370,10 @@ Vous contre deux bots à une table, aux règles de Sotchi (« Сочинка »)
 - **La feuille de marque est toujours sous les yeux**, dessinée comme la feuille de papier d'une vraie table.
   - Montagne, poule et whists s'inscrivent en totaux cumulés, et le résultat de chaque joueur figure près du cercle central.
   - Sur téléphone, une bande au-dessus de la table garde la marque et ouvre la feuille en grand.
-- **Une vraie table de jeu.** Un tapis vert profond dans un cadre de bois porte les cartes, le panneau d’actions et la feuille : une feuille blanche à peine crème, aux lignes tracées au crayon, où les chiffres s’écrivent seuls à la plume. Le menu est une page de cahier d’écolier à carreaux, et le dos des cartes montre nécromancie, magie noire et vampires.
+- **Un repaire autour d’une vraie table.** Tapis émeraude au damas gaufré ; cadres, plaques et boutons d’argent noirci sur velours ; candélabres aux flammes vivantes, fenêtres en ogive baignées de lune, chauves-souris aux yeux rouges. Les cartes sont grandes (jusqu’à 112 px) : le jeu est au centre, le reste crée l’ambiance. La feuille est une grande page au coin brûlé avec une plume de corbeau ; les plis restent sur la table en piles séparées, croisées. L’idée et les prompts Midjourney : [DESIGN_CONCEPT_RU.md](DESIGN_CONCEPT_RU.md) (en russe).
+- **69 personnages.** Les adversaires changent d’une poule à l’autre et le vainqueur reste ; chacun a un portrait dans un cadre d’argent, une biographie drôle et son propre style de jeu. On peut les choisir dans le menu.
+- **Toutes les options du menu se jouent :** whist–passe–demi-whist, misère sans talon, annonces à l’aveugle et bombes, talon payant, aide américaine, le whist du donneur et la misère partagée à quatre, dents.
+- **Au doigt comme à la souris.** La table est testée au toucher sur téléphone et tablette et à la souris sur ordinateur ; la poule est enregistrée après chaque coup, avec le bouton « Enregistrer » et quand la page est masquée.
 - **Cinq langues** (RU, EN, HE, ES, FR), qui se changent dans l’en-tête ou dans le menu. L’hébreu se lit de droite à gauche, et la table et la feuille gardent leur disposition.
 
 ### Les règles en bref (Sotchi, telles qu'elles sont faites)

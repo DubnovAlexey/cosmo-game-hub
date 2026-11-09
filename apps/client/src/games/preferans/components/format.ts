@@ -3,8 +3,8 @@
 // [RU] ФАЙЛ: подписи стола преферанса из состояния игры на текущем языке — порядок карт, заявки, роли, слова,
 //      итоги раздач.
 import {
-    NO_TRUMP, SUIT_SYMBOLS, bidOf, cardsOf, contractOf, otherSeats, rankOf, suitOf,
-    type Bid, type Card, type CardSet, type DealResult, type DealState, type Seat,
+    NO_TRUMP, SUIT_SYMBOLS, bidOf, cardsOf, contractOf, darkLevel, isDarkBid, otherSeats, rankOf, suitOf,
+    type Bid, type Card, type CardSet, type DealResult, type DealSeating, type DealState, type Seat,
 } from '../engine/index.ts';
 import { directionOf } from '@shared/i18n/languages';
 import type { Dictionary } from '../i18n/index.ts';
@@ -24,16 +24,21 @@ export function sortForHand(set: CardSet): Card[] {
     return cardsOf(set).sort((a, b) => SUIT_POSITION[suitOf(a)] - SUIT_POSITION[suitOf(b)] || rankOf(b) - rankOf(a));
 }
 
-/** [EN] A bid as players write it: 6♠ … 10NT, misère. [RU] Заявка так, как её пишут: 6♠ … 10БК, мизер. */
+/** [EN] A bid as players write it: 6♠ … 10NT, misère, misère without the talon, «6 dark». [RU] Заявка так, как её пишут: 6♠ … 10БК, мизер, мизер без прикупа, «6 втёмную». */
 export function bidName(bid: Bid, t: Dictionary): string {
+    if (isDarkBid(bid)) return t.extra.dark(darkLevel(bid));
     const contract = contractOf(bid);
-    if (contract.kind === 'misere') return t.bids.misere;
+    if (contract.kind === 'misere') return contract.noTalon ? t.extra.misereNoTalon : t.bids.misere;
     const text = `${contract.level}${contract.strain === NO_TRUMP ? t.bids.noTrump : SUIT_SYMBOLS[contract.strain]}`;
     return directionOf(t.language) === 'rtl' ? ltr(text) : text;
 }
 
-export const contractLabel = (state: DealState, t: Dictionary): string | null =>
-    (state.contract ? bidName(bidOf(state.contract), t) : null);
+/** [EN] What is being played; a game won with a dark bid says so. [RU] Что играется; игра, выигранная тёмной заявкой, это называет. */
+export const contractLabel = (state: DealState, t: Dictionary): string | null => {
+    if (!state.contract) return null;
+    const label = bidName(bidOf(state.contract), t);
+    return state.contract.kind === 'game' && isDarkBid(state.winningBid) ? `${label} · ${t.extra.results.dark}` : label;
+};
 
 /** [EN] Role badge of a seat. [RU] Значок роли игрока. */
 export function roleOf(state: DealState, seat: Seat, t: Dictionary): string | null {
@@ -63,26 +68,68 @@ export function lastCall(state: DealState, seat: Seat, t: Dictionary): string | 
     for (let i = state.bidding.history.length - 1; i >= 0; i -= 1) {
         const call = state.bidding.history[i];
         if (call.seat !== seat) continue;
-        return call.call === 'pass' ? t.actions.pass : bidName(call.bid, t);
+        if (call.call === 'pass') return call.dark ? t.extra.darkPass : t.actions.pass;
+        return bidName(call.bid, t);
     }
     return null;
 }
 
-/** [EN] One line describing a finished deal; the sentence agrees with who declared (you, Orion, Vega).
- *  [RU] Одна строка об итоге раздачи; фраза согласуется с тем, кто играл (вы, Орион, Вега). */
-export function resultText(result: DealResult, names: readonly string[], t: Dictionary): string {
-    if (result.mode === 'raspasy') return t.results.allPass(result.tricksWon.map((tricks, seat) => `${names[seat]} ${tricks}`).join(' · '));
+/** [EN] One line describing a finished deal; the sentence agrees with who declared (you or a dweller of the lair).
+ *       `names` and the sentences count table players; `seating` says who sat in which deal seat (four at the
+ *       table the dealer sits out, and on all-pass his talon's tricks are told too).
+ *  [RU] Одна строка об итоге раздачи; фраза согласуется с тем, кто играл (вы или обитатель логова). `names` и
+ *       фразы считают игроков стола; `seating` говорит, кто сидел на каком месте раздачи (вчетвером сдающий сидит на
+ *       прикупе, и на распасах называются и взятки его прикупа). */
+export function resultText(result: DealResult, names: readonly string[], t: Dictionary, seating?: DealSeating, options: { readonly bombs?: boolean } = {}): string {
+    const notes = resultNotes(result, names, t, seating, options);
+    const text = resultCore(result, names, t, seating);
+    return notes.length > 0 ? `${text} · ${notes.join(' · ')}` : text;
+}
+
+/**
+ * [EN] What the table options added to a deal: dark, bombs and the factor, a shared misère, the dealer's whist, the
+ *      paid talon, the bombs a dark all-pass gave. [RU] Что добавили опции стола: втёмную, бомбы и множитель, мизер
+ *      пополам, вист сдающего, платный прикуп, бомбы после тёмных распасов.
+ */
+function resultNotes(result: DealResult, names: readonly string[], t: Dictionary, seating: DealSeating | undefined, options: { readonly bombs?: boolean }): string[] {
+    const notes: string[] = [];
+    const extra = t.extra.results;
+    const player = (seat: Seat): number => (seating ? seating.players[seat] : seat);
+    if (result.noTalon) notes.push(extra.noTalon);
+    if (result.mode === 'raspasy' && result.darkPassers && result.darkPassers.length > 0) {
+        notes.push(extra.darkAllPass);
+        if (options.bombs) notes.push(extra.bombsEarned(result.darkPassers.map(seat => names[player(seat)]).join(', ')));
+    }
+    if (result.dark) notes.push(extra.dark);
+    const factor = result.multiplier ?? 1;
+    if (result.mode !== 'raspasy' && factor > (result.dark ? 2 : 1)) notes.push(extra.bombs);
+    if (factor > 1) notes.push(extra.times(factor));
+    if (result.misereShared) notes.push(extra.shared);
+    if (result.dealerSeat !== undefined && seating && seating.sittingOut !== null) notes.push(extra.dealerWhisted(seating.sittingOut));
+    if (result.talonPremium) notes.push(extra.premium(Math.round(result.talonPremium * 10) / 10));
+    return notes;
+}
+
+function resultCore(result: DealResult, names: readonly string[], t: Dictionary, seating?: DealSeating): string {
+    const player = (seat: Seat): number => (seating ? seating.players[seat] : seat);
+    if (result.redeal) return t.results.redeal;
+    if (result.mode === 'raspasy') {
+        const parts = result.tricksWon.map((tricks, seat) => `${names[player(seat as Seat)]} ${tricks}`);
+        if (seating && seating.sittingOut !== null) parts.push(`${names[seating.sittingOut]} ${result.talonTricks ?? 0}`);
+        return t.results.allPass(parts.join(' · '));
+    }
     const declarer = result.declarer as Seat;
+    const who = player(declarer);
     const tricks = result.tricksWon[declarer];
-    if (result.mode === 'misere') return tricks === 0 ? t.results.misereClean(declarer) : t.results.misereCaught(declarer, tricks);
+    if (result.mode === 'misere') return tricks === 0 ? t.results.misereClean(who) : t.results.misereCaught(who, tricks);
     const contract = result.contract;
-    if (!contract || contract.kind !== 'game') return names[declarer];
+    if (!contract || contract.kind !== 'game') return names[who];
     const label = bidName(bidOf(contract), t);
-    if (result.conceded) return t.results.conceded(declarer, label, result.conceded);
-    if (!result.played) return result.halfWhister !== null ? t.results.halfWhistCounted(declarer, label) : t.results.nobodyWhisted(declarer, label);
+    if (result.conceded) return t.results.conceded(who, label, result.conceded);
+    if (!result.played) return result.halfWhister !== null ? t.results.halfWhistCounted(who, label) : t.results.nobodyWhisted(who, label);
     const under = contract.level - tricks;
     const defence = otherSeats(declarer).map(seat => result.tricksWon[seat]).reduce((a, b) => a + b, 0);
-    return under <= 0 ? t.results.made(declarer, label, tricks, defence) : t.results.down(declarer, label, under, tricks);
+    return under <= 0 ? t.results.made(who, label, tricks, defence) : t.results.down(who, label, under, tricks);
 }
 
 export const levelOfBid = (bid: number): number => {

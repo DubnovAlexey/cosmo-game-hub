@@ -7,7 +7,7 @@ import { withBase } from '@shell/utils/withBase';
 
 <!-- We use the Layout component and pass the "title" Prop -->
 <!-- Мы используем компонент Layout и передаем Prop "title" -->
-<Layout title="Home | Cosmo Game Hub">
+<Layout title="Home | Cosmo Game Hub" titleKey="title.home">
 
     <!-- Main container for the landing page -->
     <!-- Главный контейнер для посадочной страницы -->
@@ -15,14 +15,14 @@ import { withBase } from '@shell/utils/withBase';
 
         <!-- Main Heading -->
         <!-- Главный заголовок -->
-        <h1 class="text-5xl font-bold mb-6 text-blue-400">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-blue-400 px-4" data-i18n="home.title">
             Welcome to Cosmo Game Hub
         </h1>
 
         <!-- Subtitle -->
         <!-- Подзаголовок -->
-        <p class="text-xl text-gray-300 mb-8 max-w-2xl">
-            Your ultimate platform for playing, learning, and competing in classic logic games.
+        <p class="text-xl text-gray-300 mb-8 max-w-2xl px-4" data-i18n="home.subtitle">
+            Your platform for playing, learning and competing in classic logic games — on a computer, a tablet or a phone.
         </p>
 
         <!-- Call to Action Button -->
@@ -30,7 +30,7 @@ import { withBase } from '@shell/utils/withBase';
         <!-- [EN] FIX: was a <button> without an action; now a link to the games collection -->
         <!-- [RU] ИСПРАВЛЕНИЕ: была <button> без действия; теперь это ссылка на коллекцию игр -->
         <a href={withBase('/games')} class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
-            Start Playing
+            <span data-i18n="home.start">Start playing</span>
         </a>
 
     </div>

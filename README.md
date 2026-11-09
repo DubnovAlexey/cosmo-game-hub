@@ -6,14 +6,14 @@
 
 ## English
 
-A web platform for classic logic games. Chess against the Stockfish engine and preferans (Sochi rules) against two bots are playable. More games are planned and appear in the collection as "Coming soon".
+A web platform for classic logic games. Chess against the Stockfish engine and preferans (Sochi, Leningrad, Rostov and Classic rules, two to four at the table) against bots with characters are playable. More games are planned and appear in the collection as "Coming soon".
 
 **Live demo:** https://dubnovalexey.github.io/cosmo-game-hub/
 
 ### Try it in a minute
 
 - **Chess.** Open **Games → Chess**, start a game and make a legal move to see the engine reply, the clocks and the move history. Try the PGN download after playing.
-- **Preferans.** Open **Games → Preferans**, choose the table options and play a pool against two bots. Reload the page in the middle of a deal: the game continues where you stopped.
+- **Preferans.** Open **Games → Preferans**, choose the table options and play a pool against bots with characters. Reload the page in the middle of a deal: the game continues where you stopped.
 - **Coming soon.** The other game cards are previews.
 
 ### Features
@@ -24,7 +24,7 @@ A web platform for classic logic games. Chess against the Stockfish engine and p
 - A game-over screen for victory, defeat and draw.
 - The finished game can be downloaded as a PGN file, the standard format of chess notation.
 - The engine runs in a Web Worker, so the board stays responsive while the computer thinks.
-- Preferans, Sochi rules: you against two bots that never look at hidden cards.
+- Preferans: Sochi, Leningrad, Rostov and Classic rules, two to four at the table, every table option of the menu; 69 characters as opponents, and they never look at hidden cards.
   - Table options: pool length, all-pass prices, half-whist, «здесь».
   - A score sheet with pool, mountain and whists.
   - The game is saved after every move.
@@ -42,7 +42,7 @@ apps/client/
   src/shell/                    the site around the games: layout, header, footer, catalog
   src/shared/                   code used by two or more games: overlay, seeded random, saved games
   src/games/chess/              chess: components, hooks, engine bridge (Stockfish, UCI), assets, tests
-  src/games/preferans/          preferans: table UI, hook, engine (Sochi rules, solver, bots), tests
+  src/games/preferans/          preferans: table UI, hook, engine (four rule variants, two to four players, solver, bots), tests
   public/games/chess/           files with a fixed URL: the Stockfish worker, its GPL licence, the cover
 COSMO_GAME_HUB_BIBLE.md         the project Bible, five languages in one file: why it is built this way
 .github/workflows/deploy.yml    build and publish to GitHub Pages on every push to main
@@ -59,7 +59,7 @@ Each game folder has its own README with the rules: [chess](apps/client/src/game
   - The same rules code runs the table, the bots, the tests and, later, the game server.
   - The preferans solver will move to Rust compiled to WebAssembly only if measurements call for it.
   - C++ appears only inside ready engines such as Stockfish.
-- **Mobile first.** Pages without a game load no React. A game is saved after every move and continues after a reload.
+- **Phone, tablet and computer alike.** Finger and mouse are equal and tested the same way. Pages without a game load no React. A game is saved after every move, with the «Save» button and when the page hides, and continues after a reload. The site speaks five languages (RU, EN, HE, ES, FR).
 
 The project Bible has the full reasoning: the options compared, measurements, the bridges between parts and the engine internals. It is available in [Русский](COSMO_GAME_HUB_BIBLE.md#russian) · [English](COSMO_GAME_HUB_BIBLE.md#english) · [עברית](COSMO_GAME_HUB_BIBLE.md#hebrew) · [Español](COSMO_GAME_HUB_BIBLE.md#spanish) · [Français](COSMO_GAME_HUB_BIBLE.md#french).
 
@@ -129,14 +129,14 @@ To build the static site: `npm run build --workspace client` (the result goes to
 
 ## Русский
 
-Веб-платформа классических логических игр. Уже играются шахматы против движка Stockfish и преферанс (Сочинка) против двух ботов. Остальные игры в разработке и показаны в коллекции с пометкой «Coming soon».
+Веб-платформа классических логических игр. Уже играются шахматы против движка Stockfish и преферанс (Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом) против ботов. Остальные игры в разработке и показаны в коллекции с пометкой «Coming soon».
 
 **Демо:** https://dubnovalexey.github.io/cosmo-game-hub/
 
 ### Попробовать за минуту
 
 - **Шахматы.** Откройте **Games → Chess**, начните партию и сделайте допустимый ход: появятся ответ движка, часы и история ходов. После игры попробуйте выгрузку PGN.
-- **Преферанс.** Откройте **Games → Preferans**, выберите настройки стола и сыграйте пулю против двух ботов. Перезагрузите страницу посреди раздачи — игра продолжится с того же места.
+- **Преферанс.** Откройте **Games → Preferans**, выберите настройки стола и сыграйте пулю против ботов с характерами. Перезагрузите страницу посреди раздачи — игра продолжится с того же места.
 - **Coming soon.** Остальные карточки показывают будущие игры.
 
 ### Возможности
@@ -147,7 +147,7 @@ To build the static site: `npm run build --workspace client` (the result goes to
 - Экран конца партии: победа, поражение, ничья.
 - Сыгранную партию можно скачать файлом PGN — это стандартный формат записи шахматных партий.
 - Движок работает в Web Worker, поэтому доска не замирает, пока компьютер думает.
-- Преферанс по правилам Сочинки: вы против двух ботов, которые никогда не подглядывают в чужие карты.
+- Преферанс: Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом, все опции меню; 69 героев-соперников, которые никогда не подглядывают в чужие карты.
   - Настройки стола: длина пули, цены распасов, полвиста, «здесь».
   - Запись с пулей, горой и вистами.
   - Сохранение после каждого хода.
@@ -182,7 +182,7 @@ COSMO_GAME_HUB_BIBLE.md         Библия проекта, пять языко
   - Один и тот же код правил работает в столе, у ботов, в тестах и позже на игровом сервере.
   - Решатель преферанса переедет на Rust, собранный в WebAssembly, только если этого потребуют замеры.
   - C++ используется только внутри готовых движков вроде Stockfish.
-- **Телефон в первую очередь.** Страницы без игры не грузят React. Партия сохраняется после каждого хода и продолжается после перезагрузки.
+- **Телефон, планшет и компьютер на равных.** Палец и мышь равноценны и проверяются одинаково. Страницы без игры не грузят React. Партия сохраняется после каждого хода, по кнопке «Сохранить» и при сворачивании страницы и продолжается после перезагрузки. Сайт говорит на пяти языках (RU, EN, HE, ES, FR).
 
 Все рассуждения собраны в Библии проекта: сравнение вариантов, замеры, мосты между частями и устройство движков. Она есть на пяти языках: [Русский](COSMO_GAME_HUB_BIBLE.md#russian) · [English](COSMO_GAME_HUB_BIBLE.md#english) · [עברית](COSMO_GAME_HUB_BIBLE.md#hebrew) · [Español](COSMO_GAME_HUB_BIBLE.md#spanish) · [Français](COSMO_GAME_HUB_BIBLE.md#french).
 
@@ -254,14 +254,14 @@ npm run dev --workspace client
 
 ## עברית
 
-פלטפורמת אינטרנט למשחקי היגיון קלאסיים. כבר אפשר לשחק שחמט נגד המנוע Stockfish ופרפרנס (חוקי סוצ'י) נגד שני בוטים. משחקים נוספים נמצאים בפיתוח ומוצגים באוסף עם הסימון "Coming soon".
+פלטפורמת אינטרנט למשחקי היגיון קלאסיים. כבר אפשר לשחק שחמט נגד המנוע Stockfish ופרפרנס (חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן) נגד בוטים עם אופי. משחקים נוספים נמצאים בפיתוח ומוצגים באוסף עם הסימון "Coming soon".
 
 **הדגמה חיה:** https://dubnovalexey.github.io/cosmo-game-hub/
 
 ### נסו בדקה
 
 - **שחמט.** פתחו את **Games → Chess**, התחילו משחק ובצעו מסע חוקי, ותראו את תשובת המנוע, את השעונים ואת היסטוריית המסעים. אחרי המשחק נסו את הורדת ה-PGN.
-- **פרפרנס.** פתחו את **Games → Preferans**, בחרו את הגדרות השולחן ושחקו פולה נגד שני בוטים. רעננו את הדף באמצע חלוקה: המשחק ממשיך מהמקום שבו עצרתם.
+- **פרפרנס.** פתחו את **Games → Preferans**, בחרו את הגדרות השולחן ושחקו פוליה נגד בוטים עם אופי. רעננו את הדף באמצע חלוקה: המשחק ממשיך מהמקום שבו עצרתם.
 - **Coming soon.** שאר כרטיסי המשחקים הם תצוגה מקדימה.
 
 ### יכולות
@@ -272,7 +272,7 @@ npm run dev --workspace client
 - מסך סיום משחק: ניצחון, הפסד או תיקו.
 - אפשר להוריד את המשחק כקובץ PGN, הפורמט המקובל לרישום משחקי שחמט.
 - המנוע רץ ב-Web Worker, ולכן הלוח לא נתקע בזמן שהמחשב חושב.
-- פרפרנס לפי חוקי סוצ'י: אתם מול שני בוטים שלעולם אינם מציצים בקלפים נסתרים.
+- פרפרנס: חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן, כל אפשרויות התפריט; 69 דמויות כיריבים, שלעולם אינן מציצות בקלפים נסתרים.
   - הגדרות שולחן: אורך הפולה, מחירי הראספסים, חצי ויסט, «здесь».
   - דף ניקוד עם פולה, הר וויסטים.
   - שמירה אחרי כל מהלך.
@@ -311,7 +311,7 @@ COSMO_GAME_HUB_BIBLE.md         המדריך הטכני, חמש שפות בקו�
   - אותו קוד חוקים מפעיל את השולחן, את הבוטים, את הבדיקות ובהמשך גם את שרת המשחק.
   - הפותר של הפרפרנס יעבור ל-Rust שמהודר ל-WebAssembly רק אם המדידות ידרשו זאת.
   - שפת ‎C++‎ מופיעה רק בתוך מנועים מוכנים כמו Stockfish.
-- **קודם כול לנייד.** דפים בלי משחק אינם טוענים React. כל משחק נשמר אחרי כל מהלך וממשיך אחרי רענון.
+- **טלפון, טאבלט ומחשב באותה מידה.** אצבע ועכבר שווים ונבדקים באותו אופן. דפים בלי משחק אינם טוענים React. כל משחק נשמר אחרי כל מהלך, בכפתור «לשמור» וכשהדף מוסתר, וממשיך אחרי רענון. האתר מדבר בחמש שפות (RU, EN, HE, ES, FR).
 
 המדריך הטכני של הפרויקט (Bible) מכיל את הנימוקים המלאים: השוואת חלופות, מדידות, הגשרים בין החלקים והמבנה הפנימי של המנועים. הוא זמין בחמש שפות: [Русский](COSMO_GAME_HUB_BIBLE.md#russian) · [English](COSMO_GAME_HUB_BIBLE.md#english) · [עברית](COSMO_GAME_HUB_BIBLE.md#hebrew) · [Español](COSMO_GAME_HUB_BIBLE.md#spanish) · [Français](COSMO_GAME_HUB_BIBLE.md#french).
 
@@ -387,14 +387,14 @@ npm run dev --workspace client
 
 ## Español
 
-Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez contra el motor Stockfish y al preferans (reglas de Sochi) contra dos bots. Hay más juegos previstos; en la colección aparecen como "Coming soon".
+Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez contra el motor Stockfish y al preferans (reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa) contra bots con carácter. Hay más juegos previstos; en la colección aparecen como "Coming soon".
 
 **Demo en vivo:** https://dubnovalexey.github.io/cosmo-game-hub/
 
 ### Pruébalo en un minuto
 
 - **Ajedrez.** Abre **Games → Chess**, empieza una partida y haz una jugada legal: verás la respuesta del motor, los relojes y el historial de jugadas. Después de jugar, prueba la descarga en PGN.
-- **Preferans.** Abre **Games → Preferans**, elige las opciones de la mesa y juega un pool contra dos bots. Recarga la página en mitad de una mano: la partida continúa donde la dejaste.
+- **Preferans.** Abre **Games → Preferans**, elige las opciones de la mesa y juega una pulya contra bots con carácter. Recarga la página en mitad de una mano: la partida continúa donde la dejaste.
 - **Coming soon.** Las demás tarjetas son avances de juegos futuros.
 
 ### Funciones
@@ -405,7 +405,7 @@ Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez 
 - Pantalla de fin de partida: victoria, derrota o tablas.
 - La partida terminada se puede descargar como archivo PGN, el formato estándar de notación de ajedrez.
 - El motor funciona en un Web Worker, así que el tablero sigue respondiendo mientras el ordenador piensa.
-- Preferans con reglas de Sochi: tú contra dos bots que nunca miran las cartas ocultas.
+- Preferans: reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa, todas las opciones del menú; 69 personajes como rivales, que nunca miran las cartas ocultas.
   - Opciones de mesa: longitud del pool, precios de las manos sin contrato («raspasy»), medio whist, «здесь».
   - Una hoja de puntuación con pool, montaña y whists.
   - La partida se guarda después de cada jugada.
@@ -440,7 +440,7 @@ Cada carpeta de juego tiene su propio README con las reglas: [ajedrez](apps/clie
   - El mismo código de reglas mueve la mesa, los bots, las pruebas y, más adelante, el servidor de juego.
   - El solver del preferans pasará a Rust compilado a WebAssembly solo si las mediciones lo piden.
   - C++ aparece solo dentro de motores ya hechos, como Stockfish.
-- **Primero el móvil.** Las páginas sin juego no cargan React. Cada partida se guarda después de cada jugada y continúa tras recargar.
+- **Móvil, tableta y ordenador por igual.** El dedo y el ratón valen lo mismo y se prueban igual. Las páginas sin juego no cargan React. Cada partida se guarda tras cada jugada, con el botón «Guardar» y al ocultarse la página, y continúa tras recargar. El sitio habla cinco idiomas (RU, EN, HE, ES, FR).
 
 La Biblia del proyecto recoge el razonamiento completo: las opciones comparadas, las mediciones, los puentes entre las partes y el interior de los motores. Está disponible en [Русский](COSMO_GAME_HUB_BIBLE.md#russian) · [English](COSMO_GAME_HUB_BIBLE.md#english) · [עברית](COSMO_GAME_HUB_BIBLE.md#hebrew) · [Español](COSMO_GAME_HUB_BIBLE.md#spanish) · [Français](COSMO_GAME_HUB_BIBLE.md#french).
 
@@ -510,14 +510,14 @@ Para compilar el sitio estático: `npm run build --workspace client` (el resulta
 
 ## Français
 
-Une plateforme web de jeux de logique classiques. On peut déjà jouer aux échecs contre le moteur Stockfish et à la préférence (preferans, règles de Sotchi) contre deux bots. D'autres jeux sont prévus ; ils apparaissent dans la collection avec la mention « Coming soon ».
+Une plateforme web de jeux de logique classiques. On peut déjà jouer aux échecs contre le moteur Stockfish et à la préférence (preferans : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table) contre des bots pleins de caractère. D'autres jeux sont prévus ; ils apparaissent dans la collection avec la mention « Coming soon ».
 
 **Démo en ligne :** https://dubnovalexey.github.io/cosmo-game-hub/
 
 ### Essayer en une minute
 
 - **Échecs.** Ouvrez **Games → Chess**, commencez une partie et jouez un coup légal : vous verrez la réponse du moteur, les pendules et l'historique des coups. Après la partie, essayez le téléchargement PGN.
-- **Préférence.** Ouvrez **Games → Preferans**, choisissez les options de la table et jouez une poule contre deux bots. Rechargez la page au milieu d'une donne : la partie reprend là où vous l'avez laissée.
+- **Préférence.** Ouvrez **Games → Preferans**, choisissez les options de la table et jouez une poule contre des bots pleins de caractère. Rechargez la page au milieu d'une donne : la partie reprend là où vous l'avez laissée.
 - **Coming soon.** Les autres cartes de jeux sont des aperçus.
 
 ### Fonctionnalités
@@ -528,7 +528,7 @@ Une plateforme web de jeux de logique classiques. On peut déjà jouer aux éche
 - Écran de fin de partie : victoire, défaite ou nulle.
 - La partie terminée peut être téléchargée au format PGN, la notation standard des échecs.
 - Le moteur tourne dans un Web Worker : l'échiquier reste réactif pendant que l'ordinateur réfléchit.
-- Préférence, règles de Sotchi : vous contre deux bots qui ne regardent jamais les cartes cachées.
+- Préférence : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table, toutes les options du menu ; 69 personnages comme adversaires, qui ne regardent jamais les cartes cachées.
   - Options de table : longueur de la poule, prix des donnes sans contrat (« raspasy »), demi-whist, « здесь ».
   - Une feuille de marque avec poule, montagne et whists.
   - La partie est sauvegardée après chaque coup.
@@ -563,7 +563,7 @@ Chaque dossier de jeu a son propre README avec les règles : [échecs](apps/clie
   - Le même code de règles fait tourner la table, les bots, les tests et, plus tard, le serveur de jeu.
   - Le solveur de la préférence passera à Rust compilé en WebAssembly seulement si les mesures l'exigent.
   - Le C++ n'apparaît que dans des moteurs tout faits comme Stockfish.
-- **Mobile d'abord.** Les pages sans jeu ne chargent pas React. Chaque partie est sauvegardée après chaque coup et reprend après un rechargement.
+- **Téléphone, tablette et ordinateur à égalité.** Le doigt et la souris se valent et sont testés de la même façon. Les pages sans jeu ne chargent pas React. Chaque partie est enregistrée après chaque coup, avec le bouton « Enregistrer » et quand la page se masque, et reprend après un rechargement. Le site parle cinq langues (RU, EN, HE, ES, FR).
 
 La Bible du projet contient le raisonnement complet : les options comparées, les mesures, les ponts entre les parties et le fonctionnement interne des moteurs. Elle existe en [Русский](COSMO_GAME_HUB_BIBLE.md#russian) · [English](COSMO_GAME_HUB_BIBLE.md#english) · [עברית](COSMO_GAME_HUB_BIBLE.md#hebrew) · [Español](COSMO_GAME_HUB_BIBLE.md#spanish) · [Français](COSMO_GAME_HUB_BIBLE.md#french).
 

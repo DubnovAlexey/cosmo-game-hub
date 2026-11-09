@@ -8,33 +8,33 @@ import Layout from '@shell/layouts/Layout.astro';
 import { leaderboardData } from '@shell/data/mockLeaderboard';
 ---
 
-<Layout title="Leaderboard | Cosmo Game Hub">
+<Layout title="Leaderboard | Cosmo Game Hub" titleKey="title.leaderboard">
 
     <div class="container mx-auto px-6 py-12">
 
         <h1 class="text-4xl font-bold text-blue-400 mb-4 text-center">
-            Top Players
-            <span class="align-middle ml-2 text-xs font-bold uppercase tracking-wider bg-gray-700 text-gray-300 border border-gray-600 px-3 py-1 rounded-full">Demo</span>
+            <span data-i18n="leaders.title">Top players</span>
+            <span class="align-middle ms-2 text-xs font-bold uppercase tracking-wider bg-gray-700 text-gray-300 border border-gray-600 px-3 py-1 rounded-full" data-i18n="leaders.demo">Demo</span>
         </h1>
 
         <!-- [EN] The table shows sample data until player accounts exist — say so instead of passing it off as real players -->
         <!-- [RU] Пока нет аккаунтов игроков, в таблице примерные данные — так и пишем, а не выдаём их за настоящих игроков -->
-        <p class="text-gray-400 text-center mb-8 max-w-2xl mx-auto">
+        <p class="text-gray-400 text-center mb-8 max-w-2xl mx-auto" data-i18n="leaders.note">
             Sample data for now: real rankings will appear once player accounts and saved games arrive.
         </p>
 
         <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-lg border border-gray-700">
 
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-start border-collapse">
 
                 <!-- Table Header -->
                 <!-- Шапка таблицы -->
                 <thead>
                     <tr class="bg-gray-900 text-blue-400 border-b border-gray-700 text-sm uppercase tracking-wider">
-                        <th class="p-4 font-semibold">Rank</th>
-                        <th class="p-4 font-semibold">Player</th>
-                        <th class="p-4 font-semibold">Score</th>
-                        <th class="p-4 font-semibold">Game</th>
+                        <th class="p-4 font-semibold text-start" data-i18n="leaders.rank">Rank</th>
+                        <th class="p-4 font-semibold text-start" data-i18n="leaders.player">Player</th>
+                        <th class="p-4 font-semibold text-start" data-i18n="leaders.score">Score</th>
+                        <th class="p-4 font-semibold text-start" data-i18n="leaders.game">Game</th>
                     </tr>
                 </thead>
 
@@ -55,7 +55,7 @@ import { leaderboardData } from '@shell/data/mockLeaderboard';
                             <td class="p-4 font-mono text-blue-300">
                                 {player.score}
                             </td>
-                            <td class="p-4">
+                            <td class="p-4" data-i18n={`game.${player.game.toLowerCase().replace(/^cosmo /, '').replace(/\s+/g, '-')}.title`}>
                                 {player.game}
                             </td>
                         </tr>

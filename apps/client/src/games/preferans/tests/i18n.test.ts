@@ -82,7 +82,13 @@ test('every pool seats a new company; a damaged save gets a valid one', () => {
     assert.equal(withChampion[0], 'koschei', 'the winner of the last pool keeps a seat');
     assert.ok(withChampion[1] !== 'carmilla' && withChampion[1] !== 'koschei', 'the other seat gets a new face');
     assert.deepEqual(castForNewPool(['xenon', null], 2, random, CAST, 'koschei'), ['xenon', 'koschei']);
-    assert.equal(ROSTER.length, 38, 'all of Alexey\'s pictures play: 20 dwellers and 18 guests');
+    assert.equal(ROSTER.length, 69, 'all of Alexey\'s pictures play: 43 dwellers and 26 guests');
+    assert.equal(ROSTER.filter(character => character.guest).length, 26);
+    // [EN] A new face speaks Russian in its own gender and case. [RU] Новое лицо говорит по-русски в своём роде и падеже.
+    const company = makeRu(['vual', 'ivy']);
+    assert.equal(company.info.needs(1, 6), 'Императрице Вуали нужно 6 взяток');
+    assert.match(company.actions.returnQuestion(1), /^Императрица Вуаль сказала/);
+    assert.match(company.actions.yourTurnFor(2), /за Короля Плюща/);
 });
 
 test('French puts a non-breaking space before : ; ? !', () => {

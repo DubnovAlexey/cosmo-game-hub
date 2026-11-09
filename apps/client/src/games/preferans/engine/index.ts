@@ -15,6 +15,7 @@ export * from './play.ts';
 export * from './bidding.ts';
 export * from './scoring.ts';
 export * from './deal.ts';
+export * from './table.ts';
 export * from './ai/solver.ts';
 export * from './ai/knowledge.ts';
 export * from './ai/evaluate.ts';

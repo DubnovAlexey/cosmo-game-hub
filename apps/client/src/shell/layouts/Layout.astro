@@ -17,17 +17,40 @@ import { withBase } from '../utils/withBase';
 // [RU] Определяем структуру наших Props с помощью интерфейса TypeScript
 interface Props {
     title: string;
+    /**
+     * [EN] Key of the page name in shell/i18n/shellTexts.ts: the tab title follows the chosen language.
+     * [RU] Ключ названия страницы в shell/i18n/shellTexts.ts: заголовок вкладки следует выбранному языку.
+     */
+    titleKey?: string;
+    /**
+     * [EN] The floating «to top» button; game pages switch it off, so it never covers the game's controls on a phone.
+     * [RU] Плавающая кнопка «наверх»; страницы игр её выключают, чтобы на телефоне она не закрывала кнопки игры.
+     */
+    scrollToTop?: boolean;
 }
 
 // [EN] Destructure the title from Astro.props
 // [RU] Деструктуризируем title из Astro.props
-const {title} = Astro.props;
+const {title, titleKey, scrollToTop = true} = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-title-key={titleKey}>
 <head>
     <meta charset="UTF-8">
+    <!-- [EN] Before anything is drawn: the saved language and its direction (Hebrew right to left), so the page does not
+         jump. The texts follow a moment later (shell/i18n/applyLanguage.ts).
+         [RU] До первой отрисовки: сохранённый язык и его направление (иврит справа налево), чтобы страница не прыгала.
+         Тексты подтягиваются мгновением позже (shell/i18n/applyLanguage.ts). -->
+    <script is:inline>
+        try {
+            var saved = localStorage.getItem('cosmo-game-hub:language');
+            if (saved && /^(ru|en|he|es|fr)$/.test(saved)) {
+                document.documentElement.lang = saved;
+                document.documentElement.dir = saved === 'he' ? 'rtl' : 'ltr';
+            }
+        } catch (error) { /* private mode: English until the script below runs */ }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Cosmo Game Hub - Play and Learn">
 
@@ -67,6 +90,13 @@ const {title} = Astro.props;
 
 <!-- [EN] Floating scroll-to-top button -->
 <!-- [RU] Плавающая кнопка прокрутки наверх -->
-<ScrollToTop/>
+{scrollToTop && <ScrollToTop/>}
+
+<!-- [EN] The hub's texts in the chosen language, following the switch in the header and the ones inside the games. -->
+<!-- [RU] Тексты хаба на выбранном языке; следуют переключателю в шапке и переключателям внутри игр. -->
+<script>
+    import { startShellLanguage } from '../i18n/applyLanguage';
+    startShellLanguage();
+</script>
 </body>
 </html>

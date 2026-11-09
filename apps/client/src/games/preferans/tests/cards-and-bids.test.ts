@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   FULL_DECK, MISERE, bidLabel, cardLabel, cardsOf, contractOf, countCards, gameBid, hasCard, highestCard, lowestCard,
-  parseCard, parseCards, removeCard, setOf, BID_LADDER,
+  parseCard, parseCards, removeCard, setOf, BID_LADDER, MISERE_NO_TALON, bidRank, darkBid,
 } from '../engine/index.ts';
 
 test('the deck has 32 different cards and every label parses back', () => {
@@ -28,7 +28,11 @@ test('card sets work for the highest card too (bit 31 = A♥)', () => {
 });
 
 test('the ladder: 26 bids, misère between 8 no-trump and 9 spades', () => {
-  assert.equal(BID_LADDER.length, 26);
+  // [EN] 26 classic bids, then misère without the talon (a table option), numbered last so old numbers stay.
+  // [RU] 26 классических заявок, затем мизер без прикупа (опция стола) — последним номером, чтобы старые номера не менялись.
+  assert.equal(BID_LADDER.length, 27);
+  assert.ok(bidRank(gameBid(9, 4)) < bidRank(MISERE_NO_TALON) && bidRank(MISERE_NO_TALON) < bidRank(gameBid(10, 0)));
+  assert.ok(bidRank(gameBid(6, 4)) < bidRank(darkBid(6)) && bidRank(darkBid(6)) < bidRank(gameBid(7, 0)), 'a dark six sits between 6NT and 7♠');
   assert.equal(bidLabel(gameBid(8, 4)), '8БК');
   assert.equal(bidLabel(MISERE), 'Мизер');
   assert.equal(bidLabel(gameBid(9, 0)), '9♠');

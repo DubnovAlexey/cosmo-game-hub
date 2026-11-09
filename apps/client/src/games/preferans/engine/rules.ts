@@ -1,6 +1,6 @@
 // =====================================================================
 // FILE: apps/client/src/games/preferans/engine/rules.ts
-// PURPOSE: a rule set (вариант правил) as data. Sochi («Сочинка») is the default; Leningrad and Rostov are
+// PURPOSE: a rule set (вариант правил) as data. Sochi («Сочинка») is the default; Leningrad, Rostov and Classic are
 //          other objects, not other engines: the scoring reads the scales and switches below.
 // Sources: rulespal.com/preference/rulebook (Sochi tables), en.wikipedia.org/wiki/Preferans; Leningrad and Rostov —
 //          pref-bridge.ucoz.net (PrefRulesLeningrad, PrefRulesRostov), preferans.games, gambler.ru, ru.wikipedia.org
@@ -67,6 +67,57 @@ export interface RuleSet {
    * the mountain, and whoever is above the average writes the same amount off.
    */
   readonly poolEnd: 'own' | 'common';
+  /**
+   * Four at the table, all-pass (Wikipedia, en-Wikipedia, gambler.ru): the talon cards are the dealer's hand. Each
+   * leads its trick, and a talon card that nobody beats takes the trick for the dealer (at most two tricks).
+   */
+  readonly talonTakesTricks: boolean;
+  /**
+   * Two at the table («гусарик», Wikipedia, rulespal, yellowclub): this seat is the dummy («болван»), a third hand
+   * that always passes. Its defender decides to whist without seeing it; the whist is then always open and the
+   * defender plays both hands. null = three real players.
+   */
+  readonly dummySeat: 0 | 1 | 2 | null;
+  /** Everybody passed and there is no all-pass at this table (two players): the deal is simply dealt again. */
+  readonly allPassRedeal: boolean;
+  /**
+   * «Вист — пас — полвиста» (Wikipedia, pref-bridge Leningrad): a lone whister on a six or a seven (the other defender
+   * passed) may take half-whist instead of playing: the game counts as made and he writes half of the obligation.
+   */
+  readonly whistPassHalf: boolean;
+  /**
+   * Misère without the talon («мизер без прикупа», Wikipedia, rulespal): a bid above the nines, played without taking
+   * the talon; our table lets only a ten beat it (sources differ: МГУ, mail.ru, pref-bridge). Scored like misère.
+   */
+  readonly misereNoTalon: boolean;
+  /**
+   * Dark calls (Classic, Префклуб МГУ, pref-bridge): as the first word, before looking at the cards, a pass in the dark
+   * or a level in the dark. A dark game costs double — pool, mountain and whists; all-pass after a dark pass too.
+   */
+  readonly darkBids: boolean;
+  /**
+   * Bombs (Classic: «бомба», «брандер», «ёлка»): after an all-pass with dark passes every dark passer gets a bomb; his
+   * next game or misère costs ×2, ×4 or ×8 for one, two or three bombs. Made — the bombs burn out; failed — they stay.
+   */
+  readonly bombs: boolean;
+  /**
+   * Paid talon («платный прикуп», en-Wikipedia, ФСПР section 6): quick tricks in the talon — an ace or a marriage
+   * (king and queen of a suit) 1, ace and king of a suit 2, two aces 3 — cost the declarer the price of the game each;
+   * each defender writes half of it on him (four at the table the dealer writes all of it).
+   */
+  readonly paidTalon: boolean;
+  /**
+   * American help («американская помощь», Кодекс 4.2.3; own pools only): points above the target go into the pool of
+   * the opponent with the biggest pool still short of it (a tie: the one on the left), and the helper writes
+   * whistsPerPoint whists on him for every point.
+   */
+  readonly americanHelp: boolean;
+  /** Four at the table: when both defenders pass, the dealer may look at one of their hands and whist with it himself. */
+  readonly dealerWhists: boolean;
+  /** Four at the table: the misère declarer may call the dealer to share it — pool or mountain split in half. */
+  readonly misereHalves: boolean;
+  /** Teeth («зуб», Префклуб МГУ): a mark on the sheet towards whoever set you down; it does not change the score. */
+  readonly teeth: boolean;
 }
 
 // BEGIN SOCHI
@@ -93,6 +144,18 @@ export const SOCHI: RuleSet = Object.freeze({
   raspasyWhists: 0,
   sharedHighResponsibility: false,
   poolEnd: 'own',
+  talonTakesTricks: false,
+  dummySeat: null,
+  allPassRedeal: false,
+  whistPassHalf: false,
+  misereNoTalon: false,
+  darkBids: false,
+  bombs: false,
+  paidTalon: false,
+  americanHelp: false,
+  dealerWhists: false,
+  misereHalves: false,
+  teeth: false,
 });
 // END SOCHI
 
@@ -136,6 +199,18 @@ export const ROSTOV: RuleSet = Object.freeze({
 });
 // END ROSTOV
 
+// BEGIN CLASSIC
+/**
+ * Classic («Классика», Префклуб МГУ, pref-bridge Classic): Sochi prices and whist, all-pass 1 · 2 · 4, and the two
+ * mechanics no other variant has — dark calls and bombs (table options of this variant).
+ */
+export const CLASSIC: RuleSet = Object.freeze({
+  ...SOCHI,
+  name: 'classic',
+  raspasyProgression: Object.freeze([1, 2, 4]),
+});
+// END CLASSIC
+
 // BEGIN customizeRules: the table options a player may switch before a pool
 export interface RuleOptions {
   /** All-pass trick prices in a row, e.g. [1, 2, 3] (Sochi), [1, 2, 4], or [1] for no progression. */
@@ -152,6 +227,19 @@ export interface RuleOptions {
   readonly stalingrad?: boolean;
   /** Conceding a hopeless game: 2 or 3 tricks, 0 = not allowed. */
   readonly concedeTricks?: 0 | 2 | 3;
+  /** Four at the table: on all-pass the talon is the dealer's hand and may take tricks. */
+  readonly talonTakesTricks?: boolean;
+  /** Two at the table: the dummy's seat (it always passes); all-pass becomes a new deal. */
+  readonly dummySeat?: 0 | 1 | 2 | null;
+  readonly whistPassHalf?: boolean;
+  readonly misereNoTalon?: boolean;
+  readonly darkBids?: boolean;
+  readonly bombs?: boolean;
+  readonly paidTalon?: boolean;
+  readonly americanHelp?: boolean;
+  readonly dealerWhists?: boolean;
+  readonly misereHalves?: boolean;
+  readonly teeth?: boolean;
 }
 
 export function customizeRules(base: RuleSet, options: RuleOptions): RuleSet {
@@ -166,6 +254,19 @@ export function customizeRules(base: RuleSet, options: RuleOptions): RuleSet {
     raspasyTalonLeads: options.raspasyTalonLeads ?? base.raspasyTalonLeads,
     stalingrad: options.stalingrad ?? base.stalingrad,
     concedeTricks: options.concedeTricks ?? base.concedeTricks,
+    talonTakesTricks: options.talonTakesTricks ?? base.talonTakesTricks,
+    dummySeat: options.dummySeat === undefined ? base.dummySeat : options.dummySeat,
+    allPassRedeal: options.dummySeat === undefined ? base.allPassRedeal : options.dummySeat !== null,
+    whistPassHalf: options.whistPassHalf ?? base.whistPassHalf,
+    misereNoTalon: options.misereNoTalon ?? base.misereNoTalon,
+    darkBids: options.darkBids ?? base.darkBids,
+    // [EN] Bombs are born from dark passes: without dark calls there are none. [RU] Бомбы рождаются из тёмных пасов: без тёмных заявок их нет.
+    bombs: (options.bombs ?? base.bombs) && (options.darkBids ?? base.darkBids),
+    paidTalon: options.paidTalon ?? base.paidTalon,
+    americanHelp: options.americanHelp ?? base.americanHelp,
+    dealerWhists: options.dealerWhists ?? base.dealerWhists,
+    misereHalves: options.misereHalves ?? base.misereHalves,
+    teeth: options.teeth ?? base.teeth,
   });
 }
 // END customizeRules
