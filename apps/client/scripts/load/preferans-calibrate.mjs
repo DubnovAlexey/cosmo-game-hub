@@ -164,13 +164,13 @@ if (isMainThread) {
             const calls = whist?.calls ?? [];
             row.whisters = calls.filter(call => call === 'whist' || call === 'half').length;
             const obligation = state.rules.whistObligation[contract.level];
-            const position = { hands: state.hands, trump: state.trump, turn: state.phase === 'play' ? state.turn : lead, trick: [], target: declarer, targetWants: 'max' };
-            const hands = state.phase === 'play' ? state.hands : state.hands;
-            const { tricks } = solveWithStats({ ...position, hands });
+            // [EN] A game passed without a whist is still played out by the solver: could the defence have held it?
+            // [RU] Игру, прошедшую без виста, решатель всё равно доигрывает: удержала бы её защита?
+            const { tricks } = solveWithStats({ hands: state.hands, trump: state.trump, turn: state.phase === 'play' ? state.turn : lead, trick: [], target: declarer, targetWants: 'max' });
             row.played = state.phase === 'play';
             row.made = tricks >= contract.level;
-            row.obligationMet = 10 - tricks >= obligation;
             row.defenceMeets = 10 - tricks >= obligation;
+            row.obligationMet = row.defenceMeets;
         } else if (row.mode === 'misere') {
             const declarer = state.declarer;
             const { tricks } = solveWithStats({ hands: state.hands, trump: null, turn: state.phase === 'play' ? state.turn : lead, trick: [], target: declarer, targetWants: 'min' });
