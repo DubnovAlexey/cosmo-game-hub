@@ -26,6 +26,13 @@
     --quill: 'Marck Script', 'Cormorant Garamond', Georgia, 'David', cursive;
     --engraved: 700 0.8rem/1.2 'Cormorant Garamond', Georgia, 'David', serif;
     --print: 'Cormorant Garamond', Georgia, 'Times New Roman', 'David', serif;
+    /* [EN] What Lair.tsx writes on the lair inside this room while the page scrolls (how far the candelabra are
+            lifted, where the two bats are); here are the values for the moment before the script runs.
+       [RU] То, что Lair.tsx пишет на логово внутри этой комнаты при прокрутке (на сколько приподняты канделябры, где
+            две мыши); здесь значения до запуска скрипта. */
+    --lift: 0px;
+    --bat-left: none;
+    --bat-right: none;
     /* [EN] Blackened silver (DESIGN_CONCEPT_RU.md §0): highlight, body, shadow, depth, and the cast edge of every plaque,
             button and frame; velvet for what lies inside them. [RU] Черненое серебро (DESIGN_CONCEPT_RU.md §0): блик,
             тело, тень, глубина и литой кант каждой таблички, кнопки и рамки; бархат — то, что внутри них. */

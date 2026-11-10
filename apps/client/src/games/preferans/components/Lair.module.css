@@ -14,10 +14,14 @@
     inset: 0;
     z-index: 0;
     /* [EN] clip, not hidden: hidden would make the lair a scroll box and the stage could not stick to the screen.
-       [RU] clip, а не hidden: hidden сделал бы логово прокручиваемым, и сцена не прилипла бы к экрану. */
-    overflow: hidden;
+            A browser that does not know clip gets hidden below: the decor stays inside, only the stage stops sticking.
+       [RU] clip, а не hidden: hidden сделал бы логово прокручиваемым, и сцена не прилипла бы к экрану. Браузер,
+            который не знает clip, получает hidden ниже: декор остаётся внутри, только сцена перестаёт прилипать. */
     overflow: clip;
     pointer-events: none;
+}
+@supports not (overflow: clip) {
+    .lair { overflow: hidden; }
 }
 
 /* [EN] The stage sticks to the screen while the room scrolls under it; the floor with the candelabra stands at its
@@ -29,7 +33,10 @@
     top: 0;
     width: 100%;
     height: min(100vh, 100%);
-    height: min(100dvh, 100%);
+}
+/* [EN] Where the browser knows the height without its own bars, that one is used. [RU] Где браузер знает высоту без своих панелей, берётся она. */
+@supports (height: 100dvh) {
+    .stage { height: min(100dvh, 100%); }
 }
 .floor { position: absolute; inset: 0; transform: translateY(calc(-1 * var(--lift, 0px))); }
 /* [EN] Each bat flies along its curve (JS, --bat-left / --bat-right) and catches up with a soft glide.
