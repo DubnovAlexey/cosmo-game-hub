@@ -61,9 +61,13 @@ export const games: Game[] = [
     },
     {
         title: "Poker",
-        description: "The ultimate card game combining strategy, psychology, and a little bit of luck.",
+        description: "No-limit Texas hold'em, a sit-and-go of two to six: rising blinds, side pots, and the regulars of the vampire lair as opponents, each with a poker manner of their own. Play chips only.",
+        badge: "New",
         gameUrl: "/games/poker",
-        status: "soon",
+        // [EN] Hole cards and chips on the lair's felt, drawn by hand (public/games/poker/cover.svg).
+        // [RU] Карманные карты и фишки на сукне логова, нарисовано вручную (public/games/poker/cover.svg).
+        coverUrl: "/games/poker/cover.svg",
+        status: "playable",
         icon: "♠"
     },
     {

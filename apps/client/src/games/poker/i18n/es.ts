@@ -1,0 +1,101 @@
+// [EN] FILE: games/poker/i18n/es.ts — the poker table in Spanish. [RU] ФАЙЛ: покерный стол по-испански.
+import type { PokerTexts, Who } from './types';
+
+const RANK_NAMES = ['dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'jota', 'reina', 'rey', 'as'];
+const SUIT_NAMES = ['picas', 'corazones', 'diamantes', 'tréboles'];
+const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
+const name = (who: Who): string => (who.you ? 'Tú' : capitalised(who.name));
+
+const es: PokerTexts = {
+  language: 'es',
+  gameTitle: 'Póker',
+  tagline: 'Texas hold’em · torneo de eliminación · tú contra los habituales de la cripta',
+  header: {
+    language: 'Idioma',
+    save: 'Guardar',
+    savedAt: time => `guardado a las ${time}`,
+    menu: 'Menú de la mesa',
+    level: (small, big, ante, hand) => `Ciegas ${small}/${big}${ante > 0 ? ` · ante ${ante}` : ''} · mano ${hand}`,
+  },
+  setup: {
+    title: 'La mesa de póker de la guarida',
+    intro: 'Texas hold’em sin límite, torneo de eliminación: todos empiezan con las mismas fichas y las ciegas suben hasta que queda uno solo. Tus rivales son los habituales de la cripta, cada uno con su estilo.',
+    noMoney: 'Solo fichas de juego: un juego y una lección de probabilidad, nunca apuestas con dinero.',
+    opponents: 'Rivales en la mesa',
+    opponentsCount: count => `${count} ${count === 1 ? 'rival' : 'rivales'}`,
+    stack: 'Fichas por jugador',
+    speed: 'Las ciegas suben',
+    speeds: { slow: 'despacio', normal: 'como siempre', fast: 'deprisa' },
+    speedHint: hands => `cada ${hands} manos`,
+    strength: 'Rivales',
+    strengths: { casual: 'normales — se equivocan', strong: 'fuertes — calculan' },
+    start: 'Sentarse a la mesa',
+    continue: 'Seguir el torneo',
+    savedLine: (hand, players, when) => `Torneo guardado: mano ${hand}, ${players} en la mesa, ${when}`,
+    close: 'Cerrar el menú',
+  },
+  seat: {
+    you: 'Tú',
+    dealer: 'Botón',
+    smallBlind: 'CP',
+    bigBlind: 'CG',
+    folded: 'se retira',
+    allIn: 'all-in',
+    thinking: 'pensando…',
+    out: 'eliminado',
+    stack: chips => `${chips} fichas`,
+    about: who => `Quién es ${who}`,
+  },
+  actions: {
+    fold: 'Retirarse',
+    check: 'Pasar',
+    call: amount => `Igualar ${amount}`,
+    bet: to => `Apostar ${to}`,
+    raise: to => `Subir a ${to}`,
+    allIn: amount => `All-in ${amount}`,
+    amount: 'Apuesta',
+    presets: { half: '½ bote', threeQuarters: '¾ bote', pot: 'Bote', max: 'Todo' },
+    yourTurn: 'Tu turno',
+    waiting: who => `Turno de ${who.name}`,
+  },
+  streets: { preflop: 'Preflop', flop: 'Flop', turn: 'Turn', river: 'River', showdown: 'Enfrentamiento' },
+  pot: amount => `Bote ${amount}`,
+  sidePot: (index, amount) => `Bote secundario ${index}: ${amount}`,
+  hands: ['Carta alta', 'Pareja', 'Doble pareja', 'Trío', 'Escalera', 'Color', 'Full', 'Póker', 'Escalera de color', 'Escalera real'],
+  log: {
+    title: 'La mano hasta ahora',
+    blinds: (small, big, ante) => `Ciegas ${small}/${big}${ante ? `, ante ${ante}` : ''}`,
+    fold: who => `${name(who)}: se retira`,
+    check: who => `${name(who)}: pasa`,
+    call: (who, to, allIn) => `${name(who)}: iguala ${to}${allIn ? ', all-in' : ''}`,
+    bet: (who, to, allIn) => `${name(who)}: apuesta ${to}${allIn ? ', all-in' : ''}`,
+    raise: (who, to, allIn) => `${name(who)}: sube a ${to}${allIn ? ', all-in' : ''}`,
+    street: (street, cards) => `${street}: ${cards}`,
+  },
+  results: {
+    wins: (who, amount, hand) => (who.you ? `Te llevas ${amount} — ${hand}` : `${capitalised(who.name)} se lleva ${amount} — ${hand}`),
+    uncontested: (who, amount) => (who.you ? `Te llevas ${amount} sin enfrentamiento` : `${capitalised(who.name)} se lleva ${amount} sin enfrentamiento`),
+    returned: (who, amount) => (who.you ? `Te vuelve la apuesta no igualada de ${amount}` : `A ${who.name} le vuelve la apuesta no igualada de ${amount}`),
+    split: (names, amount, hand) => `${names} se reparten ${amount} — ${hand}`,
+    nextHand: 'Siguiente mano',
+    youWon: '¡Has ganado el torneo! Todas las fichas de la cripta son tuyas.',
+    youOut: (place, players) => `Quedas eliminado: puesto ${place} de ${players}.`,
+    botWon: who => `${capitalised(who.name)} gana el torneo.`,
+    newTournament: 'Nuevo torneo',
+  },
+  cards: { name: (rank, suit) => `${RANK_NAMES[rank]} de ${SUIT_NAMES[suit]}`, back: 'una carta boca abajo' },
+  characters: {
+    vlad: { name: 'Conde Vlad', tagline: 'Juega pocas manos, y cada una hasta la última gota.' },
+    carmilla: { name: 'Carmilla', tagline: 'Sonríe igual con ases que con nada. Adivina qué tiene.' },
+    koschei: { name: 'Koschéi', tagline: 'Inmortal, así que sin prisa: esperará cien años a los ases.' },
+    stilet: { name: 'Don Estilete', tagline: 'Apuesta como si el bote ya fuera suyo. A veces lo es.' },
+    kaznachey: { name: 'Tesorero Nudillos', tagline: 'Paga por ver cada carta: el tesoro no se audita solo.' },
+    lilith: { name: 'Lilith', tagline: 'Calcula las probabilidades del bote antes de que parpadees.' },
+    crystal: { name: 'el Cráneo de Cristal', tagline: 'Se ve a través de él y aun así no se le lee: dentro solo hay matemáticas.' },
+    galeon: { name: 'Capitán Galeón', tagline: 'Va all-in como al abordaje: con estruendo y sin dudar.' },
+    shadow: { name: 'Lady Sombra', tagline: 'Calla con una mano enorme y apuesta cuando no tiene nada.' },
+    semyonych: { name: 'Mapache Semiónich', tagline: 'Cuarenta años de póker de cocina: conoce todos los trucos y se inventó la mitad.' },
+  },
+};
+
+export default es;

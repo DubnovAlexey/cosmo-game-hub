@@ -21,6 +21,7 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
     'title.leaderboard': t('Leaderboard', 'Лидеры', 'טבלת מובילים', 'Clasificación', 'Classement'),
     'title.chess': t('Chess', 'Шахматы', 'שחמט', 'Ajedrez', 'Échecs'),
     'title.preferans': t('Preferans', 'Преферанс', 'פרפרנס', 'Preferans', 'Préférence'),
+    'title.poker': t('Poker', 'Покер', 'פוקר', 'Póquer', 'Poker'),
 
     // Header
     'nav.games': t('Games', 'Игры', 'משחקים', 'Juegos', 'Jeux'),
@@ -93,11 +94,11 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
         'Le jeu de cartes classique des enchères et du whist\u00a0: règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table, face à des bots honnêtes et pleins de caractère dans un repaire de vampires.'),
     'game.poker.title': t('Poker', 'Покер', 'פוקר', 'Póquer', 'Poker'),
     'game.poker.description': t(
-        'The card game of strategy, psychology and a little luck.',
-        'Карточная игра стратегии, психологии и немного удачи.',
-        'משחק קלפים של אסטרטגיה, פסיכולוגיה וקצת מזל.',
-        'El juego de cartas de estrategia, psicología y un poco de suerte.',
-        'Le jeu de cartes de la stratégie, de la psychologie et d’un peu de chance.'),
+        'No-limit Texas hold’em, a sit-and-go of two to six: rising blinds, side pots, and the regulars of the vampire lair as opponents, each with a poker manner of their own. Play chips only.',
+        'Безлимитный техасский холдем, турнир на выбывание от двух до шести: растущие блайнды, побочные банки и завсегдатаи вампирского логова в соперниках, у каждого своя покерная манера. Только игровые фишки.',
+        'טקסס הולדם ללא הגבלה, טורניר הדחה לשניים עד שישה: בליינדים עולים, קופות צד, וקבועי מאורת הערפדים כיריבים, לכל אחד סגנון פוקר משלו. רק אסימוני משחק.',
+        'Texas hold’em sin límite, torneo de eliminación de dos a seis: ciegas que suben, botes secundarios y los habituales de la guarida de vampiros como rivales, cada uno con su estilo de póker. Solo fichas de juego.',
+        'Texas hold’em sans limite, tournoi à élimination de deux à six : blindes qui montent, pots annexes et les habitués du repaire de vampires pour adversaires, chacun avec sa manière de jouer. Jetons de jeu seulement.'),
     'game.tic-tac-toe.title': t('Tic-Tac-Toe', 'Крестики-нолики', 'איקס עיגול', 'Tres en raya', 'Morpion'),
     'game.tic-tac-toe.description': t(
         'A quick and fun logic game, perfect for a short break.',

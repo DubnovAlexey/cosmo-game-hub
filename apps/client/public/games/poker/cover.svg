@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 423" width="740" height="423">
+<!-- [EN] Poker cover (10.11.2026): the lair's oval table — pocket aces fanned over a king, a queen and a seven, chip
+     stacks and the silver button on deep emerald felt in a lacquered rail, candlelight from both sides. Drawn by hand.
+     [RU] Обложка покера (10.11.2026): овальный стол логова — карманные тузы веером над королём, дамой и семёркой,
+     стопки фишек и серебряный баттон на глубоком изумрудном сукне в лакированном борту, свет свечей с двух сторон.
+     Нарисовано вручную. -->
+<defs>
+  <radialGradient id="crypt" cx="50%" cy="35%" r="80%">
+    <stop offset="0" stop-color="#22131f"/><stop offset="0.6" stop-color="#0c070d"/><stop offset="1" stop-color="#040304"/>
+  </radialGradient>
+  <radialGradient id="felt" cx="50%" cy="40%" r="70%">
+    <stop offset="0" stop-color="#11553a"/><stop offset="0.45" stop-color="#0b3d2a"/><stop offset="0.8" stop-color="#082f20"/><stop offset="1" stop-color="#041a11"/>
+  </radialGradient>
+  <linearGradient id="silver" x1="0" x2="1" y1="0" y2="1">
+    <stop offset="0" stop-color="#eef0f3"/><stop offset="0.3" stop-color="#8d939c"/><stop offset="0.55" stop-color="#2b2e34"/><stop offset="0.78" stop-color="#b4bac2"/><stop offset="1" stop-color="#3c4048"/>
+  </linearGradient>
+  <linearGradient id="paper" x1="0" x2="0.4" y1="0" y2="1">
+    <stop offset="0" stop-color="#fffdf6"/><stop offset="1" stop-color="#eee5d2"/>
+  </linearGradient>
+  <radialGradient id="candle" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#ffb54a" stop-opacity="0.32"/><stop offset="1" stop-color="#ffb54a" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="redChip" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#e04a63"/><stop offset="1" stop-color="#7a0a17"/></radialGradient>
+  <radialGradient id="boneChip" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#f4f1ea"/><stop offset="1" stop-color="#9a9fa8"/></radialGradient>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#000" flood-opacity="0.6"/></filter>
+  <g id="card">
+    <rect x="-34" y="-48" width="68" height="96" rx="7" fill="url(#paper)" stroke="#5a5048" stroke-opacity="0.45"/>
+    <rect x="-31" y="-45" width="62" height="90" rx="5" fill="none" stroke="#b5ab98" stroke-opacity="0.5"/>
+  </g>
+  <g id="redStack">
+    <ellipse cx="0" cy="0" rx="20" ry="7" fill="#2a0208"/><ellipse cx="0" cy="-3" rx="20" ry="7" fill="url(#redChip)" stroke="#ffe7c2" stroke-opacity="0.6" stroke-dasharray="5 4"/>
+    <ellipse cx="0" cy="-8" rx="20" ry="7" fill="#2a0208"/><ellipse cx="0" cy="-11" rx="20" ry="7" fill="url(#redChip)" stroke="#ffe7c2" stroke-opacity="0.6" stroke-dasharray="5 4"/>
+    <ellipse cx="0" cy="-16" rx="20" ry="7" fill="#2a0208"/><ellipse cx="0" cy="-19" rx="20" ry="7" fill="url(#redChip)" stroke="#ffe7c2" stroke-opacity="0.6" stroke-dasharray="5 4"/>
+  </g>
+  <g id="boneStack">
+    <ellipse cx="0" cy="0" rx="20" ry="7" fill="#3a3e45"/><ellipse cx="0" cy="-3" rx="20" ry="7" fill="url(#boneChip)" stroke="#7a0a17" stroke-opacity="0.7" stroke-dasharray="5 4"/>
+    <ellipse cx="0" cy="-8" rx="20" ry="7" fill="#3a3e45"/><ellipse cx="0" cy="-11" rx="20" ry="7" fill="url(#boneChip)" stroke="#7a0a17" stroke-opacity="0.7" stroke-dasharray="5 4"/>
+  </g>
+</defs>
+<rect width="740" height="423" fill="url(#crypt)"/>
+<g fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="2">
+  <path d="M0 40H740M0 80H740M0 120H740M90 0V40M260 0V40M450 0V40M630 0V40M170 40V80M360 40V80M540 40V80M60 80V120M300 80V120M520 80V120M700 80V120"/>
+</g>
+<circle cx="40" cy="170" r="190" fill="url(#candle)"/>
+<circle cx="700" cy="170" r="190" fill="url(#candle)"/>
+<!-- the table / стол -->
+<ellipse cx="370" cy="300" rx="352" ry="168" fill="#0e0807"/>
+<ellipse cx="370" cy="300" rx="344" ry="161" fill="none" stroke="url(#silver)" stroke-width="2.5"/>
+<ellipse cx="370" cy="300" rx="336" ry="154" fill="#0e0807"/>
+<ellipse cx="370" cy="300" rx="330" ry="149" fill="url(#felt)"/>
+<ellipse cx="370" cy="296" rx="250" ry="104" fill="none" stroke="#c8cdd4" stroke-opacity="0.16"/>
+<!-- the board / доска -->
+<g filter="url(#shadow)">
+  <g transform="translate(290 232)"><use href="#card"/><text x="-25" y="-22" font-family="Georgia, serif" font-weight="700" font-size="20" fill="#15171c">K</text><text x="-24" y="-3" font-family="Georgia, serif" font-size="17" fill="#15171c">♠</text><text x="0" y="22" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#22252b">♠</text></g>
+  <g transform="translate(370 232)"><use href="#card"/><text x="-25" y="-22" font-family="Georgia, serif" font-weight="700" font-size="20" fill="#b30f22">Q</text><text x="-24" y="-3" font-family="Georgia, serif" font-size="17" fill="#b30f22">♥</text><text x="0" y="22" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#c3172c">♥</text></g>
+  <g transform="translate(450 232)"><use href="#card"/><text x="-25" y="-22" font-family="Georgia, serif" font-weight="700" font-size="20" fill="#b30f22">7</text><text x="-24" y="-3" font-family="Georgia, serif" font-size="17" fill="#b30f22">♦</text><text x="0" y="22" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#c3172c">♦</text></g>
+</g>
+<!-- pocket aces fanned in front / карманные тузы веером впереди -->
+<g filter="url(#shadow)">
+  <g transform="translate(340 352) rotate(-10)"><use href="#card"/><text x="-25" y="-22" font-family="Georgia, serif" font-weight="700" font-size="20" fill="#15171c">A</text><text x="-24" y="-3" font-family="Georgia, serif" font-size="17" fill="#15171c">♠</text><text x="0" y="22" text-anchor="middle" font-family="Georgia, serif" font-size="48" fill="#22252b">♠</text></g>
+  <g transform="translate(392 356) rotate(8)"><use href="#card"/><text x="-25" y="-22" font-family="Georgia, serif" font-weight="700" font-size="20" fill="#b30f22">A</text><text x="-24" y="-3" font-family="Georgia, serif" font-size="17" fill="#b30f22">♥</text><text x="0" y="22" text-anchor="middle" font-family="Georgia, serif" font-size="48" fill="#c3172c">♥</text></g>
+</g>
+<!-- chips and the button / фишки и баттон -->
+<g filter="url(#shadow)">
+  <use href="#redStack" transform="translate(176 330)"/>
+  <use href="#boneStack" transform="translate(214 344)"/>
+  <use href="#redStack" transform="translate(566 338)"/>
+  <circle cx="530" cy="372" r="15" fill="url(#silver)" stroke="#15171b"/>
+  <text x="530" y="378" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="15" fill="#15171b">D</text>
+</g>
+</svg>

@@ -1,0 +1,388 @@
+/* [EN] FILE: games/poker/components/Poker.module.css — the lair's poker room: the same crypt and the same club as the
+        preferans table (blackened silver on velvet, the scribe's quill, deep bottle-emerald felt), with an oval table
+        in a lacquered rail. Seats sit around the oval (positions from PokerTable.tsx), the board and the pot in the
+        middle, the decision tray under the table. On a phone the oval stands upright and everything is sized by the
+        screen, so a finger reaches every control.
+   [RU] ФАЙЛ: покерная комната логова: та же крипта и тот же клуб, что у стола преферанса (черненое серебро на бархате,
+        перо писаря, глубокое бутылочно-изумрудное сукно), с овальным столом в лакированном борту. Места стоят вокруг
+        овала (позиции — из PokerTable.tsx), доска и банк посередине, лоток решений под столом. На телефоне овал встаёт
+        вертикально, и всё меряется экраном, поэтому палец достаёт любую кнопку. */
+
+/* ===== 1. Room / Комната ===== */
+.room {
+    --quill: 'Marck Script', 'Cormorant Garamond', Georgia, 'David', cursive;
+    --print: 'Cormorant Garamond', Georgia, 'Times New Roman', 'David', serif;
+    --silver-hi: #d8dbe0;
+    --silver: #9097a1;
+    --silver-edge: linear-gradient(135deg, #e3e6ea 0%, #7c838d 20%, #2b2e34 46%, #a3aab3 68%, #3c4048 86%, #8d939c 100%);
+    --candle-edge: linear-gradient(135deg, #fff1cc 0%, #e0b061 24%, #6c5228 50%, #ffcf7a 74%, #8a6a3a 100%);
+    --velvet: linear-gradient(180deg, #2a1720 0%, #150b10 100%);
+    --bone: #eadfc6;
+    --candle: #ffb54a;
+    --blood: #9b111e;
+    --card-w: clamp(40px, 5.4vw, 74px);
+    --card-h: calc(var(--card-w) * 1.42);
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    padding: 18px clamp(10px, 2.5vw, 28px) 40px;
+    color: var(--bone);
+    font-family: var(--print), serif;
+    font-weight: 600;
+    background:
+        radial-gradient(ellipse 60% 45% at 50% 40%, rgba(130, 16, 28, 0.2), transparent 72%),
+        radial-gradient(ellipse 22% 38% at 5% 58%, rgba(255, 160, 60, 0.08), transparent 70%),
+        radial-gradient(ellipse 22% 38% at 95% 58%, rgba(255, 160, 60, 0.08), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.035' stroke-width='2'%3E%3Cpath d='M0 1H240M0 41H240M0 81H240'/%3E%3Cpath d='M72 1V41M168 1V41M28 41V81M118 41V81M206 41V81M88 81V120M182 81V120'/%3E%3C/g%3E%3Cg fill='%23000000' fill-opacity='0.16'%3E%3Crect x='2' y='3' width='68' height='36'/%3E%3Crect x='170' y='3' width='68' height='36'/%3E%3Crect x='30' y='43' width='86' height='36'/%3E%3Crect x='120' y='83' width='60' height='35'/%3E%3C/g%3E%3C/svg%3E"),
+        radial-gradient(ellipse at 50% 35%, #1b0f1a 0%, #0c070d 60%, #040304 100%);
+    background-attachment: fixed;
+}
+
+.header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; max-width: 1180px; margin: 0 auto 14px; }
+.title {
+    margin: 0;
+    font: 400 clamp(2.4rem, 4.6vw, 3.4rem)/1.15 var(--quill), cursive;
+    background: linear-gradient(180deg, #f3f5f7 0%, #c3c8cf 34%, #6c737d 58%, #b9c0c9 82%, #8d939c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 0 #050506) drop-shadow(0 0 16px rgba(176, 16, 31, 0.3));
+}
+.titleInitial {
+    display: inline-block;
+    font-size: 1.32em;
+    line-height: 0.9;
+    background: linear-gradient(180deg, #ff6670 0%, #c8102e 42%, #5a0711 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.subtitle { margin: 4px 0 0; color: #b8b2a6; font-size: 0.98rem; font-style: italic; }
+.level { margin: 2px 0 0; color: #e3dccb; font: 400 1.12rem/1.3 var(--quill), cursive; }
+.settings { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.language select, .settings select {
+    min-height: 40px;
+    padding: 4px 30px 4px 12px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: var(--velvet) padding-box, var(--silver-edge) border-box;
+    color: var(--bone);
+    font: 600 0.95rem var(--print), serif;
+}
+.savedAt { color: #b8b2a6; font-size: 0.85rem; font-style: italic; white-space: nowrap; }
+
+/* ===== 2. Buttons / Кнопки ===== */
+.button {
+    min-height: 44px;
+    padding: 6px 16px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: var(--velvet) padding-box, var(--silver-edge) border-box;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55), inset 0 0 0 3px rgba(216, 219, 224, 0.14), 0 4px 10px rgba(0, 0, 0, 0.6);
+    color: var(--bone);
+    font: 700 1rem var(--print), serif;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    text-shadow: 0 1px 0 #000;
+    transition: transform 0.12s ease, filter 0.12s ease;
+}
+.button:hover:not(:disabled) { filter: brightness(1.18); }
+.button:active:not(:disabled) { transform: translateY(1px); }
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+.buttonPrimary { background: linear-gradient(180deg, #7a0a17 0%, #3d0610 100%) padding-box, var(--candle-edge) border-box; }
+.buttonFold { background: linear-gradient(180deg, #1f1d22 0%, #0d0b0e 100%) padding-box, var(--silver-edge) border-box; }
+.button:focus-visible { outline: 2px solid #fde68a; outline-offset: 2px; }
+
+/* ===== 3. Table / Стол ===== */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) clamp(240px, 22vw, 300px); gap: 18px; max-width: 1180px; margin: 0 auto; align-items: start; }
+.tableArea { min-width: 0; }
+.felt {
+    position: relative;
+    aspect-ratio: 16 / 9.4;
+    min-height: 380px;
+    border-radius: 50% / 46%;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0.26 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"),
+        radial-gradient(ellipse 22% 16% at 50% 50%, rgba(196, 228, 205, 0.05), transparent 72%),
+        radial-gradient(ellipse at 50% 42%, #0e4630 0%, #0b3d2a 40%, #082f20 70%, #041a11 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(0, 0, 0, 0.35), inset 0 0 90px rgba(0, 0, 0, 0.55),
+        0 0 0 10px #0e0807, 0 0 0 11px #9097a1, 0 0 0 16px #0e0807, 0 0 0 17px #000, 0 0 0 20px rgba(110, 15, 26, 0.6), 0 26px 60px rgba(0, 0, 0, 0.8);
+    margin: 22px 22px 44px;
+    width: calc(100% - 44px);
+}
+/* [EN] A fine silver line marks the betting line on the cloth. [RU] Тонкая серебряная линия отмечает на сукне черту ставок. */
+.felt::before { content: ''; position: absolute; inset: 12%; border-radius: 50% / 46%; box-shadow: inset 0 0 0 1px rgba(200, 205, 212, 0.16); pointer-events: none; }
+
+.center { position: absolute; left: 50%; top: 47%; display: grid; justify-items: center; gap: 8px; transform: translate(-50%, -50%); pointer-events: none; }
+.board { display: flex; gap: calc(var(--card-w) * 0.12); }
+.slot { width: var(--card-w); height: var(--card-h); border-radius: calc(var(--card-w) * 0.11); box-shadow: inset 0 0 0 1px rgba(216, 219, 224, 0.16); }
+.pot { padding: 2px 14px 4px; border-radius: 999px; background: rgba(0, 0, 0, 0.45); color: #f3e7c6; font: 400 1.25rem/1.2 var(--quill), cursive; white-space: nowrap; }
+.sidePots { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; color: #cfc6b0; font: 400 0.98rem var(--quill), cursive; }
+.street { color: #a9c7b2; }
+
+/* ===== 4. Seats / Места ===== */
+/* [EN] A seat is a compact pod: the portrait with its plaque, and the two cards beside it toward the middle of the
+        table (to the right on the left side, to the left on the right side, below at the top; your cards above your
+        plaque). [RU] Место — компактная группа: портрет с табличкой и две карты рядом, ближе к середине стола
+        (справа на левой стороне, слева на правой, снизу наверху; ваши карты — над вашей табличкой). */
+.seat {
+    /* [EN] PokerTable.tsx sets the place of every seat inline; the middle of the table is only a default.
+       [RU] PokerTable.tsx задаёт место каждого игрока прямо в разметке; середина стола — только запасное значение. */
+    --x: 50%;
+    --y: 50%;
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: max-content;
+    transform: translate(-50%, -50%);
+}
+.seatWest { flex-direction: row; }
+.seatEast { flex-direction: row-reverse; }
+.seatNorth { flex-direction: column; }
+.seatSouth { flex-direction: column-reverse; }
+.who { position: relative; display: grid; justify-items: center; gap: 0; }
+.who .plaque { position: relative; z-index: 1; margin-top: -8px; }
+.who .status { margin-top: 3px; }
+.bubble {
+    position: absolute;
+    top: 100%;
+    z-index: 6;
+    width: min(240px, 60vw);
+    margin: 6px 0 0;
+    padding: 6px 10px 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.98), rgba(16, 8, 12, 0.98)) padding-box, var(--silver-edge) border-box;
+    color: #e3dccb;
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.35;
+    text-align: center;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+}
+.portrait {
+    position: relative;
+    width: clamp(46px, 5.6vw, 76px);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 3px solid transparent;
+    border-radius: 50%;
+    background: #0c070a padding-box, var(--silver-edge) border-box;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    cursor: pointer;
+}
+.portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; display: block; filter: sepia(0.1) saturate(0.92) contrast(1.06); }
+.seatTurn .portrait { background: #0c070a padding-box, var(--candle-edge) border-box; box-shadow: 0 0 0 2px rgba(255, 181, 74, 0.5), 0 0 26px rgba(255, 140, 50, 0.55); }
+.seatFolded .portrait, .seatFolded .hole { opacity: 0.42; filter: grayscale(0.5); }
+.seatOut { opacity: 0.35; }
+.plaque {
+    display: grid;
+    justify-items: center;
+    min-width: 92px;
+    padding: 2px 12px 4px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: var(--velvet) padding-box, var(--silver-edge) border-box;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.6);
+    text-align: center;
+}
+.seatName { max-width: 170px; overflow: hidden; color: var(--bone); font: 400 1.12rem/1.15 var(--quill), cursive; text-overflow: ellipsis; white-space: nowrap; }
+.seatStack { color: #d9c9a0; font-size: 0.86rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.status {
+    padding: 0 8px 2px;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #e3dccb;
+    font: 400 0.98rem var(--quill), cursive;
+    white-space: nowrap;
+}
+.statusAllIn { background: linear-gradient(180deg, #7a0a17, #3d0610); color: #ffe7c2; }
+.statusThinking { color: #ffcf7a; animation: breathe 1.4s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+.hole { display: flex; gap: 3px; }
+.badges { position: absolute; top: -6px; right: -14px; z-index: 3; display: flex; gap: 3px; pointer-events: none; }
+/* [EN] Yours sit at the right end of your plaque. [RU] Ваши — у правого края вашей таблички. */
+.badgesYours { top: auto; bottom: 6px; right: -30px; }
+.dealer, .blind {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font: 700 0.72rem var(--print), serif;
+    box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.35), 0 0 0 1px #15171b, 0 3px 6px rgba(0, 0, 0, 0.6);
+}
+.dealer { background: radial-gradient(circle at 36% 30%, #ffffff 0%, #c9ced5 48%, #6c737d 100%); color: #15171b; }
+.blind { background: radial-gradient(circle at 36% 30%, #d6506a 0%, #8e0f1c 60%, #4a0610 100%); color: #ffe7c2; font-size: 0.6rem; }
+
+/* [EN] Bets lie on the cloth between the seat and the pot: a little stack of chips and the amount.
+   [RU] Ставки лежат на сукне между местом и банком: маленькая стопка фишек и сумма. */
+.bet {
+    --bx: 50%;
+    --by: 50%;
+    position: absolute;
+    left: var(--bx);
+    top: var(--by);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transform: translate(-50%, -50%);
+    color: #f3e7c6;
+    font: 400 1.05rem var(--quill), cursive;
+    text-shadow: 0 1px 2px #000;
+    pointer-events: none;
+}
+.chips { position: relative; width: 22px; height: 18px; }
+.chips i {
+    position: absolute;
+    left: 0;
+    width: 22px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 40%, #d9455f 0%, #8e0f1c 70%);
+    box-shadow: 0 1px 0 #2a0208, inset 0 0 0 1.5px rgba(255, 231, 194, 0.65);
+}
+.chips i:nth-child(1) { bottom: 0; }
+.chips i:nth-child(2) { bottom: 4px; background: radial-gradient(ellipse at 50% 40%, #e9ecf0 0%, #8d939c 70%); }
+.chips i:nth-child(3) { bottom: 8px; }
+
+/* ===== 5. Cards / Карты ===== */
+.card {
+    --card-frame: inset 0 0 0 calc(var(--card-w) * 0.045) #fbf7ec, inset 0 0 0 calc(var(--card-w) * 0.045 + 1px) rgba(110, 118, 130, 0.5);
+    position: relative;
+    flex: none;
+    width: var(--card-w);
+    height: var(--card-h);
+    border: 1px solid rgba(20, 16, 12, 0.35);
+    border-radius: calc(var(--card-w) * 0.11);
+    background:
+        repeating-linear-gradient(0deg, rgba(120, 100, 60, 0.025) 0 1px, transparent 1px 3px),
+        linear-gradient(160deg, #fffdf6 0%, #f1e9d8 100%);
+    box-shadow: var(--card-frame), 0 6px 10px -3px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.35);
+    font-family: var(--print), serif;
+    font-weight: 700;
+    line-height: 1;
+    user-select: none;
+    animation: deal 0.28s ease-out;
+}
+@keyframes deal { from { opacity: 0; transform: translateY(-10px) scale(0.92); } to { opacity: 1; transform: none; } }
+.cardSmall { --card-w: clamp(26px, 2.9vw, 40px); --card-h: calc(var(--card-w) * 1.42); }
+.cardHand { --card-w: clamp(46px, 5.6vw, 78px); --card-h: calc(var(--card-w) * 1.42); }
+.cardRed { color: #b30f22; }
+.cardBlack { color: #15171c; }
+.cardCorner { position: absolute; top: calc(var(--card-w) * 0.07); left: calc(var(--card-w) * 0.09); font-size: calc(var(--card-w) * 0.26); text-align: center; }
+.cardCenter { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--card-w) * 0.58); }
+.cardRed .cardCenter, .cardBlack .cardCenter { -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.cardRed .cardCenter { background-image: radial-gradient(circle calc(var(--card-w) * 0.34) at 44% 52%, #ff8a94 0%, #d3182f 34%, #7a0a17 100%); }
+.cardBlack .cardCenter { background-image: radial-gradient(circle calc(var(--card-w) * 0.34) at 44% 52%, #9aa1ab 0%, #2c3036 38%, #060708 100%); }
+.cardBack { --card-frame: inset 0 0 0 1px rgba(216, 219, 224, 0.22); border: 1px solid rgba(144, 151, 161, 0.6); background: #0e0307 url('../assets/card-back.svg') center / 100% 100% no-repeat; }
+.cardWinning { box-shadow: var(--card-frame), 0 0 0 2px #f6d58a, 0 0 18px rgba(255, 196, 110, 0.6); transform: translateY(-4px); }
+.cardDim { filter: brightness(0.62) saturate(0.7); }
+
+/* ===== 6. Decisions, log, result / Решения, ход раздачи, итог ===== */
+.tray {
+    position: relative;
+    margin: 0 auto;
+    max-width: 860px;
+    padding: 12px 16px 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.97) 0%, rgba(16, 8, 12, 0.97) 100%) padding-box, var(--silver-edge) border-box;
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.5), 0 14px 30px rgba(0, 0, 0, 0.6);
+}
+.trayTitle { margin: 0 0 8px; font: 400 1.45rem/1.2 var(--quill), cursive; color: var(--bone); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.actions .button { flex: 1 1 120px; }
+.raiseRow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; }
+.raiseRow input[type='range'] { flex: 1 1 200px; min-height: 44px; accent-color: #c8102e; }
+.amount {
+    width: 110px;
+    min-height: 44px;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: #120a0e padding-box, var(--silver-edge) border-box;
+    color: var(--bone);
+    font: 700 1.05rem var(--print), serif;
+}
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.presets .button { min-height: 40px; padding: 4px 10px; font-size: 0.92rem; }
+.waiting { margin: 0; color: #ffcf7a; font: 400 1.3rem var(--quill), cursive; }
+
+.side { display: grid; gap: 14px; }
+.panel {
+    padding: 10px 14px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.92) 0%, rgba(16, 8, 12, 0.92) 100%) padding-box, var(--silver-edge) border-box;
+}
+.panelTitle { margin: 0 0 6px; font: 400 1.3rem var(--quill), cursive; color: var(--bone); }
+.log { max-height: 320px; margin: 0; padding: 0; overflow-y: auto; list-style: none; font: 400 1.02rem/1.35 var(--quill), cursive; color: #e3dccb; }
+.log li + li { margin-top: 3px; }
+.logStreet { color: #a9c7b2; }
+.result {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.97) 0%, rgba(16, 8, 12, 0.97) 100%) padding-box, var(--candle-edge) border-box;
+    text-align: center;
+    animation: rise 0.25s ease-out;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.resultLine { margin: 0; font: 400 1.22rem/1.3 var(--quill), cursive; color: #f3e7c6; }
+.tagline { margin: 0; color: #cfc6b0; font-size: 0.95rem; font-style: italic; }
+
+/* ===== 7. Menu / Меню ===== */
+.backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; overflow-y: auto; background: rgba(4, 2, 4, 0.72); }
+.menu {
+    width: min(560px, 100%);
+    padding: 18px 20px 20px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.99) 0%, rgba(16, 8, 12, 0.99) 100%) padding-box, var(--silver-edge) border-box;
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.5), 0 24px 60px rgba(0, 0, 0, 0.8);
+}
+.menuTitle { margin: 0 0 8px; font: 400 2rem/1.15 var(--quill), cursive; color: var(--bone); }
+.menuText { margin: 0 0 10px; color: #e3dccb; font-size: 1.02rem; line-height: 1.45; }
+.field { display: grid; gap: 6px; margin: 12px 0; }
+.fieldLabel { font: 400 1.2rem var(--quill), cursive; color: var(--bone); }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice { min-width: 52px; }
+.choiceOn { background: linear-gradient(180deg, #7a0a17 0%, #3d0610 100%) padding-box, var(--candle-edge) border-box; }
+.menuActions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.menuActions .button { flex: 1 1 200px; }
+.company { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 0; }
+.company img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: 50% 22%; box-shadow: 0 0 0 2px #6c737d; }
+
+/* ===== 8. Phone and tablet / Телефон и планшет ===== */
+@media (max-width: 1023px) {
+    .layout { grid-template-columns: 1fr; }
+    .side { order: 3; }
+}
+@media (max-width: 700px) {
+    .room { padding: 12px 8px 28px; }
+    .felt { aspect-ratio: 0.82; min-height: 0; margin: 16px 14px 22px; width: calc(100% - 28px); border-radius: 46% / 36%; }
+    .felt::before { border-radius: 46% / 36%; }
+    .room { --card-w: clamp(34px, 10.5vw, 52px); }
+    .cardSmall { --card-w: clamp(20px, 6vw, 30px); }
+    .cardHand { --card-w: clamp(42px, 12vw, 60px); }
+    .seat { max-width: 112px; }
+    .portrait { width: clamp(38px, 11vw, 52px); }
+    .plaque { min-width: 72px; padding: 1px 8px 3px; }
+    .seatName { max-width: 108px; font-size: 0.98rem; white-space: normal; line-height: 1.05; }
+    .seatStack { font-size: 0.78rem; }
+    .badges { right: -8px; }
+    .pot { font-size: 1.1rem; }
+    .actions .button { flex: 1 1 calc(50% - 10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card, .result, .statusThinking { animation: none; }
+}

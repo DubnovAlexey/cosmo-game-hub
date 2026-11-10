@@ -1,0 +1,12 @@
+---
+// [EN] Route /games/poker. The page only places the game: everything else lives in src/games/poker.
+// [RU] Маршрут /games/poker. Страница только ставит игру на место: всё остальное — в src/games/poker.
+import Layout from '@shell/layouts/Layout.astro';
+import { PokerGame } from '@games/poker';
+---
+
+<Layout title="Poker | Cosmo Game Hub" titleKey="title.poker" scrollToTop={false}>
+    <!-- [EN] client:only — the game and its Web Worker bots run only in the browser. -->
+    <!-- [RU] client:only — игра и её боты в Web Worker работают только в браузере. -->
+    <PokerGame client:only="react" />
+</Layout>

@@ -1,0 +1,101 @@
+// [EN] FILE: games/poker/i18n/en.ts — the poker table in English. [RU] ФАЙЛ: покерный стол по-английски.
+import type { PokerTexts, Who } from './types';
+
+const RANK_NAMES = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king', 'ace'];
+const SUIT_NAMES = ['spades', 'hearts', 'diamonds', 'clubs'];
+const name = (who: Who): string => (who.you ? 'You' : who.name);
+const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
+
+const en: PokerTexts = {
+  language: 'en',
+  gameTitle: 'Poker',
+  tagline: "Texas hold'em · a sit-and-go · you against the regulars of the crypt",
+  header: {
+    language: 'Language',
+    save: 'Save',
+    savedAt: time => `saved at ${time}`,
+    menu: 'Table menu',
+    level: (small, big, ante, hand) => `Blinds ${small}/${big}${ante > 0 ? ` · ante ${ante}` : ''} · hand ${hand}`,
+  },
+  setup: {
+    title: "The lair's poker table",
+    intro: "No-limit Texas hold'em, a sit-and-go: everybody starts with the same chips and the blinds rise until one player is left. Your opponents are the regulars of the crypt, each with a manner of their own.",
+    noMoney: 'Play chips only: a game and a lesson in probability, never a bet for money.',
+    opponents: 'Opponents at the table',
+    opponentsCount: count => `${count} ${count === 1 ? 'opponent' : 'opponents'}`,
+    stack: 'Chips each',
+    speed: 'The blinds rise',
+    speeds: { slow: 'slowly', normal: 'as usual', fast: 'fast' },
+    speedHint: hands => `every ${hands} hands`,
+    strength: 'Opponents',
+    strengths: { casual: 'casual — they make mistakes', strong: 'strong — they count' },
+    start: 'Take a seat',
+    continue: 'Continue the tournament',
+    savedLine: (hand, players, when) => `Saved tournament: hand ${hand}, ${players} at the table, ${when}`,
+    close: 'Close the menu',
+  },
+  seat: {
+    you: 'You',
+    dealer: 'Button',
+    smallBlind: 'SB',
+    bigBlind: 'BB',
+    folded: 'folded',
+    allIn: 'all-in',
+    thinking: 'thinking…',
+    out: 'out',
+    stack: chips => `${chips} chips`,
+    about: who => `Who is ${who}`,
+  },
+  actions: {
+    fold: 'Fold',
+    check: 'Check',
+    call: amount => `Call ${amount}`,
+    bet: to => `Bet ${to}`,
+    raise: to => `Raise to ${to}`,
+    allIn: amount => `All-in ${amount}`,
+    amount: 'Bet',
+    presets: { half: '½ pot', threeQuarters: '¾ pot', pot: 'Pot', max: 'All' },
+    yourTurn: 'Your turn',
+    waiting: who => `${capitalised(who.name)} to act`,
+  },
+  streets: { preflop: 'Preflop', flop: 'Flop', turn: 'Turn', river: 'River', showdown: 'Showdown' },
+  pot: amount => `Pot ${amount}`,
+  sidePot: (index, amount) => `Side pot ${index}: ${amount}`,
+  hands: ['High card', 'One pair', 'Two pair', 'Three of a kind', 'Straight', 'Flush', 'Full house', 'Four of a kind', 'Straight flush', 'Royal flush'],
+  log: {
+    title: 'The hand so far',
+    blinds: (small, big, ante) => `Blinds ${small}/${big}${ante ? `, ante ${ante}` : ''}`,
+    fold: who => `${capitalised(name(who))}: fold`,
+    check: who => `${capitalised(name(who))}: check`,
+    call: (who, to, allIn) => `${capitalised(name(who))}: call ${to}${allIn ? ', all-in' : ''}`,
+    bet: (who, to, allIn) => `${capitalised(name(who))}: bet ${to}${allIn ? ', all-in' : ''}`,
+    raise: (who, to, allIn) => `${capitalised(name(who))}: raise to ${to}${allIn ? ', all-in' : ''}`,
+    street: (street, cards) => `${street}: ${cards}`,
+  },
+  results: {
+    wins: (who, amount, hand) => (who.you ? `You take ${amount} — ${hand}` : `${capitalised(who.name)} takes ${amount} — ${hand}`),
+    uncontested: (who, amount) => (who.you ? `You take ${amount} without a showdown` : `${capitalised(who.name)} takes ${amount} without a showdown`),
+    returned: (who, amount) => (who.you ? `Your uncalled ${amount} comes back` : `${capitalised(who.name)} gets back an uncalled ${amount}`),
+    split: (names, amount, hand) => `${names} split ${amount} — ${hand}`,
+    nextHand: 'Next hand',
+    youWon: 'You won the tournament! Every chip of the crypt is yours.',
+    youOut: (place, players) => `You are out: place ${place} of ${players}.`,
+    botWon: who => `${capitalised(who.name)} wins the tournament.`,
+    newTournament: 'New tournament',
+  },
+  cards: { name: (rank, suit) => `${RANK_NAMES[rank]} of ${SUIT_NAMES[suit]}`, back: 'a card face down' },
+  characters: {
+    vlad: { name: 'Count Vlad', tagline: 'Plays few hands, and every one of them to the last drop.' },
+    carmilla: { name: 'Carmilla', tagline: 'Smiles the same with aces and with nothing. Guess which she has.' },
+    koschei: { name: 'Koschei', tagline: 'Immortal, so in no hurry: he will wait a hundred years for aces.' },
+    stilet: { name: 'Don Stiletto', tagline: 'Bets as if the pot were his already. Sometimes it is.' },
+    kaznachey: { name: 'Treasurer Knuckles', tagline: 'Pays to see every card: the treasury will not audit itself.' },
+    lilith: { name: 'Lilith', tagline: 'Works out the pot odds before you can blink.' },
+    crystal: { name: 'the Crystal Skull', tagline: 'You can see right through him and still not read him: inside there is only maths.' },
+    galeon: { name: 'Captain Galleon', tagline: 'Goes all-in like a boarding party: loud and without a doubt.' },
+    shadow: { name: 'Lady Shadow', tagline: 'Silent over a monster, betting when she has nothing.' },
+    semyonych: { name: 'Semyonych the Raccoon', tagline: 'Forty years of kitchen poker: knows every trick and invented half of them.' },
+  },
+};
+
+export default en;

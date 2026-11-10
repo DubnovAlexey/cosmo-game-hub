@@ -1,0 +1,101 @@
+// [EN] FILE: games/poker/i18n/he.ts — the poker table in Hebrew (right to left; the table itself keeps its layout).
+// [RU] ФАЙЛ: покерный стол на иврите (справа налево; сам стол сохраняет раскладку).
+import type { PokerTexts, Who } from './types';
+
+const RANK_NAMES = ['שתיים', 'שלוש', 'ארבע', 'חמש', 'שש', 'שבע', 'שמונה', 'תשע', 'עשר', 'נסיך', 'מלכה', 'מלך', 'אס'];
+const SUIT_NAMES = ['עלה', 'לב', 'יהלום', 'תלתן'];
+const name = (who: Who): string => (who.you ? 'את/ה' : who.name);
+
+const he: PokerTexts = {
+  language: 'he',
+  gameTitle: 'פוקר',
+  tagline: 'טקסס הולדם · טורניר הדחה · את/ה מול קבועי המרתף',
+  header: {
+    language: 'שפה',
+    save: 'לשמור',
+    savedAt: time => `נשמר ב-${time}`,
+    menu: 'תפריט השולחן',
+    level: (small, big, ante, hand) => `בליינדים ${small}/${big}${ante > 0 ? ` · אנטה ${ante}` : ''} · יד ${hand}`,
+  },
+  setup: {
+    title: 'שולחן הפוקר של המאורה',
+    intro: 'טקסס הולדם ללא הגבלה, טורניר הדחה: לכולם אותו מספר אסימונים, והבליינדים עולים עד שנשאר שחקן אחד. היריבים הם קבועי המרתף, ולכל אחד סגנון משלו.',
+    noMoney: 'רק אסימוני משחק: זה משחק ושיעור בהסתברות, לא הימור על כסף.',
+    opponents: 'יריבים ליד השולחן',
+    opponentsCount: count => (count === 1 ? 'יריב אחד' : `${count} יריבים`),
+    stack: 'אסימונים לכל אחד',
+    speed: 'הבליינדים עולים',
+    speeds: { slow: 'לאט', normal: 'כרגיל', fast: 'מהר' },
+    speedHint: hands => `כל ${hands} ידיים`,
+    strength: 'היריבים',
+    strengths: { casual: 'רגילים — טועים', strong: 'חזקים — מחשבים' },
+    start: 'להתיישב ליד השולחן',
+    continue: 'להמשיך את הטורניר',
+    savedLine: (hand, players, when) => `טורניר שמור: יד ${hand}, ${players} ליד השולחן, ${when}`,
+    close: 'לסגור את התפריט',
+  },
+  seat: {
+    you: 'את/ה',
+    dealer: 'כפתור',
+    smallBlind: 'ב״ק',
+    bigBlind: 'ב״ג',
+    folded: 'פולד',
+    allIn: 'אול-אין',
+    thinking: 'חושב/ת…',
+    out: 'מחוץ למשחק',
+    stack: chips => `${chips} אסימונים`,
+    about: who => `מי זה: ${who}`,
+  },
+  actions: {
+    fold: 'פולד',
+    check: 'צ׳ק',
+    call: amount => `קול ${amount}`,
+    bet: to => `בט ${to}`,
+    raise: to => `רייז ל-${to}`,
+    allIn: amount => `אול-אין ${amount}`,
+    amount: 'הימור',
+    presets: { half: '½ קופה', threeQuarters: '¾ קופה', pot: 'קופה', max: 'הכול' },
+    yourTurn: 'תורך',
+    waiting: who => `התור של ${who.name}`,
+  },
+  streets: { preflop: 'פרה-פלופ', flop: 'פלופ', turn: 'טרן', river: 'ריבר', showdown: 'חשיפה' },
+  pot: amount => `קופה ${amount}`,
+  sidePot: (index, amount) => `קופת צד ${index}: ${amount}`,
+  hands: ['קלף גבוה', 'זוג', 'שני זוגות', 'שלישייה', 'סטרייט', 'פלאש', 'פול האוס', 'רביעייה', 'סטרייט פלאש', 'רויאל פלאש'],
+  log: {
+    title: 'מהלך היד',
+    blinds: (small, big, ante) => `בליינדים ${small}/${big}${ante ? `, אנטה ${ante}` : ''}`,
+    fold: who => `${name(who)}: פולד`,
+    check: who => `${name(who)}: צ׳ק`,
+    call: (who, to, allIn) => `${name(who)}: קול ${to}${allIn ? ', אול-אין' : ''}`,
+    bet: (who, to, allIn) => `${name(who)}: בט ${to}${allIn ? ', אול-אין' : ''}`,
+    raise: (who, to, allIn) => `${name(who)}: רייז ל-${to}${allIn ? ', אול-אין' : ''}`,
+    street: (street, cards) => `${street}: ${cards}`,
+  },
+  results: {
+    wins: (who, amount, hand) => (who.you ? `את/ה לוקח/ת ${amount} — ${hand}` : `${who.name} ${who.female ? 'לוקחת' : 'לוקח'} ${amount} — ${hand}`),
+    uncontested: (who, amount) => (who.you ? `את/ה לוקח/ת ${amount} בלי חשיפה` : `${who.name} ${who.female ? 'לוקחת' : 'לוקח'} ${amount} בלי חשיפה`),
+    returned: (who, amount) => (who.you ? `ההימור שלא הושווה, ${amount}, חוזר אלייך/אליך` : `${who.name} ${who.female ? 'מקבלת' : 'מקבל'} בחזרה הימור שלא הושווה, ${amount}`),
+    split: (names, amount, hand) => `${names} מתחלקים ב-${amount} — ${hand}`,
+    nextHand: 'היד הבאה',
+    youWon: 'ניצחת בטורניר! כל האסימונים של המרתף שלך.',
+    youOut: (place, players) => `יצאת מהמשחק: מקום ${place} מתוך ${players}.`,
+    botWon: who => `${who.name} ${who.female ? 'זוכה' : 'זוכה'} בטורניר.`,
+    newTournament: 'טורניר חדש',
+  },
+  cards: { name: (rank, suit) => `${RANK_NAMES[rank]} ${SUIT_NAMES[suit]}`, back: 'קלף הפוך' },
+  characters: {
+    vlad: { name: 'הרוזן ולאד', tagline: 'משחק מעט ידיים, ואת כל אחת מהן — עד הטיפה האחרונה.' },
+    carmilla: { name: 'קרמילה', tagline: 'מחייכת אותו חיוך עם אסים ועם כלום. נחשו מה יש לה.' },
+    koschei: { name: 'קושצ׳יי', tagline: 'בן אלמוות, ולכן לא ממהר: יחכה לאסים גם מאה שנה.' },
+    stilet: { name: 'דון סטילטו', tagline: 'מהמר כאילו הקופה כבר שלו. לפעמים זה נכון.' },
+    kaznachey: { name: 'הגזבר עצמות', tagline: 'משלם כדי לראות כל קלף: האוצר לא יבדוק את עצמו.' },
+    lilith: { name: 'לילית', tagline: 'מחשבת את סיכויי הקופה מהר יותר ממצמוץ.' },
+    crystal: { name: 'בדולח', tagline: 'שקוף לגמרי ובכל זאת אי אפשר לקרוא אותו: בפנים רק מתמטיקה.' },
+    galeon: { name: 'קפטן גליון', tagline: 'הולך אול-אין כמו להסתערות על ספינה: ברעש ובלי ספק.' },
+    shadow: { name: 'ליידי צל', tagline: 'שותקת מעל יד חזקה ומהמרת כשאין לה כלום.' },
+    semyonych: { name: 'הדביבון סמיוניץ׳', tagline: 'ארבעים שנה של פוקר מטבח: מכיר כל תרגיל, ואת חציים המציא בעצמו.' },
+  },
+};
+
+export default he;
