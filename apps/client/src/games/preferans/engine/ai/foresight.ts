@@ -21,8 +21,9 @@ import { scoreGame, type DealScore, type GameScoreInput } from '../scoring.ts';
 // [RU] Относительный путь нарочно: Node запускает движок прямо в тестах и не знает псевдонима @shared.
 // noinspection ES6PreferShortImport
 import { shuffled, type Random } from '../../../../shared/engine/random.ts';
-import { estimateDeclarerTricks, misereRisk } from './evaluate.ts';
+import { misereRisk } from './evaluate.ts';
 import { solveBefore } from './solver.ts';
+import { declarerStrength } from './strength.ts';
 
 // BEGIN 1. Thinking time
 /** How long and how widely a bot may imagine: so many deals at most, and about so many milliseconds. */
@@ -57,32 +58,16 @@ export interface GamePlan {
   readonly rest: CardSet;
   readonly discard: readonly [Card, Card];
   readonly strain: Strain;
-  /** The quick estimate of the ten cards kept (evaluate.ts), with the small corrections below. */
+  /** What the ten cards kept are worth in that strain at one look (strength.ts). */
   readonly estimate: number;
 }
 
 /**
- * The quick estimate plus what it does not see, in small numbers that only settle ties between discards: with a
- * trump suit a void or a single card on the side is worth a ruff; high cards are worth keeping, low ones are not.
+ * Every way to keep ten of twelve cards for a game, the most promising first: 66 discards × the strains asked for,
+ * each rated at one look (strength.ts). `only` restricts the strain (a defender imagining a declarer who named it);
+ * `leads`: the declarer leads to the first trick.
  */
-function planValue(rest: CardSet, strain: Strain): number {
-  let value = estimateDeclarerTricks(rest, strain);
-  for (let suit = 0 as Suit; suit < 4; suit = (suit + 1) as Suit) {
-    if (suit === strain) continue;
-    const ranks = (rest >>> (suit * 8)) & 0xff;
-    let length = 0;
-    for (let rank = 0; rank < 8; rank += 1) if ((ranks & (1 << rank)) !== 0) { length += 1; value += rank * 0.004; }
-    if (strain !== NO_TRUMP && length === 0) value += 0.2;
-    else if (strain !== NO_TRUMP && length === 1 && (ranks & 0x80) === 0) value += 0.08;
-  }
-  return value;
-}
-
-/**
- * Every way to keep ten of twelve cards for a game, the most promising first: 66 discards × the strains asked for.
- * `only` restricts the strain (a defender imagining a declarer who named it).
- */
-export function gamePlans(twelve: CardSet, only: Strain | null = null, limit = 1): GamePlan[] {
+export function gamePlans(twelve: CardSet, only: Strain | null = null, limit = 1, leads: boolean | null = null): GamePlan[] {
   const cards = cardsOf(twelve);
   const strains: readonly Strain[] = only === null ? [0, 1, 2, 3, NO_TRUMP] : [only];
   const plans: GamePlan[] = [];
@@ -92,7 +77,7 @@ export function gamePlans(twelve: CardSet, only: Strain | null = null, limit = 1
       let best: Strain = strains[0];
       let bestValue = -Infinity;
       for (const strain of strains) {
-        const value = planValue(rest, strain);
+        const value = declarerStrength(rest, strain, leads);
         if (value > bestValue + 1e-9) { bestValue = value; best = strain; }
       }
       plans.push({ rest, discard: [cards[i], cards[j]], strain: best, estimate: bestValue });
@@ -101,7 +86,7 @@ export function gamePlans(twelve: CardSet, only: Strain | null = null, limit = 1
   plans.sort((a, b) => b.estimate - a.estimate);
   return plans.slice(0, Math.max(1, limit));
 }
-export const gamePlan = (twelve: CardSet, only: Strain | null = null): GamePlan => gamePlans(twelve, only, 1)[0];
+export const gamePlan = (twelve: CardSet, only: Strain | null = null, leads: boolean | null = null): GamePlan => gamePlans(twelve, only, 1, leads)[0];
 
 /** Ways to keep ten of twelve cards for a misère, the safest first (then the highest cards thrown away). */
 export function miserePlans(twelve: CardSet, limit = 1): { rest: CardSet; discard: readonly [Card, Card] }[] {
@@ -142,7 +127,7 @@ export function imagineDeclaring(hand: CardSet, seat: Seat, lead: Seat, thinking
   const pace = paceOf(thinking);
   while (goesOn(pace, worlds.length)) {
     const cards = shuffled(unknown, thinking.random);
-    const plan = gamePlan(unionOf(hand, setOf(cards.slice(0, 2))));
+    const plan = gamePlan(unionOf(hand, setOf(cards.slice(0, 2))), null, seat === lead);
     const hands = seated(seat, plan.rest, setOf(cards.slice(2, 12)), setOf(cards.slice(12, 22)));
     const tricks = solveBefore({ hands, trump: trumpOf(plan.strain), turn: lead, trick: [], target: seat, targetWants: 'max' }, deadlineOf(pace, worlds.length));
     if (tricks === null) break;
@@ -213,12 +198,13 @@ export function imaginePlans(
 
 // BEGIN 5. A defender
 /**
- * How much weaker than his contract a declarer's quick estimate may look. A declarer names a game he expects to
- * make, so an imagined deal where his cards do not even come near it is not how the cards lie. Set by measurement
- * (preferans-calibrate.mjs): the estimate of real declarers after the talon is at least the level minus this in
- * nine games of ten.
+ * How a declarer's ten cards look at one look (strength.ts) next to the level he named. A declarer names a game he
+ * expects to make, and a higher one when he clearly can: an imagined deal where his cards are much weaker than his
+ * game — or much stronger — is not how the cards lie. Set by measurement (preferans-calibrate.mjs prints the
+ * strength of real declarers minus their level): nine declarers of ten lie between these two numbers.
  */
-export const DECLARER_SLACK = 0.75;
+export const DECLARER_AT_LEAST = -0.35;
+export const DECLARER_AT_MOST = 1.6;
 /** Tries to find a plausible declarer for one imagined deal; after that the strongest one seen is taken. */
 const DECLARER_TRIES = 48;
 
@@ -226,7 +212,7 @@ const DECLARER_TRIES = 48;
  * A defender's view of a declared game: the declarer's tricks in every imagined deal. The twenty-two cards the
  * defender does not see are dealt as twelve to the declarer (his hand with the talon — he keeps the best ten for
  * the strain he named) and ten to the partner; deals where the declarer could not have named this game are thrown
- * away (see DECLARER_SLACK). `partner` is given when its cards are known (the dealer of four looked at them).
+ * away (see DECLARER_AT_LEAST). `partner` is given when its cards are known (the dealer of four looked at them).
  */
 export function imagineDefending(
   hand: CardSet, seat: Seat, declarer: Seat, level: Level, strain: Strain, lead: Seat, thinking: Thinking, partner: CardSet | null = null,
@@ -236,12 +222,16 @@ export function imagineDefending(
   const declarerTricks: number[] = [];
   const pace = paceOf(thinking);
   while (goesOn(pace, declarerTricks.length)) {
-    let chosen: { plan: GamePlan; partnerHand: CardSet } | null = null;
+    // [EN] The first deal whose declarer fits his game; if none of the tries does, the one that came nearest.
+    // [RU] Первый расклад, в котором играющий соответствует своей игре; если не подошёл ни один, берётся ближайший.
+    let chosen: { plan: GamePlan; partnerHand: CardSet; miss: number } | null = null;
     for (let attempt = 0; attempt < DECLARER_TRIES; attempt += 1) {
       const cards = shuffled(unknown, thinking.random);
-      const plan = gamePlan(setOf(cards.slice(0, 12)), strain);
-      if (chosen === null || plan.estimate > chosen.plan.estimate) chosen = { plan, partnerHand: partner ?? setOf(cards.slice(12, 22)) };
-      if (plan.estimate >= level - DECLARER_SLACK) break;
+      const plan = gamePlan(setOf(cards.slice(0, 12)), strain, declarer === lead);
+      const margin = plan.estimate - level;
+      const miss = margin < DECLARER_AT_LEAST ? DECLARER_AT_LEAST - margin : margin > DECLARER_AT_MOST ? margin - DECLARER_AT_MOST : 0;
+      if (chosen === null || miss < chosen.miss) chosen = { plan, partnerHand: partner ?? setOf(cards.slice(12, 22)), miss };
+      if (miss === 0) break;
     }
     if (chosen === null) break;
     const hands: CardSet[] = [0, 0, 0];

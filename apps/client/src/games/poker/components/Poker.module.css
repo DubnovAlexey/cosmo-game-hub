@@ -260,6 +260,9 @@
         не должна разрастаться так, чтобы место рядом с доской дотянулось до доски. */
 .seatName { max-width: 124px; color: var(--bone); font: 400 1.12rem/1.15 var(--quill), cursive; overflow-wrap: break-word; unicode-bidi: plaintext; }
 .seatStack { color: #d9c9a0; font-size: 0.86rem; font-variant-numeric: tabular-nums; white-space: nowrap; unicode-bidi: plaintext; }
+/* [EN] The stack in words on a computer, as a number beside a chip on a phone. [RU] Стек словами на компьютере, числом рядом с фишкой на телефоне. */
+.stackNumber { display: none; align-items: center; gap: 4px; }
+.chip { flex: none; width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #d9455f 0%, #8e0f1c 70%); box-shadow: inset 0 0 0 1px rgba(255, 231, 194, 0.7); }
 /* [EN] «Fold», «all-in», «thinking», «out» — across the cards, so the pod keeps its size.
    [RU] «Фолд», «олл-ин», «думает», «выбыл» — поверх карт, чтобы группа сохраняла размер. */
 .status {
@@ -523,7 +526,10 @@
             the whole cell is too narrow for it. [RU] Самое длинное слово имени задаёт ширину группы, так что слово
             рвётся посередине, только когда ему тесна даже вся клетка. */
     .seatName { max-width: none; font-size: clamp(0.76rem, 3.7vw, 0.95rem); line-height: 1.05; }
-    .seatStack { font-size: 0.78rem; }
+    .seatStack { font-size: 0.8rem; }
+    /* [EN] The words stay for a screen reader, in a box of one pixel. [RU] Слова остаются для экранного диктора, в рамке в один пиксель. */
+    .stackWords { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .stackNumber { display: inline-flex; }
     .status { font-size: 0.84rem; padding: 0 4px 1px; }
     /* [EN] The button and the blinds stand one over the other at the outer corner of the portrait.
        [RU] Баттон и блайнды стоят друг над другом у внешнего угла портрета. */

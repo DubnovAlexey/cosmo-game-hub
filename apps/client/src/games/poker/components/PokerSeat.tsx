@@ -43,8 +43,9 @@ export const PokerSeat: React.FC<PokerSeatProps> = ({
     seat, place, character, stack, bet, reveal, winning, status, onTurn, dealer, smallBlind, bigBlind, open, onToggle,
 }) => {
     const t = usePokerTexts();
+    const pod = useRef<HTMLDivElement>(null);
     const caption = useRef<HTMLParagraphElement>(null);
-    useKeepOnScreen(caption, open && character !== null, character);
+    useKeepOnScreen(caption, pod, open && character !== null, character);
     const yours = character === null;
     const name = character ? t.characters[character].name : t.seat.you;
     const classes = [
@@ -54,7 +55,7 @@ export const PokerSeat: React.FC<PokerSeatProps> = ({
     const statusText = status === null ? null : status === 'out' ? t.seat.out : status === 'folded' ? t.seat.folded : status === 'allIn' ? t.seat.allIn : t.seat.thinking;
     const statusClasses = [styles.status, status === 'allIn' ? styles.statusAllIn : '', status === 'thinking' ? styles.statusThinking : ''].filter(Boolean).join(' ');
     return (
-        <div className={classes} data-wide={place.wide} data-phone={place.phone}>
+        <div ref={pod} className={classes} data-wide={place.wide} data-phone={place.phone}>
             <div className={styles.who}>
                 {character && (
                     <button type="button" className={styles.portrait} aria-label={t.seat.about(name)} aria-expanded={open} onClick={onToggle}>
@@ -70,9 +71,15 @@ export const PokerSeat: React.FC<PokerSeatProps> = ({
                 </span>
                 <div className={styles.plaque}>
                     <span className={styles.seatName}>{name}</span>
-                    <span className={styles.seatStack}>{t.seat.stack(stack)}</span>
+                    {/* [EN] A phone shows the chips as a number beside a chip: «1 500 в стеке» in some languages is
+                             wider than the whole place. A screen reader hears the full phrase everywhere.
+                        [RU] Телефон показывает фишки числом рядом с фишкой: «1 500 в стеке» на некоторых языках шире
+                             всего места. Экранный диктор везде слышит полную фразу. */}
+                    <span className={styles.seatStack}>
+                        <span className={styles.stackWords}>{t.seat.stack(stack)}</span>
+                        <span className={styles.stackNumber} aria-hidden="true"><i className={styles.chip} />{stack}</span>
+                    </span>
                 </div>
-                {open && character && <p ref={caption} className={styles.bubble} role="note">{t.characters[character].tagline}</p>}
             </div>
             <div className={styles.hand}>
                 <div className={styles.hole}>
@@ -85,6 +92,9 @@ export const PokerSeat: React.FC<PokerSeatProps> = ({
                     {bet !== null && <span className={styles.bet}><span className={styles.chips} aria-hidden="true"><i /><i /><i /></span>{bet}</span>}
                 </div>
             </div>
+            {/* [EN] The line opens under the whole pod, centred; shared/hooks/useKeepOnScreen keeps it on the screen.
+                [RU] Реплика раскрывается под всей группой, по центру; shared/hooks/useKeepOnScreen держит её на экране. */}
+            {open && character && <p ref={caption} className={styles.bubble} role="note">{t.characters[character].tagline}</p>}
         </div>
     );
 };

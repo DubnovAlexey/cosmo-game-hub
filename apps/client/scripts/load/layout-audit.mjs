@@ -74,7 +74,7 @@ const TEXT_AUDIT = `((rootSelector) => {
       const text = node.textContent.replace(/\\s+/g, ' ').trim();
       if (!text) continue;
       const owner = node.parentElement;
-      if (!owner || owner.closest('[class*="card"], [class*="Card"], option, script, style, [aria-hidden="true"]')) continue;
+      if (!owner || owner.closest('[class*="card"], [class*="Card"], option, script, style')) continue;
       const st = getComputedStyle(owner);
       if (st.visibility === 'hidden' || parseFloat(st.opacity) < 0.05) continue;
       // [EN] Text kept only for screen readers (a box of one pixel) is not on the screen at all. [RU] Текст только для экранного диктора (рамка в один пиксель) на экране не виден вовсе.
@@ -144,7 +144,20 @@ const TEXT_AUDIT = `((rootSelector) => {
   } finally {
     lift.remove();
   }
-  if (document.documentElement.scrollWidth > Math.round(screenWidth) + 1) found.push('the page is wider than the screen: ' + document.documentElement.scrollWidth + ' > ' + Math.round(screenWidth));
+  if (document.documentElement.scrollWidth > Math.round(screenWidth) + 1) {
+    // [EN] Name what sticks out: the widest thing that no box around it cuts off. [RU] Назвать, что торчит: самое широкое из того, что не обрезает ни одна рамка вокруг.
+    let widest = null;
+    for (const el of document.body.querySelectorAll('*')) {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.right <= screenWidth + 1) continue;
+      let cut = false;
+      for (let box = el.parentElement; box && box !== document.body; box = box.parentElement) {
+        if (getComputedStyle(box).overflowX !== 'visible' && box.getBoundingClientRect().right <= screenWidth + 1) { cut = true; break; }
+      }
+      if (!cut && (!widest || r.right > widest.right)) widest = { right: r.right, left: r.left, name: label(el) };
+    }
+    found.push('the page is wider than the screen: ' + document.documentElement.scrollWidth + ' > ' + Math.round(screenWidth) + (widest ? ' (' + widest.name + ' ' + Math.round(widest.left) + '…' + Math.round(widest.right) + ')' : ''));
+  }
   return found;
 })`;
 

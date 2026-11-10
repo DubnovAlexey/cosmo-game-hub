@@ -85,7 +85,9 @@ function ChoiceGroup<T extends string | number>({ id, title, choices, value, lab
                 <p className={styles.setupLabel}>{title}</p>
                 <InfoButton open={open} controls={id} label={t.setup.about(title)} onToggle={onInfo} />
             </div>
-            <div className={styles.infoCard} id={id}>{info}</div>
+            {/* [EN] role="note": an explanation of the option; under the mouse it lies over the lines below on purpose.
+                [RU] role="note": пояснение к опции; под мышью оно нарочно ложится поверх строк ниже. */}
+            <div className={styles.infoCard} id={id} role="note">{info}</div>
             <div className={styles.choiceRow}>
                 {choices.map(choice => (
                     <button key={String(choice.value)} type="button" title={hint(choice.value)} disabled={!choice.ready}
@@ -117,7 +119,7 @@ const OptionRow: React.FC<{ id: OptionId; table: TableConfig; open: boolean; onI
                 <InfoButton open={open} controls={infoId} label={t.setup.about(text.name)} onToggle={onInfo} />
             </div>
             {closed && closed.kind !== 'notReady' && <p id={`${infoId}-why`} className={styles.closedNote}>{t.closed(closed)}</p>}
-            <div className={styles.infoCard} id={infoId}><Explanation text={text} t={t} /></div>
+            <div className={styles.infoCard} id={infoId} role="note"><Explanation text={text} t={t} /></div>
         </div>
     );
 };

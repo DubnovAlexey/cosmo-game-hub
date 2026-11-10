@@ -30,6 +30,7 @@ import {
 } from './foresight.ts';
 import { knowledgeOf, sampleHands } from './knowledge.ts';
 import { scoreMoves } from './solver.ts';
+import { declarerStrength } from './strength.ts';
 
 // BEGIN 1. Options
 /**
@@ -205,7 +206,7 @@ function chooseDiscard(state: DealState, seat: Seat, options: BotOptions): Actio
     return { type: 'discard', seat, cards: plans[chosen].discard };
   }
   // A game: the most promising discards (each with its strain), compared by what their best contract is worth.
-  const plans = gamePlans(twelve, null, 5);
+  const plans = gamePlans(twelve, null, 5, seat === lead);
   const thinking = thinkingOf(options, 0.5);
   if (!thinking) return { type: 'discard', seat, cards: plans[0].discard };
   const required = requiredBid(state);
@@ -246,7 +247,7 @@ function chooseContract(state: DealState, seat: Seat, options: BotOptions): Acti
   const required = requiredBid(state);
   // The two strains the quick estimate likes best: the cards are already chosen, only the name of the game is open.
   const strains = ([0, 1, 2, 3, 4] as Strain[])
-    .map(strain => ({ strain, estimate: estimateDeclarerTricks(hand, strain) }))
+    .map(strain => ({ strain, estimate: declarerStrength(hand, strain, seat === state.firstHand) }))
     .sort((a, b) => b.estimate - a.estimate)
     .slice(0, 2);
   const known = unionOf(hand, setOf(state.discards));

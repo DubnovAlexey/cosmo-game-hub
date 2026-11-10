@@ -110,6 +110,25 @@ if (isMainThread) {
         const overtricks = games.map(row => row.declarerTricks - row.level);
         console.log(`declarer's tricks minus the level (solver): mean ${(overtricks.reduce((a, b) => a + b, 0) / overtricks.length).toFixed(2)}; short ${pct(overtricks.filter(v => v < 0).length, overtricks.length)} · exact ${pct(overtricks.filter(v => v === 0).length, overtricks.length)} · over ${pct(overtricks.filter(v => v > 0).length, overtricks.length)}`);
     }
+    // [EN] What the decisions are worth in whists by the table's own scoring (foresight.ts worth): the declarer's
+    //      game, and a whist against letting the game go. A decision is right when it pays on average, whatever
+    //      the share of failures looks like.
+    // [RU] Чего решения стоят в вистах по правилам самого стола (foresight.ts worth): игра играющего и вист против
+    //      того, чтобы отпустить игру. Решение верно, когда оно окупается в среднем, как бы ни выглядела доля неудач.
+    const mean = list => (list.length ? (list.reduce((a, b) => a + b, 0) / list.length).toFixed(1) : '—');
+    console.log(`worth in whists per game: the declarer ${mean(games.map(row => row.declarerWorth))} (played ${mean(played.map(row => row.declarerWorth))}, not whisted ${mean(games.filter(row => !row.played).map(row => row.declarerWorth))})`);
+    const lone = played.filter(row => row.whisters === 1);
+    const pair = played.filter(row => row.whisters === 2);
+    console.log(`a whist against letting the game go: a lone whister ${mean(lone.map(row => row.whistGain))} over ${lone.length} games · two whisters ${mean(pair.map(row => row.whistGain))} each over ${pair.length} games`);
+    console.log(`the same by level, lone whister: ${[6, 7, 8, 9].map(level => { const list = lone.filter(row => row.level === level); return `${level}: ${mean(list.map(row => row.whistGain))} (${list.length})`; }).join(' · ')}`);
+    const viewed = games.filter(row => row.imagined);
+    if (viewed.length > 0) {
+        const real = viewed.map(row => row.declarerTricks - row.level);
+        const dreamt = viewed.flatMap(row => row.imagined.map(tricks => tricks - row.level));
+        const share = (list, test) => pct(list.filter(test).length, list.length);
+        console.log(`the declarer's tricks minus the level — real: mean ${mean(real)}, short ${share(real, v => v < 0)}, exact ${share(real, v => v === 0)}, over ${share(real, v => v > 0)}`);
+        console.log(`                              a defender imagines: mean ${mean(dreamt)}, short ${share(dreamt, v => v < 0)}, exact ${share(dreamt, v => v === 0)}, over ${share(dreamt, v => v > 0)}`);
+    }
     const seconds = parts.reduce((sum, part) => sum + part.botSeconds, 0);
     console.log(`bots' thinking before the play: ${(1000 * seconds / Math.max(1, auctions.length)).toFixed(0)} ms per deal`);
     console.log(`\n${auctions.length} deals in ${((Date.now() - started) / 1000).toFixed(1)} s on ${tasks.length} threads`);
@@ -119,7 +138,7 @@ if (isMainThread) {
     const { ROSTER } = await import('../../src/games/preferans/characters/roster.ts');
     const {
         newDeal, applyAction, chooseAction, createRandom, solveWithStats, bestStrain, misereRisk, cardsOf, removeCard, rankOf,
-        estimateDeclarerTricks, NEUTRAL_STYLE, SOCHI,
+        estimateDeclarerTricks, scoreGame, worth, tricksRound, imagineDefending, otherSeats, NEUTRAL_STYLE, SOCHI,
     } = engine;
     const { from, count, players, styles, foresight, skipPotential } = workerData;
     let botSeconds = 0;
@@ -199,6 +218,19 @@ if (isMainThread) {
             row.declarerTricks = tricks;
             row.estimateAfter = estimateDeclarerTricks(state.hands[declarer], contract.strain);
             row.made = tricks >= contract.level;
+            // [EN] The score of this game with the solver's tricks, and of the same game let go without a whist.
+            // [RU] Запись этой игры со взятками решателя и той же игры, отпущенной без виста.
+            const whisters = whist?.whisters ?? [];
+            const scored = scoreGame({ declarer, level: contract.level, tricks: tricksRound(declarer, tricks), whisters, halfWhister: whist?.halfWhister ?? null, played: row.played }, state.rules);
+            const letGo = scoreGame({ declarer, level: contract.level, tricks: [0, 0, 0], whisters: [], halfWhister: null, played: false }, state.rules);
+            row.declarerWorth = worth(scored, declarer, state.rules);
+            if (row.played && whisters.length > 0) row.whistGain = whisters.reduce((sum, seat) => sum + worth(scored, seat, state.rules) - worth(letGo, seat, state.rules), 0) / whisters.length;
+            // [EN] What the first defender imagines about this declarer (the same call the bot makes before it whists).
+            // [RU] Что первый защитник воображает об этом играющем (тот же вызов, что бот делает перед вистом).
+            if (seed % 3 === 0) {
+                const defender = otherSeats(declarer)[0];
+                row.imagined = imagineDefending(deal.hands[defender], defender, declarer, contract.level, contract.strain, lead, { random: createRandom(seed ^ 0x5eed), samples: 12, timeBudgetMs: 60000 });
+            }
             row.defenceMeets = 10 - tricks >= obligation;
             row.obligationMet = row.defenceMeets;
         } else if (row.mode === 'misere') {

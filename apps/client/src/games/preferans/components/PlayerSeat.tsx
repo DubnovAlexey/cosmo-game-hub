@@ -90,17 +90,24 @@ const Portrait: React.FC<{ id: CharacterId; name: string; thinking: boolean; ali
     const t = useTexts();
     const [open, setOpen] = useState(false);
     const bioId = useId();
-    // [EN] The biography opens under the portrait and is then moved sideways into the screen: under the top seat of
-    //      a phone it used to run past the right edge and widen the page.
-    // [RU] Биография раскрывается под портретом и затем сдвигается вбок внутрь экрана: под верхним местом на
+    // [EN] The biography opens under the portrait, moved sideways so it lies inside the screen: under the top seat
+    //      of a phone it used to run past the right edge and widen the page.
+    // [RU] Биография раскрывается под портретом со сдвигом вбок, чтобы лечь внутрь экрана: под верхним местом на
     //      телефоне она уходила за правый край и расширяла страницу.
+    const wrap = useRef<HTMLDivElement>(null);
     const bio = useRef<HTMLDivElement>(null);
-    useKeepOnScreen(bio, open, id);
+    useKeepOnScreen(bio, wrap, open, id, alignRight ? 'end' : 'start');
+    // [EN] Escape or a press anywhere outside closes it, so two biographies never lie on each other.
+    // [RU] Escape или нажатие где угодно снаружи закрывает её, поэтому две биографии никогда не лежат друг на друге.
     useEffect(() => {
         if (!open) return;
         const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpen(false); };
+        const onPress = (event: PointerEvent) => {
+            if (event.target instanceof Node && !wrap.current?.contains(event.target)) setOpen(false);
+        };
         window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
+        window.addEventListener('pointerdown', onPress);
+        return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('pointerdown', onPress); };
     }, [open]);
     useEffect(() => { setOpen(false); }, [id]);
     // [EN] Until the picture has loaded, the frame shows a monogram on velvet. [RU] Пока картинка не загрузилась, в рамке монограмма на бархате.
@@ -110,7 +117,7 @@ const Portrait: React.FC<{ id: CharacterId; name: string; thinking: boolean; ali
     const text = t.characters[id];
     const initial = (text.name.trim().split(/\s+/).pop() ?? '?').charAt(0).toUpperCase();
     return (
-        <div className={styles.portraitWrap}>
+        <div ref={wrap} className={styles.portraitWrap}>
             <button type="button" className={`${styles.portrait} ${thinking ? styles.portraitThinking : ''} ${loaded ? '' : styles.portraitEmpty}`}
                 aria-expanded={open} aria-controls={bioId} aria-label={t.portrait.about(name)} onClick={() => setOpen(value => !value)}>
                 {!loaded && <span className={styles.monogram} aria-hidden="true"><span>{initial}</span></span>}
