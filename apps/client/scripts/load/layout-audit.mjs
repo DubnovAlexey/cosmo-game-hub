@@ -194,6 +194,9 @@ function note(where, list) {
     for (const problem of list) {
         const key = problem.replace(/-?\d+…-?\d+ of \d+/, '…').replace(/\d[\d\s ]*/g, '#');
         const entry = problems.get(key) ?? { problem, places: [] };
+        // [EN] A new kind of problem is printed at once, so a long run that is stopped still tells what it saw.
+        // [RU] Новый вид проблемы печатается сразу, поэтому долгий прогон, который остановили, всё равно расскажет, что видел.
+        if (entry.places.length === 0) console.log(`  ! ${problem}  [${where}]`);
         if (entry.places.length < 400) entry.places.push(where);
         problems.set(key, entry);
     }
