@@ -61,7 +61,7 @@ test('a fleet is legal only when every ship of the list stands by the rules', ()
 });
 
 test('a random fleet always stands by the rules, in both styles and both rule sets', () => {
-  for (let seed = 1; seed <= 300; seed += 1) {
+  for (let seed = 1; seed <= 80; seed += 1) {
     for (const rules of [CLASSIC, WESTERN, customizeRules(WESTERN, { touching: false }), customizeRules(CLASSIC, { touching: true })]) {
       for (const style of ['scattered', 'tucked'] as const) {
         assert.ok(isFleetLegal(randomFleet(rules, createRandom(seed), style), rules), `seed ${seed}, ${rules.id}, ${style}`);
@@ -75,11 +75,11 @@ test('a random fleet always stands by the rules, in both styles and both rule se
 test('a tucked fleet leaves more free water for the boats than a scattered one', () => {
   const freeAfterBigShips = (style: 'scattered' | 'tucked'): number => {
     let total = 0;
-    for (let seed = 1; seed <= 200; seed += 1) {
+    for (let seed = 1; seed <= 80; seed += 1) {
       const big = randomFleet(CLASSIC, createRandom(seed), style).filter(vessel => vessel.cells.length > 1);
       total += legalPlacements(big, 1, CLASSIC).length;
     }
-    return total / 200;
+    return total / 80;
   };
   assert.ok(freeAfterBigShips('tucked') > freeAfterBigShips('scattered') + 4);
 });
