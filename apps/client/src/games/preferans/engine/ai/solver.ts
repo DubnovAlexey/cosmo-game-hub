@@ -284,6 +284,20 @@ export function solve(position: SolverPosition): number {
 }
 
 /**
+ * The same exact number, but the search gives up once `deadline` (a `Date.now()` time) passes and returns null:
+ * a bot that imagines many deals before it bids or whists (foresight.ts) drops that one deal and decides with the
+ * others, so a slow phone never freezes on a hard one.
+ */
+export function solveBefore(position: SolverPosition, deadline: number): number | null {
+  try {
+    return runRoot(new Search(position, deadline), position, null);
+  } catch (error) {
+    if (error === STOPPED) return null;
+    throw error;
+  }
+}
+
+/**
  * Value of every legal card of the player to move; equivalent cards get the same value. With a `deadline`
  * (a `Date.now()` time) the search gives up once it passes and returns null: the bot then decides with the
  * samples it already has, so a slow phone never freezes on one hard deal.

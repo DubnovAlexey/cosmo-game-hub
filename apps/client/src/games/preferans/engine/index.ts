@@ -19,4 +19,5 @@ export * from './table.ts';
 export * from './ai/solver.ts';
 export * from './ai/knowledge.ts';
 export * from './ai/evaluate.ts';
+export * from './ai/foresight.ts';
 export * from './ai/bot.ts';
