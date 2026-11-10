@@ -25,6 +25,9 @@
     position: relative;
     isolation: isolate;
     min-height: 100vh;
+    /* [EN] Nothing may widen the page sideways (a seat pod at the edge of a small screen). [RU] Ничто не должно расширять страницу вбок (группа места у края маленького экрана). */
+    overflow-x: hidden;
+    overflow-x: clip;
     padding: 18px clamp(10px, 2.5vw, 28px) 40px;
     color: var(--bone);
     font-family: var(--print), serif;
@@ -209,6 +212,8 @@
 .badges { position: absolute; top: -6px; right: -14px; z-index: 3; display: flex; gap: 3px; pointer-events: none; }
 /* [EN] Yours sit at the right end of your plaque. [RU] Ваши — у правого края вашей таблички. */
 .badgesYours { top: auto; bottom: 6px; right: -30px; }
+/* [EN] On the right-hand seats they sit on the left of the portrait, toward the table. [RU] У правых мест — слева от портрета, со стороны стола. */
+.badgesWest { right: auto; left: -14px; }
 .dealer, .blind {
     display: grid;
     place-items: center;

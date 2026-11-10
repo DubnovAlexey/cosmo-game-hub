@@ -29,10 +29,12 @@ interface PokerTableProps {
 }
 
 /** Seats round an ellipse, clockwise from you at the bottom; bets lie on the way to the middle. */
-function positions(count: number, tall: boolean): { x: number; y: number; bx: number; by: number }[] {
-    // [EN] A phone's oval is narrow: the side seats move in, so their plaques stay on the screen.
-    // [RU] Овал телефона узкий: боковые места сдвигаются внутрь, чтобы их таблички оставались на экране.
-    const rx = tall ? 33 : 45;
+function positions(count: number, tall: boolean, narrow: boolean): { x: number; y: number; bx: number; by: number }[] {
+    // [EN] A phone's oval is narrow and a tablet's margins are thin: the side seats move in, so nothing sticks out
+    //      past the screen (an overflow widens the page and makes a tap land below its target).
+    // [RU] Овал телефона узкий, а поля планшета тонкие: боковые места сдвигаются внутрь, чтобы ничего не выходило за
+    //      экран (выступ расширяет страницу, и касание попадает ниже цели).
+    const rx = tall ? 33 : narrow ? 37 : 45;
     const ry = tall ? 43 : 41;
     return Array.from({ length: count }, (_, index) => {
         const angle = ((90 + (index * 360) / count) * Math.PI) / 180;
@@ -44,15 +46,16 @@ function positions(count: number, tall: boolean): { x: number; y: number; bx: nu
 
 const cardText = (card: Card): string => `${rankLabel(rankOf(card))}${SUIT_SYMBOLS[suitOf(card)]}`;
 
-function useTall(): boolean {
-    const [tall, setTall] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches);
+function useMatch(query: string): boolean {
+    const [matches, setMatches] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches);
     useEffect(() => {
-        const query = window.matchMedia('(max-width: 700px)');
-        const update = () => setTall(query.matches);
-        query.addEventListener('change', update);
-        return () => query.removeEventListener('change', update);
-    }, []);
-    return tall;
+        const list = window.matchMedia(query);
+        const update = () => setMatches(list.matches);
+        update();
+        list.addEventListener('change', update);
+        return () => list.removeEventListener('change', update);
+    }, [query]);
+    return matches;
 }
 
 export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, texts: t }) => {
@@ -61,7 +64,8 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
     const [openSeat, setOpenSeat] = useState<number | null>(null);
     const game = usePoker(!menuOpen);
     const { table, cast } = game;
-    const tall = useTall();
+    const tall = useMatch('(max-width: 700px)');
+    const narrow = useMatch('(max-width: 899px)');
     const format = (chips: number): string => chips.toLocaleString(language);
     const who = (seat: number): Who => (seat === HUMAN_SEAT
         ? { name: t.seat.you, female: false, you: true }
@@ -114,7 +118,7 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
     const openMenu = () => { setSaved(loadPokerSave()); setMenuOpen(true); };
 
     const legal = table && table.turn === HUMAN_SEAT ? legalActions(table) : null;
-    const spots = table ? positions(table.seats.length, tall) : [];
+    const spots = table ? positions(table.seats.length, tall, narrow) : [];
     const showdown = table?.result?.showdown ?? false;
     const savedTime = game.savedAt !== null ? new Date(game.savedAt).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' }) : null;
 
@@ -183,7 +187,7 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
                                         )}
                                         {/* [EN] The button and the blinds sit on the frame, outside the round picture that would clip them.
                                             [RU] Баттон и блайнды сидят на рамке, вне круглой картинки, которая бы их обрезала. */}
-                                        <span className={`${styles.badges} ${id ? '' : styles.badgesYours}`} aria-hidden="true">
+                                        <span className={`${styles.badges} ${id ? '' : styles.badgesYours} ${id && spot.x > 65 ? styles.badgesWest : ''}`} aria-hidden="true">
                                             {table.button === index && <span className={styles.dealer} title={t.seat.dealer}>D</span>}
                                             {table.smallBlindSeat === index && <span className={styles.blind} title={t.seat.smallBlind}>{t.seat.smallBlind}</span>}
                                             {table.bigBlindSeat === index && <span className={styles.blind} title={t.seat.bigBlind}>{t.seat.bigBlind}</span>}

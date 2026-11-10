@@ -92,7 +92,9 @@ const AUDIT = `(() => {
     const minimum = ${MOUSE} ? (card ? 18 : 24) : (card ? 24 : 36);
     if (Math.min(r.width * (card ? 0.6 : 1), r.height) < minimum) found.push((card ? 'card ' : 'control ') + name(el) + ' is small: ' + Math.round(r.width) + '×' + Math.round(r.height));
   }
-  if (document.documentElement.scrollWidth > innerWidth + 1) found.push('the page scrolls sideways: ' + document.documentElement.scrollWidth + ' > ' + innerWidth);
+  // A mobile browser widens innerWidth itself when something sticks out, so the page is compared with the screen.
+  const screenWidth = Math.round(window.visualViewport?.width ?? innerWidth);
+  if (document.documentElement.scrollWidth > screenWidth + 1 || innerWidth > screenWidth + 1) found.push('the page is wider than the screen: ' + document.documentElement.scrollWidth + ' > ' + screenWidth);
   return found;
 })()`;
 async function audit(where) {

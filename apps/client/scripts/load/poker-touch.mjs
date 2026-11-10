@@ -75,7 +75,9 @@ const AUDIT = `(() => {
     const slider = el.type === 'range';
     if (Math.min(slider ? r.height : r.width, r.height) < minimum) found.push('control ' + name(el) + ' is small: ' + Math.round(r.width) + '×' + Math.round(r.height));
   }
-  if (document.documentElement.scrollWidth > innerWidth + 1) found.push('the page scrolls sideways: ' + document.documentElement.scrollWidth + ' > ' + innerWidth);
+  // A mobile browser widens innerWidth itself when something sticks out, so the page is compared with the screen.
+  const screenWidth = Math.round(window.visualViewport?.width ?? innerWidth);
+  if (document.documentElement.scrollWidth > screenWidth + 1 || innerWidth > screenWidth + 1) found.push('the page is wider than the screen: ' + document.documentElement.scrollWidth + ' > ' + screenWidth);
   return found;
 })()`;
 async function audit(where) {
@@ -111,7 +113,11 @@ try {
     })`);
     const key = JSON.stringify(state);
     if (key !== lastKey) { lastKey = key; lastChange = Date.now(); }
-    if (Date.now() - lastChange > 30000) { await shot('stall'); throw new Error(`STALL: ${key}`); }
+    if (Date.now() - lastChange > 30000) {
+      await shot('stall');
+      console.log(misses.length ? `MISSES before the stall:\n  ${misses.slice(-8).join('\n  ')}` : 'no misses before the stall');
+      throw new Error(`STALL: ${key}`);
+    }
     if (state.over) { await audit('tournament over'); console.log('the tournament ended'); break; }
     if (state.next) {
       await audit('result');
