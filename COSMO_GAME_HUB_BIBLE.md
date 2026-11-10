@@ -51,7 +51,9 @@ cosmo-game-hub/
         │   ├── utils/            withBase (ссылки под base URL)
         │   └── tests/            navigation.test.mjs
         ├── shared/               код для двух и более игр
-        │   ├── components/       GameOverOverlay, LanguageSwitch
+        │   ├── components/       GameOverOverlay, LanguageSwitch, CharacterCard
+        │   ├── characters/       roster.ts · texts/ (ru en he es fr)
+        │   ├── hooks/            useKeepOnScreen.ts
         │   ├── i18n/             languages.ts, useLanguage.ts — выбор и запоминание языка
         │   ├── engine/           random.ts — случайные числа по зерну
         │   ├── utils/            storageEngine.ts — сохранения и результаты
@@ -284,7 +286,7 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
   - Вынужденный вист на «Сталинграде» бот отдаёт без раздумий.
   - Безнадёжную игру бот уводит, только если ожидаемый недобор не меньше разрешённого ухода минус полвзятки.
 - **Известные недостатки.**
-  - Боты ошибаются в оценке руки, и это видно на замере 10.11.2026 (`scripts/load/preferans-calibrate.mjs`, 3000 раздач, точный решатель вместо розыгрыша): распасы — 34% раздач, и в 71% из них кто-то мог сыграть шестерную; 71% игр проходят без виста, хотя в 45% из них защита взяла бы своё; когда вистуют, обязательство недобрано в 28% случаев, а играющий делает игру в 61%. Калибровка стоит в «Открытых задачах».
+  - Быстрая оценка руки ошибалась (замер 10.11.2026: 71% игр проходили без виста, играющий делал игру в 61%). С того же дня решения до розыгрыша принимает воображение с точным решателем, а оценку поправляет таблица, выученная у решателя, — раздел 21.
   - У PIMC два классических изъяна:
     - «слияние стратегий» (strategy fusion): метод думает, что в каждом раскладе сможет сыграть по-своему, как будто знает расклад;
     - «нелокальность» (non-locality): метод не учитывает, что прошлые ходы соперников намекают на их карты.
@@ -460,7 +462,7 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 
 - **Преферанс:**
   - вычитка переводов на иврит, испанский и французский носителями языка;
-  - калибровка торговли и виста ботов и решений сдающего (вист сдающего, мизер пополам) по таблицам `scripts/load/preferans-calibrate.mjs`: цель — играющий делает игру примерно в 80% случаев, вист недобирает не чаще чем в 15%, распасов меньше, а замер повторяется после каждой правки;
+  - решения сдающего вчетвером (вист сдающего, мизер пополам) пока решаются по-старому или по мерке защитника: измерить их отдельным замером; после любой правки ботов повторять `scripts/load/preferans-calibrate.mjs`;
   - точное решение 66 раскладов в открытом висте и на мизере;
   - фоны и рамки по промптам из `DESIGN_CONCEPT_RU.md`, если Алексей их сгенерирует;
   - игра по сети.
@@ -472,7 +474,7 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 - **Покер:**
   - калибровка ботов против людей (сейчас манеры измерены только друг против друга, `scripts/load/poker-bots.mjs`) и диапазоны соперников точнее — по позиции и размеру ставок;
   - кэш-игра с докупкой и свои уровни блайндов рядом с турниром;
-  - общий компонент карты с преферансом и общий список персонажей в `shared/` вместо копий портретов и рубашки;
+  - общий компонент игральной карты с преферансом вместо двух своих (герои уже общие — раздел 21); выбор соперников в меню покера, как в преферансе;
   - игра по сети.
 - **Инструменты:**
   - проверка границ импорта (ESLint `no-restricted-imports`);
@@ -574,6 +576,49 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 - **Стол** (`components/`) — тот же клуб, что у преферанса: овал бутылочно-изумрудного сукна в лакированном борту, места по часовой стрелке от вас внизу (портрет с табличкой, карты ближе к середине), ставки на сукне, доска и банк посередине, итог раздачи в лотке под столом, выигравшая пятёрка подсвечена. На телефоне овал вертикальный и вытягивается с числом игроков. Портреты и рубашка скопированы из преферанса: игры не импортируют друг друга.
 - **Проверки.** 19 тестов покера (всего 112). `scripts/load/poker-touch.mjs` играет пальцем на телефоне и планшете и мышью на компьютере; `npm run load` запускает и его, и `poker-bots.mjs`.
 
+### 21. Общие герои, столы без наложений и боты с воображением (10.11.2026, вечер)
+
+- **Повод.** Алексей прислал снимок покера с телефона: реплика героя обрезана краем экрана, карты соседей лежат на банке, ставка спрятана под картами. Прежние проверки этого не видели: они проверяли только кнопки.
+- **Стол покера — сетка на любом экране.**
+  - `games/poker/components/seating.ts` даёт каждому игроку именованное место сетки: дальняя сторона (`nw`, `n`, `ne`), ряд с доской (`w`, доска, `e`), ближняя сторона (`sw`, вы, `se`). На компьютере и планшете боковые места стоят рядом с доской, на телефоне доска занимает всю ширину, и боковые места уходят в углы.
+  - Сетка не умеет класть одно на другое, поэтому наложений нет по построению: при любой ширине, числе игроков и длине имён. Овал — только сукно позади сетки.
+  - Место не меняет размер во время раздачи: у ставки своя строка внутри места, а «фолд», «олл-ин», «думает» пишутся поверх карт.
+  - На телефоне шапка и лоток решений компактные: стол вместе с лотком помещается на один экран. Стек показан числом рядом с фишкой («1 500 в стеке» на иврите шире всего места).
+- **Подпись, которая раскрывается рядом с чем-то** (биография под портретом, карточка героя), держится на экране хуком `shared/hooks/useKeepOnScreen.ts`.
+  - Сдвиг считается до того, как подпись хоть раз встанет на своё место: на время измерения она приколота к углу экрана невидимой.
+  - Причина: даже одна раскладка с подписью за краем заставляет браузер телефона уменьшить всю страницу, и страница остаётся уменьшенной (стол 320 px становился 367).
+- **Проверка раскладки** `scripts/load/layout-audit.mjs` (входит в `npm run load`) смотрит на столы так, как смотрит человек: 20 экранов (телефоны стоя и лёжа, планшеты, компьютеры), любое число игроков, пять языков, раскрыта каждая карточка.
+  - Ловит: текст за экраном; текст, обрезанный рамкой; текст под чем-то нарисованным; слово, разорванное между строк; текст, вылезший из своей таблички; место на доске, банке или ставке; страницу шире экрана (и называет, что торчит).
+  - Итог после правок: 1339 проверок, замечаний нет.
+- **Герои общие для всех игр.** Вопрос Алексея: одни и те же соперники в преферансе и покере — не вынести ли их? Вынесены.
+  - `shared/characters/roster.ts` — кто они: запись, грамматический род, обитатель или гость, путь к картинке. `shared/characters/texts/{ru,en,he,es,fr}.ts` — имена и биографии. Картинки лежат один раз в `public/shared/characters/` (копии покера удалены).
+  - В игре остаётся только её манера: `games/preferans/characters/roster.ts` (смелость, вист, мизер, время раздумий), `games/poker/characters.ts` (плотность, агрессия, блеф) и покерные реплики в словарях покера, `games/chess/components/ChessOpponent.tsx` (случайный герой на партию, кнопка «Другой соперник»).
+  - Правило двух (раздел 5) выполнено: героями пользуются три игры.
+- **Портрет героя ведёт себя одинаково везде** (`shared/components/CharacterCard.tsx`, решение Алексея: «окошечки совсем маленькие… непонятно, кого ты выбираешь»).
+  - За столом: под мышью вся картинка вырастает в 2,5 раза и уходит обратно, когда мышь убрали; нажатие раскрывает карточку героя (картинка, имя, биография, реплика этой игры); Escape или нажатие в стороне закрывает её.
+  - В выборе соперников: рядом с портретом встаёт та же карточка в стиле логова вместо простой подсказки браузера. Место карточки считает `shared/utils/placeBeside.ts`: справа, иначе слева, на телефоне — под или над портретом.
+  - Палец не умеет наводить: на телефоне карточку раскрывает касание.
+- **Каталог игр.** Под мышью карточка игры выходит вперёд и вырастает в полтора раза целиком (а не картинка внутри неё); крайние карточки растут от своего края и не уходят за экран. Щелчок по обложке открывает игру так же, как кнопка «Играть».
+- **Боты преферанса решают воображением** (`games/preferans/engine/ai/foresight.ts`).
+  - До розыгрыша бот делает то же, что уже делал с каждой картой: сдаёт невидимые карты наугад так, как они могли лечь, даёт точному решателю сыграть каждый расклад и считает. Так решаются заявка, мизер, снос, контракт и вист.
+  - Цена решения считается правилами самого стола (`worth`): висты, пуля и гора одной раздачи сводятся в одно число так же, как при окончательном расчёте. Поэтому бот одинаково верно решает в Сочинке, Ленинградке и Ростовке.
+  - Защитник воображает только такого играющего, который мог назвать эту игру. Для этого нужна оценка руки «с одного взгляда»: `engine/ai/strength.ts` — быстрая оценка плюс поправки, выученные у решателя (`strengthTable.ts`, пишет `scripts/load/preferans-learn.mjs`, 300 000 примеров). Ошибка оценки упала с 1,22 до 0,79 взятки.
+  - Медленное устройство не зависает: у воображения тот же бюджет времени и те же жёсткие пределы, что у хода картой; если расклады не успели — отвечает прежняя быстрая оценка.
+- **Замер** (`scripts/load/preferans-calibrate.mjs`, 3000 раздач, точный решатель вместо розыгрыша):
+
+  | | было | стало |
+  |---|---|---|
+  | распасы | 37% | 16% |
+  | играющий делает игру, когда вистуют | 64% | 85% |
+  | игра проходит без виста | 68% | 39% |
+  | вист недобирает обязательство | 32% | 30% |
+  | чего стоит одиночный вист против «отпустить игру» | — | +3,6 виста |
+  | время раздумий до розыгрыша, компьютер | 0 | около 0,2 с на решение |
+
+  - Прежняя цель «вист недобирает не чаще чем в 15%» снята: это была не та мерка. Вист с риском недобора выгоден, если в среднем приносит больше, чем отпущенная игра, — и замер теперь печатает именно эту цену.
+  - Защитник воображает играющего таким, какой он есть: его взятки сверх заказа сходятся с настоящими (14% / 41% / 45% против 13% / 41% / 47%).
+- **Проверки.** `npm test` — 130 теста. Новые: места покера на обоих экранах, сдвиг подписи внутрь экрана, место всплывающей карточки, пограничная рука в торговле.
+
 [↑ К выбору языка](#top)
 
 ---
@@ -623,7 +668,9 @@ cosmo-game-hub/
         │   ├── utils/            withBase (links under the base URL)
         │   └── tests/            navigation.test.mjs
         ├── shared/               code for two or more games
-        │   ├── components/       GameOverOverlay, LanguageSwitch
+        │   ├── components/       GameOverOverlay, LanguageSwitch, CharacterCard
+        │   ├── characters/       roster.ts · texts/ (ru en he es fr)
+        │   ├── hooks/            useKeepOnScreen.ts
         │   ├── i18n/             languages.ts, useLanguage.ts — choosing and remembering the language
         │   ├── engine/           random.ts — seeded random numbers
         │   ├── utils/            storageEngine.ts — saves and results
@@ -856,7 +903,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
   - A forced whist under Stalingrad is given without thinking.
   - The bot concedes a hopeless game only when the expected shortfall is at least the allowed concession minus half a trick.
 - **Known weaknesses.**
-  - The bots misjudge their hands, as the measurement of 10.11.2026 shows (`scripts/load/preferans-calibrate.mjs`, 3000 deals, the exact solver instead of the card play): all-pass in 34% of deals, and in 71% of them someone could have made a six; 71% of games pass without a whist although in 45% of them the defence would have held its share; when they whist, the obligation is missed in 28% of cases, and the declarer makes the game in 61%. Calibration is listed in "Open tasks".
+  - The quick estimate of a hand was wrong (the measurement of 10.11.2026: 71% of games passed without a whist, the declarer made 61%). Since the same day the decisions before the play are made by imagination with the exact solver, and the estimate is corrected by a table learned from the solver — section 21.
   - PIMC has two classic flaws:
     - **strategy fusion:** the method assumes it can play differently in each deal, as if it knew the layout;
     - **non-locality:** the method ignores that the opponents' earlier moves hint at their cards.
@@ -1032,7 +1079,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 
 - **Preferans:**
   - native speakers proofread the Hebrew, Spanish and French translations;
-  - calibrate the bots' bidding and whist and the dealer's decisions (the dealer's whist, shared misère) by the tables of `scripts/load/preferans-calibrate.mjs`: the target is a declarer who makes the game about 80% of the time, a whist that falls short no more than 15% of the time, fewer all-passes, and the measurement rerun after every change;
+  - the dealer's decisions at a table of four (the dealer's whist, shared misère) are still decided the old way or by the defender's measure: measure them separately; rerun `scripts/load/preferans-calibrate.mjs` after any change of the bots;
   - solve the 66 positions of open whist and misère exactly;
   - backgrounds and frames from the prompts of `DESIGN_CONCEPT_RU.md`, if Alexey generates them;
   - online play.
@@ -1044,7 +1091,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 - **Poker:**
   - calibrate the bots against people (their manners are measured only against each other so far, `scripts/load/poker-bots.mjs`) and read the opponents' ranges finer — by position and bet size;
   - a cash game with rebuys and custom blind levels next to the tournament;
-  - one card component shared with preferans and one list of characters in `shared/` instead of copied portraits and backs;
+  - one playing-card component shared with preferans instead of two of their own (the heroes are already shared — section 21); a choice of opponents on the poker menu, as in preferans;
   - online play.
 - **Tooling:**
   - an import-boundary check (ESLint `no-restricted-imports`);
@@ -1146,6 +1193,49 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 - **The table** (`components/`) is the same club as the preferans table: an oval of bottle-emerald felt in a lacquered rail, seats clockwise from you at the bottom (a portrait with its plaque, the cards toward the middle), bets on the cloth, the board and the pot in the middle, the result of a hand in the tray under the table, the winning five lit up. On a phone the oval stands upright and grows with the company. Portraits and the back are copied from preferans: games never import each other.
 - **Checks.** 19 poker tests (112 in all). `scripts/load/poker-touch.mjs` plays by finger on phones and tablets and with a mouse on a computer; `npm run load` runs it and `poker-bots.mjs`.
 
+### 21. Shared heroes, tables without overlaps and bots that imagine (10.11.2026, evening)
+
+- **The reason.** Alexey sent a phone screenshot of poker: a hero's line cut by the screen edge, the neighbours' cards on the pot, a bet hidden under the cards. The earlier checks did not see it: they checked only the buttons.
+- **The poker table is a grid on every screen.**
+  - `games/poker/components/seating.ts` gives every player a named place of a grid: the far side (`nw`, `n`, `ne`), the row with the board (`w`, the board, `e`), the near side (`sw`, you, `se`). On a computer and a tablet the side seats stand beside the board; on a phone the board takes the whole width and the side seats go to the corners.
+  - A grid cannot put one thing on another, so there are no overlaps by construction: whatever the width, the number of players and the length of the names. The oval is only the cloth behind the grid.
+  - A seat never changes size during a hand: the bet has its own line inside the seat, and "fold", "all-in", "thinking" are written across the cards.
+  - On a phone the header and the decision tray are compact: the table with the tray fits one screen. The stack is a number beside a chip (in Hebrew "1,500 in the stack" is wider than the whole seat).
+- **A caption that opens beside something** (a biography under a portrait, a hero's card) is kept on the screen by the hook `shared/hooks/useKeepOnScreen.ts`.
+  - The shift is computed before the caption ever stands in its own place: for the moment of measuring it is pinned to the corner of the screen, invisible.
+  - The reason: even one layout with the caption past the edge makes a phone browser zoom the whole page out, and the page stays zoomed out (a table 320 px wide became 367).
+- **The layout check** `scripts/load/layout-audit.mjs` (part of `npm run load`) looks at the tables the way a person does: 20 screens (phones upright and on their side, tablets, computers), every number of players, five languages, every card opened.
+  - It catches: text past the screen; text cut by a box; text under something painted; a word torn between lines; text sticking out of its plate; a seat on the board, the pot or a bet; a page wider than the screen (and names what sticks out).
+  - The result after the fixes: 1,339 checks, nothing found.
+- **The heroes are shared by all the games.** Alexey's question: the same opponents sit in preferans and in poker — should they be moved out? They were.
+  - `shared/characters/roster.ts` — who they are: the record, the grammatical gender, dweller or guest, the path of the picture. `shared/characters/texts/{ru,en,he,es,fr}.ts` — names and biographies. The pictures lie once in `public/shared/characters/` (poker's copies are deleted).
+  - A game keeps only its manner: `games/preferans/characters/roster.ts` (boldness, whist, misère, thinking time), `games/poker/characters.ts` (tightness, aggression, bluff) with the poker lines in the poker dictionaries, `games/chess/components/ChessOpponent.tsx` (a random hero per game, the "Another opponent" button).
+  - The rule of two (section 5) is met: three games use the heroes.
+- **A hero's portrait behaves the same everywhere** (`shared/components/CharacterCard.tsx`, Alexey's decision: "the windows are tiny… it is not clear whom you pick").
+  - At a table: under the mouse the whole picture grows 2.5 times and goes back when the mouse leaves; a press opens the hero's card (picture, name, biography, the line of this game); Escape or a press elsewhere closes it.
+  - In the choice of opponents: the same card in the style of the lair stands beside the portrait instead of the browser's plain tooltip. `shared/utils/placeBeside.ts` finds its place: to the right, else to the left, on a phone under or over the portrait.
+  - A finger cannot hover: on a phone a tap opens the card.
+- **The catalog of games.** Under the mouse a game card comes forward and grows one and a half times as a whole (not the picture inside it); the cards at the edges grow from their own edge and stay on the screen. A click on the cover opens the game like the "Play" button.
+- **The preferans bots decide by imagination** (`games/preferans/engine/ai/foresight.ts`).
+  - Before the play a bot does what it already did with every card: it deals the unseen cards at random the way they could lie, lets the exact solver play each deal and counts. The bid, the misère, the discard, the contract and the whist are decided this way.
+  - What a decision is worth is counted by the table's own rules (`worth`): the whists, the pool and the mountain of one deal become one number exactly as in the final settlement. So a bot decides equally well in Sochi, Leningrad and Rostov.
+  - A defender imagines only a declarer who could have named this game. That needs a rating of a hand at one look: `engine/ai/strength.ts` — the quick estimate plus corrections learned from the solver (`strengthTable.ts`, written by `scripts/load/preferans-learn.mjs`, 300,000 examples). The error of the estimate fell from 1.22 to 0.79 tricks.
+  - A slow device does not freeze: the imagining has the same time budget and the same hard limits as a card move; if the deals did not come in time, the old quick estimate answers.
+- **The measurement** (`scripts/load/preferans-calibrate.mjs`, 3000 deals, the exact solver instead of the card play):
+
+  | | before | now |
+  |---|---|---|
+  | all-pass | 37% | 16% |
+  | the declarer makes a whisted game | 64% | 85% |
+  | a game passes without a whist | 68% | 39% |
+  | a whist falls short of the obligation | 32% | 30% |
+  | what a lone whist is worth against letting the game go | — | +3.6 whists |
+  | thinking before the play, a computer | 0 | about 0.2 s per decision |
+
+  - The earlier target "a whist falls short no more than 15% of the time" is dropped: it was the wrong measure. A whist with a risk of falling short pays when on average it brings more than a game let go — and the measurement now prints exactly that worth.
+  - A defender imagines the declarer as he is: his tricks above the contract match the real ones (14% / 41% / 45% against 13% / 41% / 47%).
+- **Checks.** `npm test` — 130 tests. New: the poker seats on both screens, the shift of a caption into the screen, the place of the floating card, the borderline hand in the bidding.
+
 [↑ Back to the languages](#top)
 
 ---
@@ -1199,7 +1289,9 @@ cosmo-game-hub/
         │   ├── utils/            קישורים תחת נתיב הבסיס
         │   └── tests/            בדיקות הניווט
         ├── shared/               קוד של שני משחקים או יותר
-        │   ├── components/       מסך סיום המשחק, מתג השפה
+        │   ├── components/       מסך סיום המשחק, מתג השפה, כרטיס הגיבור
+        │   ├── characters/       הגיבורים של כל המשחקים: מי הם, שמות וביוגרפיות בחמש שפות
+        │   ├── hooks/            כיתוב שנשאר על המסך
         │   ├── i18n/             בחירת השפה וזכירתה
         │   ├── engine/           מספרים אקראיים לפי זרע
         │   ├── utils/            שמירות ותוצאות
@@ -1434,7 +1526,7 @@ cosmo-game-hub/
   - את הוויסט הכפוי של סטלינגרד הבוט נותן בלי לחשוב.
   - הבוט מוותר על משחק אבוד רק אם החיסרון הצפוי הוא לפחות הוויתור המותר פחות חצי לקיחה.
 - **חולשות ידועות.**
-  - הבוטים טועים בהערכת היד, כפי שמראה המדידה מ-10.11.2026 (`scripts/load/preferans-calibrate.mjs`, ‏3000 חלוקות, הפותר המדויק במקום המשחק): ראספסים ב-34% מהחלוקות, וב-71% מהם מישהו יכול היה לשחק שישייה; 71% מהמשחקים עוברים בלי ויסט, אף שב-45% מהם ההגנה הייתה לוקחת את שלה; כשמווסטים, ההתחייבות לא מושגת ב-28% מהמקרים, והמכריז עושה את המשחק ב-61%. הכיול מופיע ב"משימות פתוחות".
+  - ההערכה המהירה של היד טעתה (המדידה מ-10.11.2026: ‏71% מהמשחקים עברו בלי ויסט, המכריז עשה את המשחק ב-61%). מאותו יום ההחלטות שלפני המשחק מתקבלות בדמיון עם הפותר המדויק, ואת ההערכה מתקנת טבלה שנלמדה מהפותר — סעיף 21.
   - לשיטת PIMC יש שני פגמים קלאסיים:
     - **מיזוג אסטרטגיות (strategy fusion):** השיטה מניחה שתוכל לשחק אחרת בכל חלוקה, כאילו היא יודעת את פיזור הקלפים;
     - **אי-מקומיות (non-locality):** השיטה מתעלמת מכך שהמסעים הקודמים של היריבים רומזים על הקלפים שלהם.
@@ -1610,7 +1702,7 @@ cosmo-game-hub/
 
 - **פרפרנס:**
   - הגהה של התרגומים לעברית, לספרדית ולצרפתית בידי דוברי השפה;
-  - כיול המכרז והוויסט של הבוטים והחלטות המחלק (ויסט המחלק, מיזר חצי־חצי) לפי הטבלאות של `scripts/load/preferans-calibrate.mjs`: היעד — מכריז שעושה את המשחק בכ-80% מהמקרים, ויסט שלא משיג את ההתחייבות לא יותר מ-15%, פחות ראספסים, והמדידה חוזרת אחרי כל שינוי;
+  - החלטות המחלק בשולחן של ארבעה (ויסט המחלק, מיזר חצי־חצי) עדיין מוכרעות בדרך הישנה או לפי המדד של המגן: למדוד אותן בנפרד; אחרי כל שינוי בבוטים להריץ שוב את `scripts/load/preferans-calibrate.mjs`;
   - פתרון מדויק של 66 פריסות בוויסט גלוי ובמיזר;
   - רקעים ומסגרות לפי הפרומפטים מ־`DESIGN_CONCEPT_RU.md`, אם אלכסיי ייצר אותם;
   - משחק ברשת.
@@ -1622,7 +1714,7 @@ cosmo-game-hub/
 - **פוקר:**
   - כיול הבוטים מול אנשים (עד עכשיו הסגנונות נמדדו רק זה מול זה, `scripts/load/poker-bots.mjs`) וקריאה מדויקת יותר של טווחי היריבים — לפי מיקום וגודל הימור;
   - משחק קאש עם רכישה חוזרת ורמות בליינדים לבחירה לצד הטורניר;
-  - רכיב קלף משותף עם הפרפרנס ורשימת דמויות אחת ב-`shared/` במקום עותקים של דיוקנים וגב קלף;
+  - רכיב קלף משחק אחד משותף עם הפרפרנס במקום שניים נפרדים (הגיבורים כבר משותפים — סעיף 21); בחירת יריבים בתפריט הפוקר, כמו בפרפרנס;
   - משחק ברשת.
 - **כלים:**
   - בדיקה של גבולות הייבוא (ESLint `no-restricted-imports`);
@@ -1724,6 +1816,49 @@ cosmo-game-hub/
 - **השולחן** (`components/`) הוא אותו מועדון כמו שולחן הפרפרנס: אליפסה של לבד אזמרגד בקבוק במסגרת מלוכה, מושבים עם כיוון השעון ממך למטה (דיוקן עם שלט, הקלפים לכיוון האמצע), הימורים על הלבד, הלוח והקופה באמצע, תוצאת היד במגש שמתחת לשולחן, החמישייה המנצחת מוארת. בטלפון האליפסה עומדת ומתארכת עם מספר השחקנים. הדיוקנים וגב הקלף הועתקו מהפרפרנס: משחקים לא מייבאים זה מזה.
 - **בדיקות.** ‏19 בדיקות פוקר (112 בסך הכול). ‏`scripts/load/poker-touch.mjs` משחק באצבע בטלפון ובטאבלט ובעכבר במחשב; ‏`npm run load` מריץ אותו ואת `poker-bots.mjs`.
 
+### 21. גיבורים משותפים, שולחנות בלי חפיפות ובוטים עם דמיון (10.11.2026, ערב)
+
+- **הסיבה.** אלכסיי שלח צילום מסך של פוקר מהטלפון: המשפט של הגיבור נחתך בקצה המסך, הקלפים של השכנים מונחים על הקופה, הימור מוסתר מתחת לקלפים. הבדיקות הקודמות לא ראו זאת: הן בדקו רק את הכפתורים.
+- **שולחן הפוקר הוא רשת בכל מסך.**
+  - `games/poker/components/seating.ts` נותן לכל שחקן מקום בעל שם ברשת: הצד הרחוק (`nw`, `n`, `ne`), השורה עם הלוח (`w`, הלוח, `e`), הצד הקרוב (`sw`, אתם, `se`). במחשב ובטאבלט מקומות הצד עומדים ליד הלוח; בטלפון הלוח תופס את כל הרוחב ומקומות הצד עוברים לפינות.
+  - רשת אינה יכולה להניח דבר על דבר, ולכן אין חפיפות מעצם המבנה: בכל רוחב, מספר שחקנים ואורך שמות. האליפסה היא רק הלבד שמאחורי הרשת.
+  - מקום אינו משנה גודל במהלך היד: להימור שורה משלו בתוך המקום, ו"פולד", "אול-אין", "חושב" נכתבים על גבי הקלפים.
+  - בטלפון הכותרת ומגש ההחלטות קומפקטיים: השולחן עם המגש נכנס למסך אחד. הערימה מוצגת כמספר ליד אסימון.
+- **כיתוב שנפתח ליד משהו** (ביוגרפיה מתחת לדיוקן, כרטיס גיבור) נשמר על המסך בעזרת `shared/hooks/useKeepOnScreen.ts`.
+  - ההזזה מחושבת לפני שהכיתוב עומד ולו פעם אחת במקומו: בזמן המדידה הוא נעוץ בפינת המסך, בלתי נראה.
+  - הסיבה: אפילו פריסה אחת עם כיתוב מעבר לקצה גורמת לדפדפן הטלפון להקטין את כל העמוד, והעמוד נשאר מוקטן (שולחן ברוחב 320 px נעשה 367).
+- **בדיקת הפריסה** `scripts/load/layout-audit.mjs` (חלק מ-`npm run load`) מסתכלת על השולחנות כמו אדם: 20 מסכים (טלפונים עומדים ושוכבים, טאבלטים, מחשבים), כל מספר שחקנים, חמש שפות, כל כרטיס נפתח.
+  - היא תופסת: טקסט מעבר למסך; טקסט שנחתך במסגרת; טקסט מתחת למשהו מצויר; מילה שנקרעה בין שורות; טקסט שיוצא מהלוחית שלו; מקום על הלוח, על הקופה או על הימור; עמוד רחב מהמסך (ואומרת מה בולט).
+  - התוצאה אחרי התיקונים: 1,339 בדיקות, אין ממצאים.
+- **הגיבורים משותפים לכל המשחקים.** השאלה של אלכסיי: אותם יריבים יושבים בפרפרנס ובפוקר — אולי להוציא אותם? הוצאו.
+  - `shared/characters/roster.ts` — מי הם: הרשומה, המין הדקדוקי, דייר או אורח, הנתיב לתמונה. `shared/characters/texts/{ru,en,he,es,fr}.ts` — שמות וביוגרפיות. התמונות נמצאות פעם אחת ב-`public/shared/characters/` (העותקים של הפוקר נמחקו).
+  - במשחק נשאר רק הסגנון שלו: `games/preferans/characters/roster.ts` (נועזות, ויסט, מיזר, זמן מחשבה), `games/poker/characters.ts` (הדיקות, אגרסיביות, בלוף) עם משפטי הפוקר במילוני הפוקר, `games/chess/components/ChessOpponent.tsx` (גיבור אקראי לכל משחק, הכפתור "יריב אחר").
+  - כלל השניים (סעיף 5) מתקיים: שלושה משחקים משתמשים בגיבורים.
+- **דיוקן של גיבור מתנהג אותו דבר בכל מקום** (`shared/components/CharacterCard.tsx`, החלטה של אלכסיי: "החלונות קטנים מאוד… לא ברור את מי בוחרים").
+  - ליד שולחן: מתחת לעכבר כל התמונה גדלה פי 2.5 וחוזרת כשהעכבר עוזב; לחיצה פותחת את כרטיס הגיבור (תמונה, שם, ביוגרפיה, המשפט של המשחק הזה); Escape או לחיצה בצד סוגרים אותו.
+  - בבחירת היריבים: אותו כרטיס בסגנון המאורה עומד ליד הדיוקן במקום הרמז הפשוט של הדפדפן. `shared/utils/placeBeside.ts` מוצא לו מקום: מימין, אחרת משמאל, בטלפון — מתחת לדיוקן או מעליו.
+  - אצבע אינה יכולה לרחף: בטלפון הקשה פותחת את הכרטיס.
+- **קטלוג המשחקים.** מתחת לעכבר כרטיס המשחק יוצא קדימה וגדל פי אחד וחצי בשלמותו (ולא התמונה שבתוכו); הכרטיסים שבקצוות גדלים מהקצה שלהם ונשארים על המסך. לחיצה על העטיפה פותחת את המשחק כמו הכפתור "לשחק".
+- **בוטי הפרפרנס מחליטים בדמיון** (`games/preferans/engine/ai/foresight.ts`).
+  - לפני המשחק הבוט עושה מה שכבר עשה עם כל קלף: מחלק את הקלפים הסמויים באקראי כפי שיכלו ליפול, נותן לפותר המדויק לשחק כל חלוקה וסופר. כך מוכרעים ההכרזה, המיזר, ההשלכה, החוזה והוויסט.
+  - שוויה של החלטה נספר לפי חוקי השולחן עצמו (`worth`): הוויסטים, הפוליה וההר של חלוקה אחת הופכים למספר אחד בדיוק כמו בחשבון הסופי. לכן הבוט מחליט נכון באותה מידה בסוצ׳י, בלנינגרד וברוסטוב.
+  - מגן מדמיין רק מכריז שיכול היה להכריז על המשחק הזה. לשם כך נדרש דירוג של יד במבט אחד: `engine/ai/strength.ts` — ההערכה המהירה ועוד תיקונים שנלמדו מהפותר (`strengthTable.ts`, נכתב בידי `scripts/load/preferans-learn.mjs`, ‏300,000 דוגמאות). שגיאת ההערכה ירדה מ-1.22 ל-0.79 לקיחות.
+  - מכשיר איטי אינו נתקע: לדמיון אותו תקציב זמן ואותם גבולות קשיחים כמו למהלך בקלף; אם החלוקות לא הספיקו — עונה ההערכה המהירה הישנה.
+- **המדידה** (`scripts/load/preferans-calibrate.mjs`, ‏3000 חלוקות, הפותר המדויק במקום המשחק):
+
+  | | היה | עכשיו |
+  |---|---|---|
+  | ראספסים | 37% | 16% |
+  | המכריז עושה משחק שיש בו ויסט | 64% | 85% |
+  | משחק עובר בלי ויסט | 68% | 39% |
+  | ויסט לא משיג את ההתחייבות | 32% | 30% |
+  | כמה שווה ויסט בודד מול "לשחרר את המשחק" | — | +3.6 ויסטים |
+  | מחשבה לפני המשחק, מחשב | 0 | כ-0.2 שנ׳ להחלטה |
+
+  - היעד הקודם "ויסט לא משיג את ההתחייבות לא יותר מ-15%" בוטל: זה היה המדד הלא נכון. ויסט עם סיכון משתלם כשבממוצע הוא מביא יותר ממשחק ששוחרר — והמדידה מדפיסה עכשיו בדיוק את השווי הזה.
+  - מגן מדמיין את המכריז כפי שהוא: הלקיחות שלו מעל החוזה תואמות את האמיתיות (14% / 41% / 45% מול 13% / 41% / 47%).
+- **בדיקות.** ‏`npm test` — ‏130 בדיקות. חדשות: מקומות הפוקר בשני המסכים, הזזת כיתוב אל תוך המסך, מקום הכרטיס הצף, יד גבולית במכרז.
+
 [↑ חזרה לבחירת השפה](#top)
 
 </div>
@@ -1775,7 +1910,9 @@ cosmo-game-hub/
         │   ├── utils/            withBase (enlaces bajo la URL base)
         │   └── tests/            navigation.test.mjs
         ├── shared/               código para dos o más juegos
-        │   ├── components/       GameOverOverlay, LanguageSwitch
+        │   ├── components/       GameOverOverlay, LanguageSwitch, CharacterCard
+        │   ├── characters/       roster.ts · texts/ (ru en he es fr)
+        │   ├── hooks/            useKeepOnScreen.ts
         │   ├── i18n/             languages.ts, useLanguage.ts — elegir y recordar el idioma
         │   ├── engine/           random.ts — números aleatorios con semilla
         │   ├── utils/            storageEngine.ts — guardado y resultados
@@ -2008,7 +2145,7 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
   - El whist forzado de Stalingrado lo da sin pensar.
   - Se rinde ante una partida perdida solo si la falta esperada es al menos la rendición permitida menos media baza.
 - **Debilidades conocidas.**
-  - Los bots se equivocan al valorar la mano, como muestra la medición del 10.11.2026 (`scripts/load/preferans-calibrate.mjs`, 3000 repartos, el solver exacto en lugar del juego de cartas): raspasy en el 34% de los repartos, y en el 71% de ellos alguien podía cumplir un seis; el 71% de los juegos pasan sin whist aunque en el 45% la defensa habría cumplido; cuando hacen whist, la obligación falla en el 28% de los casos y el declarante cumple en el 61%. La calibración figura en «Tareas abiertas».
+  - La estimación rápida de la mano se equivocaba (medición del 10.11.2026: el 71% de los juegos pasaban sin whist, el declarante cumplía en el 61%). Desde ese mismo día las decisiones previas al juego las toma la imaginación con el solver exacto, y la estimación la corrige una tabla aprendida del solver: sección 21.
   - PIMC tiene dos defectos clásicos:
     - **fusión de estrategias (strategy fusion):** el método supone que puede jugar distinto en cada reparto, como si conociera la distribución;
     - **no localidad (non-locality):** el método ignora que las jugadas anteriores de los rivales dan pistas sobre sus cartas.
@@ -2184,7 +2321,7 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 
 - **Preferans:**
   - revisión de las traducciones al hebreo, español y francés por hablantes nativos;
-  - calibrar la subasta y el whist de los bots y las decisiones del repartidor (su whist, la miseria a medias) con las tablas de `scripts/load/preferans-calibrate.mjs`: el objetivo es un declarante que cumple alrededor del 80% de las veces, un whist que falla como mucho el 15%, menos raspasy y la medición repetida tras cada cambio;
+  - las decisiones del repartidor en una mesa de cuatro (su whist, la miseria a medias) aún se toman a la antigua o con la medida del defensor: medirlas aparte; repetir `scripts/load/preferans-calibrate.mjs` tras cualquier cambio de los bots;
   - resolver con exactitud las 66 posiciones de whist abierto y miseria;
   - fondos y marcos con los prompts de `DESIGN_CONCEPT_RU.md`, si Alexey los genera;
   - juego en línea.
@@ -2196,7 +2333,7 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 - **Póker:**
   - calibrar los bots contra personas (hasta ahora sus estilos solo se midieron entre ellos, `scripts/load/poker-bots.mjs`) y leer los rangos rivales con más finura, por posición y tamaño de apuesta;
   - una partida de cash con recompras y niveles de ciegas a elegir junto al torneo;
-  - un componente de carta común con el preferans y una lista de personajes en `shared/` en lugar de copias de retratos y reversos;
+  - un componente de naipe compartido con el preferans en lugar de dos propios (los héroes ya son comunes: sección 21); elegir rivales en el menú del póker, como en el preferans;
   - juego en línea.
 - **Herramientas:**
   - una comprobación de los límites de importación (ESLint `no-restricted-imports`);
@@ -2298,6 +2435,49 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 - **La mesa** (`components/`) es el mismo club que la de preferans: un óvalo de tapete esmeralda botella en un borde lacado, asientos en el sentido de las agujas del reloj desde ti abajo (retrato con su placa, cartas hacia el centro), apuestas sobre el tapete, tablero y bote en el centro, el resultado de la mano en la bandeja bajo la mesa, la quinta ganadora iluminada. En el móvil el óvalo se pone de pie y crece con el número de jugadores. Retratos y reverso copiados del preferans: los juegos no se importan entre sí.
 - **Pruebas.** 19 pruebas de póker (112 en total). `scripts/load/poker-touch.mjs` juega con el dedo en móvil y tableta y con ratón en el ordenador; `npm run load` lo lanza junto con `poker-bots.mjs`.
 
+### 21. Héroes compartidos, mesas sin solapamientos y bots con imaginación (10.11.2026, tarde)
+
+- **El motivo.** Alexey envió una captura del póker en el móvil: la frase de un héroe cortada por el borde de la pantalla, las cartas de los vecinos sobre el bote, una apuesta escondida bajo las cartas. Las pruebas anteriores no lo veían: solo comprobaban los botones.
+- **La mesa de póker es una rejilla en cualquier pantalla.**
+  - `games/poker/components/seating.ts` da a cada jugador un lugar con nombre en una rejilla: el lado lejano (`nw`, `n`, `ne`), la fila de la mesa (`w`, las cartas comunes, `e`), el lado cercano (`sw`, tú, `se`). En ordenador y tableta los asientos laterales están junto a las cartas comunes; en el móvil estas ocupan todo el ancho y los asientos laterales pasan a las esquinas.
+  - Una rejilla no puede poner una cosa sobre otra, así que no hay solapamientos por construcción: con cualquier ancho, número de jugadores y longitud de nombres. El óvalo es solo el tapete detrás de la rejilla.
+  - Un asiento no cambia de tamaño durante la mano: la apuesta tiene su propia línea dentro del asiento, y «fold», «all-in», «piensa» se escriben sobre las cartas.
+  - En el móvil la cabecera y la bandeja de decisiones son compactas: la mesa con la bandeja cabe en una pantalla. Las fichas se muestran como un número junto a una ficha.
+- **Un texto que se abre junto a algo** (una biografía bajo un retrato, la ficha de un héroe) se mantiene en pantalla con el hook `shared/hooks/useKeepOnScreen.ts`.
+  - El desplazamiento se calcula antes de que el texto ocupe su sitio ni una sola vez: mientras se mide está clavado en la esquina de la pantalla, invisible.
+  - La razón: basta una sola maquetación con el texto fuera del borde para que el navegador del móvil reduzca toda la página, y la página se queda reducida (una mesa de 320 px pasaba a 367).
+- **La prueba de maquetación** `scripts/load/layout-audit.mjs` (parte de `npm run load`) mira las mesas como las mira una persona: 20 pantallas (móviles en vertical y en horizontal, tabletas, ordenadores), cualquier número de jugadores, cinco idiomas, cada ficha abierta.
+  - Detecta: texto fuera de la pantalla; texto cortado por un marco; texto bajo algo pintado; una palabra partida entre líneas; texto que se sale de su placa; un asiento sobre las cartas comunes, el bote o una apuesta; una página más ancha que la pantalla (y dice qué sobresale).
+  - Resultado tras los arreglos: 1339 comprobaciones, sin hallazgos.
+- **Los héroes son comunes a todos los juegos.** La pregunta de Alexey: los mismos rivales se sientan en el preferans y en el póker, ¿no habría que sacarlos? Se sacaron.
+  - `shared/characters/roster.ts` — quiénes son: el registro, el género gramatical, habitante o invitado, la ruta de la imagen. `shared/characters/texts/{ru,en,he,es,fr}.ts` — nombres y biografías. Las imágenes están una sola vez en `public/shared/characters/` (las copias del póker se borraron).
+  - En cada juego queda solo su manera: `games/preferans/characters/roster.ts` (audacia, whist, miseria, tiempo de reflexión), `games/poker/characters.ts` (dureza, agresividad, farol) con las frases de póker en sus diccionarios, `games/chess/components/ChessOpponent.tsx` (un héroe al azar por partida, el botón «Otro rival»).
+  - La regla de dos (sección 5) se cumple: tres juegos usan a los héroes.
+- **El retrato de un héroe se comporta igual en todas partes** (`shared/components/CharacterCard.tsx`, decisión de Alexey: «las ventanitas son muy pequeñas… no se entiende a quién eliges»).
+  - En una mesa: bajo el ratón la imagen entera crece 2,5 veces y vuelve cuando el ratón se va; una pulsación abre la ficha del héroe (imagen, nombre, biografía, la frase de este juego); Escape o una pulsación fuera la cierra.
+  - Al elegir rivales: la misma ficha con el estilo de la guarida aparece junto al retrato en lugar de la simple ayuda del navegador. `shared/utils/placeBeside.ts` le busca sitio: a la derecha, si no a la izquierda, y en el móvil debajo o encima del retrato.
+  - Un dedo no puede pasar por encima: en el móvil la ficha se abre con un toque.
+- **El catálogo de juegos.** Bajo el ratón la tarjeta de un juego avanza y crece una vez y media entera (no la imagen de dentro); las tarjetas de los bordes crecen desde su borde y no salen de la pantalla. Un clic en la portada abre el juego igual que el botón «Jugar».
+- **Los bots del preferans deciden con imaginación** (`games/preferans/engine/ai/foresight.ts`).
+  - Antes del juego el bot hace lo que ya hacía con cada carta: reparte al azar las cartas que no ve tal como podrían estar, deja que el solver exacto juegue cada reparto y cuenta. Así se deciden la subasta, la miseria, el descarte, el contrato y el whist.
+  - El valor de una decisión se cuenta con las reglas de la propia mesa (`worth`): los whists, la pulya y la montaña de un reparto se vuelven un número igual que en la liquidación final. Por eso el bot decide igual de bien en Sochi, Leningrado y Rostov.
+  - Un defensor imagina solo a un declarante que pudo nombrar ese juego. Para eso hace falta valorar una mano de un vistazo: `engine/ai/strength.ts` — la estimación rápida más correcciones aprendidas del solver (`strengthTable.ts`, escrita por `scripts/load/preferans-learn.mjs`, 300 000 ejemplos). El error de la estimación bajó de 1,22 a 0,79 bazas.
+  - Un dispositivo lento no se cuelga: la imaginación tiene el mismo presupuesto de tiempo y los mismos límites duros que una jugada; si los repartos no llegan a tiempo, responde la estimación rápida de antes.
+- **La medición** (`scripts/load/preferans-calibrate.mjs`, 3000 repartos, el solver exacto en lugar del juego de cartas):
+
+  | | antes | ahora |
+  |---|---|---|
+  | raspasy | 37% | 16% |
+  | el declarante cumple un juego con whist | 64% | 85% |
+  | un juego pasa sin whist | 68% | 39% |
+  | el whist no llega a la obligación | 32% | 30% |
+  | cuánto vale un whist en solitario frente a dejar pasar el juego | — | +3,6 whists |
+  | reflexión antes del juego, ordenador | 0 | unos 0,2 s por decisión |
+
+  - El objetivo anterior «un whist que falla como mucho el 15%» se retira: era la medida equivocada. Un whist con riesgo compensa cuando de media trae más que un juego dejado pasar, y la medición imprime ahora justo ese valor.
+  - Un defensor imagina al declarante tal como es: sus bazas por encima del contrato coinciden con las reales (14% / 41% / 45% frente a 13% / 41% / 47%).
+- **Pruebas.** `npm test`: 130 pruebas. Nuevas: los asientos del póker en las dos pantallas, el desplazamiento de un texto hacia dentro de la pantalla, el sitio de la ficha flotante, la mano dudosa en la subasta.
+
 [↑ Volver a los idiomas](#top)
 
 ---
@@ -2347,7 +2527,9 @@ cosmo-game-hub/
         │   ├── utils/            withBase (liens sous l'URL de base)
         │   └── tests/            navigation.test.mjs
         ├── shared/               code pour deux jeux ou plus
-        │   ├── components/       GameOverOverlay, LanguageSwitch
+        │   ├── components/       GameOverOverlay, LanguageSwitch, CharacterCard
+        │   ├── characters/       roster.ts · texts/ (ru en he es fr)
+        │   ├── hooks/            useKeepOnScreen.ts
         │   ├── i18n/             languages.ts, useLanguage.ts — choisir et retenir la langue
         │   ├── engine/           random.ts — nombres aléatoires à graine
         │   ├── utils/            storageEngine.ts — sauvegardes et résultats
@@ -2580,7 +2762,7 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
   - Le whist forcé de Stalingrad est donné sans réfléchir.
   - Le bot n'abandonne une partie perdue que si la chute attendue atteint au moins l'abandon autorisé moins un demi-pli.
 - **Faiblesses connues.**
-  - Les bots jugent mal leur main, comme le montre la mesure du 10.11.2026 (`scripts/load/preferans-calibrate.mjs`, 3000 donnes, le solveur exact à la place du jeu de la carte) : raspasy dans 34 % des donnes, et dans 71 % d'entre eux quelqu'un pouvait faire un six ; 71 % des jeux passent sans whist alors que dans 45 % la défense aurait tenu sa part ; quand ils whistent, l'obligation manque dans 28 % des cas et le déclarant fait son jeu dans 61 %. Le calibrage figure dans « Tâches ouvertes ».
+  - L'estimation rapide de la main se trompait (mesure du 10.11.2026 : 71 % des jeux passaient sans whist, le déclarant faisait son jeu dans 61 %). Depuis ce même jour les décisions d'avant le jeu de la carte sont prises par l'imagination avec le solveur exact, et l'estimation est corrigée par un tableau appris du solveur — section 21.
   - Le PIMC a deux défauts classiques :
     - **la fusion des stratégies (strategy fusion) :** la méthode suppose qu'elle pourra jouer différemment dans chaque donne, comme si elle connaissait la répartition ;
     - **la non-localité (non-locality) :** la méthode ignore que les coups précédents des adversaires renseignent sur leurs cartes.
@@ -2756,7 +2938,7 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 
 - **Préférence :**
   - relecture des traductions en hébreu, espagnol et français par des locuteurs natifs ;
-  - calibrer les enchères et le whist des bots et les décisions du donneur (son whist, la misère partagée) d'après les tableaux de `scripts/load/preferans-calibrate.mjs` : le but est un déclarant qui fait son jeu environ 80 % du temps, un whist qui manque son obligation au plus 15 % du temps, moins de raspasy, et la mesure relancée après chaque changement ;
+  - les décisions du donneur à quatre (son whist, la misère partagée) se prennent encore à l'ancienne ou à la mesure du défenseur : les mesurer à part ; relancer `scripts/load/preferans-calibrate.mjs` après tout changement des bots ;
   - résoudre exactement les 66 positions du whist ouvert et de la misère ;
   - fonds et cadres d'après les prompts de `DESIGN_CONCEPT_RU.md`, si Alexey les génère ;
   - le jeu en ligne.
@@ -2768,7 +2950,7 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 - **Poker :**
   - calibrer les bots contre des personnes (leurs manières ne sont mesurées qu'entre eux pour l'instant, `scripts/load/poker-bots.mjs`) et lire plus finement les fourchettes adverses, selon la position et la taille des mises ;
   - une partie de cash avec recaves et des niveaux de blindes au choix à côté du tournoi ;
-  - un composant de carte commun avec la préférence et une seule liste de personnages dans `shared/` au lieu de portraits et de dos copiés ;
+  - un composant de carte à jouer commun avec la préférence au lieu de deux (les héros sont déjà communs — section 21) ; le choix des adversaires dans le menu du poker, comme à la préférence ;
   - le jeu en ligne.
 - **Outillage :**
   - une vérification des frontières d'import (ESLint `no-restricted-imports`) ;
@@ -2869,5 +3051,48 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 
 - **La table** (`components/`) est le même club que celle de la préférence : un ovale de tapis émeraude bouteille dans un rebord laqué, les sièges dans le sens des aiguilles d'une montre depuis vous en bas (portrait avec sa plaque, cartes vers le centre), mises sur le tapis, tableau et pot au milieu, résultat de la main dans le plateau sous la table, main gagnante illuminée. Sur téléphone, l'ovale se dresse et s'allonge avec le nombre de joueurs. Portraits et dos copiés de la préférence : les jeux ne s'importent pas entre eux.
 - **Tests.** 19 tests de poker (112 en tout). `scripts/load/poker-touch.mjs` joue au doigt sur téléphone et tablette et à la souris sur ordinateur ; `npm run load` le lance avec `poker-bots.mjs`.
+
+### 21. Héros partagés, tables sans chevauchements et bots qui imaginent (10.11.2026, soir)
+
+- **La raison.** Alexey a envoyé une capture du poker sur téléphone : la réplique d'un héros coupée par le bord de l'écran, les cartes des voisins posées sur le pot, une mise cachée sous les cartes. Les vérifications précédentes ne le voyaient pas : elles ne contrôlaient que les boutons.
+- **La table de poker est une grille sur tous les écrans.**
+  - `games/poker/components/seating.ts` donne à chaque joueur une place nommée d'une grille : le côté éloigné (`nw`, `n`, `ne`), la rangée du tableau (`w`, le tableau, `e`), le côté proche (`sw`, vous, `se`). Sur ordinateur et tablette les places de côté se tiennent près du tableau ; sur téléphone le tableau prend toute la largeur et les places de côté vont dans les coins.
+  - Une grille ne sait pas poser une chose sur une autre : il n'y a donc aucun chevauchement par construction, quels que soient la largeur, le nombre de joueurs et la longueur des noms. L'ovale n'est que le tapis derrière la grille.
+  - Une place ne change pas de taille pendant la main : la mise a sa propre ligne dans la place, et « fold », « tapis », « réfléchit » s'écrivent par-dessus les cartes.
+  - Sur téléphone l'en-tête et le plateau de décisions sont compacts : la table avec le plateau tient sur un écran. Le tapis de jetons est un nombre à côté d'un jeton.
+- **Une légende qui s'ouvre à côté de quelque chose** (une biographie sous un portrait, la fiche d'un héros) reste à l'écran grâce au hook `shared/hooks/useKeepOnScreen.ts`.
+  - Le décalage est calculé avant que la légende n'occupe sa place ne serait-ce qu'une fois : pendant la mesure elle est épinglée dans le coin de l'écran, invisible.
+  - La raison : une seule mise en page avec la légende hors du bord suffit pour que le navigateur du téléphone dézoome toute la page, et la page reste dézoomée (une table de 320 px passait à 367).
+- **La vérification de mise en page** `scripts/load/layout-audit.mjs` (partie de `npm run load`) regarde les tables comme le fait une personne : 20 écrans (téléphones debout et couchés, tablettes, ordinateurs), tout nombre de joueurs, cinq langues, chaque fiche ouverte.
+  - Elle attrape : un texte hors de l'écran ; un texte coupé par un cadre ; un texte sous quelque chose de peint ; un mot coupé entre deux lignes ; un texte qui dépasse de sa plaque ; une place sur le tableau, le pot ou une mise ; une page plus large que l'écran (et dit ce qui dépasse).
+  - Résultat après les corrections : 1339 contrôles, rien trouvé.
+- **Les héros sont communs à tous les jeux.** La question d'Alexey : les mêmes adversaires s'assoient à la préférence et au poker — ne faut-il pas les sortir ? Ils l'ont été.
+  - `shared/characters/roster.ts` — qui ils sont : la fiche, le genre grammatical, habitant ou invité, le chemin de l'image. `shared/characters/texts/{ru,en,he,es,fr}.ts` — noms et biographies. Les images se trouvent une seule fois dans `public/shared/characters/` (les copies du poker sont supprimées).
+  - Chaque jeu ne garde que sa manière : `games/preferans/characters/roster.ts` (audace, whist, misère, temps de réflexion), `games/poker/characters.ts` (rigueur, agressivité, bluff) avec les répliques de poker dans ses dictionnaires, `games/chess/components/ChessOpponent.tsx` (un héros au hasard par partie, le bouton « Un autre adversaire »).
+  - La règle des deux (section 5) est respectée : trois jeux utilisent les héros.
+- **Le portrait d'un héros se comporte partout de la même façon** (`shared/components/CharacterCard.tsx`, décision d'Alexey : « les fenêtres sont toutes petites… on ne voit pas qui l'on choisit »).
+  - À une table : sous la souris l'image entière grandit 2,5 fois et revient quand la souris s'en va ; un appui ouvre la fiche du héros (image, nom, biographie, la réplique de ce jeu) ; Échap ou un appui ailleurs la ferme.
+  - Au choix des adversaires : la même fiche dans le style du repaire se place à côté du portrait à la place de la simple infobulle du navigateur. `shared/utils/placeBeside.ts` lui trouve sa place : à droite, sinon à gauche, sur téléphone sous le portrait ou au-dessus.
+  - Un doigt ne survole pas : sur téléphone un toucher ouvre la fiche.
+- **Le catalogue des jeux.** Sous la souris la carte d'un jeu avance et grandit d'une fois et demie tout entière (et non l'image à l'intérieur) ; les cartes des bords grandissent depuis leur bord et restent à l'écran. Un clic sur la couverture ouvre le jeu comme le bouton « Jouer ».
+- **Les bots de la préférence décident par l'imagination** (`games/preferans/engine/ai/foresight.ts`).
+  - Avant le jeu de la carte, le bot fait ce qu'il faisait déjà pour chaque carte : il distribue au hasard les cartes qu'il ne voit pas comme elles pourraient être, laisse le solveur exact jouer chaque donne et compte. L'enchère, la misère, l'écart, le contrat et le whist se décident ainsi.
+  - Ce que vaut une décision est compté avec les règles de la table elle-même (`worth`) : les whists, la poule et la montagne d'une donne deviennent un seul nombre exactement comme au règlement final. Le bot décide donc aussi bien en Sotchi, en Leningrad et en Rostov.
+  - Un défenseur n'imagine qu'un déclarant qui a pu annoncer ce jeu. Il faut pour cela évaluer une main d'un coup d'œil : `engine/ai/strength.ts` — l'estimation rapide plus des corrections apprises du solveur (`strengthTable.ts`, écrit par `scripts/load/preferans-learn.mjs`, 300 000 exemples). L'erreur de l'estimation est passée de 1,22 à 0,79 levée.
+  - Un appareil lent ne se fige pas : l'imagination a le même budget de temps et les mêmes limites strictes qu'un coup ; si les donnes n'arrivent pas à temps, l'ancienne estimation rapide répond.
+- **La mesure** (`scripts/load/preferans-calibrate.mjs`, 3000 donnes, le solveur exact à la place du jeu de la carte) :
+
+  | | avant | maintenant |
+  |---|---|---|
+  | raspasy | 37 % | 16 % |
+  | le déclarant fait un jeu whisté | 64 % | 85 % |
+  | un jeu passe sans whist | 68 % | 39 % |
+  | le whist manque son obligation | 32 % | 30 % |
+  | ce que vaut un whist seul face au jeu laissé passer | — | +3,6 whists |
+  | réflexion avant le jeu de la carte, ordinateur | 0 | environ 0,2 s par décision |
+
+  - L'objectif précédent « un whist qui manque son obligation au plus 15 % du temps » est abandonné : ce n'était pas la bonne mesure. Un whist risqué paie quand il rapporte en moyenne plus qu'un jeu laissé passer — et la mesure imprime maintenant exactement cette valeur.
+  - Un défenseur imagine le déclarant tel qu'il est : ses levées au-dessus du contrat concordent avec les vraies (14% / 41% / 45% contre 13% / 41% / 47%).
+- **Vérifications.** `npm test` — 130 tests. Nouveaux : les places du poker sur les deux écrans, le décalage d'une légende dans l'écran, la place de la fiche flottante, la main limite aux enchères.
 
 [↑ Retour aux langues](#top)

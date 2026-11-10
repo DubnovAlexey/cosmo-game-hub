@@ -126,7 +126,15 @@ const TEXT_AUDIT = `((rootSelector) => {
           if (at <= 0) continue;
           // [EN] An open caption lies over the table on purpose; only what covers the caption itself counts.
           // [RU] Раскрытая подпись лежит поверх стола нарочно; считается только то, что закрывает саму подпись.
-          const cover = stack.slice(0, at).find(el => !el.contains(owner) && painted(el, x, y) && (popover ? true : !el.closest(POPOVER)));
+          // [EN] …and a caption opened inside a menu (an explanation under the mouse) lies over the lines of that
+          //      menu on purpose too: a cover that belongs to another caption than the text itself is intended.
+          // [RU] …и подпись, раскрытая внутри меню (пояснение под мышью), тоже нарочно лежит поверх строк этого меню:
+          //      то, что принадлежит другой подписи, чем сам текст, закрывает его намеренно.
+          const cover = stack.slice(0, at).find(el => {
+            if (el.contains(owner) || !painted(el, x, y)) return false;
+            const coverPopover = el.closest(POPOVER);
+            return coverPopover === null || coverPopover === popover;
+          });
           if (cover) { found.push('text «' + sample + '» is covered by ' + label(cover)); break; }
         }
         // [EN] A line must stay inside the plate it is written on (a name wider than its plaque).
