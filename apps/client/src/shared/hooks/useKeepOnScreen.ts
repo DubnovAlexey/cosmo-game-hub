@@ -3,12 +3,12 @@
 //      is placed by CSS next to its owner; right after it opens, and whenever the window changes, the hook measures
 //      it and writes how far to move it sideways into the CSS variable --shift (the caption's own rule declares
 //      `--shift: 0px` and adds it with `translate`). Without it a caption of a seat at the edge of a phone ran off
-//      the screen (Alexey, 11.11.2026).
+//      the screen (Alexey, 10.11.2026).
 // [RU] ФАЙЛ: держит подпись, которая раскрывается рядом с чем-то (биография героя под портретом за столом преферанса,
 //      реплика завсегдатая за покерным столом), внутри экрана. Подпись ставит рядом с хозяином CSS; сразу после
 //      раскрытия и при любом изменении окна хук измеряет её и пишет в CSS-переменную --shift, на сколько сдвинуть её
 //      вбок (собственное правило подписи объявляет `--shift: 0px` и прибавляет сдвиг через `translate`). Без этого
-//      подпись места у края телефона уезжала за экран (Алексей, 11.11.2026).
+//      подпись места у края телефона уезжала за экран (Алексей, 10.11.2026).
 import { useLayoutEffect, type RefObject } from 'react';
 import { shiftIntoView } from '../utils/shiftIntoView.ts';
 

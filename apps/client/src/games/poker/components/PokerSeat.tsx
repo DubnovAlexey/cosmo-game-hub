@@ -14,7 +14,7 @@ import type { Card, SeatState } from '../engine/index.ts';
 import { portraitPath, type PokerCharacterId } from '../characters';
 import { usePokerTexts } from '../i18n';
 import { PokerCard } from './PokerCard';
-import type { SeatPlace, SeatSide } from './seating';
+import type { SeatPlace } from './seating';
 import styles from './Poker.module.css';
 
 export type SeatStatus = 'out' | 'folded' | 'allIn' | 'thinking';
@@ -39,13 +39,6 @@ interface PokerSeatProps {
     readonly onToggle: () => void;
 }
 
-const SIDES: Readonly<Record<SeatSide, string>> = {
-    west: styles.seatWest,
-    east: styles.seatEast,
-    north: styles.seatNorth,
-    south: styles.seatSouth,
-};
-
 export const PokerSeat: React.FC<PokerSeatProps> = ({
     seat, place, character, stack, bet, reveal, winning, status, onTurn, dealer, smallBlind, bigBlind, open, onToggle,
 }) => {
@@ -55,13 +48,13 @@ export const PokerSeat: React.FC<PokerSeatProps> = ({
     const yours = character === null;
     const name = character ? t.characters[character].name : t.seat.you;
     const classes = [
-        styles.seat, SIDES[place.side], yours ? styles.seatYours : '', onTurn ? styles.seatTurn : '',
+        styles.seat, yours ? styles.seatYours : '', onTurn ? styles.seatTurn : '',
         seat.folded ? styles.seatFolded : '', seat.out ? styles.seatOut : '', open ? styles.seatOpen : '',
     ].filter(Boolean).join(' ');
     const statusText = status === null ? null : status === 'out' ? t.seat.out : status === 'folded' ? t.seat.folded : status === 'allIn' ? t.seat.allIn : t.seat.thinking;
     const statusClasses = [styles.status, status === 'allIn' ? styles.statusAllIn : '', status === 'thinking' ? styles.statusThinking : ''].filter(Boolean).join(' ');
     return (
-        <div className={classes} data-area={place.area} style={{ '--x': `${place.x}%`, '--y': `${place.y}%` } as React.CSSProperties}>
+        <div className={classes} data-wide={place.wide} data-phone={place.phone}>
             <div className={styles.who}>
                 {character && (
                     <button type="button" className={styles.portrait} aria-label={t.seat.about(name)} aria-expanded={open} onClick={onToggle}>

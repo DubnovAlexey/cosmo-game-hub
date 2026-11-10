@@ -1,73 +1,63 @@
-// [EN] FILE: games/poker/tests/seating.test.ts — who sits where at the poker table: you at the bottom, the others
-//      clockwise; on a phone every player gets a place of the grid of its own, the two sides stay balanced and the
-//      places go round the table in the same clockwise order as the oval.
-// [RU] ФАЙЛ: кто где сидит за покерным столом: вы внизу, остальные по часовой стрелке; на телефоне у каждого игрока
-//      своё место сетки, две стороны уравновешены, а места идут вокруг стола в том же порядке по часовой стрелке,
-//      что и на овале.
+// [EN] FILE: games/poker/tests/seating.test.ts — who sits where at the poker table, on a computer and on a phone: you
+//      at the bottom, everybody on a place of the grid of their own, the places go round the table clockwise like
+//      the action, the two sides hold the same number of players, and a phone never uses the places beside the
+//      board (the board takes its whole width).
+// [RU] ФАЙЛ: кто где сидит за покерным столом, на компьютере и на телефоне: вы внизу, у каждого своё место сетки,
+//      места идут вокруг стола по часовой стрелке, как ход, на двух сторонах поровну игроков, а телефон никогда не
+//      занимает места рядом с доской (доска занимает всю его ширину).
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { MAX_SEATS, MIN_SEATS, seating, type SeatArea } from '../components/seating.ts';
+import { CLOCKWISE, MAX_SEATS, MIN_SEATS, seating, type SeatArea, type SeatPlace } from '../components/seating.ts';
 
 const COUNTS = Array.from({ length: MAX_SEATS - MIN_SEATS + 1 }, (_, index) => MIN_SEATS + index);
+const SCREENS: readonly (keyof SeatPlace)[] = ['wide', 'phone'];
+const LEFT: readonly SeatArea[] = ['sw', 'w', 'nw'];
+const RIGHT: readonly SeatArea[] = ['ne', 'e', 'se'];
 
-test('you sit at the bottom, alone on your side', () => {
-  for (const count of COUNTS) for (const narrow of [false, true]) {
-    const places = seating(count, narrow);
-    assert.equal(places.length, count);
-    assert.equal(places[0].side, 'south');
-    assert.equal(places[0].area, 's');
-    assert.ok(Math.abs(places[0].x - 50) < 1e-9 && places[0].y > 80, 'the bottom of the oval');
-    for (const place of places.slice(1)) {
-      assert.notEqual(place.side, 'south', `${count} players: nobody else sits on your side`);
-      assert.notEqual(place.area, 's');
-    }
+test('you sit at the bottom, and nobody else does', () => {
+  for (const count of COUNTS) for (const screen of SCREENS) {
+    const areas = seating(count).map(place => place[screen]);
+    assert.equal(areas.length, count);
+    assert.equal(areas[0], 's');
+    assert.ok(!areas.slice(1).includes('s'), `${count} players, ${screen}: ${areas.join(' ')}`);
   }
 });
 
-test('the phone grid gives everybody a place of their own', () => {
+test('everybody has a place of the grid of their own', () => {
+  for (const count of COUNTS) for (const screen of SCREENS) {
+    const areas = seating(count).map(place => place[screen]);
+    assert.equal(new Set(areas).size, count, `${count} players, ${screen}: ${areas.join(' ')}`);
+  }
+});
+
+test('the places go round the table clockwise, like the action', () => {
+  for (const count of COUNTS) for (const screen of SCREENS) {
+    const order = seating(count).map(place => CLOCKWISE.indexOf(place[screen]));
+    for (let index = 1; index < order.length; index += 1) assert.ok(order[index] > order[index - 1], `${count} players, ${screen}: ${order.join(' ')}`);
+  }
+});
+
+test('both sides of the table hold the same number of players', () => {
+  for (const count of COUNTS) for (const screen of SCREENS) {
+    const areas = seating(count).map(place => place[screen]);
+    assert.equal(areas.filter(area => LEFT.includes(area)).length, areas.filter(area => RIGHT.includes(area)).length, `${count} players, ${screen}: ${areas.join(' ')}`);
+  }
+});
+
+test('with three or more the next to act sits on your left, the last on your right', () => {
+  for (const count of COUNTS.filter(seats => seats >= 3)) for (const screen of SCREENS) {
+    const areas = seating(count).map(place => place[screen]);
+    assert.ok(LEFT.includes(areas[1]), `${count} players, ${screen}`);
+    assert.ok(RIGHT.includes(areas[count - 1]), `${count} players, ${screen}`);
+  }
+});
+
+test('a phone keeps the places beside the board free, a computer the corners beside you', () => {
   for (const count of COUNTS) {
-    const areas = seating(count).map(place => place.area);
-    assert.equal(new Set(areas).size, count, `${count} players: ${areas.join(' ')}`);
-  }
-});
-
-test('the phone grid goes clockwise, like the oval and like the action', () => {
-  const clockwise: readonly SeatArea[] = ['s', 'sw', 'nw', 'n', 'ne', 'se'];
-  for (const count of COUNTS) {
-    const order = seating(count).map(place => clockwise.indexOf(place.area));
-    for (let index = 1; index < order.length; index += 1) assert.ok(order[index] > order[index - 1], `${count} players: ${order.join(' ')}`);
-  }
-});
-
-test('both sides of the phone grid hold the same number of players', () => {
-  for (const count of COUNTS) {
-    const areas = seating(count).map(place => place.area);
-    const left = areas.filter(area => area === 'sw' || area === 'nw').length;
-    const right = areas.filter(area => area === 'se' || area === 'ne').length;
-    assert.equal(left, right, `${count} players: ${areas.join(' ')}`);
-  }
-});
-
-test('on the oval the next player sits on your left and the sides mirror each other', () => {
-  for (const count of COUNTS.filter(seats => seats >= 3)) {
     const places = seating(count);
-    assert.ok(places[1].x < 50, `${count} players: the next to act sits on the left`);
-    assert.ok(places[count - 1].x > 50, `${count} players: the last to act sits on the right`);
-    for (let index = 1; index < count; index += 1) {
-      const mirror = places[count - index];
-      assert.ok(Math.abs(places[index].x + mirror.x - 100) < 1e-9 && Math.abs(places[index].y - mirror.y) < 1e-9, `${count} players: seat ${index} mirrors seat ${count - index}`);
-    }
-  }
-});
-
-test('a narrow screen pulls the side seats in, the cards of a side seat lie toward the middle', () => {
-  for (const count of COUNTS.filter(seats => seats >= 3)) {
-    const wide = seating(count, false);
-    const narrow = seating(count, true);
-    for (let index = 1; index < count; index += 1) {
-      assert.ok(Math.abs(narrow[index].x - 50) <= Math.abs(wide[index].x - 50) + 1e-9);
-      if (wide[index].side === 'west') assert.ok(wide[index].x < 50);
-      if (wide[index].side === 'east') assert.ok(wide[index].x > 50);
+    for (const place of places) {
+      assert.ok(place.phone !== 'w' && place.phone !== 'e', `${count} players: the board of a phone takes the whole width`);
+      assert.ok(place.wide !== 'sw' && place.wide !== 'se', `${count} players: on a computer the near corners stay free`);
     }
   }
 });

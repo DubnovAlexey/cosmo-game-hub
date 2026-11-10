@@ -34,25 +34,12 @@ const NO_CARDS: ReadonlySet<Card> = new Set<Card>();
 
 const cardText = (card: Card): string => `${rankLabel(rankOf(card))}${SUIT_SYMBOLS[suitOf(card)]}`;
 
-function useMatch(query: string): boolean {
-    const [matches, setMatches] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches);
-    useEffect(() => {
-        const list = window.matchMedia(query);
-        const update = () => setMatches(list.matches);
-        update();
-        list.addEventListener('change', update);
-        return () => list.removeEventListener('change', update);
-    }, [query]);
-    return matches;
-}
-
 export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, texts: t }) => {
     const [menuOpen, setMenuOpen] = useState(true);
     const [saved, setSaved] = useState(() => loadPokerSave());
     const [openSeat, setOpenSeat] = useState<number | null>(null);
     const game = usePoker(!menuOpen);
     const { table, cast } = game;
-    const narrow = useMatch('(max-width: 899px)');
     // [EN] An open line under a portrait closes by Escape and by a press anywhere else.
     // [RU] Раскрытая реплика под портретом закрывается клавишей Escape и нажатием в любом другом месте.
     useEffect(() => {
@@ -118,7 +105,7 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
     const openMenu = () => { setSaved(loadPokerSave()); setMenuOpen(true); };
 
     const legal = table && table.turn === HUMAN_SEAT ? legalActions(table) : null;
-    const places = table ? seating(table.seats.length, narrow) : [];
+    const places = table ? seating(table.seats.length) : [];
     const showdown = table?.result?.showdown ?? false;
     const savedTime = game.savedAt !== null ? new Date(game.savedAt).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' }) : null;
 

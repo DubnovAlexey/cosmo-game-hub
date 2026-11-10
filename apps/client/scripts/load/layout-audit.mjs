@@ -2,7 +2,7 @@
 //      on phones (upright and on their side), tablets and computers, with every number of players, it opens every
 //      portrait's caption and checks three things.
 //        1. No text goes past the screen or is cut by a box around it (a caption cut by the screen edge on a phone,
-//           Alexey, 11.11.2026).
+//           Alexey, 10.11.2026).
 //        2. No text is hidden under something painted over it (a card over «Префлоп · Банк 30», a card over a bet).
 //        3. On the poker oval no seat lies on the board, the pot, a bet or another seat.
 //      Text inside playing cards is skipped here (fanned cards overlap on purpose); the poker check covers the
@@ -12,7 +12,7 @@
 // [RU] ФАЙЛ: смотрит на карточные столы так, как человек смотрит на экран: на телефонах (стоя и лёжа), планшетах и
 //      компьютерах, при любом числе игроков, раскрывает подпись каждого портрета и проверяет три вещи.
 //        1. Никакой текст не выходит за экран и не обрезается рамкой вокруг (подпись, обрезанная краем экрана на
-//           телефоне, Алексей, 11.11.2026).
+//           телефоне, Алексей, 10.11.2026).
 //        2. Никакой текст не спрятан под чем-то нарисованным поверх (карта на «Префлоп · Банк 30», карта на ставке).
 //        3. На покерном овале ни одно место не лежит на доске, банке, ставке или другом месте.
 //      Текст внутри игральных карт здесь пропускается (карты веером перекрываются нарочно); сами карты доски
@@ -36,7 +36,7 @@ const HANDS = Number(option('hands', '1'));
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
 
 /** [EN] A phone or a tablet is touched; a computer is clicked. [RU] Телефон и планшет трогают пальцем, на компьютере щёлкают. */
-const touchScreen = (width, height) => Math.min(width, height) < 900 || (width <= 1366 && height >= 1024);
+const touchScreen = (width, height) => width <= 1180 || (width <= 1366 && height > width);
 
 // [EN] The checks run inside the page. Elements are found by the start of their CSS-module class («_seat_…»).
 // [RU] Проверки выполняются внутри страницы. Элементы ищутся по началу класса CSS-модуля («_seat_…»).
@@ -353,7 +353,7 @@ try {
             width, height, deviceScaleFactor: touch ? 2 : 1, mobile: touch,
             screenOrientation: width > height ? { type: 'landscapePrimary', angle: 90 } : { type: 'portraitPrimary', angle: 0 },
         });
-        await page.send('Emulation.setTouchEmulationEnabled', { enabled: touch, maxTouchPoints: touch ? 5 : 0 });
+        await page.send('Emulation.setTouchEmulationEnabled', touch ? { enabled: true, maxTouchPoints: 5 } : { enabled: false });
         const where = `${width}x${height}`;
         for (const language of LANGUAGES) {
             if (GAME === 'all' || GAME === 'poker') {

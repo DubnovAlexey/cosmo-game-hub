@@ -1,14 +1,16 @@
 /* [EN] FILE: games/poker/components/Poker.module.css — the lair's poker room: the same crypt and the same club as the
         preferans table (blackened silver on velvet, the scribe's quill, deep bottle-emerald felt), with an oval table
-        in a lacquered rail. On a computer and a tablet the seats stand round the oval (places from seating.ts), the
-        board and the pot in the middle, the decision tray under the table. On a phone the table is a grid of three
-        rows — the far side, the board, the near side — so nothing can lie on anything else, and the table with the
-        tray fits one screen.
+        in a lacquered rail. The table is a grid of three rows and three columns (places from seating.ts): the far
+        side, the row with the board, the near side. Every seat is a cell, so nothing can lie on anything else on any
+        screen; the oval is the cloth behind the grid. On a computer and a tablet the side seats stand beside the
+        board; on a phone the board takes the whole width, the side seats go to the corners, and the table with the
+        decision tray fits one screen.
    [RU] ФАЙЛ: покерная комната логова: та же крипта и тот же клуб, что у стола преферанса (черненое серебро на бархате,
-        перо писаря, глубокое бутылочно-изумрудное сукно), с овальным столом в лакированном борту. На компьютере и
-        планшете места стоят вокруг овала (позиции — из seating.ts), доска и банк посередине, лоток решений под
-        столом. На телефоне стол — сетка в три ряда: дальняя сторона, доска, ближняя сторона; так ничто не может лечь
-        на другое, а стол вместе с лотком помещается на один экран. */
+        перо писаря, глубокое бутылочно-изумрудное сукно), с овальным столом в лакированном борту. Стол — сетка в три
+        ряда и три колонки (места — из seating.ts): дальняя сторона, ряд с доской, ближняя сторона. Каждое место —
+        клетка, поэтому ничто не может лечь на другое ни на каком экране; овал — сукно позади сетки. На компьютере
+        и планшете боковые места стоят рядом с доской; на телефоне доска занимает всю ширину, боковые места уходят в
+        углы, а стол вместе с лотком решений помещается на один экран. */
 
 /* ===== 1. Room / Комната ===== */
 .room {
@@ -22,7 +24,7 @@
     --bone: #eadfc6;
     --candle: #ffb54a;
     --blood: #9b111e;
-    --card-w: clamp(40px, 5.4vw, 74px);
+    --card-w: clamp(40px, 5.2vw, 70px);
     --card-h: calc(var(--card-w) * 1.42);
     /* [EN] The cards of the other players and your own two: a seat keeps room for them even before the deal.
        [RU] Карты других игроков и ваши две: место держит под них площадь ещё до раздачи. */
@@ -112,14 +114,28 @@
 /* ===== 3. Table / Стол ===== */
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) clamp(240px, 22vw, 300px); gap: 18px; max-width: 1180px; margin: 0 auto; align-items: start; }
 .tableArea { min-width: 0; }
+/* [EN] The cloth is the grid itself: 'nw n ne' — the far side, 'w c e' — the board with a seat on either side,
+        'sw s se' — the near side with you in the middle. The side columns share what the board leaves, a seat never
+        grows wider than its cell, and the height follows the content (a phone on its side gets a low table, a
+        tablet upright a taller one).
+   [RU] Сукно и есть сетка: 'nw n ne' — дальняя сторона, 'w c e' — доска с местом по бокам, 'sw s se' — ближняя
+        сторона с вами посередине. Боковые колонки делят то, что оставила доска, место никогда не становится шире
+        своей клетки, а высота идёт за содержимым (у телефона на боку стол низкий, у планшета стоя — повыше). */
 .felt {
     position: relative;
     /* [EN] The table keeps its geometry in Hebrew too (cards toward the middle); the texts inside still read right to
             left. [RU] Стол сохраняет геометрию и на иврите (карты ближе к середине); тексты внутри всё равно читаются
             справа налево. */
     direction: ltr;
-    aspect-ratio: 16 / 9.4;
-    min-height: 380px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas: 'nw n ne' 'w c e' 'sw s se';
+    align-items: center;
+    align-content: space-between;
+    gap: 10px 8px;
+    min-height: min(52vw, 56vh, 480px);
+    margin: 22px 22px 44px;
+    width: calc(100% - 44px);
     border-radius: 50% / 46%;
     background:
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0.26 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E"),
@@ -128,54 +144,52 @@
     box-shadow:
         inset 0 0 0 1px rgba(0, 0, 0, 0.35), inset 0 0 90px rgba(0, 0, 0, 0.55),
         0 0 0 10px #0e0807, 0 0 0 11px #9097a1, 0 0 0 16px #0e0807, 0 0 0 17px #000, 0 0 0 20px rgba(110, 15, 26, 0.6), 0 26px 60px rgba(0, 0, 0, 0.8);
-    margin: 22px 22px 44px;
-    width: calc(100% - 44px);
 }
 /* [EN] A fine silver line marks the betting line on the cloth. [RU] Тонкая серебряная линия отмечает на сукне черту ставок. */
 .felt::before { content: ''; position: absolute; inset: 12%; border-radius: 50% / 46%; box-shadow: inset 0 0 0 1px rgba(200, 205, 212, 0.16); pointer-events: none; }
 
-.center { position: absolute; left: 50%; top: 49%; display: grid; justify-items: center; gap: 8px; transform: translate(-50%, -50%); pointer-events: none; }
+.center { grid-area: c; display: grid; justify-items: center; gap: 8px; }
 .board { display: flex; gap: calc(var(--card-w) * 0.12); }
 .slot { width: var(--card-w); height: var(--card-h); border-radius: calc(var(--card-w) * 0.11); box-shadow: inset 0 0 0 1px rgba(216, 219, 224, 0.16); }
-.pot { padding: 2px 14px 4px; border-radius: 999px; background: rgba(0, 0, 0, 0.45); color: #f3e7c6; font: 400 1.25rem/1.2 var(--quill), cursive; white-space: nowrap; }
+.pot { padding: 2px 14px 4px; border-radius: 999px; background: rgba(0, 0, 0, 0.45); color: #f3e7c6; font: 400 1.25rem/1.2 var(--quill), cursive; white-space: nowrap; unicode-bidi: plaintext; }
 .street { color: #a9c7b2; }
 
 /* ===== 4. Seats / Места ===== */
 /* [EN] A seat is a pod: the portrait with its plaque, and beside it — toward the middle of the table — the two cards
-        with the bet under them. On a computer and a tablet the pods stand round the oval (seating.ts gives the place
-        of each); on a phone they are cells of a grid (section 8). A pod never changes size during a hand: the bet has
-        its own line even when there is none, and «fold», «all-in», «thinking» are written across the cards — so a
-        pod cannot push or cover its neighbours, the board or the pot.
+        with the bet under them. A pod never changes size during a hand: the bet has its own line even when there is
+        none, and «fold», «all-in», «thinking» are written across the cards — so a pod cannot push its neighbours,
+        the board or the pot.
    [RU] Место — компактная группа: портрет с табличкой, а рядом, ближе к середине стола, две карты и ставка под ними.
-        На компьютере и планшете группы стоят по овалу (место каждой даёт seating.ts); на телефоне это клетки сетки
-        (раздел 8). Группа не меняет размер во время раздачи: у ставки своя строка, даже когда ставки нет, а «фолд»,
-        «олл-ин», «думает» пишутся поверх карт — поэтому группа не может толкнуть или закрыть соседей, доску и банк. */
-.seat {
-    /* [EN] seating.ts sets the place of every seat inline; the middle of the table is only a default.
-       [RU] seating.ts задаёт место каждого игрока прямо в разметке; середина стола — только запасное значение. */
-    --x: 50%;
-    --y: 50%;
-    position: absolute;
-    left: var(--x);
-    top: var(--y);
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: max-content;
-    transform: translate(-50%, -50%);
-}
+        Группа не меняет размер во время раздачи: у ставки своя строка, даже когда ставки нет, а «фолд», «олл-ин»,
+        «думает» пишутся поверх карт — поэтому группа не может толкнуть соседей, доску и банк. */
+.seat { position: relative; z-index: 2; display: flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; }
 /* [EN] The seat whose line is open lies above its neighbours. [RU] Место с раскрытой репликой лежит поверх соседей. */
 .seatOpen { z-index: 8; }
-.seatWest, .seatNorth { flex-direction: row; }
-.seatEast { flex-direction: row-reverse; }
-.seatSouth { flex-direction: column-reverse; }
-.who { position: relative; display: grid; justify-items: center; }
+.seatYours { flex-direction: column-reverse; }
+/* [EN] A computer and a tablet: where each place of the grid stands. The far middle seat pokes over the rail, its
+        neighbours stand a step lower along the curve; the seats beside the board lean out over the rail, so the
+        board keeps its width; your plaque lies on the near rail.
+   [RU] Компьютер и планшет: где стоит каждое место сетки. Среднее дальнее место выступает над бортом, соседи стоят
+        на шаг ниже по дуге; места рядом с доской выступают за борт, чтобы доска сохранила ширину; ваша табличка
+        лежит на ближнем борту. */
+@media (min-width: 701px) {
+    .seat[data-wide='n'] { grid-area: n; justify-self: center; align-self: start; margin-top: calc(var(--portrait) * -0.45); }
+    .seat[data-wide='nw'] { grid-area: nw; justify-self: start; align-self: start; margin: 14px 0 0 -6px; }
+    .seat[data-wide='ne'] { grid-area: ne; justify-self: end; align-self: start; margin: 14px -6px 0 0; flex-direction: row-reverse; }
+    .seat[data-wide='w'] { grid-area: w; justify-self: start; margin-left: -20px; max-width: calc(100% + 20px); }
+    .seat[data-wide='e'] { grid-area: e; justify-self: end; margin-right: -20px; max-width: calc(100% + 20px); flex-direction: row-reverse; }
+    .seat[data-wide='s'] { grid-area: s; justify-self: center; align-self: end; margin-bottom: -34px; }
+    .seat[data-wide='e'] .badges, .seat[data-wide='ne'] .badges { right: auto; left: -4px; }
+    /* [EN] In the middle of the far side and at your own place a long name has room for one line.
+       [RU] Посередине дальней стороны и на вашем месте длинному имени хватает места на одну строку. */
+    .seat[data-wide='n'] .seatName, .seat[data-wide='s'] .seatName { max-width: 210px; }
+}
+.who { position: relative; display: grid; justify-items: center; min-width: 0; }
 .who .plaque { position: relative; z-index: 1; margin-top: -8px; }
 .seatYours .who .plaque { margin-top: 0; }
 /* [EN] The cards and the bet in front of them. [RU] Карты и ставка перед ними. */
-.hand { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.seatSouth .hand { flex-direction: column-reverse; }
+.hand { display: flex; flex: none; flex-direction: column; align-items: center; gap: 4px; }
+.seatYours .hand { flex-direction: column-reverse; }
 .hole {
     position: relative;
     display: flex;
@@ -187,16 +201,16 @@
 }
 .seatYours .hole { min-width: calc(var(--hand-w) * 2 + 3px); min-height: calc(var(--hand-w) * 1.42); }
 .betSlot { display: flex; align-items: center; justify-content: center; min-height: 24px; }
-/* [EN] The line of a regular opens under the portrait. Its place is centred by CSS; useKeepOnScreen adds --shift so
+/* [EN] The line of a regular opens under the portrait. Its place is centred by CSS; useKeepOnScreen writes --shift so
         it never leaves the screen (a seat at the edge of a phone). [RU] Реплика завсегдатая раскрывается под
-        портретом. По центру её ставит CSS; useKeepOnScreen добавляет --shift, чтобы она не уходила за экран (место
-        у края телефона). */
+        портретом. По центру её ставит CSS; useKeepOnScreen пишет --shift, чтобы она не уходила за экран (место у
+        края телефона). */
 .bubble {
+    --shift: 0px;
     position: absolute;
     top: 100%;
     left: 50%;
     z-index: 6;
-    --shift: 0px;
     width: max-content;
     max-width: min(260px, calc(100vw - 24px));
     margin: 6px 0 0;
@@ -241,7 +255,10 @@
     box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.6);
     text-align: center;
 }
-.seatName { max-width: 170px; overflow: hidden; color: var(--bone); font: 400 1.12rem/1.15 var(--quill), cursive; text-overflow: ellipsis; white-space: nowrap; unicode-bidi: plaintext; }
+/* [EN] A name wraps between its words («Казначей» / «Костяшкин»): a plaque must not grow so wide that the seat
+        beside the board reaches the board. [RU] Имя переносится между словами («Казначей» / «Костяшкин»): табличка
+        не должна разрастаться так, чтобы место рядом с доской дотянулось до доски. */
+.seatName { max-width: 124px; color: var(--bone); font: 400 1.12rem/1.15 var(--quill), cursive; overflow-wrap: break-word; unicode-bidi: plaintext; }
 .seatStack { color: #d9c9a0; font-size: 0.86rem; font-variant-numeric: tabular-nums; white-space: nowrap; unicode-bidi: plaintext; }
 /* [EN] «Fold», «all-in», «thinking», «out» — across the cards, so the pod keeps its size.
    [RU] «Фолд», «олл-ин», «думает», «выбыл» — поверх карт, чтобы группа сохраняла размер. */
@@ -267,7 +284,6 @@
 /* [EN] The dealer button and the blinds: at the top corner of the pod on the table's side.
    [RU] Баттон и блайнды: у верхнего угла группы со стороны стола. */
 .badges { position: absolute; top: -6px; right: -4px; z-index: 3; display: flex; gap: 3px; pointer-events: none; }
-.seatEast .badges { right: auto; left: -4px; }
 /* [EN] Yours lie on the top corners of your plaque. [RU] Ваши лежат на верхних углах вашей таблички. */
 .seatYours .badges { top: -13px; left: -8px; right: -8px; flex-direction: row-reverse; justify-content: space-between; }
 .dealer, .blind {
@@ -418,25 +434,20 @@
 .company img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: 50% 22%; box-shadow: 0 0 0 2px #6c737d; }
 
 /* ===== 8. Phone and tablet / Телефон и планшет ===== */
-@media (max-width: 1023px) {
+/* [EN] Below a wide desktop the log of the hand goes under the table: the table needs the whole width for the seats
+        beside the board. [RU] Уже широкого монитора ход раздачи уходит под стол: столу нужна вся ширина для мест
+        рядом с доской. */
+@media (max-width: 1199px) {
     .layout { grid-template-columns: 1fr; }
     .side { order: 3; }
 }
-/* [EN] A phone on its side: the screen is low, so the table takes the height of the screen, not a share of its width.
-   [RU] Телефон на боку: экран низкий, поэтому стол берёт высоту экрана, а не долю его ширины. */
-@media (min-width: 701px) and (max-height: 560px) {
-    .felt { aspect-ratio: auto; min-height: 0; height: max(300px, calc(100vh - 76px)); }
-    /* [EN] Where the browser knows the height without its own bars, that one is used. [RU] Где браузер знает высоту без своих панелей, берётся она. */
-    @supports (height: 100dvh) {
-        .felt { height: max(300px, calc(100dvh - 76px)); }
-    }
-}
-/* [EN] A phone: the table is a grid of three rows — the far side (nw, n, ne), the board with the pot, the near side
-        (sw, you, se). Every seat is a cell, so by construction nothing lies on anything else, whatever the width of
-        the phone, the number of players and the length of the names. The oval is only the cloth behind the grid.
-   [RU] Телефон: стол — сетка в три ряда: дальняя сторона (nw, n, ne), доска с банком, ближняя сторона (sw, вы, se).
-        Каждое место — клетка, поэтому по построению ничто ни на что не ложится при любой ширине телефона, числе
-        игроков и длине имён. Овал — только сукно позади сетки. */
+/* [EN] A phone: the board takes the whole width ('c c c'), so the side seats go to the corners of the far and the
+        near side, and a seat becomes a small grid of its own — the portrait with the cards beside it, the plaque
+        under them, the bet toward the board. The header and the tray are compact, so the table with the tray fits
+        one screen.
+   [RU] Телефон: доска занимает всю ширину ('c c c'), поэтому боковые места уходят в углы дальней и ближней стороны, а
+        место становится маленькой собственной сеткой: портрет с картами рядом, под ними табличка, ставка — со
+        стороны доски. Шапка и лоток компактные, поэтому стол вместе с лотком помещается на один экран. */
 @media (max-width: 700px) {
     .room {
         --card-w: clamp(34px, 12.4vw, 56px);
@@ -458,12 +469,10 @@
     .savedAt { order: 9; font-size: 0.78rem; }
 
     .felt {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
         grid-template-areas: 'nw n ne' 'c c c' 'sw s se';
         align-items: start;
+        align-content: normal;
         gap: 8px;
-        aspect-ratio: auto;
         min-height: 0;
         margin: 16px 14px 28px;
         width: calc(100% - 28px);
@@ -471,36 +480,32 @@
         border-radius: 46% / 40%;
     }
     .felt::before { border-radius: 46% / 40%; }
-    .center { position: static; grid-area: c; justify-self: center; gap: 6px; transform: none; }
+    .center { justify-self: center; gap: 6px; }
     .pot { font-size: 1.1rem; }
 
     .seat {
-        position: relative;
-        left: auto;
-        top: auto;
         display: grid;
         grid-template-columns: auto auto;
         grid-template-areas: 'face cards' 'plaque plaque' 'bet bet';
         justify-items: center;
         gap: 2px 3px;
         width: min-content;
-        max-width: 100%;
-        transform: none;
     }
-    /* [EN] On the right-hand side the cards lie to the left of the portrait, toward the table.
-       [RU] На правой стороне карты лежат слева от портрета, со стороны стола. */
-    .seat[data-area='ne'] { grid-template-areas: 'cards face' 'plaque plaque' 'bet bet'; }
-    .seat[data-area='sw'] { grid-template-areas: 'bet bet' 'face cards' 'plaque plaque'; }
-    .seat[data-area='se'] { grid-template-areas: 'bet bet' 'cards face' 'plaque plaque'; }
+    /* [EN] On the right-hand side the cards lie to the left of the portrait, toward the table; on the near side the
+            bet lies above, toward the board. [RU] На правой стороне карты лежат слева от портрета, со стороны стола;
+            на ближней стороне ставка лежит сверху, со стороны доски. */
+    .seat[data-phone='ne'] { grid-template-areas: 'cards face' 'plaque plaque' 'bet bet'; }
+    .seat[data-phone='sw'] { grid-template-areas: 'bet bet' 'face cards' 'plaque plaque'; }
+    .seat[data-phone='se'] { grid-template-areas: 'bet bet' 'cards face' 'plaque plaque'; }
     /* [EN] The far and the near side follow the curve of the table: the middle seat stands at its top, the corner
             seats a step lower. [RU] Дальняя и ближняя стороны идут по дуге стола: среднее место стоит в её вершине,
             угловые — на шаг ниже. */
-    .seat[data-area='n'] { grid-area: n; justify-self: center; margin-top: -12px; }
-    .seat[data-area='nw'] { grid-area: nw; justify-self: start; margin-top: 8px; }
-    .seat[data-area='ne'] { grid-area: ne; justify-self: end; margin-top: 8px; }
-    .seat[data-area='sw'] { grid-area: sw; justify-self: start; align-self: end; margin-bottom: 8px; }
-    .seat[data-area='se'] { grid-area: se; justify-self: end; align-self: end; margin-bottom: 8px; }
-    .seat[data-area='s'] { grid-area: s; justify-self: center; align-self: end; margin-bottom: -14px; }
+    .seat[data-phone='n'] { grid-area: n; justify-self: center; margin-top: -12px; }
+    .seat[data-phone='nw'] { grid-area: nw; justify-self: start; margin-top: 8px; }
+    .seat[data-phone='ne'] { grid-area: ne; justify-self: end; margin-top: 8px; }
+    .seat[data-phone='sw'] { grid-area: sw; justify-self: start; align-self: end; margin-bottom: 8px; }
+    .seat[data-phone='se'] { grid-area: se; justify-self: end; align-self: end; margin-bottom: 8px; }
+    .seat[data-phone='s'] { grid-area: s; justify-self: center; align-self: end; margin-bottom: -14px; }
     /* [EN] The parts of another player's pod are laid out by the pod's own grid. [RU] Части чужой группы раскладывает собственная сетка группы. */
     .seat:not(.seatYours) .who, .seat:not(.seatYours) .hand { display: contents; }
     .portrait { grid-area: face; }
@@ -514,18 +519,17 @@
     .bet { font-size: 0.98rem; }
     .plaque { min-width: 0; padding: 1px 4px 3px; }
     .seatYours .plaque { min-width: 84px; padding: 1px 10px 3px; }
-    /* [EN] A name wraps between its words; `overflow: visible` lets the longest word set the width of the pod, so a
-            word is broken in the middle only when even the whole cell is too narrow for it.
-       [RU] Имя переносится между словами; `overflow: visible` даёт самому длинному слову задать ширину группы, так
-            что слово рвётся посередине, только когда ему тесна даже вся клетка. */
-    .seatName { max-width: none; overflow: visible; font-size: clamp(0.76rem, 3.7vw, 0.95rem); line-height: 1.05; white-space: normal; overflow-wrap: break-word; }
+    /* [EN] The longest word of a name sets the width of the pod, so a word is broken in the middle only when even
+            the whole cell is too narrow for it. [RU] Самое длинное слово имени задаёт ширину группы, так что слово
+            рвётся посередине, только когда ему тесна даже вся клетка. */
+    .seatName { max-width: none; font-size: clamp(0.76rem, 3.7vw, 0.95rem); line-height: 1.05; }
     .seatStack { font-size: 0.78rem; }
     .status { font-size: 0.84rem; padding: 0 4px 1px; }
     /* [EN] The button and the blinds stand one over the other at the outer corner of the portrait.
        [RU] Баттон и блайнды стоят друг над другом у внешнего угла портрета. */
     .badges { top: -5px; left: -7px; right: auto; flex-direction: column; gap: 2px; }
-    .seat[data-area='ne'] .badges, .seat[data-area='se'] .badges { left: auto; right: -7px; }
-    .seat[data-area='sw'] .badges, .seat[data-area='se'] .badges { top: 17px; }
+    .seat[data-phone='ne'] .badges, .seat[data-phone='se'] .badges { left: auto; right: -7px; }
+    .seat[data-phone='sw'] .badges, .seat[data-phone='se'] .badges { top: 17px; }
     .seatYours .badges { top: -12px; left: -6px; right: -6px; flex-direction: row-reverse; }
     .dealer, .blind { width: 20px; height: 20px; font-size: 0.62rem; }
     .blind { font-size: 0.52rem; }
