@@ -7,7 +7,7 @@
 //      карты, ставки на сукне, баттон и блайнды), доска и банк посередине, итог раздачи с подсвеченной выигравшей
 //      пятёркой, ваш лоток решений, ход раздачи, меню турнира и его конец. Кто где сидит, решает seating.ts, одно
 //      место рисует PokerSeat.tsx.
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { LanguageSwitch } from '@shared/components/LanguageSwitch';
 import type { Language } from '@shared/i18n/languages';
 import {
@@ -37,22 +37,8 @@ const cardText = (card: Card): string => `${rankLabel(rankOf(card))}${SUIT_SYMBO
 export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, texts: t }) => {
     const [menuOpen, setMenuOpen] = useState(true);
     const [saved, setSaved] = useState(() => loadPokerSave());
-    const [openSeat, setOpenSeat] = useState<number | null>(null);
     const game = usePoker(!menuOpen);
     const { table, cast } = game;
-    // [EN] An open line under a portrait closes by Escape and by a press anywhere else.
-    // [RU] Раскрытая реплика под портретом закрывается клавишей Escape и нажатием в любом другом месте.
-    useEffect(() => {
-        if (openSeat === null) return;
-        const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpenSeat(null); };
-        const onPress = (event: PointerEvent) => {
-            const target = event.target instanceof Element ? event.target : null;
-            if (!target?.closest('[aria-expanded="true"], [role="note"]')) setOpenSeat(null);
-        };
-        window.addEventListener('keydown', onKey);
-        window.addEventListener('pointerdown', onPress);
-        return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('pointerdown', onPress); };
-    }, [openSeat]);
     const format = (chips: number): string => chips.toLocaleString(language);
     const who = (seat: number): Who => (seat === HUMAN_SEAT
         ? { name: t.seat.you, female: false, you: true }
@@ -156,8 +142,7 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
                                     <PokerSeat key={index} seat={seat} place={places[index]} character={yours ? null : cast[index - 1]}
                                         stack={format(seat.stack)} bet={seat.bet > 0 && table.phase !== 'done' ? format(seat.bet) : null}
                                         reveal={yours || shown} winning={showdown ? winningCards : NO_CARDS} status={status} onTurn={onTurn}
-                                        dealer={table.button === index} smallBlind={table.smallBlindSeat === index} bigBlind={table.bigBlindSeat === index}
-                                        open={openSeat === index} onToggle={() => setOpenSeat(current => (current === index ? null : index))} />
+                                        dealer={table.button === index} smallBlind={table.smallBlindSeat === index} bigBlind={table.bigBlindSeat === index} />
                                 );
                             })}
                         </div>

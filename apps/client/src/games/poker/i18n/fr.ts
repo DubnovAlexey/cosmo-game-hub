@@ -1,6 +1,6 @@
 // [EN] FILE: games/poker/i18n/fr.ts — the poker table in French, with a non-breaking space before : ; ? !
 // [RU] ФАЙЛ: покерный стол по-французски, с неразрывным пробелом перед : ; ? !
-import type { PokerTexts, Who } from './types';
+import type { PokerDictionary, Who } from './types';
 
 const RANK_NAMES = ['deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'valet', 'dame', 'roi', 'as'];
 const SUIT_NAMES = ['pique', 'cœur', 'carreau', 'trèfle'];
@@ -8,7 +8,7 @@ const capitalised = (text: string): string => text.charAt(0).toUpperCase() + tex
 const name = (who: Who): string => (who.you ? 'Vous' : capitalised(who.name));
 const S = ' ';
 
-const fr: PokerTexts = {
+const fr: PokerDictionary = {
   language: 'fr',
   gameTitle: 'Poker',
   tagline: 'Texas hold’em · tournoi à élimination · vous contre les habitués de la crypte',
@@ -47,6 +47,7 @@ const fr: PokerTexts = {
     out: 'éliminé',
     stack: chips => `${chips} jetons`,
     about: who => `Qui est ${who}`,
+    closeAbout: 'Fermer',
   },
   actions: {
     fold: 'Se coucher',
@@ -87,16 +88,16 @@ const fr: PokerTexts = {
   },
   cards: { name: (rank, suit) => `${RANK_NAMES[rank]} de ${SUIT_NAMES[suit]}`, back: 'une carte face cachée' },
   characters: {
-    vlad: { name: 'Comte Vlad', tagline: 'Joue peu de mains, et chacune jusqu’à la dernière goutte.' },
-    carmilla: { name: 'Carmilla', tagline: `Sourit pareil avec des as et avec rien. Devinez ce qu’elle a${S}?` },
-    koschei: { name: 'Kochtcheï', tagline: `Immortel, donc jamais pressé${S}: il attendra les as cent ans s’il le faut.` },
-    stilet: { name: 'Don Stylet', tagline: 'Mise comme si le pot était déjà à lui. Parfois, c’est vrai.' },
-    kaznachey: { name: 'Trésorier Osselet', tagline: `Paie pour voir chaque carte${S}: le trésor ne se vérifiera pas tout seul.` },
-    lilith: { name: 'Lilith', tagline: 'Calcule la cote du pot avant que vous ayez cligné des yeux.' },
-    crystal: { name: 'le Crâne de cristal', tagline: `Transparent, et pourtant illisible${S}: dedans, rien que des mathématiques.` },
-    galeon: { name: 'Capitaine Galion', tagline: `Fait tapis comme on monte à l’abordage${S}: bruyamment et sans le moindre doute.` },
-    shadow: { name: 'Lady Ombre', tagline: 'Se tait sur un monstre et mise quand elle n’a rien.' },
-    semyonych: { name: 'Sémionytch le raton', tagline: `Quarante ans de poker de cuisine${S}: il connaît tous les tours et en a inventé la moitié.` },
+    vlad: { tagline: 'Joue peu de mains, et chacune jusqu’à la dernière goutte.' },
+    carmilla: { tagline: `Sourit pareil avec des as et avec rien. Devinez ce qu’elle a${S}?` },
+    koschei: { tagline: `Immortel, donc jamais pressé${S}: il attendra les as cent ans s’il le faut.` },
+    stilet: { tagline: 'Mise comme si le pot était déjà à lui. Parfois, c’est vrai.' },
+    kaznachey: { tagline: `Paie pour voir chaque carte${S}: le trésor ne se vérifiera pas tout seul.` },
+    lilith: { tagline: 'Calcule la cote du pot avant que vous ayez cligné des yeux.' },
+    crystal: { tagline: `Transparent, et pourtant illisible${S}: dedans, rien que des mathématiques.` },
+    galeon: { tagline: `Fait tapis comme on monte à l’abordage${S}: bruyamment et sans le moindre doute.` },
+    shadow: { tagline: 'Se tait sur un monstre et mise quand elle n’a rien.' },
+    semyonych: { tagline: `Quarante ans de poker de cuisine${S}: il connaît tous les tours et en a inventé la moitié.` },
   },
 };
 

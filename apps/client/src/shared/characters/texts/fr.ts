@@ -1,8 +1,8 @@
-// [EN] FILE: games/preferans/i18n/characters/fr.ts — the company of the lair in French: names and biographies (French
+// [EN] FILE: shared/characters/texts/fr.ts — the company of the lair in French: names and biographies (French
 //      typography: a no-break space before : ; ? !).
 // [RU] ФАЙЛ: обитатели логова по-французски — имена и биографии (французская типографика: неразрывный пробел перед
 //      : ; ? !).
-import type { CharacterId } from '../../characters/roster.ts';
+import type { CharacterId } from '../roster.ts';
 import type { CharacterText } from './en.ts';
 
 export const CHARACTERS_FR: Readonly<Record<CharacterId, CharacterText>> = {

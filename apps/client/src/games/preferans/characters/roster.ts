@@ -1,34 +1,21 @@
 // =====================================================================
 // FILE: apps/client/src/games/preferans/characters/roster.ts
-// PURPOSE: who sits at the table against you. The lair has fifty-three dwellers (vampires, ghouls, necromancers, a
-//   masked empress, a weeping queen…) and thirty-eight guests from the neighbouring worlds (an alchemist, a zombie from
-//   Marseille, aliens, a raccoon, a ronin from an old print, a neon vampire…); every new pool seats a different
-//   company. Pictures: Alexey's own collection (Desktop «Favicon», 08–09.11.2026; some from StockCake, free to use),
-//   whole, with their backgrounds, only scaled down, in public/games/preferans/portraits.
-//   Names and biographies live in the languages (i18n/characters/*.ts); here only what does not depend on language.
-//   Pure data without React and without pictures, so the Node tests use it too.
+// PURPOSE: how the company of the lair plays preferans, and who sits at the table against you. Who the characters
+//   are (dweller or guest, gender, picture) is shared by all the games of the hub — shared/characters/roster.ts;
+//   their names and biographies — shared/characters/texts. Here is only the manner at the preferans table: how
+//   boldly each one bids, how eagerly it whists, how it loves misère, how long it thinks. Every new pool seats a
+//   different company. Pure data without React and without pictures, so the Node tests use it too.
 // =====================================================================
 
 import type { BotStyle } from '../engine/index.ts';
+// [EN] A relative path on purpose: Node runs the tests directly and knows no @shared alias.
+// [RU] Относительный путь нарочно: Node запускает тесты напрямую и не знает псевдонима @shared.
+// noinspection ES6PreferShortImport
+import { characterFacts, portraitPath, type CharacterId } from '../../../shared/characters/roster.ts';
+
+export { portraitPath, type CharacterId };
 
 // BEGIN 1. The company
-export type CharacterId =
-  | 'upyr' | 'sebastian' | 'rosalind' | 'ada' | 'vlad' | 'lucretia' | 'isolde' | 'tadeusz' | 'gunther' | 'koschei'
-  | 'vurdalak' | 'mortimer' | 'abraxas' | 'netopyr' | 'greta' | 'morana' | 'snezhana' | 'carmilla' | 'balthazar' | 'lorenzo'
-  | 'berta' | 'zhorzh' | 'mortus' | 'lyuska' | 'mara' | 'oktaedr' | 'helga' | 'morg'
-  | 'agrippina' | 'sergeant' | 'klyuv' | 'dlan' | 'edgar' | 'lilith' | 'xenon' | 'chuzhak' | 'khitin' | 'semyonych'
-  /** The second company (09.11.2026): 23 dwellers and 8 guests. */
-  | 'vual' | 'beatrice' | 'morwenna' | 'irma' | 'ivy' | 'lamplighter' | 'albina' | 'lacrima' | 'sangria' | 'selena'
-  | 'skuka' | 'mgla' | 'valentin' | 'pietro' | 'kenji' | 'octavian' | 'benedict' | 'akvarella' | 'skvoznyak' | 'melisande'
-  | 'belladonna' | 'cassandra' | 'tobias' | 'kage' | 'florian' | 'neon' | 'glyuk' | 'astral' | 'herbarium' | 'deco'
-  | 'bes'
-  /** The third company (09.11.2026, evening): 10 dwellers and 12 guests. */
-  | 'aurelia' | 'morrigan' | 'elza' | 'polunoch' | 'shadow' | 'gadyuka' | 'sobor' | 'crystal' | 'stilet' | 'rosa'
-  | 'banshee' | 'miko' | 'tryasina' | 'agafon' | 'plakalshchitsa' | 'fantom' | 'nebula' | 'undina' | 'okun' | 'gora'
-  | 'kaznachey' | 'galeon'
-  /** The dummy of a game for two: never picked as an opponent, it sits in the third seat. */
-  | 'dummy';
-
 export interface CharacterInfo {
   readonly id: CharacterId;
   /** Grammatical gender of the sentences about this character (Russian and Hebrew verbs agree with it). */
@@ -43,118 +30,114 @@ export interface CharacterInfo {
 
 /** [boldness, whistCaution, misereNerve, effort] — see CharacterInfo. */
 type Manner = readonly [number, number, number, number];
-const character = (id: CharacterId, female: boolean, guestFlag: boolean, [boldness, whistCaution, misereNerve, effort]: Manner): CharacterInfo =>
-  Object.freeze({ id, female, guest: guestFlag, style: Object.freeze({ boldness, whistCaution, misereNerve }), effort });
-const dweller = (id: CharacterId, female: boolean, manner: Manner): CharacterInfo => character(id, female, false, manner);
-const guest = (id: CharacterId, female: boolean, manner: Manner): CharacterInfo => character(id, female, true, manner);
+const manner = (id: CharacterId, [boldness, whistCaution, misereNerve, effort]: Manner): CharacterInfo =>
+  Object.freeze({ id, ...characterFacts(id), style: Object.freeze({ boldness, whistCaution, misereNerve }), effort });
 
 // [EN] Each manner follows the biography: impatient Carmilla bids high, deathless Koschei thinks for ages, the
 //      accountant Mortimer whists only by calculation, Count Vlad and Georges love misère, Snezhana is cold in all.
 // [RU] Каждая манера следует биографии: нетерпеливая Кармилла заявляет высоко, бессмертный Кощей думает вечность,
 //      бухгалтер Мортимер вистует только по расчёту, Граф Влад и Жорж обожают мизер, Снежана холодна во всём.
 export const ROSTER: readonly CharacterInfo[] = Object.freeze([
-  dweller('upyr', false, [-0.2, 1.1, 0, 1]),
-  dweller('sebastian', false, [0, 0.95, 0, 1.1]),
-  dweller('rosalind', true, [0.1, 0.85, 0, 1]),
-  dweller('ada', true, [0, 0.9, 1, 1]),
-  dweller('vlad', false, [-0.1, 1, 2, 1.2]),
-  dweller('lucretia', true, [0.2, 0.8, 0, 1]),
-  dweller('isolde', true, [-0.1, 1, 0, 1.2]),
-  dweller('tadeusz', false, [0, 1.05, 1, 0.9]),
-  dweller('gunther', false, [0.45, 0.9, 1, 0.8]),
-  dweller('koschei', false, [-0.2, 1.1, 0, 1.4]),
-  dweller('vurdalak', false, [0.1, 0.85, 0, 0.9]),
-  dweller('mortimer', false, [-0.15, 1.15, 0, 1.3]),
-  dweller('abraxas', false, [0, 1, 1, 1.4]),
-  dweller('netopyr', false, [0.35, 0.8, 0, 0.7]),
-  dweller('greta', true, [-0.1, 1.05, 0, 1]),
-  dweller('morana', true, [0, 0.85, 0, 1.1]),
-  dweller('snezhana', true, [-0.3, 1.2, 0, 1.1]),
-  dweller('carmilla', true, [0.5, 0.9, 1, 0.8]),
-  dweller('balthazar', false, [0.25, 1, 1, 1]),
-  dweller('lorenzo', false, [0.1, 0.95, 0, 1.1]),
-  dweller('vual', true, [0.3, 0.95, 0, 1.1]),
-  dweller('beatrice', true, [0, 1.0, 1, 1.0]),
-  dweller('morwenna', true, [-0.15, 1.05, 0, 1.25]),
-  dweller('irma', true, [0.2, 0.82, 0, 1.0]),
-  dweller('ivy', false, [-0.25, 1.1, 0, 1.4]),
-  dweller('lamplighter', false, [0.4, 0.9, 1, 1.0]),
-  dweller('albina', true, [0.25, 0.85, 0, 0.9]),
-  dweller('lacrima', true, [-0.1, 1.05, 0, 1.1]),
-  dweller('sangria', true, [0.3, 0.9, 1, 0.9]),
-  dweller('selena', true, [0, 1.0, 0, 1.2]),
-  dweller('skuka', true, [-0.05, 1.0, 2, 1.0]),
-  dweller('mgla', true, [0.35, 0.85, 1, 0.8]),
-  dweller('valentin', false, [0.3, 0.9, 0, 0.8]),
-  dweller('pietro', false, [0.4, 0.8, 1, 0.75]),
-  dweller('kenji', false, [0, 1.0, 0, 1.3]),
-  dweller('octavian', false, [-0.1, 1.05, 2, 1.2]),
-  dweller('benedict', false, [0.25, 0.9, 1, 0.9]),
-  dweller('akvarella', true, [0.15, 0.9, 0, 1.0]),
-  dweller('skvoznyak', false, [-0.15, 1.1, 0, 1.2]),
-  dweller('melisande', true, [-0.05, 1.0, 0, 1.1]),
-  dweller('belladonna', true, [0.15, 0.85, 0, 1.0]),
-  dweller('cassandra', true, [0.1, 0.9, 1, 1.0]),
-  dweller('tobias', false, [0.2, 0.95, 1, 0.85]),
-  dweller('aurelia', true, [0, 1.05, 0, 1.1]),
-  dweller('morrigan', true, [0.35, 0.85, 1, 0.85]),
-  dweller('elza', true, [-0.15, 1.1, 0, 1.2]),
-  dweller('polunoch', true, [0.25, 0.9, 1, 0.8]),
-  dweller('shadow', true, [-0.2, 1.05, 0, 1.0]),
-  dweller('gadyuka', true, [0.4, 0.8, 0, 0.8]),
-  dweller('sobor', false, [-0.1, 1.05, 0, 1.4]),
-  dweller('crystal', false, [0, 1.0, 0, 1.1]),
-  dweller('stilet', false, [0.15, 0.9, 0, 1.0]),
-  dweller('rosa', true, [0.2, 0.85, 1, 1.0]),
-  guest('berta', true, [0.3, 1, 0, 1]),
-  guest('zhorzh', false, [0, 1, 2, 0.8]),
-  guest('mortus', false, [-0.2, 1.1, 0, 1.4]),
-  guest('lyuska', true, [0.4, 0.8, 1, 0.8]),
-  guest('mara', true, [-0.1, 1, 1, 1.2]),
-  guest('oktaedr', false, [0, 0.95, 0, 1.3]),
-  guest('helga', true, [0.1, 1, 0, 1.2]),
-  guest('morg', false, [0, 0.85, 0, 1]),
-  guest('agrippina', true, [0.2, 0.85, 1, 0.9]),
-  guest('sergeant', false, [-0.1, 1.1, 0, 1]),
-  guest('klyuv', false, [0.15, 0.95, 0, 1.1]),
-  guest('dlan', true, [0.3, 0.9, 1, 0.9]),
-  guest('edgar', false, [-0.25, 1.15, 0, 1]),
-  guest('lilith', true, [0.35, 0.85, 1, 1]),
-  guest('xenon', false, [0.4, 1, 0, 1.1]),
-  guest('chuzhak', false, [0.1, 0.8, 0, 0.9]),
-  guest('khitin', false, [-0.1, 1.1, 0, 1.3]),
-  guest('semyonych', false, [0.15, 0.9, 2, 0.8]),
-  guest('kage', false, [0.1, 1.0, 0, 1.2]),
-  guest('florian', false, [0.05, 0.95, 1, 1.1]),
-  guest('neon', false, [0.45, 0.85, 0, 0.7]),
-  guest('glyuk', false, [0.3, 0.9, 0, 0.7]),
-  guest('astral', false, [-0.1, 1.05, 1, 1.4]),
-  guest('herbarium', false, [-0.3, 1.15, 0, 1.1]),
-  guest('deco', false, [0.2, 0.95, 1, 1.0]),
-  guest('bes', false, [0.5, 0.85, 0, 0.7]),
-  guest('banshee', true, [0.3, 0.9, 0, 0.8]),
-  guest('miko', true, [-0.05, 1.0, 1, 1.2]),
-  guest('tryasina', true, [0.3, 0.85, 1, 0.9]),
-  guest('agafon', false, [0.1, 0.95, 0, 1.3]),
-  guest('plakalshchitsa', true, [-0.2, 1.1, 0, 1.2]),
-  guest('fantom', false, [0.1, 0.95, 1, 1.0]),
-  guest('nebula', true, [0.35, 0.9, 2, 0.9]),
-  guest('undina', true, [-0.1, 1.0, 0, 1.1]),
-  guest('okun', false, [0.2, 0.8, 0, 0.8]),
-  guest('gora', false, [-0.3, 1.15, 0, 1.4]),
-  guest('kaznachey', false, [0.1, 1.0, 0, 1.2]),
-  guest('galeon', false, [0.45, 0.9, 0, 0.8]),
+  manner('upyr', [-0.2, 1.1, 0, 1]),
+  manner('sebastian', [0, 0.95, 0, 1.1]),
+  manner('rosalind', [0.1, 0.85, 0, 1]),
+  manner('ada', [0, 0.9, 1, 1]),
+  manner('vlad', [-0.1, 1, 2, 1.2]),
+  manner('lucretia', [0.2, 0.8, 0, 1]),
+  manner('isolde', [-0.1, 1, 0, 1.2]),
+  manner('tadeusz', [0, 1.05, 1, 0.9]),
+  manner('gunther', [0.45, 0.9, 1, 0.8]),
+  manner('koschei', [-0.2, 1.1, 0, 1.4]),
+  manner('vurdalak', [0.1, 0.85, 0, 0.9]),
+  manner('mortimer', [-0.15, 1.15, 0, 1.3]),
+  manner('abraxas', [0, 1, 1, 1.4]),
+  manner('netopyr', [0.35, 0.8, 0, 0.7]),
+  manner('greta', [-0.1, 1.05, 0, 1]),
+  manner('morana', [0, 0.85, 0, 1.1]),
+  manner('snezhana', [-0.3, 1.2, 0, 1.1]),
+  manner('carmilla', [0.5, 0.9, 1, 0.8]),
+  manner('balthazar', [0.25, 1, 1, 1]),
+  manner('lorenzo', [0.1, 0.95, 0, 1.1]),
+  manner('vual', [0.3, 0.95, 0, 1.1]),
+  manner('beatrice', [0, 1.0, 1, 1.0]),
+  manner('morwenna', [-0.15, 1.05, 0, 1.25]),
+  manner('irma', [0.2, 0.82, 0, 1.0]),
+  manner('ivy', [-0.25, 1.1, 0, 1.4]),
+  manner('lamplighter', [0.4, 0.9, 1, 1.0]),
+  manner('albina', [0.25, 0.85, 0, 0.9]),
+  manner('lacrima', [-0.1, 1.05, 0, 1.1]),
+  manner('sangria', [0.3, 0.9, 1, 0.9]),
+  manner('selena', [0, 1.0, 0, 1.2]),
+  manner('skuka', [-0.05, 1.0, 2, 1.0]),
+  manner('mgla', [0.35, 0.85, 1, 0.8]),
+  manner('valentin', [0.3, 0.9, 0, 0.8]),
+  manner('pietro', [0.4, 0.8, 1, 0.75]),
+  manner('kenji', [0, 1.0, 0, 1.3]),
+  manner('octavian', [-0.1, 1.05, 2, 1.2]),
+  manner('benedict', [0.25, 0.9, 1, 0.9]),
+  manner('akvarella', [0.15, 0.9, 0, 1.0]),
+  manner('skvoznyak', [-0.15, 1.1, 0, 1.2]),
+  manner('melisande', [-0.05, 1.0, 0, 1.1]),
+  manner('belladonna', [0.15, 0.85, 0, 1.0]),
+  manner('cassandra', [0.1, 0.9, 1, 1.0]),
+  manner('tobias', [0.2, 0.95, 1, 0.85]),
+  manner('aurelia', [0, 1.05, 0, 1.1]),
+  manner('morrigan', [0.35, 0.85, 1, 0.85]),
+  manner('elza', [-0.15, 1.1, 0, 1.2]),
+  manner('polunoch', [0.25, 0.9, 1, 0.8]),
+  manner('shadow', [-0.2, 1.05, 0, 1.0]),
+  manner('gadyuka', [0.4, 0.8, 0, 0.8]),
+  manner('sobor', [-0.1, 1.05, 0, 1.4]),
+  manner('crystal', [0, 1.0, 0, 1.1]),
+  manner('stilet', [0.15, 0.9, 0, 1.0]),
+  manner('rosa', [0.2, 0.85, 1, 1.0]),
+  manner('berta', [0.3, 1, 0, 1]),
+  manner('zhorzh', [0, 1, 2, 0.8]),
+  manner('mortus', [-0.2, 1.1, 0, 1.4]),
+  manner('lyuska', [0.4, 0.8, 1, 0.8]),
+  manner('mara', [-0.1, 1, 1, 1.2]),
+  manner('oktaedr', [0, 0.95, 0, 1.3]),
+  manner('helga', [0.1, 1, 0, 1.2]),
+  manner('morg', [0, 0.85, 0, 1]),
+  manner('agrippina', [0.2, 0.85, 1, 0.9]),
+  manner('sergeant', [-0.1, 1.1, 0, 1]),
+  manner('klyuv', [0.15, 0.95, 0, 1.1]),
+  manner('dlan', [0.3, 0.9, 1, 0.9]),
+  manner('edgar', [-0.25, 1.15, 0, 1]),
+  manner('lilith', [0.35, 0.85, 1, 1]),
+  manner('xenon', [0.4, 1, 0, 1.1]),
+  manner('chuzhak', [0.1, 0.8, 0, 0.9]),
+  manner('khitin', [-0.1, 1.1, 0, 1.3]),
+  manner('semyonych', [0.15, 0.9, 2, 0.8]),
+  manner('kage', [0.1, 1.0, 0, 1.2]),
+  manner('florian', [0.05, 0.95, 1, 1.1]),
+  manner('neon', [0.45, 0.85, 0, 0.7]),
+  manner('glyuk', [0.3, 0.9, 0, 0.7]),
+  manner('astral', [-0.1, 1.05, 1, 1.4]),
+  manner('herbarium', [-0.3, 1.15, 0, 1.1]),
+  manner('deco', [0.2, 0.95, 1, 1.0]),
+  manner('bes', [0.5, 0.85, 0, 0.7]),
+  manner('banshee', [0.3, 0.9, 0, 0.8]),
+  manner('miko', [-0.05, 1.0, 1, 1.2]),
+  manner('tryasina', [0.3, 0.85, 1, 0.9]),
+  manner('agafon', [0.1, 0.95, 0, 1.3]),
+  manner('plakalshchitsa', [-0.2, 1.1, 0, 1.2]),
+  manner('fantom', [0.1, 0.95, 1, 1.0]),
+  manner('nebula', [0.35, 0.9, 2, 0.9]),
+  manner('undina', [-0.1, 1.0, 0, 1.1]),
+  manner('okun', [0.2, 0.8, 0, 0.8]),
+  manner('gora', [-0.3, 1.15, 0, 1.4]),
+  manner('kaznachey', [0.1, 1.0, 0, 1.2]),
+  manner('galeon', [0.45, 0.9, 0, 0.8]),
 ]);
-/** The dummy («болван») of a game for two: a scarecrow skeleton drawn for the game (portraits/dummy.svg). */
-export const DUMMY: CharacterInfo = character('dummy', false, true, [0, 1, 0, 1]);
+/** The dummy («болван») of a game for two: a scarecrow skeleton drawn for the game (shared/characters/dummy.svg). */
+export const DUMMY: CharacterInfo = manner('dummy', [0, 1, 0, 1]);
 const BY_ID = new Map<CharacterId, CharacterInfo>([...ROSTER, DUMMY].map(entry => [entry.id, entry]));
 
 /** A character who can sit at the table as an opponent (the dummy is not one). */
 export const isCharacterId = (value: unknown): value is CharacterId => typeof value === 'string' && value !== 'dummy' && BY_ID.has(value as CharacterId);
 export const characterInfo = (id: CharacterId): CharacterInfo => BY_ID.get(id) ?? ROSTER[0];
 export const isFemale = (id: CharacterId): boolean => characterInfo(id).female;
-/** Where the picture lies in the site (relative to the base URL). */
-export const portraitPath = (id: CharacterId): string => (id === 'dummy' ? 'games/preferans/portraits/dummy.svg' : `games/preferans/portraits/${id}.webp`);
 // END 1
 
 // BEGIN 2. Who plays this pool

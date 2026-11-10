@@ -1,6 +1,6 @@
-// [EN] FILE: games/preferans/i18n/characters/es.ts — the company of the lair in Spanish: names and biographies.
+// [EN] FILE: shared/characters/texts/es.ts — the company of the lair in Spanish: names and biographies.
 // [RU] ФАЙЛ: обитатели логова по-испански — имена и биографии.
-import type { CharacterId } from '../../characters/roster.ts';
+import type { CharacterId } from '../roster.ts';
 import type { CharacterText } from './en.ts';
 
 export const CHARACTERS_ES: Readonly<Record<CharacterId, CharacterText>> = {

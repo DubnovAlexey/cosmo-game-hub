@@ -3,7 +3,7 @@
 //      08.11.2026 (Кодекс 1996, pref-bridge, Gambler, preferans.games, ФСПР, Википедия).
 import type { ClosedReason, OptionId, VariantId } from '../engine/index.ts';
 import { DUMMY, ROSTER, isFemale, type Cast } from '../characters/roster.ts';
-import { CHARACTERS_RU } from './characters/ru.ts';
+import { CHARACTERS_RU } from '../../../shared/characters/texts/ru.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {

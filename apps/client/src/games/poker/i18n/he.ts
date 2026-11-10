@@ -1,12 +1,12 @@
 // [EN] FILE: games/poker/i18n/he.ts — the poker table in Hebrew (right to left; the table itself keeps its layout).
 // [RU] ФАЙЛ: покерный стол на иврите (справа налево; сам стол сохраняет раскладку).
-import type { PokerTexts, Who } from './types';
+import type { PokerDictionary, Who } from './types';
 
 const RANK_NAMES = ['שתיים', 'שלוש', 'ארבע', 'חמש', 'שש', 'שבע', 'שמונה', 'תשע', 'עשר', 'נסיך', 'מלכה', 'מלך', 'אס'];
 const SUIT_NAMES = ['עלה', 'לב', 'יהלום', 'תלתן'];
 const name = (who: Who): string => (who.you ? 'את/ה' : who.name);
 
-const he: PokerTexts = {
+const he: PokerDictionary = {
   language: 'he',
   gameTitle: 'פוקר',
   tagline: 'טקסס הולדם · טורניר הדחה · את/ה מול קבועי המרתף',
@@ -45,6 +45,7 @@ const he: PokerTexts = {
     out: 'מחוץ למשחק',
     stack: chips => `${chips} אסימונים`,
     about: who => `מי זה: ${who}`,
+    closeAbout: 'סגירה',
   },
   actions: {
     fold: 'פולד',
@@ -85,16 +86,16 @@ const he: PokerTexts = {
   },
   cards: { name: (rank, suit) => `${RANK_NAMES[rank]} ${SUIT_NAMES[suit]}`, back: 'קלף הפוך' },
   characters: {
-    vlad: { name: 'הרוזן ולאד', tagline: 'משחק מעט ידיים, ואת כל אחת מהן — עד הטיפה האחרונה.' },
-    carmilla: { name: 'קרמילה', tagline: 'מחייכת אותו חיוך עם אסים ועם כלום. נחשו מה יש לה.' },
-    koschei: { name: 'קושצ׳יי', tagline: 'בן אלמוות, ולכן לא ממהר: יחכה לאסים גם מאה שנה.' },
-    stilet: { name: 'דון סטילטו', tagline: 'מהמר כאילו הקופה כבר שלו. לפעמים זה נכון.' },
-    kaznachey: { name: 'הגזבר עצמות', tagline: 'משלם כדי לראות כל קלף: האוצר לא יבדוק את עצמו.' },
-    lilith: { name: 'לילית', tagline: 'מחשבת את סיכויי הקופה מהר יותר ממצמוץ.' },
-    crystal: { name: 'בדולח', tagline: 'שקוף לגמרי ובכל זאת אי אפשר לקרוא אותו: בפנים רק מתמטיקה.' },
-    galeon: { name: 'קפטן גליון', tagline: 'הולך אול-אין כמו להסתערות על ספינה: ברעש ובלי ספק.' },
-    shadow: { name: 'ליידי צל', tagline: 'שותקת מעל יד חזקה ומהמרת כשאין לה כלום.' },
-    semyonych: { name: 'הדביבון סמיוניץ׳', tagline: 'ארבעים שנה של פוקר מטבח: מכיר כל תרגיל, ואת חציים המציא בעצמו.' },
+    vlad: { tagline: 'משחק מעט ידיים, ואת כל אחת מהן — עד הטיפה האחרונה.' },
+    carmilla: { tagline: 'מחייכת אותו חיוך עם אסים ועם כלום. נחשו מה יש לה.' },
+    koschei: { tagline: 'בן אלמוות, ולכן לא ממהר: יחכה לאסים גם מאה שנה.' },
+    stilet: { tagline: 'מהמר כאילו הקופה כבר שלו. לפעמים זה נכון.' },
+    kaznachey: { tagline: 'משלם כדי לראות כל קלף: האוצר לא יבדוק את עצמו.' },
+    lilith: { tagline: 'מחשבת את סיכויי הקופה מהר יותר ממצמוץ.' },
+    crystal: { tagline: 'שקוף לגמרי ובכל זאת אי אפשר לקרוא אותו: בפנים רק מתמטיקה.' },
+    galeon: { tagline: 'הולך אול-אין כמו להסתערות על ספינה: ברעש ובלי ספק.' },
+    shadow: { tagline: 'שותקת מעל יד חזקה ומהמרת כשאין לה כלום.' },
+    semyonych: { tagline: 'ארבעים שנה של פוקר מטבח: מכיר כל תרגיל, ואת חציים המציא בעצמו.' },
   },
 };
 

@@ -1,12 +1,12 @@
 // [EN] FILE: games/poker/i18n/es.ts — the poker table in Spanish. [RU] ФАЙЛ: покерный стол по-испански.
-import type { PokerTexts, Who } from './types';
+import type { PokerDictionary, Who } from './types';
 
 const RANK_NAMES = ['dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'jota', 'reina', 'rey', 'as'];
 const SUIT_NAMES = ['picas', 'corazones', 'diamantes', 'tréboles'];
 const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 const name = (who: Who): string => (who.you ? 'Tú' : capitalised(who.name));
 
-const es: PokerTexts = {
+const es: PokerDictionary = {
   language: 'es',
   gameTitle: 'Póker',
   tagline: 'Texas hold’em · torneo de eliminación · tú contra los habituales de la cripta',
@@ -45,6 +45,7 @@ const es: PokerTexts = {
     out: 'eliminado',
     stack: chips => `${chips} fichas`,
     about: who => `Quién es ${who}`,
+    closeAbout: 'Cerrar',
   },
   actions: {
     fold: 'Retirarse',
@@ -85,16 +86,16 @@ const es: PokerTexts = {
   },
   cards: { name: (rank, suit) => `${RANK_NAMES[rank]} de ${SUIT_NAMES[suit]}`, back: 'una carta boca abajo' },
   characters: {
-    vlad: { name: 'Conde Vlad', tagline: 'Juega pocas manos, y cada una hasta la última gota.' },
-    carmilla: { name: 'Carmilla', tagline: 'Sonríe igual con ases que con nada. Adivina qué tiene.' },
-    koschei: { name: 'Koschéi', tagline: 'Inmortal, así que sin prisa: esperará cien años a los ases.' },
-    stilet: { name: 'Don Estilete', tagline: 'Apuesta como si el bote ya fuera suyo. A veces lo es.' },
-    kaznachey: { name: 'Tesorero Nudillos', tagline: 'Paga por ver cada carta: el tesoro no se audita solo.' },
-    lilith: { name: 'Lilith', tagline: 'Calcula las probabilidades del bote antes de que parpadees.' },
-    crystal: { name: 'el Cráneo de Cristal', tagline: 'Se ve a través de él y aun así no se le lee: dentro solo hay matemáticas.' },
-    galeon: { name: 'Capitán Galeón', tagline: 'Va all-in como al abordaje: con estruendo y sin dudar.' },
-    shadow: { name: 'Lady Sombra', tagline: 'Calla con una mano enorme y apuesta cuando no tiene nada.' },
-    semyonych: { name: 'Mapache Semiónich', tagline: 'Cuarenta años de póker de cocina: conoce todos los trucos y se inventó la mitad.' },
+    vlad: { tagline: 'Juega pocas manos, y cada una hasta la última gota.' },
+    carmilla: { tagline: 'Sonríe igual con ases que con nada. Adivina qué tiene.' },
+    koschei: { tagline: 'Inmortal, así que sin prisa: esperará cien años a los ases.' },
+    stilet: { tagline: 'Apuesta como si el bote ya fuera suyo. A veces lo es.' },
+    kaznachey: { tagline: 'Paga por ver cada carta: el tesoro no se audita solo.' },
+    lilith: { tagline: 'Calcula las probabilidades del bote antes de que parpadees.' },
+    crystal: { tagline: 'Se ve a través de él y aun así no se le lee: dentro solo hay matemáticas.' },
+    galeon: { tagline: 'Va all-in como al abordaje: con estruendo y sin dudar.' },
+    shadow: { tagline: 'Calla con una mano enorme y apuesta cuando no tiene nada.' },
+    semyonych: { tagline: 'Cuarenta años de póker de cocina: conoce todos los trucos y se inventó la mitad.' },
   },
 };
 

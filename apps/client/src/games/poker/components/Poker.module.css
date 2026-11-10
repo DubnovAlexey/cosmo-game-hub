@@ -163,8 +163,10 @@
         Группа не меняет размер во время раздачи: у ставки своя строка, даже когда ставки нет, а «фолд», «олл-ин»,
         «думает» пишутся поверх карт — поэтому группа не может толкнуть соседей, доску и банк. */
 .seat { position: relative; z-index: 2; display: flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; }
-/* [EN] The seat whose line is open lies above its neighbours. [RU] Место с раскрытой репликой лежит поверх соседей. */
-.seatOpen { z-index: 8; }
+/* [EN] The seat whose portrait is under the mouse (it grows) or whose card is open lies above its neighbours.
+   [RU] Место, чей портрет под мышью (он растёт) или чья карточка раскрыта, лежит поверх соседей. */
+.seat:hover { z-index: 8; }
+.seat:has([aria-expanded='true']) { z-index: 9; }
 .seatYours { flex-direction: column-reverse; }
 /* [EN] A computer and a tablet: where each place of the grid stands. The far middle seat pokes over the rail, its
         neighbours stand a step lower along the curve; the seats beside the board lean out over the rail, so the
@@ -201,32 +203,10 @@
 }
 .seatYours .hole { min-width: calc(var(--hand-w) * 2 + 3px); min-height: calc(var(--hand-w) * 1.42); }
 .betSlot { display: flex; align-items: center; justify-content: center; min-height: 24px; }
-/* [EN] The line of a regular opens under the portrait. Its place is centred by CSS; useKeepOnScreen writes --shift so
-        it never leaves the screen (a seat at the edge of a phone). [RU] Реплика завсегдатая раскрывается под
-        портретом. По центру её ставит CSS; useKeepOnScreen пишет --shift, чтобы она не уходила за экран (место у
-        края телефона). */
-.bubble {
-    --shift: 0px;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    z-index: 6;
-    width: max-content;
-    max-width: min(260px, calc(100vw - 24px));
-    margin: 6px 0 0;
-    padding: 6px 10px 8px;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    background: linear-gradient(180deg, rgba(40, 21, 30, 0.98), rgba(16, 8, 12, 0.98)) padding-box, var(--silver-edge) border-box;
-    color: #e3dccb;
-    font-size: 0.95rem;
-    font-style: italic;
-    line-height: 1.35;
-    text-align: center;
-    unicode-bidi: plaintext;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
-    translate: calc(-50% + var(--shift)) 0;
-}
+/* [EN] The small picture with its large one and the hero's card (shared/components/CharacterCard): the wrapper is
+        as large as the round picture. [RU] Маленькая картинка со своей крупной и карточкой героя
+        (shared/components/CharacterCard): обёртка размером с круглую картинку. */
+.face { width: var(--portrait); }
 .portrait {
     position: relative;
     flex: none;
@@ -511,7 +491,7 @@
     .seat[data-phone='s'] { grid-area: s; justify-self: center; align-self: end; margin-bottom: -14px; }
     /* [EN] The parts of another player's pod are laid out by the pod's own grid. [RU] Части чужой группы раскладывает собственная сетка группы. */
     .seat:not(.seatYours) .who, .seat:not(.seatYours) .hand { display: contents; }
-    .portrait { grid-area: face; }
+    .face { grid-area: face; }
     .seat:not(.seatYours) .hole { grid-area: cards; }
     .seat:not(.seatYours) .plaque { grid-area: plaque; justify-self: stretch; margin-top: -4px; }
     .seat:not(.seatYours) .betSlot { grid-area: bet; }

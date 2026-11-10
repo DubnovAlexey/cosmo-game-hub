@@ -1,8 +1,8 @@
-// [EN] FILE: games/preferans/i18n/characters/he.ts — the company of the lair in Hebrew: names and biographies. The
+// [EN] FILE: shared/characters/texts/he.ts — the company of the lair in Hebrew: names and biographies. The
 //      sentences about them take «ל» + name for "to" and agree the verb with the character's gender (roster.ts).
 // [RU] ФАЙЛ: обитатели логова на иврите — имена и биографии. Фразы о них берут «ל» + имя для «кому» и согласуют
 //      глагол с родом персонажа (roster.ts).
-import type { CharacterId } from '../../characters/roster.ts';
+import type { CharacterId } from '../roster.ts';
 import type { CharacterText } from './en.ts';
 
 export const CHARACTERS_HE: Readonly<Record<CharacterId, CharacterText>> = {

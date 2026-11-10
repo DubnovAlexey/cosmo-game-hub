@@ -6,7 +6,7 @@
 //      просто «la poule»; русские термины остаются в «».
 import type { ClosedReason, OptionId, VariantId } from '../engine/index.ts';
 import type { Cast } from '../characters/roster.ts';
-import { CHARACTERS_FR } from './characters/fr.ts';
+import { CHARACTERS_FR } from '../../../shared/characters/texts/fr.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {

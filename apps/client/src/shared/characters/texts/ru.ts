@@ -1,8 +1,8 @@
-// [EN] FILE: games/preferans/i18n/characters/ru.ts — the company of the lair in Russian: name, the dative and accusative
+// [EN] FILE: shared/characters/texts/ru.ts — the company of the lair in Russian: name, the dative and accusative
 //      the sentences need («Кощею нужно 6 взяток», «ваш ход за Кощея») and a biography with a sense of humour.
 // [RU] ФАЙЛ: обитатели логова по-русски — имя, дательный и винительный падежи для фраз («Кощею нужно 6 взяток»,
 //      «ваш ход за Кощея») и биография с чувством юмора.
-import type { CharacterId } from '../../characters/roster.ts';
+import type { CharacterId } from '../roster.ts';
 
 export interface CharacterTextRu {
     readonly name: string;

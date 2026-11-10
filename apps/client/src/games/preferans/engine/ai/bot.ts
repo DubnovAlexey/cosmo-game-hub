@@ -30,7 +30,7 @@ import {
 } from './foresight.ts';
 import { knowledgeOf, sampleHands } from './knowledge.ts';
 import { scoreMoves } from './solver.ts';
-import { declarerStrength } from './strength.ts';
+import { bestStrength, declarerStrength } from './strength.ts';
 
 // BEGIN 1. Options
 /**
@@ -73,8 +73,13 @@ const BID_CHANCE = 0.66;
 const LAST_CHANCE = 0.48;
 /** Boldness in the same units as before (tricks of the old estimate): +0.4 lowers the chance wanted by 0.2. */
 const BOLDNESS_TO_CHANCE = 0.5;
-/** A hand whose quick estimate is below this makes a six in fewer than one deal of ten: it passes without imagining. */
-const HOPELESS_ESTIMATE = 3.5;
+/**
+ * Hands that need no imagining, by their strength at one look before the talon (strength.ts; measured on 4500
+ * hands, 10.11.2026): below 2.6 a six is made in one deal of eight at best — a pass; from 6.0 it is made in 97 deals
+ * of 100 — a bid of six at once. Between them the bot imagines.
+ */
+const HOPELESS_STRENGTH = 2.6;
+const SURE_SIX_STRENGTH = 6.0;
 /** A misère is bid when it comes home clean at least this often; every point of nerve lowers it. */
 const MISERE_CHANCE = 0.72;
 const MISERE_NERVE_STEP = 0.07;
@@ -82,6 +87,11 @@ const MISERE_NERVE_STEP = 0.07;
 const MISERE_RISK_TO_IMAGINE = 3;
 /** A cautious whister (1.2) wants a whist to be worth this many whists × 0.2 more before it says «вист». */
 const CAUTION_WHISTS = 15;
+/**
+ * Every whister wants a whist to pay at least this many whists more than letting the game go: the imagined deals are
+ * few, and a whist that only breaks even on paper loses a little at the table.
+ */
+const WHIST_MARGIN = 2;
 /** Fewer imagined deals than this decide nothing: the quick estimates answer instead. */
 const ENOUGH_DEALS = 4;
 
@@ -149,7 +159,9 @@ function chooseBid(state: DealState, seat: Seat, style: BotStyle, options: BotOp
     return level >= 6 && cheapest <= gameBid(level as Level, best.strain) ? { type: 'bid', seat, bid: cheapest } : { type: 'pass', seat };
   };
   if (!thinking) return byEstimate();
-  if (best.tricks + style.boldness < HOPELESS_ESTIMATE) return { type: 'pass', seat };
+  const strength = bestStrength(hand, seat === lead).tricks + style.boldness * 0.5;
+  if (strength < HOPELESS_STRENGTH) return { type: 'pass', seat };
+  if (strength >= SURE_SIX_STRENGTH && cheapest < gameBid(7, 0)) return { type: 'bid', seat, bid: cheapest };
   const worlds = imagineDeclaring(hand, seat, lead, thinking);
   if (worlds.length < ENOUGH_DEALS) return byEstimate();
   const wanted = (lastChance ? LAST_CHANCE : BID_CHANCE) - BOLDNESS_TO_CHANCE * style.boldness;
@@ -332,7 +344,7 @@ function chooseWhist(state: DealState, seat: Seat, style: BotStyle, options: Bot
   if (!whist || value === null) return chooseWhistByEstimate(state, seat, style, legal);
   // [EN] A cautious whister wants a whist to pay a little, an eager one whists even at a small loss.
   // [RU] Осторожный вистующий хочет, чтобы вист немного окупался, охотник вистует и с небольшим убытком.
-  const caution = (style.whistCaution - 1) * CAUTION_WHISTS;
+  const caution = WHIST_MARGIN + (style.whistCaution - 1) * CAUTION_WHISTS;
   if (whist.order[0] === seat) return { type: 'whist', seat, call: value.alone - caution > value.quiet ? 'whist' : 'pass' };
   if (whist.calls[0] === 'whist') return { type: 'whist', seat, call: value.both - caution > value.watching ? 'whist' : 'pass' };
   // The first defender passed: whist alone, take the sure half where the table has it, or let the game go.
@@ -428,7 +440,7 @@ function decide(state: DealState, options: BotOptions): Action {
       // [EN] The partner took half-whist: come back and whist alone only when that is worth more than letting the half stand.
       // [RU] Партнёр взял полвиста: вернуться и вистовать одному стоит, только если это выгоднее, чем оставить полвиста.
       const value = whistWorth(state, seat, options);
-      if (value !== null) return { type: 'returnWhist', seat, accept: value.alone - (style.whistCaution - 1) * CAUTION_WHISTS > value.partnerHalf };
+      if (value !== null) return { type: 'returnWhist', seat, accept: value.alone - WHIST_MARGIN - (style.whistCaution - 1) * CAUTION_WHISTS > value.partnerHalf };
       const { obligation } = whistObligation(state);
       return { type: 'returnWhist', seat, accept: estimateDefenderTricks(state.hands[seat], state.trump) >= obligation * 0.75 };
     }
@@ -454,7 +466,7 @@ function decide(state: DealState, options: BotOptions): Action {
       const look = whist.dealerLook;
       if (look === null || look === undefined) return { type: 'dealerLook', seat, defender: whist.order[0] };
       const value = whistWorth(state, look, options, state.hands[look]);
-      if (value !== null) return { type: 'dealerWhist', seat, whist: value.alone - (style.whistCaution - 1) * CAUTION_WHISTS > value.quiet };
+      if (value !== null) return { type: 'dealerWhist', seat, whist: value.alone - WHIST_MARGIN - (style.whistCaution - 1) * CAUTION_WHISTS > value.quiet };
       const { obligation } = whistObligation(state);
       return { type: 'dealerWhist', seat, whist: estimateDefenderTricks(state.hands[look], state.trump) / style.whistCaution >= obligation * 0.8 };
     }

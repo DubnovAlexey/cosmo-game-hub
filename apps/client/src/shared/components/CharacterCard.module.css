@@ -1,0 +1,128 @@
+/* [EN] FILE: shared/components/CharacterCard.module.css — the look of a hero of the lair wherever one is shown, in any
+        game: the hero's card (a plate of dark velvet in a cast silver edge with a wine ribbon — DESIGN_CONCEPT_RU.md
+        §5 of preferans), the small picture that grows two and a half times under the mouse, and the floating card
+        beside a small portrait in a list. The colours and the fonts are set here, not taken from a game's room, so
+        the card looks the same at the preferans table, at the poker table and by the chess board.
+   [RU] ФАЙЛ: вид героя логова везде, где его показывают, в любой игре: карточка героя (пластина тёмного бархата в
+        литом серебряном канте с винной лентой — DESIGN_CONCEPT_RU.md §5 преферанса), маленькая картинка, которая под
+        мышью вырастает в два с половиной раза, и всплывающая карточка рядом с маленьким портретом в списке. Цвета и
+        шрифты заданы здесь, а не берутся из комнаты игры, поэтому карточка одинакова за столом преферанса, за
+        покерным столом и у шахматной доски. */
+
+/* ===== 1. The card / Карточка ===== */
+/* [EN] The selectors are a little heavier than one class on purpose: a page that resets every margin inside itself
+        (the chess board does) must not flatten the card. [RU] Селекторы нарочно чуть тяжелее одного класса: страница,
+        которая обнуляет все отступы внутри себя (так делает шахматная доска), не должна сплющить карточку. */
+div.card {
+    --hero-quill: 'Marck Script', 'Cormorant Garamond', Georgia, 'David', cursive;
+    --hero-print: 'Cormorant Garamond', Georgia, 'Times New Roman', 'David', serif;
+    --hero-edge: linear-gradient(135deg, #e3e6ea 0%, #7c838d 20%, #2b2e34 46%, #a3aab3 68%, #3c4048 86%, #8d939c 100%);
+    --hero-bone: #eadfc6;
+    box-sizing: border-box;
+    width: min(310px, calc(100vw - 16px));
+    padding: 12px 16px 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.98) 0%, rgba(16, 8, 12, 0.98) 100%) padding-box, var(--hero-edge) border-box;
+    color: var(--hero-bone);
+    font: 600 1.04rem/1.45 var(--hero-print), serif;
+    letter-spacing: normal;
+    text-align: start;
+    text-transform: none;
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.5), inset 0 0 0 4px rgba(216, 219, 224, 0.12), 0 18px 40px rgba(0, 0, 0, 0.75);
+}
+.card .picture {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 260px;
+    margin: 0 auto 10px;
+    border: 3px solid #0c070a;
+    box-shadow: 0 0 0 1px rgba(216, 219, 224, 0.35), 0 10px 24px rgba(0, 0, 0, 0.7);
+    filter: sepia(0.1) saturate(0.92) contrast(1.06);
+}
+.card .name { margin: 0; color: #f3dada; font: 400 1.75rem/1.15 var(--hero-quill), cursive; text-shadow: 0 0 12px rgba(176, 16, 31, 0.65), 0 1px 0 #000; }
+.card .tag {
+    display: inline-block;
+    margin: 4px 0 8px;
+    padding: 1px 16px 2px 10px;
+    background: linear-gradient(90deg, #5a0711, #8e0f1c);
+    color: #f6e7d7;
+    font-size: 0.92rem;
+    font-style: italic;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 50%, 100% 100%, 0 100%);
+}
+.card .text { margin: 0 0 8px; }
+/* [EN] What the hero is like in this very game (a poker line). [RU] Каков герой именно в этой игре (покерная реплика). */
+.card .note { margin: 0 0 8px; padding-inline-start: 10px; border-inline-start: 2px solid #8e0f1c; color: #ffcf7a; font-style: italic; }
+.card .manner { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin: 0 0 10px; padding: 6px 0 0; border-top: 1px solid rgba(144, 151, 161, 0.35); list-style: none; font-size: 0.92rem; font-variant: small-caps; }
+.card .manner b { color: #d9b7a8; font-weight: 700; }
+.card .close {
+    min-height: 40px;
+    padding: 5px 16px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #2a1720 0%, #150b10 100%) padding-box, var(--hero-edge) border-box;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.6);
+    color: var(--hero-bone);
+    font: 700 1rem var(--hero-print), serif;
+    cursor: pointer;
+}
+.card .close:hover { filter: brightness(1.18); }
+.card .close:focus-visible { outline: 2px solid #fde68a; outline-offset: 2px; }
+/* [EN] A wide card: the picture on the left, two and a half times a small portrait of a list, the story beside it.
+   [RU] Широкая карточка: слева картинка, в два с половиной раза крупнее маленького портрета списка, рядом рассказ. */
+div.card.wide { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 0 14px; width: min(480px, calc(100vw - 16px)); }
+.card.wide .picture { width: 195px; max-height: 300px; margin: 0; object-fit: contain; }
+@media (max-width: 520px) {
+    div.card.wide { display: block; width: min(310px, calc(100vw - 16px)); }
+    .card.wide .picture { width: auto; max-height: 220px; margin: 0 auto 10px; }
+}
+
+/* ===== 2. A face that grows under the mouse and opens the card / Лицо, которое растёт под мышью и раскрывает карточку ===== */
+span.face { position: relative; display: inline-block; flex: none; line-height: 0; }
+/* [EN] The whole picture, two and a half times the small one, grows out of its corner while the mouse is over it and
+        goes back when the mouse leaves (Alexey, 10.11.2026: the small windows do not show who is there). Only a
+        mouse hovers: a finger opens the card instead.
+   [RU] Картинка целиком, в два с половиной раза крупнее маленькой, вырастает из своего угла, пока над ней мышь, и
+        уходит обратно, когда мышь убрали (Алексей, 10.11.2026: по маленьким окошкам не видно, кто там). Наводит
+        только мышь: палец вместо этого раскрывает карточку. */
+.face > .zoom {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 40;
+    width: 250%;
+    max-width: none;
+    height: auto;
+    border: 3px solid #0c070a;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(216, 219, 224, 0.5), 0 18px 40px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transform: translateX(-50%) scale(0.4);
+    transform-origin: 50% 0;
+    transition: transform 0.28s cubic-bezier(0.2, 0.75, 0.25, 1), opacity 0.2s ease;
+    pointer-events: none;
+}
+.face > .zoomStart { left: 0; transform: scale(0.4); transform-origin: 0 0; }
+.face > .zoomEnd { left: auto; right: 0; transform: scale(0.4); transform-origin: 100% 0; }
+@media (hover: hover) and (pointer: fine) {
+    .face:hover > .zoom { opacity: 1; transform: translateX(-50%) scale(1); transition-delay: 0.12s; }
+    .face:hover > .zoomStart, .face:hover > .zoomEnd { transform: scale(1); }
+    /* [EN] With the card open the picture is already large inside it. [RU] При раскрытой карточке картинка и так крупная внутри неё. */
+    .faceOpen:hover > .zoom { opacity: 0; }
+}
+/* [EN] The card under the face; shared/hooks/useKeepOnScreen writes --shift so it never leaves the screen.
+   [RU] Карточка под лицом; shared/hooks/useKeepOnScreen пишет --shift, чтобы она не уходила за экран. */
+.card.popover { --shift: 0px; position: absolute; top: calc(100% + 12px); left: 0; z-index: 50; line-height: 1.45; translate: var(--shift) 0; animation: heroPop 0.2s ease-out; }
+.card.popoverEnd { left: auto; right: 0; }
+.card.popoverCenter { left: 50%; translate: calc(-50% + var(--shift)) 0; }
+@keyframes heroPop { from { opacity: 0; transform: scale(0.8); } }
+
+/* ===== 3. The floating card beside a small portrait of a list / Всплывающая карточка рядом с портретом списка ===== */
+.card.peek { position: fixed; z-index: 1000; pointer-events: none; animation: heroPop 0.16s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+    .face > .zoom { transition: none; }
+    .card.popover, .card.peek { animation: none; }
+}

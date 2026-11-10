@@ -12,6 +12,7 @@ import { MoveHistory } from './MoveHistory';
 import { Graveyard } from './Graveyard';
 import { GameOverOverlay } from '@shared/components/GameOverOverlay';
 import { GameSetupModal } from './GameSetupModal';
+import { ChessOpponent, pickOpponent } from './ChessOpponent';
 
 // [EN] Import logic hooks and parser utility using Aliases
 // [RU] Импортируем хуки логики и утилиту парсинга, используя Алиасы
@@ -122,6 +123,10 @@ export const ChessGame: React.FC = () => {
         setIsSetupPhase(false);
     };
 
+    // [EN] The face of the engine for this game: somebody of the lair at random.
+    // [RU] Лицо движка на эту партию: кто-то из логова наугад.
+    const [opponent, setOpponent] = useState(() => pickOpponent());
+
     return (
         <div className={styles['chess-container']}>
 
@@ -135,6 +140,10 @@ export const ChessGame: React.FC = () => {
                 currentDifficulty={difficulty}
                 onSelect={(level: number) => setDifficulty(level)}
             />
+
+            {/* [EN] Who sits across the board: a hero of the lair, shared with the card tables. */}
+            {/* [RU] Кто сидит по ту сторону доски: герой логова, общий с карточными столами. */}
+            <ChessOpponent id={opponent} thinking={isEngineThinking} onAnother={() => setOpponent(current => pickOpponent(current))} />
 
             <div className={styles['game-zone']}>
                 <div className={styles['board-area-wrapper']}>

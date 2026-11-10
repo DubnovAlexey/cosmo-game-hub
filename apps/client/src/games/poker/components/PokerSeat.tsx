@@ -2,16 +2,16 @@
 //      regular's line), the plaque with the name and the stack, the dealer button and the blinds, the two cards and
 //      the bet in front of them. «Fold», «all-in», «thinking» and «out» are written across the cards, and the bet
 //      keeps its own line even when there is none — so the place never changes size during a hand and cannot push
-//      its neighbours. The line under the portrait is kept inside the screen by shared/hooks/useKeepOnScreen.
+//      its neighbours. The portrait that grows and opens the hero's card is shared by all the games
+//      (shared/components/CharacterCard).
 // [RU] ФАЙЛ: одно место за покерным столом: портрет (нажатие раскрывает реплику завсегдатая), табличка с именем и
 //      стеком, баттон и блайнды, две карты и ставка перед ними. «Фолд», «олл-ин», «думает» и «выбыл» пишутся поверх
 //      карт, а у ставки своя строка, даже когда ставки нет, — поэтому место не меняет размер во время раздачи и не
-//      толкает соседей. Реплику под портретом держит внутри экрана shared/hooks/useKeepOnScreen.
-import React, { useRef } from 'react';
-import { useKeepOnScreen } from '@shared/hooks/useKeepOnScreen';
-import { withBase } from '@shell/utils/withBase';
+//      толкает соседей. Портрет с увеличением и карточкой героя — общий для всех игр (shared/components/CharacterCard).
+import React from 'react';
+import { CharacterFace } from '@shared/components/CharacterCard';
 import type { Card, SeatState } from '../engine/index.ts';
-import { portraitPath, type PokerCharacterId } from '../characters';
+import type { PokerCharacterId } from '../characters';
 import { usePokerTexts } from '../i18n';
 import { PokerCard } from './PokerCard';
 import type { SeatPlace } from './seating';
@@ -35,32 +35,35 @@ interface PokerSeatProps {
     readonly dealer: boolean;
     readonly smallBlind: boolean;
     readonly bigBlind: boolean;
-    readonly open: boolean;
-    readonly onToggle: () => void;
 }
 
 export const PokerSeat: React.FC<PokerSeatProps> = ({
-    seat, place, character, stack, bet, reveal, winning, status, onTurn, dealer, smallBlind, bigBlind, open, onToggle,
+    seat, place, character, stack, bet, reveal, winning, status, onTurn, dealer, smallBlind, bigBlind,
 }) => {
     const t = usePokerTexts();
-    const pod = useRef<HTMLDivElement>(null);
-    const caption = useRef<HTMLParagraphElement>(null);
-    useKeepOnScreen(caption, pod, open && character !== null, character);
     const yours = character === null;
+    // [EN] The large picture and the card grow toward the middle of the table: from the left corner on the left
+    //      side, from the right corner on the right side.
+    // [RU] Крупная картинка и карточка растут к середине стола: из левого угла на левой стороне, из правого — на правой.
+    const rightSide = place.wide === 'e' || place.wide === 'ne';
+    const side = place.wide === 'n' ? 'center' : rightSide ? 'end' : 'start';
     const name = character ? t.characters[character].name : t.seat.you;
     const classes = [
         styles.seat, yours ? styles.seatYours : '', onTurn ? styles.seatTurn : '',
-        seat.folded ? styles.seatFolded : '', seat.out ? styles.seatOut : '', open ? styles.seatOpen : '',
+        seat.folded ? styles.seatFolded : '', seat.out ? styles.seatOut : '',
     ].filter(Boolean).join(' ');
     const statusText = status === null ? null : status === 'out' ? t.seat.out : status === 'folded' ? t.seat.folded : status === 'allIn' ? t.seat.allIn : t.seat.thinking;
     const statusClasses = [styles.status, status === 'allIn' ? styles.statusAllIn : '', status === 'thinking' ? styles.statusThinking : ''].filter(Boolean).join(' ');
     return (
-        <div ref={pod} className={classes} data-wide={place.wide} data-phone={place.phone}>
+        <div className={classes} data-wide={place.wide} data-phone={place.phone}>
             <div className={styles.who}>
+                {/* [EN] Under the mouse the whole picture grows two and a half times; a press opens the hero's card with
+                         the biography and the poker line (shared/components/CharacterCard).
+                    [RU] Под мышью вся картинка вырастает в два с половиной раза; нажатие раскрывает карточку героя с
+                         биографией и покерной репликой (shared/components/CharacterCard). */}
                 {character && (
-                    <button type="button" className={styles.portrait} aria-label={t.seat.about(name)} aria-expanded={open} onClick={onToggle}>
-                        <img src={withBase(portraitPath(character))} alt="" loading="lazy" decoding="async" draggable={false} />
-                    </button>
+                    <CharacterFace className={styles.face} faceClassName={styles.portrait} side={side} label={t.seat.about(name)} closeLabel={t.seat.closeAbout}
+                        story={{ id: character, name, bio: t.characters[character].bio, note: t.characters[character].tagline }} />
                 )}
                 {/* [EN] The button and the blinds sit on the frame, outside the round picture that would clip them.
                     [RU] Баттон и блайнды сидят на рамке, вне круглой картинки, которая бы их обрезала. */}
@@ -92,9 +95,6 @@ export const PokerSeat: React.FC<PokerSeatProps> = ({
                     {bet !== null && <span className={styles.bet}><span className={styles.chips} aria-hidden="true"><i /><i /><i /></span>{bet}</span>}
                 </div>
             </div>
-            {/* [EN] The line opens under the whole pod, centred; shared/hooks/useKeepOnScreen keeps it on the screen.
-                [RU] Реплика раскрывается под всей группой, по центру; shared/hooks/useKeepOnScreen держит её на экране. */}
-            {open && character && <p ref={caption} className={styles.bubble} role="note">{t.characters[character].tagline}</p>}
         </div>
     );
 };

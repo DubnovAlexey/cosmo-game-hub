@@ -4,11 +4,14 @@
 //      его через контекст React.
 import { createContext, useContext } from 'react';
 import type { Language } from '@shared/i18n/languages';
-import type { PokerTexts } from './types';
+import { loadCharacterTexts } from '@shared/characters/texts';
+import type { PokerCharacterId } from '../characters';
+import { withCharacters } from './people';
+import type { PokerDictionary, PokerTexts } from './types';
 
 export type { PokerTexts, Who } from './types';
 
-export function loadPokerTexts(language: Language): Promise<PokerTexts> {
+function loadDictionary(language: Language): Promise<PokerDictionary> {
     switch (language) {
         case 'ru': return import('./ru.ts').then(module => module.default);
         case 'he': return import('./he.ts').then(module => module.default);
@@ -17,6 +20,13 @@ export function loadPokerTexts(language: Language): Promise<PokerTexts> {
         default: return import('./en.ts').then(module => module.default);
     }
 }
+
+export async function loadPokerTexts(language: Language): Promise<PokerTexts> {
+    const [dictionary, people] = await Promise.all([loadDictionary(language), loadCharacterTexts(language)]);
+    return withCharacters(dictionary, people);
+}
+
+export type { PokerCharacterId };
 
 export const PokerTextsContext = createContext<PokerTexts | null>(null);
 

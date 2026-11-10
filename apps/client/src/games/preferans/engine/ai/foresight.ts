@@ -205,8 +205,28 @@ export function imaginePlans(
  */
 export const DECLARER_AT_LEAST = -0.35;
 export const DECLARER_AT_MOST = 1.6;
-/** Tries to find a plausible declarer for one imagined deal; after that the strongest one seen is taken. */
+/** Tries to find a plausible declarer for one imagined deal; after that the nearest one seen is taken. */
 const DECLARER_TRIES = 48;
+/** After this many plain tries the declarer is dealt his cards with a lean toward trumps and honours. */
+const PLAIN_TRIES = 12;
+
+/**
+ * Twenty-two unseen cards in the order they are dealt (twelve to the declarer first). `lean` 0 is a plain shuffle.
+ * With a lean the trumps and the honours tend to come first: a declarer who named eight or nine holds them, and a
+ * plain shuffle finds such a hand once in thousands of tries. Each card gets the key random^(1/weight); the
+ * largest keys come first — a weighted draw without putting cards back.
+ */
+function dealLeaning(unknown: readonly Card[], strain: Strain, lean: number, random: Random): Card[] {
+  if (lean <= 0) return shuffled(unknown, random);
+  return unknown
+    .map(card => {
+      const honour = rankOf(card) >= 5;
+      const weight = strain === NO_TRUMP ? (honour ? 1 + 0.9 * lean : 1) : (card >> 3 === strain ? 1 + 1.5 * lean : 1) * (honour ? 1 + 0.5 * lean : 1);
+      return { card, key: Math.pow(random(), 1 / weight) };
+    })
+    .sort((a, b) => b.key - a.key)
+    .map(entry => entry.card);
+}
 
 /**
  * A defender's view of a declared game: the declarer's tricks in every imagined deal. The twenty-two cards the
@@ -226,7 +246,10 @@ export function imagineDefending(
     // [RU] Первый расклад, в котором играющий соответствует своей игре; если не подошёл ни один, берётся ближайший.
     let chosen: { plan: GamePlan; partnerHand: CardSet; miss: number } | null = null;
     for (let attempt = 0; attempt < DECLARER_TRIES; attempt += 1) {
-      const cards = shuffled(unknown, thinking.random);
+      // [EN] A hand that fits a six turns up in a plain shuffle; for a higher game the deal soon starts to lean.
+      // [RU] Рука под шестерную находится и в простой тасовке; для игры выше раздача вскоре начинает «клонить».
+      const lean = attempt < PLAIN_TRIES ? 0 : (level - 6) * (attempt < PLAIN_TRIES * 2 ? 0.5 : 1) + 0.5;
+      const cards = dealLeaning(unknown, strain, lean, thinking.random);
       const plan = gamePlan(setOf(cards.slice(0, 12)), strain, declarer === lead);
       const margin = plan.estimate - level;
       const miss = margin < DECLARER_AT_LEAST ? DECLARER_AT_LEAST - margin : margin > DECLARER_AT_MOST ? margin - DECLARER_AT_MOST : 0;

@@ -128,6 +128,14 @@ if (isMainThread) {
         const share = (list, test) => pct(list.filter(test).length, list.length);
         console.log(`the declarer's tricks minus the level — real: mean ${mean(real)}, short ${share(real, v => v < 0)}, exact ${share(real, v => v === 0)}, over ${share(real, v => v > 0)}`);
         console.log(`                              a defender imagines: mean ${mean(dreamt)}, short ${share(dreamt, v => v < 0)}, exact ${share(dreamt, v => v === 0)}, over ${share(dreamt, v => v > 0)}`);
+        // [EN] The same for the high games alone: there a declarer is hard to imagine, and a wrong picture costs most.
+        // [RU] То же отдельно для высоких игр: там играющего трудно вообразить, а неверная картина стоит дороже всего.
+        const high = viewed.filter(row => row.level >= 8);
+        if (high.length > 0) {
+            const realHigh = high.map(row => row.declarerTricks - row.level);
+            const dreamtHigh = high.flatMap(row => row.imagined.map(tricks => tricks - row.level));
+            console.log(`  eight and higher (${high.length} games) — real: short ${share(realHigh, v => v < 0)}, exact ${share(realHigh, v => v === 0)}, over ${share(realHigh, v => v > 0)} · imagined: short ${share(dreamtHigh, v => v < 0)}, exact ${share(dreamtHigh, v => v === 0)}, over ${share(dreamtHigh, v => v > 0)}`);
+        }
     }
     const seconds = parts.reduce((sum, part) => sum + part.botSeconds, 0);
     console.log(`bots' thinking before the play: ${(1000 * seconds / Math.max(1, auctions.length)).toFixed(0)} ms per deal`);

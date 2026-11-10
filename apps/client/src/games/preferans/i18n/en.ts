@@ -4,7 +4,7 @@
 // [RU] ФАЙЛ: английские тексты стола преферанса.
 import type { ClosedReason, OptionId, VariantId } from '../engine/index.ts';
 import type { Cast } from '../characters/roster.ts';
-import { CHARACTERS_EN } from './characters/en.ts';
+import { CHARACTERS_EN } from '../../../shared/characters/texts/en.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {

@@ -55,6 +55,8 @@ export interface PokerTexts {
     readonly out: string;
     readonly stack: (chips: string) => string;
     readonly about: (name: string) => string;
+    /** [EN] The button that closes a hero's card. [RU] Кнопка, закрывающая карточку героя. */
+    readonly closeAbout: string;
   };
   readonly actions: {
     readonly fold: string;
@@ -95,5 +97,16 @@ export interface PokerTexts {
     readonly newTournament: string;
   };
   readonly cards: { readonly name: (rank: number, suit: number) => string; readonly back: string };
-  readonly characters: Readonly<Record<PokerCharacterId, { readonly name: string; readonly tagline: string }>>;
+  /**
+   * [EN] The regulars: the name and the biography come from the texts shared by all the games
+   *      (shared/characters/texts), the poker line — from the poker dictionary.
+   * [RU] Завсегдатаи: имя и биография приходят из текстов, общих для всех игр (shared/characters/texts), покерная
+   *      реплика — из словаря покера.
+   */
+  readonly characters: Readonly<Record<PokerCharacterId, { readonly name: string; readonly bio: string; readonly tagline: string }>>;
 }
+
+/** [EN] What a language file of poker holds: everything but the names and biographies. [RU] Что хранит языковой файл покера: всё, кроме имён и биографий. */
+export type PokerDictionary = Omit<PokerTexts, 'characters'> & {
+  readonly characters: Readonly<Record<PokerCharacterId, { readonly tagline: string }>>;
+};

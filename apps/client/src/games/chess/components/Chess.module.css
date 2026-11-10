@@ -434,3 +434,52 @@
         letter-spacing: 3px;
     }
 }
+/* [EN] The opponent: a hero of the lair across the board (ChessOpponent.tsx). The small portrait grows under the
+        mouse and opens the hero's card on a press (shared/components/CharacterCard). */
+/* [RU] Соперник: герой логова по ту сторону доски (ChessOpponent.tsx). Маленький портрет растёт под мышью и по
+        нажатию раскрывает карточку героя (shared/components/CharacterCard). */
+.opponent {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 76px;
+    padding: 8px 16px;
+    border: 1px solid rgba(157, 78, 222, 0.45);
+    border-radius: 12px;
+    background: rgba(13, 17, 23, 0.72);
+    box-shadow: 0 0 24px rgba(0, 255, 136, 0.08);
+}
+.opponent .opponent-face { width: 60px; }
+.opponent .opponent-portrait {
+    display: block;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    border: 2px solid #9d4ede;
+    border-radius: 10px;
+    background: #0c070a;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.opponent .opponent-portrait:hover, .opponent .opponent-portrait:focus-visible { border-color: #00ff88; box-shadow: 0 0 16px rgba(0, 255, 136, 0.45); outline: none; }
+.opponent .opponent-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; }
+.opponent-text { display: grid; gap: 2px; min-width: 0; }
+.opponent-label { color: #8b949e; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
+.opponent-name { color: #e6edf3; font-size: 1.15rem; font-weight: 700; }
+.opponent-name em { color: #fbbf24; font-style: normal; font-weight: 400; }
+.opponent .opponent-another {
+    margin-inline-start: 8px;
+    padding: 8px 12px;
+    border: 1px solid rgba(0, 255, 136, 0.45);
+    border-radius: 8px;
+    background: transparent;
+    color: #00ff88;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.opponent .opponent-another:hover { background: rgba(0, 255, 136, 0.12); }
+@media (max-width: 520px) {
+    .opponent { flex-wrap: wrap; justify-content: center; }
+}

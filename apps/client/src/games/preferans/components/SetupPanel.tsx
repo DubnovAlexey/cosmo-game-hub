@@ -19,7 +19,9 @@ import {
     type Change, type Choice, type OptionId, type OptionKind, type TableConfig,
 } from '../engine/index.ts';
 import { championOf, type BotStrength, type PreferansResultSummary, type PreferansSave, type PreferansSettings } from '../hooks/usePreferans';
-import { ROSTER, isFemale, portraitPath, type CharacterId } from '../characters/roster.ts';
+import { CharacterPeek, usePeek } from '@shared/components/CharacterCard';
+import { ROSTER, characterInfo, isFemale, portraitPath, type CharacterId } from '../characters/roster.ts';
+import { mannerOf } from './PlayerSeat';
 import { withBase } from '@shell/utils/withBase';
 import { useTexts, type Dictionary, type Explained } from '../i18n/index.ts';
 import { signed } from './format';
@@ -130,8 +132,15 @@ const OptionRow: React.FC<{ id: OptionId; table: TableConfig; open: boolean; onI
 // [RU] Кто сядет за стол: все обитатели логова маленькими портретами, приколотыми к странице. Нажатие сажает
 //      персонажа на следующее свободное место (не больше двух, по порядку); повторное — отпускает. «Случайные» отдаёт
 //      оба места логову, и тогда победитель прошлой пули сохраняет место (записка говорит, кто это).
+// [EN] Under the mouse (or after a finger's tap) the hero's card stands beside the portrait: the picture two and a
+//      half times larger, the name, the biography, the manner at the table — so it is clear who is being picked
+//      (Alexey, 10.11.2026; before it was the browser's own plain tooltip).
+// [RU] Под мышью (или после касания пальцем) рядом с портретом встаёт карточка героя: картинка в два с половиной
+//      раза крупнее, имя, биография, манера за столом — чтобы было понятно, кого выбираешь (Алексей, 10.11.2026;
+//      раньше это была простая подсказка самого браузера).
 const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champion: CharacterId | null; onChange: (next: readonly (CharacterId | null)[]) => void; max: number }> = ({ value, champion, onChange, max }) => {
     const t = useTexts();
+    const peek = usePeek<CharacterId>();
     const chosen = value.filter((id): id is CharacterId => id !== null);
     const toggle = (id: CharacterId) => {
         const next = chosen.includes(id) ? chosen.filter(other => other !== id) : [...chosen, id].slice(-max);
@@ -145,7 +154,7 @@ const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champio
                     const seat = chosen.indexOf(id);
                     return (
                         <button key={id} type="button" className={`${styles.galleryItem} ${seat >= 0 ? styles.galleryOn : ''}`}
-                            aria-pressed={seat >= 0} title={t.characters[id].bio} onClick={() => toggle(id)}>
+                            aria-pressed={seat >= 0} onClick={() => toggle(id)} {...peek.bind(id)}>
                             <img src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" />
                             <span>{t.characters[id].name}</span>
                             {seat >= 0 && <b className={styles.galleryMark} aria-hidden="true">{seat + 1}</b>}
@@ -153,6 +162,10 @@ const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champio
                     );
                 })}
             </div>
+            <CharacterPeek anchor={peek.anchor} story={peek.id === null ? null : {
+                id: peek.id, name: t.characters[peek.id].name, bio: t.characters[peek.id].bio,
+                tag: characterInfo(peek.id).guest ? t.portrait.guest : t.portrait.dweller, manner: mannerOf(characterInfo(peek.id), t),
+            }} />
             <div className={styles.row}>
                 <button type="button" className={styles.button} disabled={chosen.length === 0} onClick={() => onChange(Array.from({ length: max }, () => null))}>{t.setup.randomOpponents}</button>
                 {champion && chosen.length < max && <span className={styles.hint}>{t.setup.champion(t.characters[champion].name, isFemale(champion))}</span>}

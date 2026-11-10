@@ -1,6 +1,6 @@
-// [EN] FILE: games/preferans/i18n/characters/en.ts — the company of the lair in English: names and biographies.
+// [EN] FILE: shared/characters/texts/en.ts — the company of the lair in English: names and biographies.
 // [RU] ФАЙЛ: обитатели логова по-английски — имена и биографии.
-import type { CharacterId } from '../../characters/roster.ts';
+import type { CharacterId } from '../roster.ts';
 
 export interface CharacterText { readonly name: string; readonly bio: string }
 

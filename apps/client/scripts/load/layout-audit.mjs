@@ -136,7 +136,9 @@ const TEXT_AUDIT = `((rootSelector) => {
           const plate = alpha(bs.backgroundColor) > 0.05 || bs.backgroundImage !== 'none' || parseFloat(bs.borderTopWidth) > 0;
           if (!plate || bs.display === 'inline') continue;
           const b = box.getBoundingClientRect();
-          if (line.left < b.left - 1.5 || line.right > b.right + 1.5) found.push('text «' + sample + '» sticks out of its plate ' + label(box));
+          // [EN] What is seen of the line (a name cut by its own dots on purpose is seen only inside its box).
+          // [RU] То, что видно от строки (имя, нарочно обрезанное многоточием, видно только внутри своей рамки).
+          if (left < b.left - 1.5 || right > b.right + 1.5) found.push('text «' + sample + '» sticks out of its plate ' + label(box));
           break;
         }
       }

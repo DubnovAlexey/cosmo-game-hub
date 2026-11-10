@@ -1,12 +1,12 @@
 // [EN] FILE: games/poker/i18n/en.ts — the poker table in English. [RU] ФАЙЛ: покерный стол по-английски.
-import type { PokerTexts, Who } from './types';
+import type { PokerDictionary, Who } from './types';
 
 const RANK_NAMES = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king', 'ace'];
 const SUIT_NAMES = ['spades', 'hearts', 'diamonds', 'clubs'];
 const name = (who: Who): string => (who.you ? 'You' : who.name);
 const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 
-const en: PokerTexts = {
+const en: PokerDictionary = {
   language: 'en',
   gameTitle: 'Poker',
   tagline: "Texas hold'em · a sit-and-go · you against the regulars of the crypt",
@@ -45,6 +45,7 @@ const en: PokerTexts = {
     out: 'out',
     stack: chips => `${chips} chips`,
     about: who => `Who is ${who}`,
+    closeAbout: 'Close',
   },
   actions: {
     fold: 'Fold',
@@ -85,16 +86,16 @@ const en: PokerTexts = {
   },
   cards: { name: (rank, suit) => `${RANK_NAMES[rank]} of ${SUIT_NAMES[suit]}`, back: 'a card face down' },
   characters: {
-    vlad: { name: 'Count Vlad', tagline: 'Plays few hands, and every one of them to the last drop.' },
-    carmilla: { name: 'Carmilla', tagline: 'Smiles the same with aces and with nothing. Guess which she has.' },
-    koschei: { name: 'Koschei', tagline: 'Immortal, so in no hurry: he will wait a hundred years for aces.' },
-    stilet: { name: 'Don Stiletto', tagline: 'Bets as if the pot were his already. Sometimes it is.' },
-    kaznachey: { name: 'Treasurer Knuckles', tagline: 'Pays to see every card: the treasury will not audit itself.' },
-    lilith: { name: 'Lilith', tagline: 'Works out the pot odds before you can blink.' },
-    crystal: { name: 'the Crystal Skull', tagline: 'You can see right through him and still not read him: inside there is only maths.' },
-    galeon: { name: 'Captain Galleon', tagline: 'Goes all-in like a boarding party: loud and without a doubt.' },
-    shadow: { name: 'Lady Shadow', tagline: 'Silent over a monster, betting when she has nothing.' },
-    semyonych: { name: 'Semyonych the Raccoon', tagline: 'Forty years of kitchen poker: knows every trick and invented half of them.' },
+    vlad: { tagline: 'Plays few hands, and every one of them to the last drop.' },
+    carmilla: { tagline: 'Smiles the same with aces and with nothing. Guess which she has.' },
+    koschei: { tagline: 'Immortal, so in no hurry: he will wait a hundred years for aces.' },
+    stilet: { tagline: 'Bets as if the pot were his already. Sometimes it is.' },
+    kaznachey: { tagline: 'Pays to see every card: the treasury will not audit itself.' },
+    lilith: { tagline: 'Works out the pot odds before you can blink.' },
+    crystal: { tagline: 'You can see right through him and still not read him: inside there is only maths.' },
+    galeon: { tagline: 'Goes all-in like a boarding party: loud and without a doubt.' },
+    shadow: { tagline: 'Silent over a monster, betting when she has nothing.' },
+    semyonych: { tagline: 'Forty years of kitchen poker: knows every trick and invented half of them.' },
   },
 };
 

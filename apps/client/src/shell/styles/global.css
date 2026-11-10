@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+/* [EN] A card of the catalog (shell/components/GameCard.astro): under the mouse the whole card comes forward and grows
+        one and a half times (Alexey, 10.11.2026: the windows themselves must grow, not the pictures inside them).
+        A card of the left column grows from its left edge and a card of the right column from its right edge, so
+        a grown card never leaves the screen; the grid has two columns from 768 px and three from 1024 px
+        (pages/games.astro). Only a mouse hovers: on a phone the card stays as it is.
+   [RU] Карточка каталога (shell/components/GameCard.astro): под мышью вся карточка выходит вперёд и вырастает в
+        полтора раза (Алексей, 10.11.2026: должны увеличиваться сами окошки, а не картинки в них). Карточка левой
+        колонки растёт от своего левого края, карточка правой — от правого, поэтому выросшая карточка не уходит за
+        экран; в сетке две колонки с 768 px и три с 1024 px (pages/games.astro). Наводит только мышь: на телефоне
+        карточка остаётся как есть. */
+.game-card {
+    position: relative;
+    z-index: 0;
+    transition: transform 0.3s cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+    .game-card:hover {
+        z-index: 20;
+        transform: scale(1.5);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(59, 130, 246, 0.6);
+    }
+    .game-card:nth-child(odd) { transform-origin: 0 50%; }
+    .game-card:nth-child(even) { transform-origin: 100% 50%; }
+}
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+    .game-card:nth-child(3n + 1) { transform-origin: 0 50%; }
+    .game-card:nth-child(3n + 2) { transform-origin: 50% 50%; }
+    .game-card:nth-child(3n) { transform-origin: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .game-card { transition: none; }
+}

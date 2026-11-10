@@ -4,7 +4,7 @@
 //      пуля сохраняет русское имя: «pulya».
 import type { ClosedReason, OptionId, VariantId } from '../engine/index.ts';
 import type { Cast } from '../characters/roster.ts';
-import { CHARACTERS_ES } from './characters/es.ts';
+import { CHARACTERS_ES } from '../../../shared/characters/texts/es.ts';
 import type { Dictionary, Explained } from './types.ts';
 
 const VARIANTS: Readonly<Record<VariantId, Explained>> = {
