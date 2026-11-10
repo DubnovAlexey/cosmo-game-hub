@@ -8,8 +8,10 @@
 //                finishes a wounded ship along its line;
 //   - 'hard'   — counts for every cell in how many ways the ships still afloat can lie over it without breaking
 //                the rules or what is already known, and shoots where a ship is likeliest (a wounded ship first).
-//   Measured on 2000 random classic fleets (tests/gunner.test.ts keeps it true): a random shooter needs about 95
-//   shots to sink a fleet, 'easy' about 65, 'normal' about 50, 'hard' about 43.
+//   Measured on 600 random fleets, shots needed to sink a whole fleet (tests/gunner.test.ts keeps the order true):
+//   the boxed rules — shooting blindly 95, 'easy' 63, 'normal' 51, 'hard' 45; the classic rules — blindly 75,
+//   'easy' 62, 'normal' 58, 'hard' 55. In the classic game the levels lie closer: four single-deck boats are found
+//   mostly by luck, and the water round every sunk ship is opened for free.
 // SECTIONS: 1 what the gunner knows; 2 easy and normal; 3 hard; 4 entry point.
 // =====================================================================
 import { EMPTY, HIT, MISS, SUNK, UNKNOWN, cellAt, cellsOfPlacement, columnOf, rowOf, waterAround, type Mark } from '../board.ts';
