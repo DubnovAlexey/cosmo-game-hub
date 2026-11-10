@@ -1,10 +1,11 @@
 // [EN] FILE: apps/client/scripts/load/run-all.mjs — runs every load test one after another and prints a summary:
-//      the preferans engine (Node), chess and Stockfish, the preferans table on a computer and on a slow phone, and
-//      the hub itself. The browser tests need the production build served: `npm run build --workspace client`, then
+//      the preferans engine (Node), chess and Stockfish, the preferans table on a computer and on a slow phone, the
+//      poker bots and the poker table by finger and by mouse, and the hub itself. The browser tests need the production build served: `npm run build --workspace client`, then
 //      `astro preview --port 4324` (or HUB_URL pointing elsewhere).
 //      Run: npm run load        (or: node apps/client/scripts/load/run-all.mjs [--quick])
 // [RU] ФАЙЛ: запускает все нагрузочные проверки по очереди и печатает итог: движок преферанса (Node), шахматы и
-//      Stockfish, стол преферанса на компьютере и на медленном телефоне, сам хаб. Браузерным проверкам нужна
+//      Stockfish, стол преферанса на компьютере и на медленном телефоне, боты покера и стол покера пальцем и мышью,
+//      сам хаб. Браузерным проверкам нужна
 //      отданная сервером продакшен-сборка: `npm run build --workspace client`, затем `astro preview --port 4324`
 //      (или HUB_URL на другой адрес).
 import { spawnSync } from 'node:child_process';
@@ -33,13 +34,16 @@ const RUNS = [
     ['chess and Stockfish / шахматы и Stockfish', 'chess.mjs', quick ? ['--games', '1'] : []],
     ['preferans table, computer / стол, компьютер', 'preferans-ui.mjs', ['--deals', quick ? '6' : '30']],
     ['preferans table, slow phone / стол, медленный телефон', 'preferans-ui.mjs', ['--deals', quick ? '4' : '15', '--phone', '--cpu', '4']],
+    ['poker bots / боты покера', 'poker-bots.mjs', ['--tournaments', quick ? '8' : '40']],
+    ['poker table, phone by finger / стол покера, телефон пальцем', 'poker-touch.mjs', ['390', '844', '5', quick ? '3' : '8', 'load-poker-phone']],
+    ['poker table, computer by mouse / стол покера, компьютер мышью', 'poker-touch.mjs', ['1366', '768', '3', quick ? '3' : '8', 'load-poker-desktop'], { INPUT: 'mouse' }],
     ['the hub / хаб', 'hub.mjs', quick ? ['--requests', '1500', '--rounds', '5'] : []],
 ];
 const results = [];
-for (const [title, script, args] of RUNS) {
+for (const [title, script, args, env = {}] of RUNS) {
     console.log(`\n=== ${title}`);
     const started = Date.now();
-    const run = spawnSync(process.execPath, [`${here}${script}`, ...args], { stdio: 'inherit' });
+    const run = spawnSync(process.execPath, [`${here}${script}`, ...args], { stdio: 'inherit', env: { ...process.env, ...env } });
     results.push({ title, ok: run.status === 0, seconds: Math.round((Date.now() - started) / 1000) });
 }
 console.log('\n=== summary / итог');

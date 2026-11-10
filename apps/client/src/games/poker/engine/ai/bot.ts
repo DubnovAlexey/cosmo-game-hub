@@ -115,6 +115,14 @@ export function choosePokerAction(state: HandState, options: PokerBotOptions = {
     if (!preflop && ranges.length <= 2 && random() < style.bluff && (legal.raise || legal.allIn !== null)) return raise();
     return pass;
   }
+  // [EN] Nobody has raised before the flop yet: a player who wants to play opens with a raise, as people do, instead
+  //      of just calling the blind; the more aggressive, the more often.
+  // [RU] До флопа ещё никто не повышал: игрок, который хочет играть, открывается рейзом, как это делают люди, а не
+  //      просто доравнивает блайнд; чем агрессивнее, тем чаще.
+  if (preflop && state.raisesThisStreet === 0 && toCall <= big && (legal.raise || legal.allIn !== null)) {
+    const open = 1.3 + tight - style.aggression * 0.3;
+    if (strength > open && random() < 0.2 + 0.8 * style.aggression) return raise();
+  }
   const raiseAt = (preflop ? 1.6 : 1.55) + tight + reraise - style.aggression * 0.25;
   if (strength > raiseAt && state.raisesThisStreet < 4 && (legal.raise || (legal.allIn !== null && legal.allIn > state.currentBet))) return raise();
   // Call when the share of the pot beats its price, a tight player with a margin.
