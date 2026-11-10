@@ -368,7 +368,7 @@
 }
 @media (max-width: 700px) {
     .room { padding: 12px 8px 28px; }
-    .felt { aspect-ratio: 0.82; min-height: 0; margin: 16px 14px 22px; width: calc(100% - 28px); border-radius: 46% / 36%; }
+    .felt { --phone-ratio: 0.82; aspect-ratio: var(--phone-ratio); min-height: 0; margin: 16px 14px 34px; width: calc(100% - 28px); border-radius: 46% / 36%; }
     .felt::before { border-radius: 46% / 36%; }
     .room { --card-w: clamp(34px, 10.5vw, 52px); }
     .cardSmall { --card-w: clamp(20px, 6vw, 30px); }
