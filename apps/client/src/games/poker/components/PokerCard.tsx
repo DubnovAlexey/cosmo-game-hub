@@ -24,8 +24,13 @@ export const PokerCard: React.FC<PokerCardProps> = ({ card, size = 'board', winn
     const symbol = SUIT_SYMBOLS[suitOf(card)];
     return (
         <div className={[...classes, isRed(card) ? styles.cardRed : styles.cardBlack].join(' ')} role="img" aria-label={t.cards.name(rankOf(card), suitOf(card))}>
-            <span className={styles.cardCorner} aria-hidden="true">{rank}<br />{symbol}</span>
-            <span className={styles.cardCenter} aria-hidden="true">{symbol}</span>
+            {/* [EN] A small card of another player shows only its rank and suit, as large as the card allows: at
+                     the showdown they must be readable on a phone.
+                [RU] Маленькая карта другого игрока показывает только достоинство и масть — так крупно, как
+                     позволяет карта: на вскрытии их нужно прочитать и с телефона. */}
+            {size === 'small'
+                ? <span className={styles.cardMini} aria-hidden="true">{rank}<br />{symbol}</span>
+                : <><span className={styles.cardCorner} aria-hidden="true">{rank}<br />{symbol}</span><span className={styles.cardCenter} aria-hidden="true">{symbol}</span></>}
         </div>
     );
 };

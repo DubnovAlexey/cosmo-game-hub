@@ -34,7 +34,7 @@
 .sheetHeader { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 /* [EN] The words around the paper are engraved in old silver on the cloth. [RU] Подписи вокруг листа — гравировка старым серебром по сукну. */
 .sheetHeader h2 { margin: 0; color: #eadfc6; font: 400 1.85rem/1.1 'Marck Script', 'Cormorant Garamond', Georgia, 'David', cursive; letter-spacing: 0; text-shadow: 0 1px 0 #000, 0 0 10px rgba(176, 16, 31, 0.35); }
-.sheetMeta { flex: 1; color: #c9c0aa; font-family: var(--hand); font-size: 1.02rem; }
+.sheetMeta { flex: 1; color: #c9c0aa; font-family: var(--hand), cursive; font-size: 1.02rem; }
 
 .iconButton {
     display: grid;
@@ -121,24 +121,24 @@
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ===== 4. Legend, balance, deals / Легенда, итог, раздачи ===== */
-.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 14px 0 0; color: #c9c0aa; font-family: var(--hand); font-size: 1.02rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 14px 0 0; color: #c9c0aa; font-family: var(--hand), cursive; font-size: 1.02rem; }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .dotPool, .dotMountain, .dotWhists { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 50%; }
 .dotPool { background: #5eead4; }
 .dotMountain { background: #fda4af; }
 .dotWhists { background: #c4b5fd; }
 
-.balance { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 10px 0 0; font-family: var(--hand); font-size: 1.16rem; }
+.balance { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 10px 0 0; font-family: var(--hand), cursive; font-size: 1.16rem; }
 .balanceUnit { color: var(--muted); }
 .plus { color: #86efac; }
 .minus { color: #fda4af; }
 
 /* [EN] Teeth: who promised to pay whom back, a fang before each. [RU] Зубы: кто кому обещал отплатить, перед каждым — клык. */
-.teeth { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 8px 0 0; font-family: var(--hand); font-size: 1.05rem; }
+.teeth { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 8px 0 0; font-family: var(--hand), cursive; font-size: 1.05rem; }
 .tooth::before { content: '▾'; margin-inline-end: 4px; color: #eadfc6; font-size: 0.8em; }
 
 .deals { margin-top: 10px; }
-.deals summary { cursor: pointer; color: #eadfc6; font-family: var(--hand); font-weight: 400; font-size: 1.22rem; }
+.deals summary { cursor: pointer; color: #eadfc6; font-family: var(--hand), cursive; font-weight: 400; font-size: 1.22rem; }
 
 /* ===== 5. Strip for small screens / Полоса для маленьких экранов ===== */
 /* [EN] A paper note with the score: who has how much, written by hand. [RU] Бумажная записка со счётом: у кого сколько, от руки. */

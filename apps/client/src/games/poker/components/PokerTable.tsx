@@ -1,24 +1,26 @@
 // [EN] FILE: games/poker/components/PokerTable.tsx — the poker room of the lair: the header with the blinds, the oval
 //      table with the regulars around it (portraits, plaques, cards, bets on the cloth, the button and the blinds),
 //      the board and the pot in the middle, the result of a hand with the winning five lit up, your decision tray,
-//      the log of the hand, the tournament menu and its end. Seats go round the oval clockwise from you at the bottom.
+//      the log of the hand, the tournament menu and its end. Who sits where is decided in seating.ts, one place is
+//      drawn by PokerSeat.tsx.
 // [RU] ФАЙЛ: покерная комната логова: шапка с блайндами, овальный стол с завсегдатаями вокруг (портреты, таблички,
 //      карты, ставки на сукне, баттон и блайнды), доска и банк посередине, итог раздачи с подсвеченной выигравшей
-//      пятёркой, ваш лоток решений, ход раздачи, меню турнира и его конец. Места идут по овалу по часовой стрелке от
-//      вас внизу.
+//      пятёркой, ваш лоток решений, ход раздачи, меню турнира и его конец. Кто где сидит, решает seating.ts, одно
+//      место рисует PokerSeat.tsx.
 import React, { useEffect, useMemo, useState } from 'react';
 import { LanguageSwitch } from '@shared/components/LanguageSwitch';
 import type { Language } from '@shared/i18n/languages';
-import { withBase } from '@shell/utils/withBase';
 import {
     SUIT_SYMBOLS, STRAIGHT_FLUSH, bestFive, categoryOf, describe, legalActions, potSize, rankLabel, rankOf, suitOf,
     type Card, type HandState, type HandValue, type LogEntry,
 } from '../engine/index.ts';
-import { characterOf, portraitPath, type PokerCharacterId } from '../characters';
+import { characterOf } from '../characters';
 import { HUMAN_SEAT, loadPokerSave, usePoker, type PokerSave } from '../hooks/usePoker';
 import { PokerTextsContext, type PokerTexts, type Who } from '../i18n';
 import { ActionTray } from './ActionTray';
 import { PokerCard } from './PokerCard';
+import { PokerSeat, type SeatStatus } from './PokerSeat';
+import { seating } from './seating';
 import { SetupMenu } from './SetupMenu';
 import styles from './Poker.module.css';
 
@@ -28,21 +30,7 @@ interface PokerTableProps {
     readonly texts: PokerTexts;
 }
 
-/** Seats round an ellipse, clockwise from you at the bottom; bets lie on the way to the middle. */
-function positions(count: number, tall: boolean, narrow: boolean): { x: number; y: number; bx: number; by: number }[] {
-    // [EN] A phone's oval is narrow and a tablet's margins are thin: the side seats move in, so nothing sticks out
-    //      past the screen (an overflow widens the page and makes a tap land below its target).
-    // [RU] Овал телефона узкий, а поля планшета тонкие: боковые места сдвигаются внутрь, чтобы ничего не выходило за
-    //      экран (выступ расширяет страницу, и касание попадает ниже цели).
-    const rx = tall ? 33 : narrow ? 37 : 45;
-    const ry = tall ? 43 : 41;
-    return Array.from({ length: count }, (_, index) => {
-        const angle = ((90 + (index * 360) / count) * Math.PI) / 180;
-        const x = 50 + rx * Math.cos(angle);
-        const y = 50 + ry * Math.sin(angle);
-        return { x, y, bx: 50 + (x - 50) * 0.56, by: 47 + (y - 50) * 0.56 };
-    });
-}
+const NO_CARDS: ReadonlySet<Card> = new Set<Card>();
 
 const cardText = (card: Card): string => `${rankLabel(rankOf(card))}${SUIT_SYMBOLS[suitOf(card)]}`;
 
@@ -64,8 +52,20 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
     const [openSeat, setOpenSeat] = useState<number | null>(null);
     const game = usePoker(!menuOpen);
     const { table, cast } = game;
-    const tall = useMatch('(max-width: 700px)');
     const narrow = useMatch('(max-width: 899px)');
+    // [EN] An open line under a portrait closes by Escape and by a press anywhere else.
+    // [RU] Раскрытая реплика под портретом закрывается клавишей Escape и нажатием в любом другом месте.
+    useEffect(() => {
+        if (openSeat === null) return;
+        const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpenSeat(null); };
+        const onPress = (event: PointerEvent) => {
+            const target = event.target instanceof Element ? event.target : null;
+            if (!target?.closest('[aria-expanded="true"], [role="note"]')) setOpenSeat(null);
+        };
+        window.addEventListener('keydown', onKey);
+        window.addEventListener('pointerdown', onPress);
+        return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('pointerdown', onPress); };
+    }, [openSeat]);
     const format = (chips: number): string => chips.toLocaleString(language);
     const who = (seat: number): Who => (seat === HUMAN_SEAT
         ? { name: t.seat.you, female: false, you: true }
@@ -118,7 +118,7 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
     const openMenu = () => { setSaved(loadPokerSave()); setMenuOpen(true); };
 
     const legal = table && table.turn === HUMAN_SEAT ? legalActions(table) : null;
-    const spots = table ? positions(table.seats.length, tall, narrow) : [];
+    const places = table ? seating(table.seats.length, narrow) : [];
     const showdown = table?.result?.showdown ?? false;
     const savedTime = game.savedAt !== null ? new Date(game.savedAt).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' }) : null;
 
@@ -141,9 +141,7 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
 
                 <div className={styles.layout}>
                     <div className={styles.tableArea}>
-                        {/* [EN] On a phone the oval grows taller with the company, so the side seats keep clear of the board.
-                            [RU] На телефоне овал вытягивается вместе с компанией, и боковые места не налезают на доску. */}
-                        <div className={styles.felt} style={{ '--phone-ratio': String(!table || table.seats.length <= 2 ? 0.9 : table.seats.length <= 4 ? 0.74 : 0.6) } as React.CSSProperties}>
+                        <div className={styles.felt}>
                             {table && (
                                 <div className={styles.center}>
                                     <div className={styles.board}>
@@ -160,55 +158,19 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
                                 </div>
                             )}
                             {table && table.seats.map((seat, index) => {
-                                if (seat.bet <= 0 || table.phase === 'done') return null;
-                                const spot = spots[index];
-                                return (
-                                    <div key={`bet-${index}`} className={styles.bet} style={{ '--bx': `${spot.bx}%`, '--by': `${spot.by}%` } as React.CSSProperties}>
-                                        <span className={styles.chips} aria-hidden="true"><i /><i /><i /></span>{format(seat.bet)}
-                                    </div>
-                                );
-                            })}
-                            {table && table.seats.map((seat, index) => {
-                                const spot = spots[index];
-                                const id: PokerCharacterId | null = index === HUMAN_SEAT ? null : cast[index - 1];
-                                const reveal = index === HUMAN_SEAT || (showdown && table.result?.values[index] !== null && table.result?.values[index] !== undefined);
+                                const yours = index === HUMAN_SEAT;
+                                const shown = showdown && table.result?.values[index] !== null && table.result?.values[index] !== undefined;
                                 const onTurn = table.turn === index && table.phase === 'betting';
-                                const side = index === HUMAN_SEAT ? styles.seatSouth : spot.x < 35 ? styles.seatWest : spot.x > 65 ? styles.seatEast : spot.y < 50 ? styles.seatNorth : styles.seatSouth;
-                                const classes = [styles.seat, side, onTurn ? styles.seatTurn : '', seat.folded ? styles.seatFolded : '', seat.out ? styles.seatOut : ''].join(' ');
-                                const status = seat.out ? t.seat.out : seat.folded ? t.seat.folded : seat.allIn ? t.seat.allIn : onTurn && game.thinking && index !== HUMAN_SEAT ? t.seat.thinking : null;
+                                // [EN] At the showdown the cards speak for themselves: nothing is written across them.
+                                // [RU] На вскрытии карты говорят сами за себя: поверх них ничего не пишется.
+                                const status: SeatStatus | null = seat.out ? 'out' : seat.folded ? 'folded' : shown && !yours ? null
+                                    : seat.allIn ? 'allIn' : onTurn && game.thinking && !yours ? 'thinking' : null;
                                 return (
-                                    <div key={`seat-${index}`} className={classes} style={{ '--x': `${spot.x}%`, '--y': `${spot.y}%` } as React.CSSProperties}>
-                                        <div className={styles.who}>
-                                        {id && (
-                                            <button type="button" className={styles.portrait} aria-label={t.seat.about(t.characters[id].name)} aria-expanded={openSeat === index}
-                                                onClick={() => setOpenSeat(current => (current === index ? null : index))}>
-                                                <img src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" draggable={false} />
-                                            </button>
-                                        )}
-                                        {/* [EN] The button and the blinds sit on the frame, outside the round picture that would clip them.
-                                            [RU] Баттон и блайнды сидят на рамке, вне круглой картинки, которая бы их обрезала. */}
-                                        <span className={`${styles.badges} ${id ? '' : styles.badgesYours} ${id && spot.x > 65 ? styles.badgesWest : ''}`} aria-hidden="true">
-                                            {table.button === index && <span className={styles.dealer} title={t.seat.dealer}>D</span>}
-                                            {table.smallBlindSeat === index && <span className={styles.blind} title={t.seat.smallBlind}>{t.seat.smallBlind}</span>}
-                                            {table.bigBlindSeat === index && <span className={styles.blind} title={t.seat.bigBlind}>{t.seat.bigBlind}</span>}
-                                        </span>
-                                        <div className={styles.plaque}>
-                                            <span className={styles.seatName}>
-                                                {id ? t.characters[id].name : t.seat.you}
-                                            </span>
-                                            <span className={styles.seatStack}>{t.seat.stack(format(seat.stack))}</span>
-                                        </div>
-                                        {status && <span className={`${styles.status} ${seat.allIn ? styles.statusAllIn : ''} ${status === t.seat.thinking ? styles.statusThinking : ''}`}>{status}</span>}
-                                        {openSeat === index && id && <p className={styles.bubble}>{t.characters[id].tagline}</p>}
-                                        </div>
-                                        {!seat.out && seat.hole.length > 0 && (
-                                            <div className={styles.hole}>
-                                                {seat.hole.map(card => (
-                                                    <PokerCard key={`${index}-${card}`} card={reveal ? card : null} size={index === HUMAN_SEAT ? 'hand' : 'small'} winning={showdown && winningCards.has(card)} />
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
+                                    <PokerSeat key={index} seat={seat} place={places[index]} character={yours ? null : cast[index - 1]}
+                                        stack={format(seat.stack)} bet={seat.bet > 0 && table.phase !== 'done' ? format(seat.bet) : null}
+                                        reveal={yours || shown} winning={showdown ? winningCards : NO_CARDS} status={status} onTurn={onTurn}
+                                        dealer={table.button === index} smallBlind={table.smallBlindSeat === index} bigBlind={table.bigBlindSeat === index}
+                                        open={openSeat === index} onToggle={() => setOpenSeat(current => (current === index ? null : index))} />
                                 );
                             })}
                         </div>

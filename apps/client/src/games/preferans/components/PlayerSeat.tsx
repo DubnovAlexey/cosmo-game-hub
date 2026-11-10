@@ -5,6 +5,7 @@
 //      с именем, роль, последнее слово, рука (лицом для вас и открытых рук, иначе рубашкой) и взятые взятки на
 //      сукне, каждая — отдельной стопкой рубашкой вверх.
 import React, { useEffect, useId, useRef, useState } from 'react';
+import { useKeepOnScreen } from '@shared/hooks/useKeepOnScreen';
 import { withBase } from '@shell/utils/withBase';
 import { countCards, type Card, type CardSet } from '../engine/index.ts';
 import { characterInfo, portraitPath, type CharacterId, type CharacterInfo } from '../characters/roster.ts';
@@ -89,6 +90,12 @@ const Portrait: React.FC<{ id: CharacterId; name: string; thinking: boolean; ali
     const t = useTexts();
     const [open, setOpen] = useState(false);
     const bioId = useId();
+    // [EN] The biography opens under the portrait and is then moved sideways into the screen: under the top seat of
+    //      a phone it used to run past the right edge and widen the page.
+    // [RU] Биография раскрывается под портретом и затем сдвигается вбок внутрь экрана: под верхним местом на
+    //      телефоне она уходила за правый край и расширяла страницу.
+    const bio = useRef<HTMLDivElement>(null);
+    useKeepOnScreen(bio, open, id);
     useEffect(() => {
         if (!open) return;
         const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpen(false); };
@@ -111,7 +118,7 @@ const Portrait: React.FC<{ id: CharacterId; name: string; thinking: boolean; ali
                     onLoad={() => setLoaded(true)} onError={() => setLoaded(false)} />
             </button>
             {open && (
-                <div id={bioId} className={`${styles.bio} ${alignRight ? styles.bioRight : ''}`} role="dialog" aria-label={t.portrait.about(name)}>
+                <div ref={bio} id={bioId} className={`${styles.bio} ${alignRight ? styles.bioRight : ''}`} role="dialog" aria-label={t.portrait.about(name)}>
                     <img className={styles.bioPicture} src={withBase(portraitPath(id))} alt="" decoding="async" draggable={false} />
                     <p className={styles.bioName}>{text.name}</p>
                     <p className={styles.bioTag}>{characterInfo(id).guest ? t.portrait.guest : t.portrait.dweller}</p>

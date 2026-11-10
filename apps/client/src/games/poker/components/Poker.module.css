@@ -1,12 +1,14 @@
 /* [EN] FILE: games/poker/components/Poker.module.css — the lair's poker room: the same crypt and the same club as the
         preferans table (blackened silver on velvet, the scribe's quill, deep bottle-emerald felt), with an oval table
-        in a lacquered rail. Seats sit around the oval (positions from PokerTable.tsx), the board and the pot in the
-        middle, the decision tray under the table. On a phone the oval stands upright and everything is sized by the
-        screen, so a finger reaches every control.
+        in a lacquered rail. On a computer and a tablet the seats stand round the oval (places from seating.ts), the
+        board and the pot in the middle, the decision tray under the table. On a phone the table is a grid of three
+        rows — the far side, the board, the near side — so nothing can lie on anything else, and the table with the
+        tray fits one screen.
    [RU] ФАЙЛ: покерная комната логова: та же крипта и тот же клуб, что у стола преферанса (черненое серебро на бархате,
-        перо писаря, глубокое бутылочно-изумрудное сукно), с овальным столом в лакированном борту. Места стоят вокруг
-        овала (позиции — из PokerTable.tsx), доска и банк посередине, лоток решений под столом. На телефоне овал встаёт
-        вертикально, и всё меряется экраном, поэтому палец достаёт любую кнопку. */
+        перо писаря, глубокое бутылочно-изумрудное сукно), с овальным столом в лакированном борту. На компьютере и
+        планшете места стоят вокруг овала (позиции — из seating.ts), доска и банк посередине, лоток решений под
+        столом. На телефоне стол — сетка в три ряда: дальняя сторона, доска, ближняя сторона; так ничто не может лечь
+        на другое, а стол вместе с лотком помещается на один экран. */
 
 /* ===== 1. Room / Комната ===== */
 .room {
@@ -22,11 +24,19 @@
     --blood: #9b111e;
     --card-w: clamp(40px, 5.4vw, 74px);
     --card-h: calc(var(--card-w) * 1.42);
+    /* [EN] The cards of the other players and your own two: a seat keeps room for them even before the deal.
+       [RU] Карты других игроков и ваши две: место держит под них площадь ещё до раздачи. */
+    --small-w: clamp(26px, 2.9vw, 40px);
+    --hand-w: clamp(46px, 5.6vw, 78px);
+    --portrait: clamp(46px, 5.6vw, 76px);
     position: relative;
     isolation: isolate;
     min-height: 100vh;
-    /* [EN] Nothing may widen the page sideways (a seat pod at the edge of a small screen). [RU] Ничто не должно расширять страницу вбок (группа места у края маленького экрана). */
-    overflow-x: hidden;
+    /* [EN] Nothing may widen the page sideways. `clip` (unlike `hidden`) does not turn the room into a scroll box,
+            so sticky things inside keep working; browsers that do not know it get `hidden` below.
+       [RU] Ничто не должно расширять страницу вбок. `clip` (в отличие от `hidden`) не делает комнату прокручиваемой
+            рамкой, поэтому «липкие» вещи внутри продолжают работать; браузеры, которые его не знают, получают
+            `hidden` ниже. */
     overflow-x: clip;
     padding: 18px clamp(10px, 2.5vw, 28px) 40px;
     color: var(--bone);
@@ -39,6 +49,9 @@
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.035' stroke-width='2'%3E%3Cpath d='M0 1H240M0 41H240M0 81H240'/%3E%3Cpath d='M72 1V41M168 1V41M28 41V81M118 41V81M206 41V81M88 81V120M182 81V120'/%3E%3C/g%3E%3Cg fill='%23000000' fill-opacity='0.16'%3E%3Crect x='2' y='3' width='68' height='36'/%3E%3Crect x='170' y='3' width='68' height='36'/%3E%3Crect x='30' y='43' width='86' height='36'/%3E%3Crect x='120' y='83' width='60' height='35'/%3E%3C/g%3E%3C/svg%3E"),
         radial-gradient(ellipse at 50% 35%, #1b0f1a 0%, #0c070d 60%, #040304 100%);
     background-attachment: fixed;
+}
+@supports not (overflow-x: clip) {
+    .room { overflow-x: hidden; }
 }
 
 .header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; max-width: 1180px; margin: 0 auto 14px; }
@@ -121,21 +134,25 @@
 /* [EN] A fine silver line marks the betting line on the cloth. [RU] Тонкая серебряная линия отмечает на сукне черту ставок. */
 .felt::before { content: ''; position: absolute; inset: 12%; border-radius: 50% / 46%; box-shadow: inset 0 0 0 1px rgba(200, 205, 212, 0.16); pointer-events: none; }
 
-.center { position: absolute; left: 50%; top: 47%; display: grid; justify-items: center; gap: 8px; transform: translate(-50%, -50%); pointer-events: none; }
+.center { position: absolute; left: 50%; top: 49%; display: grid; justify-items: center; gap: 8px; transform: translate(-50%, -50%); pointer-events: none; }
 .board { display: flex; gap: calc(var(--card-w) * 0.12); }
 .slot { width: var(--card-w); height: var(--card-h); border-radius: calc(var(--card-w) * 0.11); box-shadow: inset 0 0 0 1px rgba(216, 219, 224, 0.16); }
 .pot { padding: 2px 14px 4px; border-radius: 999px; background: rgba(0, 0, 0, 0.45); color: #f3e7c6; font: 400 1.25rem/1.2 var(--quill), cursive; white-space: nowrap; }
-.sidePots { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; color: #cfc6b0; font: 400 0.98rem var(--quill), cursive; }
 .street { color: #a9c7b2; }
 
 /* ===== 4. Seats / Места ===== */
-/* [EN] A seat is a compact pod: the portrait with its plaque, and the two cards beside it toward the middle of the
-        table (to the right on the left side, to the left on the right side, below at the top; your cards above your
-        plaque). [RU] Место — компактная группа: портрет с табличкой и две карты рядом, ближе к середине стола
-        (справа на левой стороне, слева на правой, снизу наверху; ваши карты — над вашей табличкой). */
+/* [EN] A seat is a pod: the portrait with its plaque, and beside it — toward the middle of the table — the two cards
+        with the bet under them. On a computer and a tablet the pods stand round the oval (seating.ts gives the place
+        of each); on a phone they are cells of a grid (section 8). A pod never changes size during a hand: the bet has
+        its own line even when there is none, and «fold», «all-in», «thinking» are written across the cards — so a
+        pod cannot push or cover its neighbours, the board or the pot.
+   [RU] Место — компактная группа: портрет с табличкой, а рядом, ближе к середине стола, две карты и ставка под ними.
+        На компьютере и планшете группы стоят по овалу (место каждой даёт seating.ts); на телефоне это клетки сетки
+        (раздел 8). Группа не меняет размер во время раздачи: у ставки своя строка, даже когда ставки нет, а «фолд»,
+        «олл-ин», «думает» пишутся поверх карт — поэтому группа не может толкнуть или закрыть соседей, доску и банк. */
 .seat {
-    /* [EN] PokerTable.tsx sets the place of every seat inline; the middle of the table is only a default.
-       [RU] PokerTable.tsx задаёт место каждого игрока прямо в разметке; середина стола — только запасное значение. */
+    /* [EN] seating.ts sets the place of every seat inline; the middle of the table is only a default.
+       [RU] seating.ts задаёт место каждого игрока прямо в разметке; середина стола — только запасное значение. */
     --x: 50%;
     --y: 50%;
     position: absolute;
@@ -148,18 +165,40 @@
     width: max-content;
     transform: translate(-50%, -50%);
 }
-.seatWest { flex-direction: row; }
+/* [EN] The seat whose line is open lies above its neighbours. [RU] Место с раскрытой репликой лежит поверх соседей. */
+.seatOpen { z-index: 8; }
+.seatWest, .seatNorth { flex-direction: row; }
 .seatEast { flex-direction: row-reverse; }
-.seatNorth { flex-direction: column; }
 .seatSouth { flex-direction: column-reverse; }
-.who { position: relative; display: grid; justify-items: center; gap: 0; }
+.who { position: relative; display: grid; justify-items: center; }
 .who .plaque { position: relative; z-index: 1; margin-top: -8px; }
-.who .status { margin-top: 3px; }
+.seatYours .who .plaque { margin-top: 0; }
+/* [EN] The cards and the bet in front of them. [RU] Карты и ставка перед ними. */
+.hand { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.seatSouth .hand { flex-direction: column-reverse; }
+.hole {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: calc(var(--small-w) * 2 + 3px);
+    min-height: calc(var(--small-w) * 1.42);
+}
+.seatYours .hole { min-width: calc(var(--hand-w) * 2 + 3px); min-height: calc(var(--hand-w) * 1.42); }
+.betSlot { display: flex; align-items: center; justify-content: center; min-height: 24px; }
+/* [EN] The line of a regular opens under the portrait. Its place is centred by CSS; useKeepOnScreen adds --shift so
+        it never leaves the screen (a seat at the edge of a phone). [RU] Реплика завсегдатая раскрывается под
+        портретом. По центру её ставит CSS; useKeepOnScreen добавляет --shift, чтобы она не уходила за экран (место
+        у края телефона). */
 .bubble {
     position: absolute;
     top: 100%;
+    left: 50%;
     z-index: 6;
-    width: min(240px, 60vw);
+    --shift: 0px;
+    width: max-content;
+    max-width: min(260px, calc(100vw - 24px));
     margin: 6px 0 0;
     padding: 6px 10px 8px;
     border: 1px solid transparent;
@@ -170,11 +209,14 @@
     font-style: italic;
     line-height: 1.35;
     text-align: center;
+    unicode-bidi: plaintext;
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+    translate: calc(-50% + var(--shift)) 0;
 }
 .portrait {
     position: relative;
-    width: clamp(46px, 5.6vw, 76px);
+    flex: none;
+    width: var(--portrait);
     aspect-ratio: 1;
     padding: 0;
     border: 3px solid transparent;
@@ -186,7 +228,7 @@
 }
 .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; display: block; filter: sepia(0.1) saturate(0.92) contrast(1.06); }
 .seatTurn .portrait { background: #0c070a padding-box, var(--candle-edge) border-box; box-shadow: 0 0 0 2px rgba(255, 181, 74, 0.5), 0 0 26px rgba(255, 140, 50, 0.55); }
-.seatFolded .portrait, .seatFolded .hole { opacity: 0.42; filter: grayscale(0.5); }
+.seatFolded .portrait, .seatFolded .card { opacity: 0.5; filter: grayscale(0.5); }
 .seatOut { opacity: 0.35; }
 .plaque {
     display: grid;
@@ -199,25 +241,35 @@
     box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.6);
     text-align: center;
 }
-.seatName { max-width: 170px; overflow: hidden; color: var(--bone); font: 400 1.12rem/1.15 var(--quill), cursive; text-overflow: ellipsis; white-space: nowrap; }
-.seatStack { color: #d9c9a0; font-size: 0.86rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.seatName { max-width: 170px; overflow: hidden; color: var(--bone); font: 400 1.12rem/1.15 var(--quill), cursive; text-overflow: ellipsis; white-space: nowrap; unicode-bidi: plaintext; }
+.seatStack { color: #d9c9a0; font-size: 0.86rem; font-variant-numeric: tabular-nums; white-space: nowrap; unicode-bidi: plaintext; }
+/* [EN] «Fold», «all-in», «thinking», «out» — across the cards, so the pod keeps its size.
+   [RU] «Фолд», «олл-ин», «думает», «выбыл» — поверх карт, чтобы группа сохраняла размер. */
 .status {
-    padding: 0 8px 2px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    padding: 0 7px 2px;
     border-radius: 2px;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.74);
     color: #e3dccb;
-    font: 400 0.98rem var(--quill), cursive;
+    font: 400 0.95rem/1.2 var(--quill), cursive;
     white-space: nowrap;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
+/* [EN] Your own cards stay readable: the word sits on their lower edge. [RU] Ваши карты остаются читаемыми: слово стоит у их нижнего края. */
+.seatYours .status { top: auto; bottom: 3px; transform: translateX(-50%); }
 .statusAllIn { background: linear-gradient(180deg, #7a0a17, #3d0610); color: #ffe7c2; }
 .statusThinking { color: #ffcf7a; animation: breathe 1.4s ease-in-out infinite; }
 @keyframes breathe { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
-.hole { display: flex; gap: 3px; }
-.badges { position: absolute; top: -6px; right: -14px; z-index: 3; display: flex; gap: 3px; pointer-events: none; }
-/* [EN] Yours sit at the right end of your plaque. [RU] Ваши — у правого края вашей таблички. */
-.badgesYours { top: auto; bottom: 6px; right: -30px; }
-/* [EN] On the right-hand seats they sit on the left of the portrait, toward the table. [RU] У правых мест — слева от портрета, со стороны стола. */
-.badgesWest { right: auto; left: -14px; }
+/* [EN] The dealer button and the blinds: at the top corner of the pod on the table's side.
+   [RU] Баттон и блайнды: у верхнего угла группы со стороны стола. */
+.badges { position: absolute; top: -6px; right: -4px; z-index: 3; display: flex; gap: 3px; pointer-events: none; }
+.seatEast .badges { right: auto; left: -4px; }
+/* [EN] Yours lie on the top corners of your plaque. [RU] Ваши лежат на верхних углах вашей таблички. */
+.seatYours .badges { top: -13px; left: -8px; right: -8px; flex-direction: row-reverse; justify-content: space-between; }
 .dealer, .blind {
     display: grid;
     place-items: center;
@@ -230,25 +282,18 @@
 .dealer { background: radial-gradient(circle at 36% 30%, #ffffff 0%, #c9ced5 48%, #6c737d 100%); color: #15171b; }
 .blind { background: radial-gradient(circle at 36% 30%, #d6506a 0%, #8e0f1c 60%, #4a0610 100%); color: #ffe7c2; font-size: 0.6rem; }
 
-/* [EN] Bets lie on the cloth between the seat and the pot: a little stack of chips and the amount.
-   [RU] Ставки лежат на сукне между местом и банком: маленькая стопка фишек и сумма. */
+/* [EN] A bet lies in front of its player: a little stack of chips and the amount.
+   [RU] Ставка лежит перед своим игроком: маленькая стопка фишек и сумма. */
 .bet {
-    --bx: 50%;
-    --by: 50%;
-    position: absolute;
-    left: var(--bx);
-    top: var(--by);
-    z-index: 1;
     display: flex;
     align-items: center;
     gap: 5px;
-    transform: translate(-50%, -50%);
     color: #f3e7c6;
-    font: 400 1.05rem var(--quill), cursive;
+    font: 400 1.05rem/1 var(--quill), cursive;
     text-shadow: 0 1px 2px #000;
-    pointer-events: none;
+    white-space: nowrap;
 }
-.chips { position: relative; width: 22px; height: 18px; }
+.chips { position: relative; flex: none; width: 22px; height: 18px; }
 .chips i {
     position: absolute;
     left: 0;
@@ -282,12 +327,14 @@
     animation: deal 0.28s ease-out;
 }
 @keyframes deal { from { opacity: 0; transform: translateY(-10px) scale(0.92); } to { opacity: 1; transform: none; } }
-.cardSmall { --card-w: clamp(26px, 2.9vw, 40px); --card-h: calc(var(--card-w) * 1.42); }
-.cardHand { --card-w: clamp(46px, 5.6vw, 78px); --card-h: calc(var(--card-w) * 1.42); }
+.cardSmall { --card-w: var(--small-w); --card-h: calc(var(--card-w) * 1.42); }
+.cardHand { --card-w: var(--hand-w); --card-h: calc(var(--card-w) * 1.42); }
 .cardRed { color: #b30f22; }
 .cardBlack { color: #15171c; }
 .cardCorner { position: absolute; top: calc(var(--card-w) * 0.07); left: calc(var(--card-w) * 0.09); font-size: calc(var(--card-w) * 0.26); text-align: center; }
 .cardCenter { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--card-w) * 0.58); }
+/* [EN] A small card: the rank over the suit, as large as the card allows. [RU] Маленькая карта: достоинство над мастью, так крупно, как позволяет карта. */
+.cardMini { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--card-w) * 0.54); line-height: 0.98; text-align: center; }
 .cardRed .cardCenter, .cardBlack .cardCenter { -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .cardRed .cardCenter { background-image: radial-gradient(circle calc(var(--card-w) * 0.34) at 44% 52%, #ff8a94 0%, #d3182f 34%, #7a0a17 100%); }
 .cardBlack .cardCenter { background-image: radial-gradient(circle calc(var(--card-w) * 0.34) at 44% 52%, #9aa1ab 0%, #2c3036 38%, #060708 100%); }
@@ -375,21 +422,126 @@
     .layout { grid-template-columns: 1fr; }
     .side { order: 3; }
 }
+/* [EN] A phone on its side: the screen is low, so the table takes the height of the screen, not a share of its width.
+   [RU] Телефон на боку: экран низкий, поэтому стол берёт высоту экрана, а не долю его ширины. */
+@media (min-width: 701px) and (max-height: 560px) {
+    .felt { aspect-ratio: auto; min-height: 0; height: max(300px, calc(100vh - 76px)); }
+    /* [EN] Where the browser knows the height without its own bars, that one is used. [RU] Где браузер знает высоту без своих панелей, берётся она. */
+    @supports (height: 100dvh) {
+        .felt { height: max(300px, calc(100dvh - 76px)); }
+    }
+}
+/* [EN] A phone: the table is a grid of three rows — the far side (nw, n, ne), the board with the pot, the near side
+        (sw, you, se). Every seat is a cell, so by construction nothing lies on anything else, whatever the width of
+        the phone, the number of players and the length of the names. The oval is only the cloth behind the grid.
+   [RU] Телефон: стол — сетка в три ряда: дальняя сторона (nw, n, ne), доска с банком, ближняя сторона (sw, вы, se).
+        Каждое место — клетка, поэтому по построению ничто ни на что не ложится при любой ширине телефона, числе
+        игроков и длине имён. Овал — только сукно позади сетки. */
 @media (max-width: 700px) {
-    .room { padding: 12px 8px 28px; }
-    .felt { --phone-ratio: 0.82; aspect-ratio: var(--phone-ratio); min-height: 0; margin: 16px 14px 34px; width: calc(100% - 28px); border-radius: 46% / 36%; }
-    .felt::before { border-radius: 46% / 36%; }
-    .room { --card-w: clamp(34px, 10.5vw, 52px); }
-    .cardSmall { --card-w: clamp(20px, 6vw, 30px); }
-    .cardHand { --card-w: clamp(42px, 12vw, 60px); }
-    .seat { max-width: 112px; }
-    .portrait { width: clamp(38px, 11vw, 52px); }
-    .plaque { min-width: 72px; padding: 1px 8px 3px; }
-    .seatName { max-width: 108px; font-size: 0.98rem; white-space: normal; line-height: 1.05; }
-    .seatStack { font-size: 0.78rem; }
-    .badges { right: -8px; }
+    .room {
+        --card-w: clamp(34px, 12.4vw, 56px);
+        --small-w: clamp(18px, 5.6vw, 28px);
+        --hand-w: clamp(38px, 13vw, 62px);
+        --portrait: clamp(32px, 10vw, 46px);
+        padding: 10px 8px 24px;
+    }
+    .header { gap: 6px 12px; margin-bottom: 8px; }
+    .header > div:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 12px; }
+    .title { font-size: 2rem; }
+    /* [EN] The motto is decor; on a phone its two lines are worth more as table. [RU] Девиз — украшение; на телефоне его две строки нужнее столу. */
+    .subtitle { display: none; }
+    .level { font-size: 1.02rem; }
+    .settings { gap: 6px; }
+    .settings .button { min-height: 40px; padding: 4px 10px; font-size: 0.92rem; }
+    .language select, .settings select { padding: 4px 26px 4px 8px; font-size: 0.9rem; }
+    /* [EN] The three controls stay in one row; the time of the save goes after them. [RU] Три кнопки остаются в одном ряду; время сохранения идёт после них. */
+    .savedAt { order: 9; font-size: 0.78rem; }
+
+    .felt {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        grid-template-areas: 'nw n ne' 'c c c' 'sw s se';
+        align-items: start;
+        gap: 8px;
+        aspect-ratio: auto;
+        min-height: 0;
+        margin: 16px 14px 28px;
+        width: calc(100% - 28px);
+        padding: 0 6px;
+        border-radius: 46% / 40%;
+    }
+    .felt::before { border-radius: 46% / 40%; }
+    .center { position: static; grid-area: c; justify-self: center; gap: 6px; transform: none; }
     .pot { font-size: 1.1rem; }
-    .actions .button { flex: 1 1 calc(50% - 10px); }
+
+    .seat {
+        position: relative;
+        left: auto;
+        top: auto;
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-areas: 'face cards' 'plaque plaque' 'bet bet';
+        justify-items: center;
+        gap: 2px 3px;
+        width: min-content;
+        max-width: 100%;
+        transform: none;
+    }
+    /* [EN] On the right-hand side the cards lie to the left of the portrait, toward the table.
+       [RU] На правой стороне карты лежат слева от портрета, со стороны стола. */
+    .seat[data-area='ne'] { grid-template-areas: 'cards face' 'plaque plaque' 'bet bet'; }
+    .seat[data-area='sw'] { grid-template-areas: 'bet bet' 'face cards' 'plaque plaque'; }
+    .seat[data-area='se'] { grid-template-areas: 'bet bet' 'cards face' 'plaque plaque'; }
+    /* [EN] The far and the near side follow the curve of the table: the middle seat stands at its top, the corner
+            seats a step lower. [RU] Дальняя и ближняя стороны идут по дуге стола: среднее место стоит в её вершине,
+            угловые — на шаг ниже. */
+    .seat[data-area='n'] { grid-area: n; justify-self: center; margin-top: -12px; }
+    .seat[data-area='nw'] { grid-area: nw; justify-self: start; margin-top: 8px; }
+    .seat[data-area='ne'] { grid-area: ne; justify-self: end; margin-top: 8px; }
+    .seat[data-area='sw'] { grid-area: sw; justify-self: start; align-self: end; margin-bottom: 8px; }
+    .seat[data-area='se'] { grid-area: se; justify-self: end; align-self: end; margin-bottom: 8px; }
+    .seat[data-area='s'] { grid-area: s; justify-self: center; align-self: end; margin-bottom: -14px; }
+    /* [EN] The parts of another player's pod are laid out by the pod's own grid. [RU] Части чужой группы раскладывает собственная сетка группы. */
+    .seat:not(.seatYours) .who, .seat:not(.seatYours) .hand { display: contents; }
+    .portrait { grid-area: face; }
+    .seat:not(.seatYours) .hole { grid-area: cards; }
+    .seat:not(.seatYours) .plaque { grid-area: plaque; justify-self: stretch; margin-top: -4px; }
+    .seat:not(.seatYours) .betSlot { grid-area: bet; }
+    .seatYours { display: flex; flex-direction: column-reverse; gap: 2px; width: auto; }
+    .seatYours .hand { gap: 2px; }
+    .hole { gap: 2px; }
+    .betSlot { min-height: 20px; }
+    .bet { font-size: 0.98rem; }
+    .plaque { min-width: 0; padding: 1px 4px 3px; }
+    .seatYours .plaque { min-width: 84px; padding: 1px 10px 3px; }
+    /* [EN] A name wraps between its words; `overflow: visible` lets the longest word set the width of the pod, so a
+            word is broken in the middle only when even the whole cell is too narrow for it.
+       [RU] Имя переносится между словами; `overflow: visible` даёт самому длинному слову задать ширину группы, так
+            что слово рвётся посередине, только когда ему тесна даже вся клетка. */
+    .seatName { max-width: none; overflow: visible; font-size: clamp(0.76rem, 3.7vw, 0.95rem); line-height: 1.05; white-space: normal; overflow-wrap: break-word; }
+    .seatStack { font-size: 0.78rem; }
+    .status { font-size: 0.84rem; padding: 0 4px 1px; }
+    /* [EN] The button and the blinds stand one over the other at the outer corner of the portrait.
+       [RU] Баттон и блайнды стоят друг над другом у внешнего угла портрета. */
+    .badges { top: -5px; left: -7px; right: auto; flex-direction: column; gap: 2px; }
+    .seat[data-area='ne'] .badges, .seat[data-area='se'] .badges { left: auto; right: -7px; }
+    .seat[data-area='sw'] .badges, .seat[data-area='se'] .badges { top: 17px; }
+    .seatYours .badges { top: -12px; left: -6px; right: -6px; flex-direction: row-reverse; }
+    .dealer, .blind { width: 20px; height: 20px; font-size: 0.62rem; }
+    .blind { font-size: 0.52rem; }
+
+    /* [EN] The tray: three decisions in one row, the slider with the number, the quick sizes in one row.
+       [RU] Лоток: три решения в один ряд, ползунок с числом, быстрые размеры в один ряд. */
+    .tray { padding: 8px 10px 10px; }
+    .trayTitle { margin: 0 0 4px; font-size: 1.15rem; }
+    .actions { gap: 6px; }
+    .actions .button { flex: 1 1 auto; min-width: 28%; padding: 6px 8px; }
+    .raiseRow { gap: 6px 8px; margin-top: 8px; }
+    .raiseRow input[type='range'] { flex: 1 1 120px; }
+    .amount { width: 84px; }
+    .presets { flex: 1 1 100%; flex-wrap: nowrap; }
+    .presets .button { flex: 1 1 0; min-width: 0; padding: 4px 4px; }
+    .resultLine { font-size: 1.1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
