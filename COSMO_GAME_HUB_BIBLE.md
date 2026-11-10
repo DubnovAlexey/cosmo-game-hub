@@ -39,9 +39,10 @@ cosmo-game-hub/
     ├── tsconfig.json             strict; алиасы @shell, @shared, @games
     ├── public/games/chess/       файлы с постоянным адресом: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — обложка в каталоге (её рисует scripts/preferans-cover.mjs)
+    ├── public/games/poker/       cover.svg — обложка; portraits/ — десять завсегдатаев покерного стола
     ├── scripts/                  preferans-cover.mjs — обложка преферанса; load/ — нагрузочные проверки (npm run load)
     └── src/
-        ├── pages/                маршруты: index, games, leaderboard, about, games/chess, games/preferans
+        ├── pages/                маршруты: index, games, leaderboard, about, games/chess, games/preferans, games/poker
         ├── shell/                сайт вокруг игр
         │   ├── components/       Header, Footer, ScrollToTop, GameCard (компоненты Astro)
         │   ├── layouts/          Layout.astro
@@ -57,7 +58,8 @@ cosmo-game-hub/
         │   └── tests/            random.test.ts, storage.test.ts, languages.test.ts
         └── games/
             ├── chess/            index.ts · components/ · hooks/ · engine/ · assets/ · tests/ · README.md
-            └── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            ├── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            └── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
 ```
 
 ### 3. Стек и почему именно он
@@ -467,6 +469,11 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
   - сохранение и продолжение;
   - пять языков интерфейса, как в преферансе и на страницах хаба;
   - игра по сети в реальном времени и по переписке.
+- **Покер:**
+  - калибровка ботов против людей (сейчас манеры измерены только друг против друга, `scripts/load/poker-bots.mjs`) и диапазоны соперников точнее — по позиции и размеру ставок;
+  - кэш-игра с докупкой и свои уровни блайндов рядом с турниром;
+  - общий компонент карты с преферансом и общий список персонажей в `shared/` вместо копий портретов и рубашки;
+  - игра по сети.
 - **Инструменты:**
   - проверка границ импорта (ESLint `no-restricted-imports`);
   - `npm test` в CI перед публикацией;
@@ -525,6 +532,10 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 | 09.11.2026 | Портрет под мышью вырастает вдвое поверх всего; касание пальцем открывает карточку героя с крупной картинкой | Алексей: «непонятно, кто там нарисован»; палец и мышь равноценны |
 | 09.11.2026 | Перо писаря (Marck Script) вместо церковнославянского Ponomar и школьного Segoe Print / Comic Sans: заголовок, имена, вопросы, заметки и пуля пишутся от руки, маленькие таблички — гравированными капителями; сукно — тёмный бутылочный изумруд концепта | Алексей: «детская сказка», нужно «злее и жёстче», подписи — «от руки, курсивом, чуть покрупнее» |
 | 09.11.2026 | Череп на рубашке — гравюра: анатомический череп вампира (уже мультяшной головы), тяжёлые надбровья, угли в глубине глазниц вместо неоновых глаз, клыки в крови, штриховка со светом сверху слева; за ним бедренные кости крест-накрест | Алексей: «злее и жёстче», «детская сказка» — и «Да, перерисуй» |
+| 10.11.2026 | Покер: безлимитный холдем, турнир на выбывание от двух до шести (`games/poker/`), своя оценка руки вместо библиотек `phe`/`pokersolver` | Следующая игра по плану портфолио (§6.5), выбор Алексея; своя оценка — без скачиваний, проверена на всех 2 598 960 руках и быстрее, чем нужно ботам |
+| 10.11.2026 | Боты покера: эквити по Монте-Карло против диапазонов по торговле, шансы банка, размеры ставок как у людей, «пуш или фолд», открывающий рейз; десять завсегдатаев логова со своими манерами | Боты не читают чужие карты; манеры видны в замере `poker-bots.mjs` (VPIP, PFR, агрессия) |
+| 10.11.2026 | Покерный стол в облике логова; портреты и рубашка скопированы из преферанса | Тот же клуб; игры не импортируют друг друга, общий список персонажей — открытая задача |
+| 10.11.2026 | Проверки касаний сравнивают ширину страницы с экраном, а не с `innerWidth` | На планшете выступ в 4 px расширял страницу, видимая область сдвигалась на 32 px, и касание кнопки попадало в ползунок под ней |
 
 ### 19. Логово, все опции и игра пальцем (09.11.2026)
 
@@ -540,7 +551,28 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 - **Столы.** Вдвоём, втроём и вчетвером; варианты Сочинка, Ленинградка, Ростовка и Классика.
 - **Опции.** Все из меню играются; правила каждой — в объяснениях меню и в `RULES.md`, §9.
 - **Сохранения:** после каждого хода, по кнопке «Сохранить» и при скрытии или закрытии страницы; в меню — «Продолжить».
-- **Проверки.** `npm test` — 93 теста. `scripts/load/touch-play.mjs` играет пальцем на телефоне и планшете и мышью на компьютере (`INPUT=mouse`) и проверяет, что каждая кнопка и карта доступна и ничто её не закрывает.
+- **Проверки.** `npm test` — 93 теста (на 09.11; с покером — 112). `scripts/load/touch-play.mjs` играет пальцем на телефоне и планшете и мышью на компьютере (`INPUT=mouse`) и проверяет, что каждая кнопка и карта доступна и ничто её не закрывает.
+
+### 20. Покер (10.11.2026)
+
+- **Что.** Безлимитный техасский холдем, турнир на выбывание от двух до шести игроков (`games/poker/`): равные стеки, блайнды растут каждые 15, 10 или 6 раздач, анте с 100/200, место — по порядку вылета. Только игровые фишки. Это следующая игра плана портфолио (§6.5); Алексей выбрал покер 10.11.
+- **Движок** — чистый TypeScript без React:
+  - `cards.ts` — 52 карты числами 0…51 (достоинство × 4 + масть): быстро, легко сохранить и повторить раздачу;
+  - `evaluate.ts` — лучшая пятёрка из 5–7 карт одним числом (категория и пять достоинств по 4 бита) без перебора сочетаний: счётчики достоинств, маски мастей, маска стрита. Свой код вместо `phe`/`pokersolver` из плана: ничего не скачивается, а проверка строже — все 2 598 960 пятикарточных рук дают ровно учебные числа (40 стрит-флешей, 624 каре…) за 0,46 с, около 5,7 млн рук в секунду;
+  - `holdem.ts` — стол и правила казино: вдвоём баттон ставит малый блайнд и говорит первым до флопа; рейз не меньше последнего полного (поле `matched` у места); короткий олл-ин не открывает торговлю заново; побочные банки по уровням вкладов, возврат неуравненной ставки, лишняя фишка — первому победителю слева от баттона; доска сдаётся до конца, когда ставить некому; баттон переходит к следующему с фишками. Состояние — обычный JSON;
+  - `ai/equity.ts`, `ai/bot.ts`, `worker.ts` — боты в Web Worker.
+- **Боты.** Не читают чужие карты. Эквити по Монте-Карло: карты соперников пересдаются, пока не дотянут до силы, на которую указывает их торговля. Сравнение с шансами банка и со справедливой долей при этом числе соперников; рейзы как у людей (3 ББ на открытие, ×3 против рейза, ½–¾ банка после флопа); «пуш или фолд» с коротким стеком; открывающий рейз в неоткрытом банке. Решение — около 0,2 мс.
+- **Манеры** десяти завсегдатаев (`characters.ts`: плотность, агрессия, блеф) видны в замере `scripts/load/poker-bots.mjs` — 40 турниров по шесть ботов, 2282 раздачи, ни одной потерянной фишки:
+
+| завсегдатай | VPIP | PFR | агрессия | победы |
+|---|---|---|---|---|
+| Граф Влад — плотная акула | 28% | 10% | 0,89 | 8 из 27 |
+| Кармилла — свободная и агрессивная | 53% | 36% | 1,96 | 5 из 32 |
+| Кощей — «камень» | 19% | 2% | 0,39 | 1 из 23 |
+| Капитан Галеон — игрок | 67% | 52% | 2,62 | 5 из 25 |
+
+- **Стол** (`components/`) — тот же клуб, что у преферанса: овал бутылочно-изумрудного сукна в лакированном борту, места по часовой стрелке от вас внизу (портрет с табличкой, карты ближе к середине), ставки на сукне, доска и банк посередине, итог раздачи в лотке под столом, выигравшая пятёрка подсвечена. На телефоне овал вертикальный и вытягивается с числом игроков. Портреты и рубашка скопированы из преферанса: игры не импортируют друг друга.
+- **Проверки.** 19 тестов покера (всего 112). `scripts/load/poker-touch.mjs` играет пальцем на телефоне и планшете и мышью на компьютере; `npm run load` запускает и его, и `poker-bots.mjs`.
 
 [↑ К выбору языка](#top)
 
@@ -579,9 +611,10 @@ cosmo-game-hub/
     ├── tsconfig.json             strict; aliases @shell, @shared, @games
     ├── public/games/chess/       files with a fixed URL: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — the catalog cover (drawn by scripts/preferans-cover.mjs)
+    ├── public/games/poker/       cover.svg — the cover; portraits/ — the ten regulars of the poker table
     ├── scripts/                  preferans-cover.mjs — the preferans cover; load/ — the load tests (npm run load)
     └── src/
-        ├── pages/                routes: index, games, leaderboard, about, games/chess, games/preferans
+        ├── pages/                routes: index, games, leaderboard, about, games/chess, games/preferans, games/poker
         ├── shell/                the site around the games
         │   ├── components/       Header, Footer, ScrollToTop, GameCard (Astro components)
         │   ├── layouts/          Layout.astro
@@ -597,7 +630,8 @@ cosmo-game-hub/
         │   └── tests/            random.test.ts, storage.test.ts, languages.test.ts
         └── games/
             ├── chess/            index.ts · components/ · hooks/ · engine/ · assets/ · tests/ · README.md
-            └── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            ├── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            └── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
 ```
 
 ### 3. The stack and why
@@ -1007,6 +1041,11 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
   - save and resume;
   - five UI languages, as in preferans and on the hub's pages;
   - online play in real time and by correspondence.
+- **Poker:**
+  - calibrate the bots against people (their manners are measured only against each other so far, `scripts/load/poker-bots.mjs`) and read the opponents' ranges finer — by position and bet size;
+  - a cash game with rebuys and custom blind levels next to the tournament;
+  - one card component shared with preferans and one list of characters in `shared/` instead of copied portraits and backs;
+  - online play.
 - **Tooling:**
   - an import-boundary check (ESLint `no-restricted-imports`);
   - `npm test` in CI before publishing;
@@ -1065,6 +1104,10 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 | 09.11.2026 | A portrait grows twofold over everything under the mouse; a tap opens the character card with a large picture | Alexey: "you can't tell who is drawn there"; finger and mouse are equal |
 | 09.11.2026 | The scribe's quill (Marck Script) instead of the Church Slavonic Ponomar and the schoolboy Segoe Print / Comic Sans: the title, names, questions, notes and the sheet are written by hand, small plaques in engraved capitals; the felt is the deep bottle emerald of the concept | Alexey: "a children's fairy tale", it must be "more evil and harsher", the notes "by hand, in italics, a bit larger" |
 | 09.11.2026 | The skull on the card back as an engraving: an anatomical vampire skull (narrower than a cartoon head), heavy brows, embers deep in the orbits instead of neon eyes, bloodied fangs, hatching lit from the upper left; crossed femurs behind it | Alexey: "more evil and harsher", "a children's fairy tale" — then "yes, redraw" |
+| 10.11.2026 | Poker: no-limit hold'em, a sit-and-go of two to six (`games/poker/`), our own hand evaluator instead of the `phe`/`pokersolver` libraries | The next game of the portfolio plan (§6.5), Alexey's choice; our own evaluator downloads nothing, is checked on all 2 598 960 hands and is faster than the bots need |
+| 10.11.2026 | Poker bots: Monte Carlo equity against ranges read from the betting, pot odds, human bet sizes, push-or-fold, the opening raise; ten regulars of the lair with manners of their own | The bots never read hidden cards; the manners show in the `poker-bots.mjs` measurement (VPIP, PFR, aggression) |
+| 10.11.2026 | The poker table in the lair's look; portraits and the back copied from preferans | The same club; games never import each other, a shared list of characters is an open task |
+| 10.11.2026 | The touch checks compare the page width with the screen, not with `innerWidth` | On a tablet a 4 px overflow widened the page, the visual viewport slid 32 px, and a tap on a button landed on the slider under it |
 
 ### 19. The lair, every option and playing by finger (09.11.2026)
 
@@ -1080,7 +1123,28 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 - **Tables.** Two, three or four players; Sochi, Leningrad, Rostov and Classic rules.
 - **Options.** Every one on the menu plays; how, in the menu's explanations and in `RULES.md`, §9.
 - **Saves:** after every move, with the «Save» button and when the page is hidden or closed; «Continue» on the menu.
-- **Checks.** `npm test` — 93 tests. `scripts/load/touch-play.mjs` plays by finger on phones and tablets and with a mouse on a computer (`INPUT=mouse`) and checks that every button and card can be reached and nothing covers it.
+- **Checks.** `npm test` — 93 tests (on 09.11; with poker, 112). `scripts/load/touch-play.mjs` plays by finger on phones and tablets and with a mouse on a computer (`INPUT=mouse`) and checks that every button and card can be reached and nothing covers it.
+
+### 20. Poker (10.11.2026)
+
+- **What.** No-limit Texas hold'em, a sit-and-go of two to six players (`games/poker/`): equal stacks, blinds rising every 15, 10 or 6 hands, antes from 100/200, places in the order of going out. Play chips only. It is the next game of the portfolio plan (§6.5); Alexey chose poker on 10.11.
+- **The engine** is pure TypeScript without React:
+  - `cards.ts` — 52 cards as numbers 0…51 (rank × 4 + suit): fast, easy to save and replay;
+  - `evaluate.ts` — the best five of 5–7 cards as one number (the category and five 4-bit ranks) without enumerating combinations: rank counts, suit masks, a straight mask. Our own code instead of `phe`/`pokersolver` from the plan: nothing is downloaded and the check is stricter — all 2 598 960 five-card hands give exactly the textbook counts (40 straight flushes, 624 quads…) in 0.46 s, about 5.7 million hands a second;
+  - `holdem.ts` — the table and the casino rules: heads-up the button posts the small blind and speaks first before the flop; a raise is at least the last full raise (the seat's `matched` field); a short all-in does not reopen the betting; side pots by contribution levels, the uncalled bet back, the odd chip to the first winner left of the button; the board dealt out when nobody can bet; the button passes to the next player with chips. The state is plain JSON;
+  - `ai/equity.ts`, `ai/bot.ts`, `worker.ts` — the bots in a Web Worker.
+- **The bots** never read hidden cards. Monte Carlo equity: the opponents' cards are dealt again until they reach the strength their betting suggests. Compared with the pot odds and with the fair share at this many opponents; human raise sizes (3 BB to open, ×3 against a raise, ½–¾ pot after the flop); push-or-fold with a short stack; an opening raise in an unopened pot. A decision takes about 0.2 ms.
+- **The manners** of the ten regulars (`characters.ts`: tightness, aggression, bluff) show in the `scripts/load/poker-bots.mjs` measurement — 40 sit-and-goes of six bots, 2 282 hands, not a chip lost:
+
+| regular | VPIP | PFR | aggression | wins |
+|---|---|---|---|---|
+| Count Vlad — the tight shark | 28% | 10% | 0.89 | 8 of 27 |
+| Carmilla — loose and aggressive | 53% | 36% | 1.96 | 5 of 32 |
+| Koschei — the rock | 19% | 2% | 0.39 | 1 of 23 |
+| Captain Galleon — the gambler | 67% | 52% | 2.62 | 5 of 25 |
+
+- **The table** (`components/`) is the same club as the preferans table: an oval of bottle-emerald felt in a lacquered rail, seats clockwise from you at the bottom (a portrait with its plaque, the cards toward the middle), bets on the cloth, the board and the pot in the middle, the result of a hand in the tray under the table, the winning five lit up. On a phone the oval stands upright and grows with the company. Portraits and the back are copied from preferans: games never import each other.
+- **Checks.** 19 poker tests (112 in all). `scripts/load/poker-touch.mjs` plays by finger on phones and tablets and with a mouse on a computer; `npm run load` runs it and `poker-bots.mjs`.
 
 [↑ Back to the languages](#top)
 
@@ -1123,6 +1187,7 @@ cosmo-game-hub/
     ├── tsconfig.json             מצב קפדני ושלושה כינויי נתיב
     ├── public/games/chess/       קבצים בכתובת קבועה: מנוע השחמט, הרישיון, תמונת השער
     ├── public/games/preferans/   כריכת הפרפרנס בקטלוג (מצייר אותה scripts/preferans-cover.mjs)
+    ├── public/games/poker/       כריכת הפוקר; portraits/ — עשרת הקבועים של שולחן הפוקר
     ├── scripts/                  כריכת הפרפרנס (preferans-cover.mjs); בדיקות העומס (load/, npm run load)
     └── src/
         ├── pages/                נתיבי האתר: הבית, המשחקים, המובילים, אודות ודף לכל משחק
@@ -1141,7 +1206,8 @@ cosmo-game-hub/
         │   └── tests/            בדיקות של האקראיות, השמירות ובחירת השפה
         └── games/
             ├── chess/            שחמט: רכיבים, מצב, מנוע, מדיה, בדיקות, תיאור
-            └── preferans/        פרפרנס: רכיבים, מצב, מנוע עם בינה, שפות, תמונות, בדיקות, תיאור, חוקים
+            ├── preferans/        פרפרנס: רכיבים, מצב, מנוע עם בינה, שפות, תמונות, בדיקות, תיאור, חוקים
+            └── poker/            פוקר: הקבועים, רכיבים, מצב, מנוע עם בינה, שפות, תמונות, בדיקות, תיאור, חוקים
 ```
 
 </div>
@@ -1553,6 +1619,11 @@ cosmo-game-hub/
   - שמירה והמשך;
   - חמש שפות ממשק, כמו בפרפרנס ובדפי האתר;
   - משחק ברשת בזמן אמת ובהתכתבות.
+- **פוקר:**
+  - כיול הבוטים מול אנשים (עד עכשיו הסגנונות נמדדו רק זה מול זה, `scripts/load/poker-bots.mjs`) וקריאה מדויקת יותר של טווחי היריבים — לפי מיקום וגודל הימור;
+  - משחק קאש עם רכישה חוזרת ורמות בליינדים לבחירה לצד הטורניר;
+  - רכיב קלף משותף עם הפרפרנס ורשימת דמויות אחת ב-`shared/` במקום עותקים של דיוקנים וגב קלף;
+  - משחק ברשת.
 - **כלים:**
   - בדיקה של גבולות הייבוא (ESLint `no-restricted-imports`);
   - הרצת `npm test` ב-CI לפני פרסום;
@@ -1611,6 +1682,10 @@ cosmo-game-hub/
 | 09.11.2026 | דיוקן גדל פי שניים מעל הכול מתחת לעכבר; נגיעה פותחת את כרטיס הדמות עם תמונה גדולה | אלכסיי: "לא ברור מי מצויר שם"; אצבע ועכבר שווים |
 | 09.11.2026 | נוצת הסופר (Marck Script) במקום Ponomar הסלאבית־כנסייתית ו־Segoe Print / Comic Sans של תלמיד: הכותרת, השמות, השאלות, ההערות והדף נכתבים ביד, שלטים קטנים באותיות רישיות חרוטות; הלבד — אזמרגד בקבוק כהה של הקונספט | אלכסיי: "אגדה לילדים", צריך "רשע וקשוח יותר", ההערות "בכתב יד, באיטליק, קצת יותר גדול" |
 | 09.11.2026 | הגולגולת שעל גב הקלף כתחריט: גולגולת ערפד אנטומית (צרה מראש מצויר), גבות כבדות, גחלים בעומק ארובות העיניים במקום עיני ניאון, ניבים מגואלים בדם, קווקוו עם אור מלמעלה משמאל; מאחוריה עצמות ירך בהצלבה | אלכסיי: "רשע וקשוח יותר", "אגדה לילדים" — ואז "כן, לצייר מחדש" |
+| 10.11.2026 | פוקר: הולדם ללא הגבלה, טורניר הדחה לשניים עד שישה (`games/poker/`), הערכת יד משלנו במקום הספריות `phe`/`pokersolver` | המשחק הבא בתוכנית הפורטפוליו (§6.5), הבחירה של אלכסיי; הערכה משלנו לא מורידה כלום, נבדקה על כל 2 598 960 הידיים ומהירה יותר ממה שהבוטים צריכים |
+| 10.11.2026 | בוטי פוקר: אקוויטי במונטה קרלו מול טווחים שנקראים מההימורים, סיכויי קופה, גודלי הימור אנושיים, פוש או פולד, רייז פתיחה; עשרה קבועים של המאורה, לכל אחד סגנון משלו | הבוטים לא קוראים קלפים נסתרים; הסגנונות נראים במדידה של `poker-bots.mjs` ‏(VPIP, ‏PFR, אגרסיביות) |
+| 10.11.2026 | שולחן הפוקר במראה המאורה; הדיוקנים וגב הקלף הועתקו מהפרפרנס | אותו מועדון; משחקים לא מייבאים זה מזה, רשימת דמויות משותפת היא משימה פתוחה |
+| 10.11.2026 | בדיקות הנגיעה משוות את רוחב הדף למסך ולא ל-`innerWidth` | בטאבלט בליטה של 4 פיקסלים הרחיבה את הדף, האזור הנראה זז ב-32 פיקסלים, ונגיעה בכפתור נחתה על המחוון שמתחתיו |
 
 ### 19. המאורה, כל האפשרויות ומשחק באצבע (09.11.2026)
 
@@ -1626,7 +1701,28 @@ cosmo-game-hub/
 - **שולחנות.** שניים, שלושה או ארבעה שחקנים; חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה.
 - **אפשרויות.** כל אפשרות בתפריט משחקת; איך — בהסברים בתפריט וב־`RULES.md`, ‏§9.
 - **שמירה:** אחרי כל מהלך, בכפתור «לשמור» וכשהדף מוסתר או נסגר; «להמשיך» בתפריט.
-- **בדיקות.** ‏`npm test` — ‏93 בדיקות. ‏`scripts/load/touch-play.mjs` משחק באצבע בטלפון ובטאבלט ובעכבר במחשב (`INPUT=mouse`) ובודק שכל כפתור וקלף נגישים ושום דבר לא מסתיר אותם.
+- **בדיקות.** ‏`npm test` — ‏93 בדיקות (ב-09.11; עם הפוקר — 112). ‏`scripts/load/touch-play.mjs` משחק באצבע בטלפון ובטאבלט ובעכבר במחשב (`INPUT=mouse`) ובודק שכל כפתור וקלף נגישים ושום דבר לא מסתיר אותם.
+
+### 20. פוקר (10.11.2026)
+
+- **מה.** טקסס הולדם ללא הגבלה, טורניר הדחה לשניים עד שישה שחקנים (`games/poker/`): ערימות שוות, בליינדים שעולים כל 15, ‏10 או 6 ידיים, אנטה מ-100/200, המקום לפי סדר היציאה. רק אסימוני משחק. זה המשחק הבא בתוכנית הפורטפוליו (§6.5); אלכסיי בחר בפוקר ב-10.11.
+- **המנוע** הוא TypeScript נקי בלי React:
+  - `cards.ts` — ‏52 קלפים כמספרים 0…51 (דרגה × 4 + צורה): מהיר, קל לשמור ולחזור על חלוקה;
+  - `evaluate.ts` — חמישיית הקלפים הטובה ביותר מתוך 5–7 כמספר אחד (הקטגוריה וחמש דרגות של 4 ביטים) בלי מעבר על צירופים: מוני דרגות, מסכות צורה, מסכת סטרייט. קוד שלנו במקום `phe`/`pokersolver` מהתוכנית: לא מורידים כלום והבדיקה קפדנית יותר — כל 2 598 960 הידיים של חמישה קלפים נותנות בדיוק את מספרי הספר (40 סטרייט פלאש, 624 רביעיות…) ב-0.46 שניות, כ-5.7 מיליון ידיים בשנייה;
+  - `holdem.ts` — השולחן וחוקי הקזינו: בשניים הכפתור שם את הבליינד הקטן ומדבר ראשון לפני הפלופ; רייז הוא לפחות הרייז המלא האחרון (השדה `matched` של המושב); אול-אין קצר לא פותח מחדש את ההימורים; קופות צד לפי רמות ההשקעה, החזרת הימור שלא הושווה, האסימון העודף למנצח הראשון משמאל לכפתור; הלוח מחולק עד הסוף כשאין מי שיהמר; הכפתור עובר לבא עם אסימונים. המצב הוא JSON רגיל;
+  - `ai/equity.ts`, ‏`ai/bot.ts`, ‏`worker.ts` — הבוטים ב-Web Worker.
+- **הבוטים** לא קוראים קלפים נסתרים. אקוויטי במונטה קרלו: הקלפים של היריבים מחולקים שוב עד שהם מגיעים לכוח שההימורים שלהם מרמזים עליו. השוואה לסיכויי הקופה ולחלק ההוגן מול מספר היריבים הזה; גודלי רייז אנושיים (3 בליינדים גדולים לפתיחה, ×3 מול רייז, ½–¾ קופה אחרי הפלופ); פוש או פולד עם ערימה קצרה; רייז פתיחה בקופה שלא נפתחה. החלטה לוקחת כ-0.2 אלפיות שנייה.
+- **הסגנונות** של עשרת הקבועים (`characters.ts`: הדיקות, אגרסיביות, בלוף) נראים במדידה של `scripts/load/poker-bots.mjs` — ‏40 טורנירים של שישה בוטים, 2 282 ידיים, אף אסימון לא אבד:
+
+| קבוע | VPIP | PFR | אגרסיביות | ניצחונות |
+|---|---|---|---|---|
+| הרוזן ולאד — כריש הדוק | 28% | 10% | 0.89 | 8 מתוך 27 |
+| קרמילה — חופשית ואגרסיבית | 53% | 36% | 1.96 | 5 מתוך 32 |
+| קושצ׳יי — "סלע" | 19% | 2% | 0.39 | 1 מתוך 23 |
+| קפטן גליון — מהמר | 67% | 52% | 2.62 | 5 מתוך 25 |
+
+- **השולחן** (`components/`) הוא אותו מועדון כמו שולחן הפרפרנס: אליפסה של לבד אזמרגד בקבוק במסגרת מלוכה, מושבים עם כיוון השעון ממך למטה (דיוקן עם שלט, הקלפים לכיוון האמצע), הימורים על הלבד, הלוח והקופה באמצע, תוצאת היד במגש שמתחת לשולחן, החמישייה המנצחת מוארת. בטלפון האליפסה עומדת ומתארכת עם מספר השחקנים. הדיוקנים וגב הקלף הועתקו מהפרפרנס: משחקים לא מייבאים זה מזה.
+- **בדיקות.** ‏19 בדיקות פוקר (112 בסך הכול). ‏`scripts/load/poker-touch.mjs` משחק באצבע בטלפון ובטאבלט ובעכבר במחשב; ‏`npm run load` מריץ אותו ואת `poker-bots.mjs`.
 
 [↑ חזרה לבחירת השפה](#top)
 
@@ -1667,9 +1763,10 @@ cosmo-game-hub/
     ├── tsconfig.json             strict; alias @shell, @shared, @games
     ├── public/games/chess/       archivos con URL fija: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — la portada del catálogo (la dibuja scripts/preferans-cover.mjs)
+    ├── public/games/poker/       cover.svg — la portada; portraits/ — los diez habituales de la mesa de póker
     ├── scripts/                  preferans-cover.mjs — la portada del preferans; load/ — las pruebas de carga (npm run load)
     └── src/
-        ├── pages/                rutas: index, games, leaderboard, about, games/chess, games/preferans
+        ├── pages/                rutas: index, games, leaderboard, about, games/chess, games/preferans, games/poker
         ├── shell/                el sitio alrededor de los juegos
         │   ├── components/       Header, Footer, ScrollToTop, GameCard (componentes de Astro)
         │   ├── layouts/          Layout.astro
@@ -1685,7 +1782,8 @@ cosmo-game-hub/
         │   └── tests/            random.test.ts, storage.test.ts, languages.test.ts
         └── games/
             ├── chess/            index.ts · components/ · hooks/ · engine/ · assets/ · tests/ · README.md
-            └── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            ├── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            └── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
 ```
 
 ### 3. El stack y por qué
@@ -2095,6 +2193,11 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
   - guardar y continuar;
   - cinco idiomas de interfaz, como en el preferans y en las páginas del sitio;
   - juego en línea en tiempo real y por correspondencia.
+- **Póker:**
+  - calibrar los bots contra personas (hasta ahora sus estilos solo se midieron entre ellos, `scripts/load/poker-bots.mjs`) y leer los rangos rivales con más finura, por posición y tamaño de apuesta;
+  - una partida de cash con recompras y niveles de ciegas a elegir junto al torneo;
+  - un componente de carta común con el preferans y una lista de personajes en `shared/` en lugar de copias de retratos y reversos;
+  - juego en línea.
 - **Herramientas:**
   - una comprobación de los límites de importación (ESLint `no-restricted-imports`);
   - `npm test` en CI antes de publicar;
@@ -2153,6 +2256,10 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 | 09.11.2026 | Bajo el ratón un retrato crece al doble sobre todo; un toque abre la ficha del personaje con una imagen grande | Alexey: «no se ve quién está dibujado»; dedo y ratón valen lo mismo |
 | 09.11.2026 | La pluma del escribano (Marck Script) en lugar del eslavo eclesiástico Ponomar y del escolar Segoe Print / Comic Sans: el título, los nombres, las preguntas, las notas y la hoja se escriben a mano, las placas pequeñas en versalitas grabadas; el tapete es el esmeralda botella oscuro del concepto | Alexey: «un cuento infantil», debe ser «más malvado y más duro», las notas «a mano, en cursiva, un poco más grandes» |
 | 09.11.2026 | La calavera del reverso como grabado: una calavera de vampiro anatómica (más estrecha que una cabeza de dibujo animado), cejas pesadas, brasas al fondo de las órbitas en lugar de ojos de neón, colmillos ensangrentados, sombreado de líneas con luz desde arriba a la izquierda; detrás, fémures cruzados | Alexey: «más malvado y más duro», «un cuento infantil» — y luego «sí, redibújala» |
+| 10.11.2026 | Póker: hold'em sin límite, torneo de eliminación de dos a seis (`games/poker/`), un evaluador de manos propio en lugar de las bibliotecas `phe`/`pokersolver` | El siguiente juego del plan del portfolio (§6.5), elección de Alexey; el evaluador propio no descarga nada, está comprobado con las 2 598 960 manos y es más rápido de lo que necesitan los bots |
+| 10.11.2026 | Bots de póker: equity por Monte Carlo contra rangos leídos de las apuestas, probabilidades del bote, apuestas del tamaño de una persona, push o fold, la subida de apertura; diez habituales de la guarida con su propio estilo | Los bots nunca leen cartas ocultas; los estilos se ven en la medición de `poker-bots.mjs` (VPIP, PFR, agresividad) |
+| 10.11.2026 | La mesa de póker con el aspecto de la guarida; retratos y reverso copiados del preferans | El mismo club; los juegos no se importan entre sí, una lista común de personajes es una tarea abierta |
+| 10.11.2026 | Las pruebas táctiles comparan el ancho de la página con la pantalla, no con `innerWidth` | En una tableta un saliente de 4 px ensanchaba la página, la vista visible se desplazaba 32 px y un toque en un botón caía en el deslizador de debajo |
 
 ### 19. La guarida, todas las opciones y el juego con el dedo (09.11.2026)
 
@@ -2168,7 +2275,28 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 - **Mesas.** Dos, tres o cuatro jugadores; reglas de Sochi, Leningrado, Rostov y Clásica.
 - **Opciones.** Todas las del menú se juegan; cómo, en las explicaciones del menú y en `RULES.md`, §9.
 - **Guardado:** tras cada jugada, con el botón «Guardar» y al ocultarse o cerrarse la página; «Continuar» en el menú.
-- **Pruebas.** `npm test`: 93 pruebas. `scripts/load/touch-play.mjs` juega con el dedo en móvil y tableta y con ratón en el ordenador (`INPUT=mouse`) y comprueba que cada botón y carta se alcanza y nada los tapa.
+- **Pruebas.** `npm test`: 93 pruebas (el 09.11; con el póker, 112). `scripts/load/touch-play.mjs` juega con el dedo en móvil y tableta y con ratón en el ordenador (`INPUT=mouse`) y comprueba que cada botón y carta se alcanza y nada los tapa.
+
+### 20. Póker (10.11.2026)
+
+- **Qué.** Texas hold'em sin límite, un torneo de eliminación de dos a seis jugadores (`games/poker/`): pilas iguales, ciegas que suben cada 15, 10 o 6 manos, ante desde 100/200, puestos por orden de eliminación. Solo fichas de juego. Es el siguiente juego del plan del portfolio (§6.5); Alexey eligió el póker el 10.11.
+- **El motor** es TypeScript puro sin React:
+  - `cards.ts`: 52 cartas como números 0…51 (rango × 4 + palo): rápido, fácil de guardar y repetir;
+  - `evaluate.ts`: la mejor quinta de 5–7 cartas como un número (la categoría y cinco rangos de 4 bits) sin recorrer combinaciones: contadores de rangos, máscaras de palo, máscara de escalera. Código propio en lugar de `phe`/`pokersolver` del plan: no se descarga nada y la prueba es más estricta, porque las 2 598 960 manos de cinco cartas dan exactamente los números de los libros (40 escaleras de color, 624 póker…) en 0,46 s, unos 5,7 millones de manos por segundo;
+  - `holdem.ts`: la mesa y las reglas de casino. En el mano a mano el botón pone la ciega pequeña y habla primero antes del flop; una subida es al menos la última subida completa (el campo `matched` del asiento); un all-in corto no reabre las apuestas; botes secundarios por niveles de aportación, la apuesta no igualada vuelve, la ficha sobrante para el primer ganador a la izquierda del botón; el tablero se reparte hasta el final cuando nadie puede apostar; el botón pasa al siguiente con fichas. El estado es JSON simple;
+  - `ai/equity.ts`, `ai/bot.ts`, `worker.ts`: los bots en un Web Worker.
+- **Los bots** nunca leen cartas ocultas. Equity por Monte Carlo: las cartas rivales se reparten de nuevo hasta llegar a la fuerza que sugieren sus apuestas. Se compara con las probabilidades del bote y con la parte justa ante tantos rivales; subidas del tamaño de una persona (3 CG para abrir, ×3 contra una subida, ½–¾ del bote tras el flop); push o fold con poca pila; subida de apertura en un bote sin abrir. Una decisión tarda unos 0,2 ms.
+- **Los estilos** de los diez habituales (`characters.ts`: dureza, agresividad, farol) se ven en la medición de `scripts/load/poker-bots.mjs`: 40 torneos de seis bots, 2282 manos, ni una ficha perdida:
+
+| habitual | VPIP | PFR | agresividad | victorias |
+|---|---|---|---|---|
+| Conde Vlad, tiburón cerrado | 28% | 10% | 0,89 | 8 de 27 |
+| Carmilla, suelta y agresiva | 53% | 36% | 1,96 | 5 de 32 |
+| Koschéi, la roca | 19% | 2% | 0,39 | 1 de 23 |
+| Capitán Galeón, el jugador | 67% | 52% | 2,62 | 5 de 25 |
+
+- **La mesa** (`components/`) es el mismo club que la de preferans: un óvalo de tapete esmeralda botella en un borde lacado, asientos en el sentido de las agujas del reloj desde ti abajo (retrato con su placa, cartas hacia el centro), apuestas sobre el tapete, tablero y bote en el centro, el resultado de la mano en la bandeja bajo la mesa, la quinta ganadora iluminada. En el móvil el óvalo se pone de pie y crece con el número de jugadores. Retratos y reverso copiados del preferans: los juegos no se importan entre sí.
+- **Pruebas.** 19 pruebas de póker (112 en total). `scripts/load/poker-touch.mjs` juega con el dedo en móvil y tableta y con ratón en el ordenador; `npm run load` lo lanza junto con `poker-bots.mjs`.
 
 [↑ Volver a los idiomas](#top)
 
@@ -2207,9 +2335,10 @@ cosmo-game-hub/
     ├── tsconfig.json             strict ; alias @shell, @shared, @games
     ├── public/games/chess/       fichiers à URL fixe : stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — la couverture du catalogue (dessinée par scripts/preferans-cover.mjs)
+    ├── public/games/poker/       cover.svg — la couverture ; portraits/ — les dix habitués de la table de poker
     ├── scripts/                  preferans-cover.mjs — la couverture de la préférence ; load/ — les tests de charge (npm run load)
     └── src/
-        ├── pages/                routes : index, games, leaderboard, about, games/chess, games/preferans
+        ├── pages/                routes : index, games, leaderboard, about, games/chess, games/preferans, games/poker
         ├── shell/                le site autour des jeux
         │   ├── components/       Header, Footer, ScrollToTop, GameCard (composants Astro)
         │   ├── layouts/          Layout.astro
@@ -2225,7 +2354,8 @@ cosmo-game-hub/
         │   └── tests/            random.test.ts, storage.test.ts, languages.test.ts
         └── games/
             ├── chess/            index.ts · components/ · hooks/ · engine/ · assets/ · tests/ · README.md
-            └── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            ├── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            └── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
 ```
 
 ### 3. La pile technique et pourquoi
@@ -2635,6 +2765,11 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
   - sauvegarder et reprendre ;
   - cinq langues d'interface, comme pour la préférence et les pages du site ;
   - le jeu en ligne en temps réel et par correspondance.
+- **Poker :**
+  - calibrer les bots contre des personnes (leurs manières ne sont mesurées qu'entre eux pour l'instant, `scripts/load/poker-bots.mjs`) et lire plus finement les fourchettes adverses, selon la position et la taille des mises ;
+  - une partie de cash avec recaves et des niveaux de blindes au choix à côté du tournoi ;
+  - un composant de carte commun avec la préférence et une seule liste de personnages dans `shared/` au lieu de portraits et de dos copiés ;
+  - le jeu en ligne.
 - **Outillage :**
   - une vérification des frontières d'import (ESLint `no-restricted-imports`) ;
   - `npm test` en CI avant publication ;
@@ -2693,6 +2828,10 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 | 09.11.2026 | Sous la souris, un portrait double de taille par-dessus tout ; un toucher ouvre la fiche du personnage avec une grande image | Alexey : « on ne voit pas qui est dessiné » ; le doigt vaut la souris |
 | 09.11.2026 | La plume du scribe (Marck Script) au lieu du slavon d'église Ponomar et de l'écolier Segoe Print / Comic Sans : le titre, les noms, les questions, les notes et la feuille s'écrivent à la main, les petites plaques en capitales gravées ; le tapis est l'émeraude bouteille sombre du concept | Alexey : « un conte pour enfants », il faut « plus méchant et plus dur », les notes « à la main, en italique, un peu plus grandes » |
 | 09.11.2026 | Le crâne du dos des cartes en gravure : un crâne de vampire anatomique (plus étroit qu'une tête de dessin animé), arcades lourdes, braises au fond des orbites au lieu d'yeux néon, crocs ensanglantés, hachures éclairées d'en haut à gauche ; derrière lui, des fémurs croisés | Alexey : « plus méchant et plus dur », « un conte pour enfants » — puis « oui, redessine-le » |
+| 10.11.2026 | Poker : hold'em sans limite, tournoi à élimination de deux à six (`games/poker/`), notre propre évaluateur de mains au lieu des bibliothèques `phe`/`pokersolver` | Le jeu suivant du plan du portfolio (§6.5), choix d'Alexey ; notre évaluateur ne télécharge rien, est vérifié sur les 2 598 960 mains et va plus vite que ce qu'il faut aux bots |
+| 10.11.2026 | Bots de poker : équité par Monte-Carlo contre des fourchettes lues dans les enchères, cote du pot, mises de taille humaine, push or fold, relance d'ouverture ; dix habitués du repaire avec chacun sa manière | Les bots ne lisent jamais les cartes cachées ; leurs manières se voient dans la mesure de `poker-bots.mjs` (VPIP, PFR, agressivité) |
+| 10.11.2026 | La table de poker à l'allure du repaire ; portraits et dos copiés de la préférence | Le même club ; les jeux ne s'importent pas entre eux, une liste commune de personnages est une tâche ouverte |
+| 10.11.2026 | Les vérifications au toucher comparent la largeur de la page à l'écran, pas à `innerWidth` | Sur une tablette, un débord de 4 px élargissait la page, la zone visible glissait de 32 px et un toucher sur un bouton tombait sur le curseur en dessous |
 
 ### 19. Le repaire, toutes les options et le jeu au doigt (09.11.2026)
 
@@ -2708,6 +2847,27 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 - **Tables.** Deux, trois ou quatre joueurs ; règles de Sotchi, Leningrad, Rostov et Classique.
 - **Options.** Toutes celles du menu se jouent ; comment, dans les explications du menu et dans `RULES.md`, §9.
 - **Sauvegardes :** après chaque coup, avec le bouton « Enregistrer » et quand la page est masquée ou fermée ; « Continuer » dans le menu.
-- **Tests.** `npm test` — 93 tests. `scripts/load/touch-play.mjs` joue au doigt sur téléphone et tablette et à la souris sur ordinateur (`INPUT=mouse`) et vérifie que chaque bouton et chaque carte sont accessibles et que rien ne les cache.
+- **Tests.** `npm test` — 93 tests (au 09.11 ; avec le poker, 112). `scripts/load/touch-play.mjs` joue au doigt sur téléphone et tablette et à la souris sur ordinateur (`INPUT=mouse`) et vérifie que chaque bouton et chaque carte sont accessibles et que rien ne les cache.
+
+### 20. Poker (10.11.2026)
+
+- **Quoi.** Texas hold'em sans limite, un tournoi à élimination de deux à six joueurs (`games/poker/`) : tapis égaux, blindes qui montent toutes les 15, 10 ou 6 mains, ante à partir de 100/200, places dans l'ordre d'élimination. Jetons de jeu seulement. C'est le jeu suivant du plan du portfolio (§6.5) ; Alexey a choisi le poker le 10.11.
+- **Le moteur** est du TypeScript pur sans React :
+  - `cards.ts` — 52 cartes comme nombres 0…51 (rang × 4 + couleur) : rapide, facile à enregistrer et à rejouer ;
+  - `evaluate.ts` — la meilleure main de cinq parmi 5 à 7 cartes en un seul nombre (la catégorie et cinq rangs de 4 bits) sans parcourir les combinaisons : compteurs de rangs, masques de couleur, masque de quinte. Notre propre code au lieu de `phe`/`pokersolver` du plan : rien n'est téléchargé et la vérification est plus stricte — les 2 598 960 mains de cinq cartes donnent exactement les nombres des manuels (40 quintes flush, 624 carrés…) en 0,46 s, environ 5,7 millions de mains par seconde ;
+  - `holdem.ts` — la table et les règles du casino : en tête-à-tête, le bouton pose la petite blinde et parle en premier avant le flop ; une relance vaut au moins la dernière relance complète (le champ `matched` du siège) ; un tapis court ne rouvre pas les enchères ; pots annexes par niveaux de mise, mise non suivie rendue, jeton impair au premier gagnant à gauche du bouton ; tableau distribué jusqu'au bout quand personne ne peut miser ; le bouton passe au suivant qui a des jetons. L'état est du JSON simple ;
+  - `ai/equity.ts`, `ai/bot.ts`, `worker.ts` — les bots dans un Web Worker.
+- **Les bots** ne lisent jamais les cartes cachées. Équité par Monte-Carlo : les cartes adverses sont redistribuées jusqu'à atteindre la force que suggèrent leurs enchères. Comparée à la cote du pot et à la part équitable face à ce nombre d'adversaires ; relances de taille humaine (3 GB à l'ouverture, ×3 contre une relance, ½ à ¾ du pot après le flop) ; push or fold avec un petit tapis ; relance d'ouverture dans un pot non ouvert. Une décision prend environ 0,2 ms.
+- **Les manières** des dix habitués (`characters.ts` : serrage, agressivité, bluff) se voient dans la mesure de `scripts/load/poker-bots.mjs` — 40 tournois de six bots, 2 282 mains, pas un jeton perdu :
+
+| habitué | VPIP | PFR | agressivité | victoires |
+|---|---|---|---|---|
+| Comte Vlad — requin serré | 28 % | 10 % | 0,89 | 8 sur 27 |
+| Carmilla — large et agressive | 53 % | 36 % | 1,96 | 5 sur 32 |
+| Kochtcheï — le roc | 19 % | 2 % | 0,39 | 1 sur 23 |
+| Capitaine Galion — le flambeur | 67 % | 52 % | 2,62 | 5 sur 25 |
+
+- **La table** (`components/`) est le même club que celle de la préférence : un ovale de tapis émeraude bouteille dans un rebord laqué, les sièges dans le sens des aiguilles d'une montre depuis vous en bas (portrait avec sa plaque, cartes vers le centre), mises sur le tapis, tableau et pot au milieu, résultat de la main dans le plateau sous la table, main gagnante illuminée. Sur téléphone, l'ovale se dresse et s'allonge avec le nombre de joueurs. Portraits et dos copiés de la préférence : les jeux ne s'importent pas entre eux.
+- **Tests.** 19 tests de poker (112 en tout). `scripts/load/poker-touch.mjs` joue au doigt sur téléphone et tablette et à la souris sur ordinateur ; `npm run load` le lance avec `poker-bots.mjs`.
 
 [↑ Retour aux langues](#top)

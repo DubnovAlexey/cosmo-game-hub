@@ -101,6 +101,10 @@
 .tableArea { min-width: 0; }
 .felt {
     position: relative;
+    /* [EN] The table keeps its geometry in Hebrew too (cards toward the middle); the texts inside still read right to
+            left. [RU] Стол сохраняет геометрию и на иврите (карты ближе к середине); тексты внутри всё равно читаются
+            справа налево. */
+    direction: ltr;
     aspect-ratio: 16 / 9.4;
     min-height: 380px;
     border-radius: 50% / 46%;
