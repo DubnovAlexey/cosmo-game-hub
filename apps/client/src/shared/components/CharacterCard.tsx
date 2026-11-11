@@ -25,9 +25,9 @@ import '@fontsource/cormorant-garamond/600.css';
 import '@fontsource/cormorant-garamond/700.css';
 import '@fontsource/cormorant-garamond/600-italic.css';
 import { withBase } from '@shell/utils/withBase';
-import { portraitPath, type CharacterId } from '../characters/roster.ts';
+import { portraitFocus, portraitPath, type CharacterId } from '../characters/roster.ts';
 import { useKeepOnScreen, type CaptionSide } from '../hooks/useKeepOnScreen.ts';
-import { placeBeside } from '../utils/placeBeside.ts';
+import { placeBeside, placeOver } from '../utils/placeBeside.ts';
 import styles from './CharacterCard.module.css';
 
 /** [EN] What a card tells about a hero; every text is already in the reader's language. [RU] Что карточка рассказывает о герое; все тексты уже на языке читателя. */
@@ -107,15 +107,18 @@ export const CharacterFace: React.FC<CharacterFaceProps> = ({ story, label, clos
         return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('pointerdown', onPress); };
     }, [open]);
     const picture = withBase(portraitPath(story.id));
-    const zoom = side === 'start' ? styles.zoomStart : side === 'end' ? styles.zoomEnd : '';
+    // [EN] A wide picture grows wider, so it is as large as a tall one, not a thin strip. [RU] Широкая картинка растёт шире, чтобы быть такой же крупной, как высокая, а не узкой полоской.
+    const [wide, setWide] = useState(false);
+    const zoom = `${side === 'start' ? styles.zoomStart : side === 'end' ? styles.zoomEnd : ''} ${wide ? styles.zoomWide : ''}`;
     const popover = side === 'end' ? styles.popoverEnd : side === 'center' ? styles.popoverCenter : '';
     return (
         <span ref={wrap} className={`${styles.face} ${open ? styles.faceOpen : ''} ${className}`}>
             <button type="button" className={faceClassName} aria-label={label} aria-expanded={open} aria-controls={cardId} onClick={() => setOpen(value => !value)}>
-                <img src={picture} alt="" loading="lazy" decoding="async" draggable={false} />
+                <img src={picture} alt="" loading="lazy" decoding="async" draggable={false} style={portraitFocus(story.id)} />
                 {children}
             </button>
-            <img className={`${styles.zoom} ${zoom}`} src={picture} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} />
+            <img className={`${styles.zoom} ${zoom}`} src={picture} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false}
+                onLoad={event => setWide(event.currentTarget.naturalWidth > event.currentTarget.naturalHeight * 1.2)} />
             {open && (
                 <CharacterCard {...story} cardRef={card} domId={cardId} role="dialog" label={label} className={`${styles.popover} ${popover}`}
                     closeLabel={closeLabel} onClose={() => setOpen(false)} />
@@ -125,26 +128,35 @@ export const CharacterFace: React.FC<CharacterFaceProps> = ({ story, label, clos
 };
 
 /**
- * [EN] The card floating beside `anchor` (a small portrait of a list); null — nothing is shown. It is drawn at the
- *      end of the page, over any menu, and never takes a press.
- * [RU] Карточка, всплывающая рядом с `anchor` (маленький портрет списка); null — ничего не показано. Рисуется в конце
- *      страницы, поверх любого меню, и никогда не перехватывает нажатия.
+ * [EN] The card of a small portrait in a list (`anchor`); null — nothing is shown. By default it floats beside the
+ *      portrait; with `grow` the portrait itself grows into it, as a portrait at a table grows under the mouse: the
+ *      large picture starts where the small one is, the biography beside it (Alexey, 11.11.2026: every window must
+ *      grow seriously, as during the game, and open the biography). It is drawn at the end of the page, over any
+ *      menu (a scrolled list would clip a portrait grown inside it), and never takes a press — the portrait under it
+ *      still answers the mouse.
+ * [RU] Карточка маленького портрета списка (`anchor`); null — ничего не показано. Обычно она всплывает рядом с
+ *      портретом; с `grow` сам портрет вырастает в неё, как портрет за столом под мышью: крупная картинка начинается
+ *      там, где маленькая, рядом биография (Алексей, 11.11.2026: каждое окно должно серьёзно увеличиваться, как во
+ *      время игры, и открывать биографию). Рисуется в конце страницы, поверх любого меню (прокручиваемый список
+ *      обрезал бы выросший внутри него портрет), и никогда не перехватывает нажатия — портрет под ней по-прежнему
+ *      отвечает мыши.
  */
-export const CharacterPeek: React.FC<{ story: CharacterStory | null; anchor: HTMLElement | null }> = ({ story, anchor }) => {
+export const CharacterPeek: React.FC<{ story: CharacterStory | null; anchor: HTMLElement | null; grow?: boolean }> = ({ story, anchor, grow = false }) => {
     const card = useRef<HTMLDivElement>(null);
     const [place, setPlace] = useState<{ left: number; top: number } | null>(null);
     useLayoutEffect(() => {
         const element = card.current;
         if (!story || !anchor || !element) { setPlace(null); return; }
         const box = anchor.getBoundingClientRect();
-        const next = placeBeside(box, { width: element.offsetWidth, height: element.offsetHeight }, { width: document.documentElement.clientWidth, height: window.innerHeight });
-        setPlace(next);
-    }, [story, anchor]);
+        const size = { width: element.offsetWidth, height: element.offsetHeight };
+        const screen = { width: document.documentElement.clientWidth, height: window.innerHeight };
+        setPlace(grow ? placeOver(box, size, screen) : placeBeside(box, size, screen));
+    }, [story, anchor, grow]);
     if (!story || !anchor || typeof document === 'undefined') return null;
     // [EN] Until it is measured the card waits unseen in the corner: no flash in a wrong place, nothing past the screen.
     // [RU] Пока карточка не измерена, она ждёт невидимой в углу: никакой вспышки не на месте и ничего за экраном.
     const style: React.CSSProperties = place ? { left: place.left, top: place.top } : { left: 0, top: 0, visibility: 'hidden' };
-    return createPortal(<CharacterCard {...story} wide cardRef={card} className={styles.peek} style={style} />, document.body);
+    return createPortal(<CharacterCard {...story} wide cardRef={card} className={`${styles.peek} ${grow && place ? styles.peekGrow : ''}`} style={style} />, document.body);
 };
 
 /**

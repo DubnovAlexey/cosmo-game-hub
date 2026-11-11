@@ -1,0 +1,12 @@
+---
+// [EN] Route /games/checkers. The page only places the game: everything else lives in src/games/checkers.
+// [RU] Маршрут /games/checkers. Страница только ставит игру на место: всё остальное — в src/games/checkers.
+import Layout from '@shell/layouts/Layout.astro';
+import { CheckersGame } from '@games/checkers';
+---
+
+<Layout title="Checkers | Cosmo Game Hub" titleKey="title.checkers" scrollToTop={false}>
+    <!-- [EN] client:only — the game keeps its state and its saves in the browser. -->
+    <!-- [RU] client:only — игра хранит состояние и сохранения в браузере. -->
+    <CheckersGame client:only="react" />
+</Layout>

@@ -1,0 +1,88 @@
+// [EN] FILE: games/checkers/i18n/he.ts — draughts in Hebrew (the page turns right to left; the board itself keeps
+//      its geometry, column a on the left).
+// [RU] ФАЙЛ: шашки на иврите (страница идёт справа налево; сама доска сохраняет геометрию, колонка a слева).
+import type { CheckersTexts } from './types.ts';
+
+const he: CheckersTexts = {
+  language: 'he',
+  gameTitle: 'דמקה',
+  tagline: 'השיש הסדוק של המאורה · האבנים שלכם מול האבנים של אחד מדיירי הקריפטה',
+  header: {
+    language: 'שפה',
+    save: 'שמירה',
+    savedAt: time => `נשמר ב־${time}`,
+    menu: 'תפריט המשחק',
+  },
+  setup: {
+    title: 'משחק חדש',
+    intro: 'שתים־עשרה אבנים מול שתים־עשרה. חובה לאכול, אין לאן לסגת, ואבנים שנאכלו לא קמות לתחייה במאורה.',
+    rules: 'חוקים',
+    russian: 'דמקה רוסית',
+    russianHint: 'אבן אוכלת קדימה וגם אחורה; מלך זז ואוכל לכל מרחק לאורך האלכסון.',
+    english: 'דמקה אנגלית',
+    englishHint: 'אבן אוכלת רק קדימה; מלך זז ואוכל משבצת אחת בכל פעם, אבל לכל הכיוונים.',
+    level: 'היריב משחק',
+    levels: { easy: 'כמו מתחיל', normal: 'כמו שחקן מועדון', hard: 'כמו רב־אמן' },
+    levelHints: {
+      easy: 'רואה מהלך אחד קדימה ולפעמים מפקיר אבן.',
+      normal: 'מחשב שני מהלכים קדימה ולא נותן כלום בחינם.',
+      hard: 'מחשב עמוק ככל שהזמן מאפשר וטומן מלכודות של אכילה.',
+    },
+    colour: 'האבנים שלכם',
+    colours: { white: 'לבנות', black: 'שחורות', random: 'בהגרלה' },
+    firstHint: whiteFirst => (whiteFirst ? 'הלבנות מתחילות.' : 'השחורות מתחילות.'),
+    opponent: 'יריב',
+    another: 'יריב אחר',
+    start: 'להתחיל משחק',
+    continue: 'להמשיך את המשחק',
+    savedLine: when => `משחק שמור מ־${when}.`,
+    close: 'חזרה למשחק',
+  },
+  play: {
+    yourMove: 'תורכם',
+    mustCapture: 'תורכם: חובה לאכול',
+    goOn: 'המשיכו לאכול',
+    theirMove: who => `${who.name} ${who.female ? 'חושבת' : 'חושב'}…`,
+    hint: 'לחצו על אחת האבנים שלכם ואז על המשבצת שאליה היא תזוז. באכילה לחצו על המשבצות זו אחר זו.',
+    you: 'אתם',
+    white: 'לבנות',
+    black: 'שחורות',
+    yourSide: side => `אתם משחקים ב${side}`,
+    count: (men, kings) => `אבנים ${men}, מלכים ${kings}`,
+    logTitle: 'מהלך המשחק',
+    noMoves: 'עדיין לא היו מהלכים.',
+    takeBack: 'לבטל מהלך',
+    resign: 'להיכנע',
+    resignSure: 'בטוח להיכנע?',
+    cancel: 'לא, ממשיכים',
+  },
+  square: {
+    label: (name, state) => `${name}, ${state}`,
+    empty: 'ריקה',
+    whiteMan: 'אבן לבנה',
+    whiteKing: 'מלך לבן',
+    blackMan: 'אבן שחורה',
+    blackKing: 'מלך שחור',
+    target: 'אפשר לזוז לכאן',
+    chosen: 'נבחרה',
+  },
+  result: {
+    won: 'ניצחון! האבנים של היריב שוכבות בארון הקבורה.',
+    lost: who => `הפסד. ${who.name} ${who.female ? 'ניצחה' : 'ניצח'} אתכם.`,
+    draw: 'תיקו.',
+    drawQuiet: 'תיקו: זמן רב זזו רק מלכים ושום דבר לא נאכל.',
+    drawRepetition: 'תיקו: אותה עמדה חזרה שלוש פעמים.',
+    youResigned: 'נכנעתם.',
+    blocked: 'לצד המפסיד לא נשאר אף מהלך.',
+    moves: count => `מהלכים במשחק: ${count}.`,
+    again: 'משחק חדש',
+  },
+  hero: {
+    about: name => `מי זה: ${name}`,
+    close: 'סגירה',
+    dweller: 'דייר הקריפטה',
+    guest: 'אורח הקריפטה',
+  },
+};
+
+export default he;

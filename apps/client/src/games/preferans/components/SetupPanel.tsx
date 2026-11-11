@@ -20,7 +20,7 @@ import {
 } from '../engine/index.ts';
 import { championOf, type BotStrength, type PreferansResultSummary, type PreferansSave, type PreferansSettings } from '../hooks/usePreferans';
 import { CharacterPeek, usePeek } from '@shared/components/CharacterCard';
-import { ROSTER, characterInfo, isFemale, portraitPath, type CharacterId } from '../characters/roster.ts';
+import { ROSTER, characterInfo, isFemale, portraitFocus, portraitPath, type CharacterId } from '../characters/roster.ts';
 import { mannerOf } from './PlayerSeat';
 import { withBase } from '@shell/utils/withBase';
 import { useTexts, type Dictionary, type Explained } from '../i18n/index.ts';
@@ -155,14 +155,14 @@ const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champio
                     return (
                         <button key={id} type="button" className={`${styles.galleryItem} ${seat >= 0 ? styles.galleryOn : ''}`}
                             aria-pressed={seat >= 0} onClick={() => toggle(id)} {...peek.bind(id)}>
-                            <img src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" />
+                            <img src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" style={portraitFocus(id)} />
                             <span>{t.characters[id].name}</span>
                             {seat >= 0 && <b className={styles.galleryMark} aria-hidden="true">{seat + 1}</b>}
                         </button>
                     );
                 })}
             </div>
-            <CharacterPeek anchor={peek.anchor} story={peek.id === null ? null : {
+            <CharacterPeek grow anchor={peek.anchor} story={peek.id === null ? null : {
                 id: peek.id, name: t.characters[peek.id].name, bio: t.characters[peek.id].bio,
                 tag: characterInfo(peek.id).guest ? t.portrait.guest : t.portrait.dweller, manner: mannerOf(characterInfo(peek.id), t),
             }} />

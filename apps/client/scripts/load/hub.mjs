@@ -25,7 +25,7 @@ const totalRequests = Number(arg('requests', 6000));
 const clients = Number(arg('clients', 64));
 const rounds = Number(arg('rounds', 20));
 const out = arg('out', null);
-const PAGES = ['/', '/games/', '/games/chess/', '/games/preferans/', '/games/poker/', '/games/battleship/', '/leaderboard/', '/about/'];
+const PAGES = ['/', '/games/', '/games/chess/', '/games/preferans/', '/games/poker/', '/games/battleship/', '/games/checkers/', '/leaderboard/', '/about/'];
 const dist = fileURLToPath(new URL('../../dist/', import.meta.url));
 const report = { date: new Date().toISOString(), base: BASE, http: null, pages: [], walk: null };
 

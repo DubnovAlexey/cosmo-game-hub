@@ -11,9 +11,9 @@ import type { BotStyle } from '../engine/index.ts';
 // [EN] A relative path on purpose: Node runs the tests directly and knows no @shared alias.
 // [RU] Относительный путь нарочно: Node запускает тесты напрямую и не знает псевдонима @shared.
 // noinspection ES6PreferShortImport
-import { characterFacts, portraitPath, type CharacterId } from '../../../shared/characters/roster.ts';
+import { characterFacts, portraitFocus, portraitPath, type CharacterId } from '../../../shared/characters/roster.ts';
 
-export { portraitPath, type CharacterId };
+export { portraitFocus, portraitPath, type CharacterId };
 
 // BEGIN 1. The company
 export interface CharacterInfo {
@@ -137,6 +137,39 @@ export const ROSTER: readonly CharacterInfo[] = Object.freeze([
   manner('sunduk', [-0.25, 1.15, 0, 1.2]),
   manner('priliv', [0.1, 0.95, 1, 1.0]),
   manner('abordazh', [0.45, 0.85, 0, 0.8]),
+  // [EN] The necromancers of the catacombs (11.11.2026): Anselm argues every whist, Mordecai remembers every card
+  //      for ages, Ulrich obeys his crow and bids too high, Queen Ingrid plays only to win, the Lady of the Churchyard
+  //      reads out the rules and loves a misère.
+  // [RU] Некроманты катакомб (11.11.2026): Ансельм спорит из-за каждого виста, Мордехай вечно помнит каждую карту,
+  //      Ульрих слушается ворона и заказывает лишнее, королева Ингрид играет только на победу, Госпожа Погоста читает
+  //      правила вслух и любит мизер.
+  manner('anselm', [0.05, 1.05, 0, 1.1]),
+  manner('mordecai', [-0.1, 1.1, 0, 1.4]),
+  manner('ulrich', [0.35, 0.85, 0, 0.9]),
+  manner('ingrid', [0.3, 1.0, 0, 1.0]),
+  manner('pogost', [0.1, 0.95, 2, 1.0]),
+  // [EN] The players of the draughts scenes (11.11.2026): Velmira and Grandpa Prokhor think for ages, Bonebreaker and
+  //      Queen Bagryana attack, Doctor Morok prescribes caution, Scarlett and the Quartet love a misère, Grandma
+  //      Letitia plays without looking.
+  // [RU] Игроки со сцен шашек (11.11.2026): Вельмира и Дед Прохор думают вечность, Костолом и королева Багряна
+  //      нападают, Доктор Морок прописывает осторожность, Скарлетт и Квартет любят мизер, Бабушка Летиция играет не
+  //      глядя.
+  manner('velmira', [0.0, 1.1, 0, 1.4]),
+  manner('kostolom', [0.35, 0.9, 0, 0.9]),
+  manner('strelyany', [0.2, 1.0, 0, 1.0]),
+  manner('violet', [0.3, 0.9, 1, 0.9]),
+  manner('prokhor', [-0.2, 1.1, 0, 1.4]),
+  manner('kvartet', [0.1, 1.0, 1, 1.2]),
+  manner('morok', [-0.1, 1.15, 0, 1.2]),
+  manner('bagryana', [0.45, 0.85, 0, 0.8]),
+  manner('rogach', [0.25, 0.95, 0, 1.0]),
+  manner('agata', [0.2, 1.0, 1, 1.0]),
+  manner('serebryana', [0.0, 1.05, 0, 1.1]),
+  manner('scarlett', [0.3, 0.9, 2, 0.8]),
+  manner('letitia', [0.1, 1.1, 0, 0.8]),
+  manner('ogneslava', [0.35, 0.9, 1, 0.9]),
+  manner('celestine', [0.15, 1.0, 1, 0.9]),
+  manner('vivien', [0.25, 0.95, 0, 1.0]),
 ]);
 /** The dummy («болван») of a game for two: a scarecrow skeleton drawn for the game (shared/characters/dummy.svg). */
 export const DUMMY: CharacterInfo = manner('dummy', [0, 1, 0, 1]);

@@ -29,9 +29,15 @@ export const games: Game[] = [
     },
     {
         title: "Checkers",
-        description: "Traditional board game of diagonal moves and captures. Simple to learn, hard to master.",
+        description: "Draughts on the cracked marble of the lair: Russian rules with flying kings or English ones, compulsory captures, a hero of the vampire lair as the opponent, three levels of play.",
+        badge: "New",
         gameUrl: "/games/checkers",
-        status: "soon",
+        // [EN] A dead warrior and a nosferatu over a bloodied board, from Alexey's folder «Шашки» — his favourite
+        //      picture, 999.jpg (11.11.2026), only scaled down (public/games/checkers/cover.webp).
+        // [RU] Мёртвый воин и носферату над окровавленной доской из папки Алексея «Шашки» — его любимая картинка
+        //      999.jpg (11.11.2026), только уменьшенная (public/games/checkers/cover.webp).
+        coverUrl: "/games/checkers/cover.webp",
+        status: "playable",
         icon: "⛀"
     },
     {

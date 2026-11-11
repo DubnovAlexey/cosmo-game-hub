@@ -106,6 +106,9 @@ span.face { position: relative; display: inline-block; flex: none; line-height: 
 }
 .face > .zoomStart { left: 0; transform: scale(0.4); transform-origin: 0 0; }
 .face > .zoomEnd { left: auto; right: 0; transform: scale(0.4); transform-origin: 100% 0; }
+/* [EN] A wide picture (a scene at a board) is as large as a tall portrait grown two and a half times.
+   [RU] Широкая картинка (сцена за доской) такая же крупная, как высокий портрет, выросший в два с половиной раза. */
+.face > .zoomWide { width: 380%; }
 @media (hover: hover) and (pointer: fine) {
     .face:hover > .zoom { opacity: 1; transform: translateX(-50%) scale(1); transition-delay: 0.12s; }
     .face:hover > .zoomStart, .face:hover > .zoomEnd { transform: scale(1); }
@@ -121,8 +124,14 @@ span.face { position: relative; display: inline-block; flex: none; line-height: 
 
 /* ===== 3. The floating card beside a small portrait of a list / Всплывающая карточка рядом с портретом списка ===== */
 .card.peek { position: fixed; z-index: 1000; pointer-events: none; animation: heroPop 0.16s ease-out; }
+/* [EN] A portrait of a list that grows into its card: out of its own corner, after the same short pause as a
+        portrait at a table, so a mouse only passing by does not set the list flickering.
+   [RU] Портрет списка, который вырастает в свою карточку: из своего угла, после той же короткой паузы, что и портрет
+        за столом, чтобы мышь, просто проходящая мимо, не заставляла список мигать. */
+.card.peekGrow { transform-origin: 0 0; animation: heroGrow 0.3s cubic-bezier(0.2, 0.75, 0.25, 1) 0.1s both; }
+@keyframes heroGrow { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
     .face > .zoom { transition: none; }
-    .card.popover, .card.peek { animation: none; }
+    .card.popover, .card.peek, .card.peekGrow { animation: none; }
 }

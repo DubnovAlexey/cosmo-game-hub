@@ -23,6 +23,7 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
     'title.preferans': t('Preferans', 'Преферанс', 'פרפרנס', 'Preferans', 'Préférence'),
     'title.poker': t('Poker', 'Покер', 'פוקר', 'Póquer', 'Poker'),
     'title.battleship': t('Sea Battle', 'Морской бой', 'צוללות', 'Batalla naval', 'Bataille navale'),
+    'title.checkers': t('Checkers', 'Шашки', 'דמקה', 'Damas', 'Dames'),
 
     // Header
     'nav.games': t('Games', 'Игры', 'משחקים', 'Juegos', 'Jeux'),
@@ -67,11 +68,11 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
         'Le grand jeu de stratégie pour deux joueurs. Affûtez votre tactique et matez le roi.'),
     'game.checkers.title': t('Checkers', 'Шашки', 'דמקה', 'Damas', 'Dames'),
     'game.checkers.description': t(
-        'Traditional board game of diagonal moves and captures. Simple to learn, hard to master.',
-        'Традиционная игра ходов по диагонали и взятий. Научиться легко, мастерски играть — трудно.',
-        'משחק לוח מסורתי של מהלכים באלכסון ואכילות. קל ללמוד, קשה לשלוט.',
-        'Juego tradicional de movimientos en diagonal y capturas. Fácil de aprender, difícil de dominar.',
-        'Jeu traditionnel de coups en diagonale et de prises. Simple à apprendre, difficile à maîtriser.'),
+        'Draughts on the cracked marble of the lair: Russian rules with flying kings or English ones, compulsory captures, a hero of the vampire lair as the opponent, three levels of play.',
+        'Шашки на треснувшем мраморе логова: русские правила с летающими дамками или английские, обязательное взятие, соперник — герой вампирского логова, три уровня игры.',
+        'דמקה על השיש הסדוק של המאורה: חוקים רוסיים עם מלכים מעופפים או חוקים אנגליים, אכילה חובה, גיבור ממאורת הערפדים כיריב, שלוש רמות משחק.',
+        'Damas sobre el mármol agrietado de la guarida: reglas rusas con damas voladoras o inglesas, captura obligatoria, un héroe de la guarida de vampiros como rival, tres niveles de juego.',
+        'Les dames sur le marbre fendu du repaire : règles russes avec dames volantes ou règles anglaises, prise obligatoire, un héros du repaire de vampires pour adversaire, trois niveaux de jeu.'),
     'game.go.title': t('Go', 'Го', 'גו', 'Go', 'Go'),
     'game.go.description': t(
         'Ancient abstract strategy game: surround more territory than your opponent.',

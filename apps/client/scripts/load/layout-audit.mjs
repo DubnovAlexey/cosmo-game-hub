@@ -1,4 +1,4 @@
-// [EN] FILE: apps/client/scripts/load/layout-audit.mjs — looks at the card tables and the sea battle the way a person
+// [EN] FILE: apps/client/scripts/load/layout-audit.mjs — looks at the card tables, the sea battle and draughts the way a person
 //      looks at a screen: on phones (upright and on their side), tablets and computers, with every number of
 //      players, it opens every portrait's caption and checks three things.
 //        1. No text goes past the screen or is cut by a box around it (a caption cut by the screen edge on a phone,
@@ -7,12 +7,14 @@
 //        3. On the poker oval no seat lies on the board, the pot, a bet or another seat.
 //      Text inside playing cards is skipped here (fanned cards overlap on purpose); the poker check covers the
 //      board cards themselves. Needs the production build served (see run-all.mjs). Usage:
-//        node apps/client/scripts/load/layout-audit.mjs [--game poker|preferans|cards|battleship|all]
+//        node apps/client/scripts/load/layout-audit.mjs [--game poker|preferans|cards|battleship|checkers|all]
 //            [--screens 393x852,1366x768] [--players 2,3,4,5,6] [--languages ru,he] [--shots <folder>] [--hands 2]
 //            [--to-the-end]
 //      The sea battle is looked at in its menu, while the fleet is set out (a ship in hand, a wrong press), in the
 //      battle and in the menu opened over it; with --to-the-end the battle is fought to its last shot and the
-//      result is looked at too (about a minute for a screen).
+//      result is looked at too (about a minute for a screen). Draughts are looked at in the menu, on the board, with
+//      a man chosen, after six moves (with the log) and in the menu over the game; with --to-the-end the game is
+//      resigned and its end screen is looked at.
 // [RU] ФАЙЛ: смотрит на карточные столы и морской бой так, как человек смотрит на экран: на телефонах (стоя и лёжа),
 //      планшетах и компьютерах, при любом числе игроков, раскрывает подпись каждого портрета и проверяет три вещи.
 //        1. Никакой текст не выходит за экран и не обрезается рамкой вокруг (подпись, обрезанная краем экрана на
@@ -23,7 +25,8 @@
 //      проверяет покерная проверка. Нужна отданная сервером продакшен-сборка (см. run-all.mjs).
 //      Морской бой осматривается в меню, при расстановке флота (корабль «в руке», ошибочное нажатие), в бою и в
 //      меню, открытом поверх боя; с --to-the-end бой доводится до последнего выстрела и осматривается итог
-//      (около минуты на экран).
+//      (около минуты на экран). Шашки осматриваются в меню, на доске, с выбранной шашкой, после шести ходов (с ходом
+//      партии) и в меню поверх партии; с --to-the-end партия сдаётся и осматривается экран конца.
 import fs from 'node:fs';
 import path from 'node:path';
 import { BASE, launch, open, sleep } from './cdp.mjs';
@@ -443,6 +446,69 @@ async function battleship(page, touch, where, language) {
     await look('menu over the battle', 'menu-battle');
 }
 
+// ===== Draughts / Шашки =====
+async function checkers(page, touch, where, language) {
+    // [EN] As in the sea battle nothing is found by its words: the squares by their classes, the buttons by their place.
+    // [RU] Как и в морском бое, ничто не ищется по словам: поля — по классам, кнопки — по месту.
+    const room = '#checkers-room';
+    const look = async (what, name) => {
+        note(`${where} draughts ${what}`, await page.evaluate(`${TEXT_AUDIT}('${room}')`));
+        if (name) await shot(page, `checkers-${where}-${language}-${name}`);
+    };
+    const countOf = selector => page.evaluate(`document.querySelectorAll(${JSON.stringify(`${room} ${selector}`)}).length`);
+    if (language !== 'ru') await setLanguage(page, language);
+    // The menu: as it opens, the opponent's card, the other rules.
+    await look('menu', 'menu');
+    await captions(page, touch, `${where} draughts menu`, room, `${room} [role=dialog] [class*="_portrait_"]`, `checkers-${where}-${language}-menu`);
+    await tap(page, touch, `() => document.querySelectorAll('${room} [role=dialog] [class*="_choices_"]')[0]?.querySelectorAll('button')[1]`);
+    await sleep(200);
+    await look('menu, the other rules');
+    await tap(page, touch, `() => document.querySelectorAll('${room} [role=dialog] [class*="_choices_"]')[0]?.querySelectorAll('button')[0]`);
+    await tap(page, touch, `() => document.querySelector('${room} [class*="_menuActions_"] [class*="buttonPrimary"]')`);
+    await sleep(600);
+    if (await countOf('[class*="_board_"]') === 0) { note(`${where} draughts board`, ['the game did not begin']); return; }
+    await page.evaluate(`window.scrollTo(0, 0)`);
+    await look('board', 'board');
+    // Six moves: a glowing man, then a burning square (square by square through a capture).
+    const square = (kind, index) => `() => { const all = [...document.querySelectorAll('${room} [class*="_${kind}_"]')]; return all.length ? all[${index} % all.length] : null; }`;
+    let moves = 0;
+    for (let waited = 0, presses = 0; moves < 6 && waited < 30000 && presses < 60; presses += 1) {
+        const state = await page.evaluate(`({ over: !!document.querySelector('${room} section[role=status]'), yours: !!document.querySelector('${room} [class*="_boardActive_"]'), targets: document.querySelectorAll('${room} [class*="_darkTarget_"]').length, movable: document.querySelectorAll('${room} [class*="_darkMovable_"]').length })`);
+        if (state.over) break;
+        if (!state.yours || (state.targets === 0 && state.movable === 0)) { await sleep(200); waited += 200; continue; }
+        waited = 0;
+        if (state.targets > 0) {
+            if (moves === 1) await look('a man chosen', 'chosen');
+            await tap(page, touch, square('darkTarget', moves));
+            await sleep(160);
+            if (await countOf('[class*="_darkTarget_"]') === 0) moves += 1;
+        } else {
+            await tap(page, touch, square('darkMovable', moves * 5 + 1));
+            await sleep(160);
+        }
+    }
+    await look('six moves', 'play');
+    await captions(page, touch, `${where} draughts game`, room, `${room} [class*="_captain_"] [class*="_portrait_"]`, `checkers-${where}-${language}-game`);
+    await page.evaluate(`window.scrollTo(0, document.body.scrollHeight)`);
+    await sleep(150);
+    await look('the log');
+    if (TO_THE_END) {
+        // [EN] The end is reached by resigning (two presses), so every language sees its end screen quickly.
+        // [RU] Конец достигается сдачей (два нажатия), чтобы каждый язык быстро увидел свой экран конца.
+        for (let waited = 0; waited < 20000 && !(await page.evaluate(`!!document.querySelector('${room} [class*="_boardActive_"]')`)); waited += 200) await sleep(200);
+        await tap(page, touch, `() => [...document.querySelectorAll('${room} [class*="_actions_"] button')].pop()`);
+        await sleep(200);
+        await look('resign asked');
+        await tap(page, touch, `() => document.querySelector('${room} [class*="_actions_"] [class*="buttonPrimary"]')`);
+        await sleep(900);
+        await look('result', 'result');
+        return;
+    }
+    await tap(page, touch, `() => [...document.querySelectorAll('${room} [class*="_settings_"] button')].pop()`);
+    await sleep(350);
+    await look('menu over the game', 'menu-game');
+}
+
 const page = await launch();
 const errors = [];
 page.on('Runtime.exceptionThrown', event => errors.push(event.exceptionDetails?.exception?.description ?? 'exception'));
@@ -471,6 +537,11 @@ try {
                 await page.evaluate(`(() => { try { sessionStorage.removeItem('seeded'); } catch {} return true; })()`).catch(() => {});
                 await open(page, `${BASE}/games/battleship/`, 2200);
                 await battleship(page, touch, where, language);
+            }
+            if (GAME === 'all' || GAME === 'checkers') {
+                await page.evaluate(`(() => { try { sessionStorage.removeItem('seeded'); } catch {} return true; })()`).catch(() => {});
+                await open(page, `${BASE}/games/checkers/`, 2200);
+                await checkers(page, touch, where, language);
             }
         }
         process.stdout.write(`${where} `);

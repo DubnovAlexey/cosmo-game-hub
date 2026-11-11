@@ -12,6 +12,19 @@ export interface Size { readonly width: number; readonly height: number }
 
 const clamp = (value: number, low: number, high: number): number => Math.max(low, Math.min(high, value));
 
+/**
+ * [EN] The top-left corner of a card of `size` that grows out of `anchor`: its picture (`inset` from the card's corner)
+ *      starts where the small portrait is, and the card stays whole on the screen.
+ * [RU] Левый верхний угол карточки размера `size`, которая вырастает из `anchor`: её картинка (`inset` от угла
+ *      карточки) начинается там, где маленький портрет, а карточка целиком остаётся на экране.
+ */
+export function placeOver(anchor: Box, size: Size, screen: Size, inset = 14, margin = 8): { left: number; top: number } {
+    return {
+        left: clamp(anchor.left - inset, margin, Math.max(margin, screen.width - margin - size.width)),
+        top: clamp(anchor.top - inset, margin, Math.max(margin, screen.height - margin - size.height)),
+    };
+}
+
 /** [EN] The top-left corner of a card of `size` beside `anchor` on a `screen`. [RU] Левый верхний угол карточки размера `size` рядом с `anchor` на экране `screen`. */
 export function placeBeside(anchor: Box, size: Size, screen: Size, gap = 10, margin = 8): { left: number; top: number } {
     const middle = (anchor.top + anchor.bottom) / 2 - size.height / 2;
