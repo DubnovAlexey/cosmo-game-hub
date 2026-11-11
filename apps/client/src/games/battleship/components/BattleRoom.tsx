@@ -138,7 +138,7 @@ export const BattleRoom: React.FC<BattleRoomProps> = ({ language, onLanguage, te
                 </header>
 
                 {stage !== 'idle' && (
-                    <main className={styles.deck}>
+                    <main className={`${styles.deck} ${stage === 'placing' ? styles.deckPlacing : ''}`}>
                         <div className={styles.captain}>
                             <CharacterFace className={styles.face} faceClassName={`${styles.portrait} ${game.thinking ? styles.portraitAiming : ''}`} side="start"
                                 label={t.hero.about(hero.name)} closeLabel={t.hero.close}
@@ -152,7 +152,11 @@ export const BattleRoom: React.FC<BattleRoomProps> = ({ language, onLanguage, te
 
                         {stage === 'placing' && (
                             <section className={styles.dock} aria-label={t.placing.title}>
-                                <p className={styles.hint}>{t.placing.hint}</p>
+                                {/* [EN] One line of a fixed height for the hint and for what is wrong with the last
+                                         press: the sea never jumps under the finger when the words change.
+                                    [RU] Одна строка постоянной высоты и для подсказки, и для ошибки последнего нажатия:
+                                         море не прыгает под пальцем, когда меняются слова. */}
+                                <p className={`${styles.dockNote} ${problem ? styles.problem : styles.hint}`} role={problem ? 'alert' : undefined}>{problem ? t.placing.problems[problem] : t.placing.hint}</p>
                                 <div className={styles.dockShips}>
                                     {grouped(toPlace).map(([length, count]) => (
                                         <button key={length} type="button" className={`${styles.button} ${styles.dockShip} ${inHand === length ? styles.choiceOn : ''}`}
@@ -169,11 +173,18 @@ export const BattleRoom: React.FC<BattleRoomProps> = ({ language, onLanguage, te
                                     <button type="button" className={styles.button} disabled={fleet.length === 0} onClick={() => { game.clear(); setProblem(null); }}>{t.placing.clear}</button>
                                     <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} disabled={toPlace.length > 0} onClick={game.startBattle}>{t.placing.start}</button>
                                 </div>
-                                {problem && <p className={styles.problem} role="alert">{t.placing.problems[problem]}</p>}
                             </section>
                         )}
 
-                        <div className={`${styles.seas} ${stage === 'placing' ? styles.seasOne : ''}`}>
+                        {winner !== null && (
+                            <section className={styles.result} role="status">
+                                <p className={styles.resultLine}>{winner === YOU ? t.result.won : t.result.lost(who)}</p>
+                                <p className={styles.hint}>{t.result.stats(stats.shots, stats.hits)}</p>
+                                <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} onClick={openMenu}>{t.result.again}</button>
+                            </section>
+                        )}
+
+                        <div className={`${styles.seas} ${stage === 'placing' ? styles.seasOne : styles.seasBattle}`}>
                             {stage === 'placing' && (
                                 <SeaBoard size={size} columns={t.columns} title={t.battle.yourSea} marks={null} ships={fleet} active
                                     pressable={() => true} onPress={pressOwnSea} onHover={setHover} preview={preview}
@@ -192,14 +203,6 @@ export const BattleRoom: React.FC<BattleRoomProps> = ({ language, onLanguage, te
                                 </>
                             )}
                         </div>
-
-                        {winner !== null && (
-                            <section className={styles.result} role="status">
-                                <p className={styles.resultLine}>{winner === YOU ? t.result.won : t.result.lost(who)}</p>
-                                <p className={styles.hint}>{t.result.stats(stats.shots, stats.hits)}</p>
-                                <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} onClick={openMenu}>{t.result.again}</button>
-                            </section>
-                        )}
 
                         {stage === 'battle' && yours && theirs && battle && (
                             <div className={styles.panels}>

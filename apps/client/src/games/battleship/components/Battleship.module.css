@@ -142,6 +142,9 @@
     background: linear-gradient(180deg, rgba(40, 21, 30, 0.92) 0%, rgba(16, 8, 12, 0.92) 100%) padding-box, var(--silver-edge) border-box;
 }
 .hint { margin: 0; color: #cfc6b0; font-size: 0.95rem; font-style: italic; line-height: 1.4; }
+/* [EN] The hint and the word about a wrong press share one place of a fixed height (two lines).
+   [RU] Подсказка и слово об ошибочном нажатии делят одно место постоянной высоты (две строки). */
+.dockNote { min-height: 2.8em; }
 .dockShips, .dockActions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .dockShip { display: inline-flex; align-items: center; gap: 8px; }
 /* [EN] A little iron hull, as long as the ship has decks. [RU] Маленький железный корпус длиной в число палуб корабля. */
@@ -159,7 +162,7 @@
 }
 .dockShip .dockHull { margin-inline-end: 0; }
 .ready { color: #a9c7b2; font: 400 1.3rem var(--quill), cursive; }
-.problem { margin: 0; color: #ff9a8a; font-size: 1rem; }
+.problem { margin: 0; color: #ff9a8a; font-size: 0.95rem; line-height: 1.4; }
 
 .seas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; justify-items: center; align-items: start; }
 .seasOne { grid-template-columns: minmax(0, 1fr); }
@@ -167,6 +170,19 @@
    [RU] На компьютере ваше море слева, море соперника справа — как на листе тетради. */
 @media (min-width: 701px) {
     .seaEnemy { order: 2; }
+    /* [EN] On a low screen (a laptop) a sea gives up some of its size so that both seas stay on the screen.
+       [RU] На низком экране (ноутбук) море уступает часть размера, чтобы оба моря оставались на экране. */
+    .sea { max-width: min(480px, max(320px, calc(100vh - 260px))); }
+}
+/* [EN] Setting the fleet out on a wide screen: the sea on the left, the dock with the ships and the buttons beside it,
+        so the sea is not pushed below the edge of a laptop's screen.
+   [RU] Расстановка на широком экране: море слева, док с кораблями и кнопками рядом — море не уезжает за нижний край
+        экрана ноутбука. */
+@media (min-width: 901px) {
+    .deckPlacing { grid-template-columns: minmax(0, auto) minmax(0, 1fr); align-items: start; }
+    .deckPlacing .captain { grid-column: 1 / -1; }
+    .deckPlacing .seas { grid-column: 1; grid-row: 2; width: min(480px, max(320px, calc(100vh - 260px))); }
+    .deckPlacing .dock { grid-column: 2; grid-row: 2; }
 }
 
 /* ===== 4. A sea / Море ===== */
@@ -337,6 +353,22 @@
     .grid { padding: 4px 6px 6px 2px; }
     .panels { grid-template-columns: minmax(0, 1fr); }
     .dockActions .button, .dockShips .button { padding: 6px 10px; font-size: 0.95rem; }
+    /* [EN] Setting the fleet out by finger: the hint, then the sea, then the ships and the buttons right under it, so
+            «Turn» is under the thumb while the sea is on the screen. The dock gives up its own frame: its lines
+            become lines of the deck and take their order there.
+       [RU] Расстановка пальцем: подсказка, затем море, затем корабли и кнопки сразу под ним — «Повернуть» под большим
+            пальцем, пока море на экране. Док отказывается от своей рамки: его строки становятся строками палубы и
+            встают там в свой порядок. */
+    .dock { display: contents; }
+    .dockNote { min-height: 2.8em; padding: 0 4px; }
+    .seasOne { order: 1; }
+    .dockShips { order: 2; }
+    .dockActions { order: 3; }
+    /* [EN] In a battle the opponent's sea is the one a finger shoots at, so it is full width; your own sea is a
+            smaller chart under it — both are seen at once, without scrolling between two shots.
+       [RU] В бою палец стреляет по морю соперника, поэтому оно во всю ширину; своё море — карта поменьше под ним:
+            оба видны сразу, без прокрутки между двумя выстрелами. */
+    .seasBattle .sea:not(.seaEnemy) { max-width: 60%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
