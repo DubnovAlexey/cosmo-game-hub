@@ -71,6 +71,17 @@ export const games: Game[] = [
         icon: "♠"
     },
     {
+        title: "Sea Battle",
+        description: "Battleship on a night sea: the classic notebook rules or the boxed ones, a hero of the vampire lair as the opponent, three levels of gunnery. Set out your fleet and find the other one first.",
+        badge: "New",
+        gameUrl: "/games/battleship",
+        // [EN] Two iron ships on a night chart and a burning hit, drawn by hand (public/games/battleship/cover.svg).
+        // [RU] Два железных корабля на ночной карте и горящее попадание, нарисовано вручную (public/games/battleship/cover.svg).
+        coverUrl: "/games/battleship/cover.svg",
+        status: "playable",
+        icon: "⚓"
+    },
+    {
         title: "Tic-Tac-Toe",
         description: "Quick and fun logic game. Perfect for a short break or testing your basic algorithms.",
         gameUrl: "/games/tic-tac-toe",

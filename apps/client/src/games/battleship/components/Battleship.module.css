@@ -1,0 +1,344 @@
+/* [EN] FILE: games/battleship/components/Battleship.module.css — the sea battle in the lair: the same crypt and the
+        same club as the card tables (blackened silver on velvet, the scribe's quill), and on the table two charts of
+        a night sea in cast silver frames. Ships are riveted iron, a hit burns like an ember, a kill is a dark blood
+        cross on the wreck, a miss is a pale ring on the water. Everything is laid out by grids and plain flow, so
+        nothing can lie on anything else; on a phone the seas stand one under the other, the opponent's first.
+   [RU] ФАЙЛ: морской бой в логове: та же крипта и тот же клуб, что у карточных столов (черненое серебро на бархате,
+        перо писаря), а на столе две карты ночного моря в литых серебряных рамах. Корабли — клёпаное железо,
+        попадание горит как уголь, убитый корабль — тёмный кровавый крест на остове, промах — бледное кольцо на
+        воде. Всё разложено сетками и обычным потоком, поэтому ничто не может лечь на другое; на телефоне моря
+        стоят одно под другим, море соперника — первым. */
+
+/* ===== 1. Room / Комната ===== */
+.room {
+    --quill: 'Marck Script', 'Cormorant Garamond', Georgia, 'David', cursive;
+    --print: 'Cormorant Garamond', Georgia, 'Times New Roman', 'David', serif;
+    --silver-edge: linear-gradient(135deg, #e3e6ea 0%, #7c838d 20%, #2b2e34 46%, #a3aab3 68%, #3c4048 86%, #8d939c 100%);
+    --candle-edge: linear-gradient(135deg, #fff1cc 0%, #e0b061 24%, #6c5228 50%, #ffcf7a 74%, #8a6a3a 100%);
+    --velvet: linear-gradient(180deg, #2a1720 0%, #150b10 100%);
+    --bone: #eadfc6;
+    --candle: #ffb54a;
+    --blood: #9b111e;
+    --portrait: clamp(52px, 5vw, 68px);
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    overflow-x: clip;
+    padding: 18px clamp(10px, 2.5vw, 28px) 40px;
+    color: var(--bone);
+    font-family: var(--print), serif;
+    font-weight: 600;
+    background:
+        radial-gradient(ellipse 60% 45% at 50% 40%, rgba(16, 60, 90, 0.22), transparent 72%),
+        radial-gradient(ellipse 22% 38% at 5% 58%, rgba(255, 160, 60, 0.07), transparent 70%),
+        radial-gradient(ellipse 22% 38% at 95% 58%, rgba(255, 160, 60, 0.07), transparent 70%),
+        radial-gradient(ellipse at 50% 35%, #131622 0%, #0a0a12 60%, #040305 100%);
+    background-attachment: fixed;
+}
+@supports not (overflow-x: clip) {
+    .room { overflow-x: hidden; }
+}
+
+.header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; max-width: 1180px; margin: 0 auto 14px; }
+.title {
+    margin: 0;
+    font: 400 clamp(2.2rem, 4.4vw, 3.2rem)/1.15 var(--quill), cursive;
+    background: linear-gradient(180deg, #f3f5f7 0%, #c3c8cf 34%, #6c737d 58%, #b9c0c9 82%, #8d939c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 0 #050506) drop-shadow(0 0 16px rgba(176, 16, 31, 0.3));
+}
+.titleInitial {
+    display: inline-block;
+    font-size: 1.32em;
+    line-height: 0.9;
+    background: linear-gradient(180deg, #ff6670 0%, #c8102e 42%, #5a0711 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.subtitle { margin: 4px 0 0; color: #b8b2a6; font-size: 0.98rem; font-style: italic; }
+.settings { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.language select, .settings select {
+    min-height: 40px;
+    padding: 4px 30px 4px 12px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: var(--velvet) padding-box, var(--silver-edge) border-box;
+    color: var(--bone);
+    font: 600 0.95rem var(--print), serif;
+}
+.savedAt { color: #b8b2a6; font-size: 0.85rem; font-style: italic; white-space: nowrap; }
+
+/* ===== 2. Buttons / Кнопки ===== */
+.button {
+    min-height: 44px;
+    padding: 6px 16px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: var(--velvet) padding-box, var(--silver-edge) border-box;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55), inset 0 0 0 3px rgba(216, 219, 224, 0.14), 0 4px 10px rgba(0, 0, 0, 0.6);
+    color: var(--bone);
+    font: 700 1rem var(--print), serif;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    text-shadow: 0 1px 0 #000;
+    transition: transform 0.12s ease, filter 0.12s ease;
+}
+.button:hover:not(:disabled) { filter: brightness(1.18); }
+.button:active:not(:disabled) { transform: translateY(1px); }
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+.button:focus-visible { outline: 2px solid #fde68a; outline-offset: 2px; }
+.buttonPrimary { background: linear-gradient(180deg, #7a0a17 0%, #3d0610 100%) padding-box, var(--candle-edge) border-box; }
+.choice { min-width: 52px; }
+.choiceOn { background: linear-gradient(180deg, #7a0a17 0%, #3d0610 100%) padding-box, var(--candle-edge) border-box; }
+
+/* ===== 3. The deck: the opponent, the dock, the seas / Палуба: соперник, док, моря ===== */
+.deck { display: grid; gap: 14px; max-width: 1180px; margin: 0 auto; }
+.captain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    padding: 8px 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.92) 0%, rgba(16, 8, 12, 0.92) 100%) padding-box, var(--silver-edge) border-box;
+}
+/* [EN] The small picture with its large one and the hero's card (shared/components/CharacterCard).
+   [RU] Маленькая картинка со своей крупной и карточкой героя (shared/components/CharacterCard). */
+.face { width: var(--portrait); }
+.portrait {
+    display: block;
+    width: var(--portrait);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 3px solid transparent;
+    border-radius: 50%;
+    background: #0c070a padding-box, var(--silver-edge) border-box;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    cursor: pointer;
+}
+.portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; filter: sepia(0.1) saturate(0.92) contrast(1.06); }
+.portraitAiming { background: #0c070a padding-box, var(--candle-edge) border-box; animation: aiming 1.3s ease-in-out infinite; }
+@keyframes aiming {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(255, 181, 74, 0.35), 0 0 14px rgba(255, 140, 50, 0.35); }
+    50% { box-shadow: 0 0 0 2px rgba(255, 181, 74, 0.7), 0 0 28px rgba(255, 110, 40, 0.7); }
+}
+.captainText { display: grid; gap: 0; min-width: 0; }
+.captainLabel { color: #b8b2a6; font-size: 0.8rem; font-style: italic; }
+.captainName { color: var(--bone); font: 400 1.5rem/1.15 var(--quill), cursive; unicode-bidi: plaintext; }
+.status { flex: 1 1 220px; margin: 0; color: #e3dccb; font: 400 1.45rem/1.25 var(--quill), cursive; text-align: end; unicode-bidi: plaintext; }
+.statusYours { color: #ffcf7a; text-shadow: 0 0 14px rgba(255, 150, 60, 0.45); }
+
+.dock {
+    display: grid;
+    gap: 10px;
+    padding: 10px 14px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.92) 0%, rgba(16, 8, 12, 0.92) 100%) padding-box, var(--silver-edge) border-box;
+}
+.hint { margin: 0; color: #cfc6b0; font-size: 0.95rem; font-style: italic; line-height: 1.4; }
+.dockShips, .dockActions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.dockShip { display: inline-flex; align-items: center; gap: 8px; }
+/* [EN] A little iron hull, as long as the ship has decks. [RU] Маленький железный корпус длиной в число палуб корабля. */
+.dockHull {
+    --decks: 1;
+    display: inline-block;
+    flex: none;
+    width: calc(var(--decks) * 13px + 4px);
+    height: 11px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #c3c8cf 0%, #6c737d 45%, #2b2e34 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 3px rgba(0, 0, 0, 0.7);
+    vertical-align: middle;
+    margin-inline-end: 6px;
+}
+.dockShip .dockHull { margin-inline-end: 0; }
+.ready { color: #a9c7b2; font: 400 1.3rem var(--quill), cursive; }
+.problem { margin: 0; color: #ff9a8a; font-size: 1rem; }
+
+.seas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; justify-items: center; align-items: start; }
+.seasOne { grid-template-columns: minmax(0, 1fr); }
+/* [EN] On a computer your sea is on the left and the opponent's on the right, as on a sheet of a notebook.
+   [RU] На компьютере ваше море слева, море соперника справа — как на листе тетради. */
+@media (min-width: 701px) {
+    .seaEnemy { order: 2; }
+}
+
+/* ===== 4. A sea / Море ===== */
+.sea { display: grid; gap: 6px; width: 100%; max-width: 480px; min-width: 0; }
+.seaTitle { margin: 0; color: #e3dccb; font: 400 1.4rem/1.2 var(--quill), cursive; text-align: center; }
+.grid {
+    --sea-size: 10;
+    --axis: clamp(18px, 4.6vw, 28px);
+    display: grid;
+    /* [EN] The chart keeps its geometry in Hebrew too: column А is on the left. [RU] Карта сохраняет геометрию и на иврите: колонка А слева. */
+    direction: ltr;
+    grid-template-columns: var(--axis) repeat(var(--sea-size), minmax(0, 1fr));
+    grid-template-rows: var(--axis) repeat(var(--sea-size), auto);
+    padding: 6px 10px 10px 4px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    background:
+        repeating-linear-gradient(172deg, rgba(120, 170, 190, 0.045) 0 2px, transparent 2px 13px) padding-box,
+        radial-gradient(ellipse at 50% 40%, #123445 0%, #0b2431 55%, #06141c 100%) padding-box,
+        var(--silver-edge) border-box;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6), 0 14px 34px rgba(0, 0, 0, 0.7);
+    transition: box-shadow 0.25s ease;
+}
+/* [EN] The opponent's sea lies in a redder fog. [RU] Море соперника лежит в красноватом тумане. */
+.seaEnemy .grid {
+    background:
+        repeating-linear-gradient(172deg, rgba(190, 120, 130, 0.045) 0 2px, transparent 2px 13px) padding-box,
+        radial-gradient(ellipse at 50% 40%, #2a1c2e 0%, #1a1220 55%, #0c0810 100%) padding-box,
+        var(--silver-edge) border-box;
+}
+/* [EN] The sea where the next shot falls is lit by the candle. [RU] Море, куда упадёт следующий выстрел, освещено свечой. */
+.seaActive .grid { box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 181, 74, 0.55), 0 0 30px rgba(255, 140, 50, 0.3), 0 14px 34px rgba(0, 0, 0, 0.7); }
+.corner { grid-column: 1; grid-row: 1; }
+.axis { display: grid; place-items: center; color: #b9c0c9; font: 400 clamp(0.8rem, 2.6vw, 1.05rem)/1 var(--quill), cursive; }
+.cell {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: inset 0 0 0 1px rgba(150, 185, 200, 0.14);
+    color: inherit;
+    font: inherit;
+}
+.cell:disabled { cursor: default; }
+.cellOpen { cursor: crosshair; }
+.cellOpen:hover, .cellOpen:focus-visible { background: rgba(255, 207, 122, 0.16); box-shadow: inset 0 0 0 2px rgba(255, 207, 122, 0.75); outline: none; }
+.cell::after { content: ''; display: block; }
+/* [EN] A miss: a pale ring on the water. [RU] Промах: бледное кольцо на воде. */
+.cellMiss::after { width: 32%; aspect-ratio: 1; border: 2px solid rgba(205, 220, 230, 0.7); border-radius: 50%; background: rgba(205, 220, 230, 0.12); }
+/* [EN] Water known to be empty round a sunk ship: a small dot. [RU] Заведомо пустая вода вокруг потопленного: маленькая точка. */
+.cellEmpty::after { width: 14%; aspect-ratio: 1; border-radius: 50%; background: rgba(205, 220, 230, 0.4); }
+/* [EN] A hit burns like an ember; a sunk deck keeps a dark blood cross. [RU] Попадание горит как уголь; у потопленной палубы остаётся тёмный кровавый крест. */
+.cellHit::after, .cellSunk::after {
+    width: 74%;
+    aspect-ratio: 1;
+    background:
+        linear-gradient(45deg, transparent 43%, var(--cross, #ff5a3c) 43% 57%, transparent 57%),
+        linear-gradient(-45deg, transparent 43%, var(--cross, #ff5a3c) 43% 57%, transparent 57%);
+}
+.cellHit { --cross: #ff5a3c; background: radial-gradient(circle, rgba(255, 110, 50, 0.4) 0%, transparent 68%); }
+.cellHit::after { filter: drop-shadow(0 0 5px rgba(255, 90, 40, 0.95)); animation: ember 1.6s ease-in-out infinite; }
+.cellSunk { --cross: #a3121f; }
+.cellSunk::after { filter: drop-shadow(0 0 2px #000); }
+@keyframes ember { 0%, 100% { opacity: 0.82; } 50% { opacity: 1; } }
+/* [EN] The last shot at this sea. [RU] Последний выстрел по этому морю. */
+.cellLast { box-shadow: inset 0 0 0 2px #ffcf7a; animation: lastShot 1.2s ease-out 2; }
+@keyframes lastShot { 0% { background-color: rgba(255, 207, 122, 0.45); } 100% { background-color: transparent; } }
+/* [EN] Where the ship in hand would stand: it may — it may not. [RU] Где встанет корабль из руки: можно — нельзя. */
+.cellFits { background: rgba(70, 200, 120, 0.38); box-shadow: inset 0 0 0 2px rgba(120, 235, 160, 0.8); }
+.cellClash { background: rgba(225, 50, 60, 0.4); box-shadow: inset 0 0 0 2px rgba(255, 110, 110, 0.85); }
+
+/* [EN] A ship: riveted iron with a turret on every deck. It lies under the cells, so the marks of the shots are drawn
+        over it. [RU] Корабль: клёпаное железо с башней на каждой палубе. Он лежит под клетками, поэтому отметки
+        выстрелов рисуются поверх него. */
+.hull {
+    --decks: 1;
+    position: relative;
+    z-index: 1;
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at 50% 50%, #dfe3e8 0 13%, #4b5058 14% 24%, transparent 25%) 0 0 / calc(100% / var(--decks)) 100%,
+        linear-gradient(180deg, #aeb4bc 0%, #5d636c 42%, #25282d 100%);
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 -4px 7px rgba(0, 0, 0, 0.65), 0 3px 8px rgba(0, 0, 0, 0.75);
+    transform: scale(0.95, 0.64);
+    pointer-events: none;
+}
+.hullDown {
+    background:
+        radial-gradient(circle at 50% 50%, #dfe3e8 0 13%, #4b5058 14% 24%, transparent 25%) 0 0 / 100% calc(100% / var(--decks)),
+        linear-gradient(90deg, #aeb4bc 0%, #5d636c 42%, #25282d 100%);
+    transform: scale(0.64, 0.95);
+}
+.hullBoat { transform: scale(0.68, 0.6); }
+.hullWreck { filter: brightness(0.5) sepia(0.6) hue-rotate(-28deg) saturate(1.6); }
+
+/* ===== 5. Panels, the log, the result / Панели, ход боя, итог ===== */
+.panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.panel {
+    padding: 10px 14px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.92) 0%, rgba(16, 8, 12, 0.92) 100%) padding-box, var(--silver-edge) border-box;
+}
+.logPanel { grid-column: 1 / -1; }
+.panelTitle { margin: 0 0 6px; color: var(--bone); font: 400 1.3rem var(--quill), cursive; }
+.fleetList { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; padding: 0; list-style: none; color: #e3dccb; font-size: 1rem; }
+.log { max-height: 220px; margin: 0; padding: 0; overflow-y: auto; list-style: none; color: #e3dccb; font: 400 1.05rem/1.4 var(--quill), cursive; }
+.log li + li { margin-top: 2px; }
+.logHit { color: #ffb38a; }
+.logSunk { color: #ff7a6a; }
+.result {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 12px 16px 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.97) 0%, rgba(16, 8, 12, 0.97) 100%) padding-box, var(--candle-edge) border-box;
+    text-align: center;
+}
+.resultLine { margin: 0; color: #f3e7c6; font: 400 1.6rem/1.3 var(--quill), cursive; unicode-bidi: plaintext; }
+
+/* ===== 6. Menu / Меню ===== */
+.backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; overflow-y: auto; background: rgba(4, 2, 4, 0.72); }
+.menu {
+    width: min(580px, 100%);
+    padding: 18px 20px 20px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(40, 21, 30, 0.99) 0%, rgba(16, 8, 12, 0.99) 100%) padding-box, var(--silver-edge) border-box;
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.5), 0 24px 60px rgba(0, 0, 0, 0.8);
+}
+.menuTitle { margin: 0 0 8px; color: var(--bone); font: 400 2rem/1.15 var(--quill), cursive; }
+.menuText { margin: 0 0 10px; color: #e3dccb; font-size: 1.02rem; line-height: 1.45; }
+.field { display: grid; gap: 6px; margin: 12px 0; }
+.fieldLabel { color: var(--bone); font: 400 1.2rem var(--quill), cursive; }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.switch { display: flex; align-items: center; gap: 10px; min-height: 40px; color: #e3dccb; font-size: 1.02rem; cursor: pointer; }
+.switch input { flex: none; width: 22px; height: 22px; accent-color: #c8102e; }
+.opponentRow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.opponentName { flex: 1 1 120px; min-width: 0; color: var(--bone); font: 400 1.5rem/1.15 var(--quill), cursive; unicode-bidi: plaintext; }
+.menuActions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.menuActions .button { flex: 1 1 200px; }
+
+/* ===== 7. Phone / Телефон ===== */
+@media (max-width: 700px) {
+    .room { --portrait: 48px; padding: 10px 8px 24px; }
+    .header { gap: 6px 12px; margin-bottom: 8px; }
+    .title { font-size: 2rem; }
+    /* [EN] The motto is decor; on a phone its lines are worth more as sea. [RU] Девиз — украшение; на телефоне его строки нужнее морю. */
+    .subtitle { display: none; }
+    .settings { gap: 6px; }
+    .settings .button { min-height: 40px; padding: 4px 10px; font-size: 0.92rem; }
+    .language select, .settings select { padding: 4px 26px 4px 8px; font-size: 0.9rem; }
+    .savedAt { order: 9; font-size: 0.78rem; }
+    .deck { gap: 10px; }
+    .captain { padding: 6px 10px; }
+    .captainName { font-size: 1.25rem; }
+    .status { flex-basis: 100%; font-size: 1.25rem; text-align: start; }
+    .seas { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .sea { max-width: 100%; }
+    .grid { padding: 4px 6px 6px 2px; }
+    .panels { grid-template-columns: minmax(0, 1fr); }
+    .dockActions .button, .dockShips .button { padding: 6px 10px; font-size: 0.95rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cellHit::after, .cellLast, .portraitAiming { animation: none; }
+}

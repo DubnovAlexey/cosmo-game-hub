@@ -22,6 +22,7 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
     'title.chess': t('Chess', 'Шахматы', 'שחמט', 'Ajedrez', 'Échecs'),
     'title.preferans': t('Preferans', 'Преферанс', 'פרפרנס', 'Preferans', 'Préférence'),
     'title.poker': t('Poker', 'Покер', 'פוקר', 'Póquer', 'Poker'),
+    'title.battleship': t('Sea Battle', 'Морской бой', 'צוללות', 'Batalla naval', 'Bataille navale'),
 
     // Header
     'nav.games': t('Games', 'Игры', 'משחקים', 'Juegos', 'Jeux'),
@@ -99,6 +100,14 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
         'טקסס הולדם ללא הגבלה, טורניר הדחה לשניים עד שישה: בליינדים עולים, קופות צד, וקבועי מאורת הערפדים כיריבים, לכל אחד סגנון פוקר משלו. רק אסימוני משחק.',
         'Texas hold’em sin límite, torneo de eliminación de dos a seis: ciegas que suben, botes secundarios y los habituales de la guarida de vampiros como rivales, cada uno con su estilo de póker. Solo fichas de juego.',
         'Texas hold’em sans limite, tournoi à élimination de deux à six : blindes qui montent, pots annexes et les habitués du repaire de vampires pour adversaires, chacun avec sa manière de jouer. Jetons de jeu seulement.'),
+    'game.battleship.title': t('Sea Battle', 'Морской бой', 'צוללות', 'Batalla naval', 'Bataille navale'),
+    'game.battleship.description': t(
+        'Battleship on a night sea: the classic notebook rules or the boxed ones, a hero of the vampire lair as the opponent, three levels of gunnery. Set out your fleet and find the other one first.',
+        'Морской бой на ночном море: тетрадная классика или коробочные правила, соперник — герой вампирского логова, три уровня меткости. Расставьте флот и найдите чужой первым.',
+        'צוללות בים לילי: חוקי המחברת הקלאסיים או חוקי הקופסה, גיבור ממאורת הערפדים כיריב, שלוש רמות של קליעה. הציבו את הצי ומצאו את של היריב ראשונים.',
+        'Batalla naval en un mar nocturno: las reglas clásicas de cuaderno o las de caja, un héroe de la guarida de vampiros como rival, tres niveles de puntería. Coloca tu flota y encuentra antes la ajena.',
+        'Bataille navale sur une mer nocturne\u00a0: les règles classiques du cahier ou celles de la boîte, un héros du repaire de vampires pour adversaire, trois niveaux de tir. Disposez votre flotte et trouvez l’autre en premier.',
+    ),
     'game.tic-tac-toe.title': t('Tic-Tac-Toe', 'Крестики-нолики', 'איקס עיגול', 'Tres en raya', 'Morpion'),
     'game.tic-tac-toe.description': t(
         'A quick and fun logic game, perfect for a short break.',

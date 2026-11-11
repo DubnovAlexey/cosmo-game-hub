@@ -1,0 +1,12 @@
+---
+// [EN] Route /games/battleship. The page only places the game: everything else lives in src/games/battleship.
+// [RU] Маршрут /games/battleship. Страница только ставит игру на место: всё остальное — в src/games/battleship.
+import Layout from '@shell/layouts/Layout.astro';
+import { BattleshipGame } from '@games/battleship';
+---
+
+<Layout title="Sea Battle | Cosmo Game Hub" titleKey="title.battleship" scrollToTop={false}>
+    <!-- [EN] client:only — the game keeps its state and its saves in the browser. -->
+    <!-- [RU] client:only — игра хранит состояние и сохранения в браузере. -->
+    <BattleshipGame client:only="react" />
+</Layout>

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 423" role="img" aria-label="Sea Battle">
+  <!-- [EN] The cover of the sea battle in the catalog: a night chart of the lair, two iron ships, a burning hit, a
+            miss on the water, the moon in fog. Drawn by hand for the game; no outside pictures.
+       [RU] Обложка морского боя в каталоге: ночная карта логова, два железных корабля, горящее попадание, промах на
+            воде, луна в тумане. Нарисовано вручную для игры; чужих картинок нет. -->
+  <defs>
+    <radialGradient id="sea" cx="50%" cy="38%" r="80%">
+      <stop offset="0" stop-color="#17425a"/>
+      <stop offset="0.55" stop-color="#0b2431"/>
+      <stop offset="1" stop-color="#04090d"/>
+    </radialGradient>
+    <linearGradient id="iron" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c3c8cf"/>
+      <stop offset="0.45" stop-color="#5d636c"/>
+      <stop offset="1" stop-color="#1e2125"/>
+    </linearGradient>
+    <radialGradient id="turret" cx="40%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#eef1f4"/>
+      <stop offset="0.6" stop-color="#7c838d"/>
+      <stop offset="1" stop-color="#2b2e34"/>
+    </radialGradient>
+    <radialGradient id="ember" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffd27a" stop-opacity="0.95"/>
+      <stop offset="0.35" stop-color="#ff5a3c" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#7a0a17" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="moon" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#f3f5f7" stop-opacity="0.9"/>
+      <stop offset="0.5" stop-color="#c3c8cf" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#c3c8cf" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="62" height="62" patternUnits="userSpaceOnUse" patternTransform="translate(29 20) skewX(-8)">
+      <path d="M62 0H0V62" fill="none" stroke="#a9c7d2" stroke-opacity="0.2" stroke-width="1.2"/>
+    </pattern>
+  </defs>
+  <rect width="740" height="423" fill="url(#sea)"/>
+  <rect width="740" height="423" fill="url(#grid)"/>
+  <circle cx="610" cy="70" r="120" fill="url(#moon)"/>
+  <circle cx="610" cy="70" r="26" fill="#eef1f4" opacity="0.85"/>
+  <!-- waves -->
+  <g fill="none" stroke="#a9c7d2" stroke-opacity="0.18" stroke-width="2" stroke-linecap="round">
+    <path d="M40 120q22 -12 44 0t44 0t44 0"/>
+    <path d="M420 300q22 -12 44 0t44 0t44 0"/>
+    <path d="M90 360q22 -12 44 0t44 0"/>
+    <path d="M520 190q22 -12 44 0t44 0"/>
+  </g>
+  <!-- a four-decker -->
+  <g transform="translate(92 170) rotate(-6)">
+    <rect x="0" y="0" width="300" height="50" rx="25" fill="url(#iron)" stroke="#0c0d10" stroke-width="2"/>
+    <rect x="6" y="6" width="288" height="9" rx="4.5" fill="#fff" opacity="0.22"/>
+    <g fill="url(#turret)" stroke="#15171b" stroke-width="1.5">
+      <circle cx="44" cy="25" r="13"/><circle cx="114" cy="25" r="13"/><circle cx="186" cy="25" r="13"/><circle cx="256" cy="25" r="13"/>
+    </g>
+    <!-- the hit -->
+    <circle cx="186" cy="25" r="54" fill="url(#ember)"/>
+    <g stroke="#ff5a3c" stroke-width="9" stroke-linecap="round">
+      <path d="M166 5L206 45M206 5L166 45"/>
+    </g>
+    <g stroke="#ffd27a" stroke-width="3" stroke-linecap="round" opacity="0.9">
+      <path d="M166 5L206 45M206 5L166 45"/>
+    </g>
+  </g>
+  <!-- a two-decker, sunk -->
+  <g transform="translate(452 232) rotate(9)" opacity="0.9">
+    <rect x="0" y="0" width="150" height="46" rx="23" fill="#3a2a2c" stroke="#0c0d10" stroke-width="2"/>
+    <g stroke="#a3121f" stroke-width="8" stroke-linecap="round">
+      <path d="M22 8L52 38M52 8L22 38M96 8L126 38M126 8L96 38"/>
+    </g>
+  </g>
+  <!-- misses -->
+  <g fill="#cddce6" fill-opacity="0.12" stroke="#cddce6" stroke-opacity="0.7" stroke-width="3">
+    <circle cx="470" cy="120" r="11"/>
+    <circle cx="250" cy="320" r="11"/>
+    <circle cx="640" cy="350" r="11"/>
+  </g>
+  <rect width="740" height="423" fill="none" stroke="#9097a1" stroke-opacity="0.5" stroke-width="6"/>
+</svg>
