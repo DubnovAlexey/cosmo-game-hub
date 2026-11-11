@@ -108,10 +108,20 @@ try {
     // The fleet: take a ship off the sea, turn it, put it back somewhere, then set everything out at random.
     await audit('placing');
     const before = await count('#battleship-room [class*="_hull_"]');
-    await tap(`() => { const hull = document.querySelector('#battleship-room [class*="_hull_"]'); if (!hull) return null; const r = hull.getBoundingClientRect(); return document.elementsFromPoint(r.x + r.width / 2, r.y + r.height / 2).find(el => /_cell_/.test(String(el.className))) ?? null; }`);
+    // The first cell of the first ship, found by the ship's place in the grid (the ship may be below the screen's edge).
+    const bow = await page.evaluate(`(() => { const hull = document.querySelector('#battleship-room [class*="_hull_"]'); if (!hull) return null; const column = parseInt(hull.style.gridColumnStart, 10) - 2, row = parseInt(hull.style.gridRowStart, 10) - 2; const cells = hull.parentElement.querySelectorAll('button'); return cells[row * Math.sqrt(cells.length) + column]?.getAttribute('aria-label')?.split(',')[0] ?? null; })()`);
+    const bowCell = `() => [...document.querySelectorAll('#battleship-room [class*="_grid_"] button')].find(b => (b.getAttribute('aria-label') || '').split(',')[0] === ${JSON.stringify(bow)})`;
+    if (!bow || !await tap(bowCell)) problems.set('lift', 'no ship on the sea to press');
     await sleep(250);
     const lifted = await count('#battleship-room [class*="_hull_"]');
     if (lifted !== before - 1) problems.set('lift', `a press on a ship did not take it off the sea: ${before} → ${lifted}`);
+    // The ship in hand goes back to the cell it was taken from, then into the hand again.
+    await tap(bowCell);
+    await sleep(250);
+    const back = await count('#battleship-room [class*="_hull_"]');
+    if (back !== before) problems.set('place', `a press on the sea did not put the ship back: ${lifted} → ${back}`);
+    await tap(bowCell);
+    await sleep(250);
     await tap(button('/^Повернуть/'));
     await audit('placing, a ship in hand');
     await shot('placing');
