@@ -6,7 +6,7 @@
 
 ## English
 
-A web platform for classic logic games. Chess against the Stockfish engine preferans (Sochi, Leningrad, Rostov and Classic rules, two to four at the table) and no-limit Texas hold'em poker (a sit-and-go of two to six) against bots with characters are playable. More games are planned and appear in the collection as "Coming soon".
+A web platform for classic logic games. Chess against the Stockfish engine, preferans (Sochi, Leningrad, Rostov and Classic rules, two to four at the table) and no-limit Texas hold'em poker (a sit-and-go of two to six) against bots with characters, and a sea battle (the notebook rules or the boxed ones) against a hero of the vampire lair are playable. More games are planned and appear in the collection as "Coming soon".
 
 **Live demo:** https://dubnovalexey.github.io/cosmo-game-hub/
 
@@ -15,6 +15,7 @@ A web platform for classic logic games. Chess against the Stockfish engine prefe
 - **Chess.** Open **Games → Chess**, start a game and make a legal move to see the engine reply, the clocks and the move history. Try the PGN download after playing.
 - **Preferans.** Open **Games → Preferans**, choose the table options and play a pool against bots with characters. Reload the page in the middle of a deal: the game continues where you stopped.
 - **Poker.** Open **Games → Poker**, choose how many regulars sit down, the chips and the blind speed, and play a sit-and-go. Play chips only.
+- **Sea Battle.** Open **Games → Sea Battle**, choose the rules (the notebook «Classic» or the «Boxed game»), how well the opponent shoots and who fires first; set out the fleet or keep the random one, and shoot.
 - **Coming soon.** The other game cards are previews.
 
 ### Features
@@ -27,6 +28,7 @@ A web platform for classic logic games. Chess against the Stockfish engine prefe
 - The engine runs in a Web Worker, so the board stays responsive while the computer thinks.
 - Preferans: Sochi, Leningrad, Rostov and Classic rules, two to four at the table, every table option of the menu; 91 characters as opponents, and they never look at hidden cards.
 - Poker: no-limit Texas hold'em, a sit-and-go of two to six with rising blinds and side pots; ten regulars of the lair with poker manners of their own; our own hand evaluator, checked on all 2 598 960 five-card hands.
+- Sea Battle: battleship with two rule sets and two switches between them, a hero of the lair as the opponent, three fair levels of gunnery (the best one counts where a ship is likeliest to lie); the fleet is set out by finger and by mouse alike.
 - Heroes of the lair: one company of 91 characters for all the games — your opponent at the chess board, at the preferans and the poker tables. Under the mouse a portrait grows two and a half times; a press opens the hero's card with the picture and the biography.
   - Table options: pool length, all-pass prices, half-whist, «здесь».
   - A score sheet with pool, mountain and whists.
@@ -110,7 +112,7 @@ To build the static site: `npm run build --workspace client` (the result goes to
   - two and four players;
   - better-calibrated bot bidding;
   - online play.
-- **Next games:** checkers, then poker and the rest of the collection, each in its own folder.
+- **Next games:** checkers, then the rest of the collection, each in its own folder.
 - **Chess:**
   - save and resume;
   - small-screen controls, keyboard focus and an engine-thinking indicator;
@@ -132,7 +134,7 @@ To build the static site: `npm run build --workspace client` (the result goes to
 
 ## Русский
 
-Веб-платформа классических логических игр. Уже играются шахматы против движка Stockfish, безлимитный техасский холдем (турнир от двух до шести) и преферанс (Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом) против ботов. Остальные игры в разработке и показаны в коллекции с пометкой «Coming soon».
+Веб-платформа классических логических игр. Уже играются шахматы против движка Stockfish, безлимитный техасский холдем (турнир от двух до шести) и преферанс (Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом) против ботов, а также морской бой (тетрадные или коробочные правила) против героя вампирского логова. Остальные игры в разработке и показаны в коллекции с пометкой «Coming soon».
 
 **Демо:** https://dubnovalexey.github.io/cosmo-game-hub/
 
@@ -140,6 +142,7 @@ To build the static site: `npm run build --workspace client` (the result goes to
 
 - **Шахматы.** Откройте **Games → Chess**, начните партию и сделайте допустимый ход: появятся ответ движка, часы и история ходов. После игры попробуйте выгрузку PGN.
 - **Покер.** Откройте **Games → Poker**, выберите, сколько завсегдатаев сядет за стол, фишки и скорость блайндов, и сыграйте турнир. Только игровые фишки.
+- **Морской бой.** Откройте **Games → Sea Battle**, выберите правила (тетрадная «Классика» или «Международные»), как метко стреляет соперник и чей первый выстрел; расставьте флот или оставьте случайный и стреляйте.
 - **Преферанс.** Откройте **Games → Preferans**, выберите настройки стола и сыграйте пулю против ботов с характерами. Перезагрузите страницу посреди раздачи — игра продолжится с того же места.
 - **Coming soon.** Остальные карточки показывают будущие игры.
 
@@ -152,6 +155,7 @@ To build the static site: `npm run build --workspace client` (the result goes to
 - Сыгранную партию можно скачать файлом PGN — это стандартный формат записи шахматных партий.
 - Движок работает в Web Worker, поэтому доска не замирает, пока компьютер думает.
 - Покер: безлимитный техасский холдем, турнир на выбывание от двух до шести с растущими блайндами и побочными банками; десять завсегдатаев логова со своими покерными манерами; своя оценка руки, проверенная на всех 2 598 960 пятикарточных руках.
+- Морской бой: два набора правил и два переключателя между ними, соперник — герой логова, три честных уровня меткости (лучший считает, где кораблю лежать вероятнее всего); флот расставляется пальцем и мышью одинаково.
 - Герои логова: одна компания из 91 персонажа на все игры — ваш соперник у шахматной доски, за столом преферанса и покера. Под мышью портрет вырастает в два с половиной раза, нажатие раскрывает карточку героя с картинкой и биографией.
 - Преферанс: Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом, все опции меню; соперников — 91 герой, и никто из них никогда не подглядывает в чужие карты.
   - Настройки стола: длина пули, цены распасов, полвиста, «здесь».
@@ -236,7 +240,7 @@ npm run dev --workspace client
   - игра на двоих и на четверых;
   - более точная торговля ботов;
   - игра по сети.
-- **Следующие игры:** шашки, затем покер и остальная коллекция — каждая в своей папке.
+- **Следующие игры:** шашки, затем остальная коллекция — каждая в своей папке.
 - **Шахматы:**
   - сохранение и продолжение партии;
   - управление на маленьком экране, клавиатурный фокус и индикатор размышления движка;
@@ -260,7 +264,7 @@ npm run dev --workspace client
 
 ## עברית
 
-פלטפורמת אינטרנט למשחקי היגיון קלאסיים. כבר אפשר לשחק שחמט נגד המנוע Stockfish, פוקר טקסס הולדם ללא הגבלה (טורניר לשניים עד שישה) ופרפרנס (חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן) נגד בוטים עם אופי. משחקים נוספים נמצאים בפיתוח ומוצגים באוסף עם הסימון "Coming soon".
+פלטפורמת אינטרנט למשחקי היגיון קלאסיים. כבר אפשר לשחק שחמט נגד המנוע Stockfish, פוקר טקסס הולדם ללא הגבלה (טורניר לשניים עד שישה) ופרפרנס (חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן) נגד בוטים עם אופי, וגם צוללות (חוקי המחברת או חוקי הקופסה) נגד גיבור ממאורת הערפדים. משחקים נוספים נמצאים בפיתוח ומוצגים באוסף עם הסימון "Coming soon".
 
 **הדגמה חיה:** https://dubnovalexey.github.io/cosmo-game-hub/
 
@@ -268,6 +272,7 @@ npm run dev --workspace client
 
 - **שחמט.** פתחו את **Games → Chess**, התחילו משחק ובצעו מסע חוקי, ותראו את תשובת המנוע, את השעונים ואת היסטוריית המסעים. אחרי המשחק נסו את הורדת ה-PGN.
 - **פוקר.** פתחו את **Games → Poker**, בחרו כמה קבועים יתיישבו, את האסימונים ואת מהירות הבליינדים, ושחקו טורניר. רק אסימוני משחק.
+- **צוללות.** פתחו את **Games → Sea Battle**, בחרו את החוקים ("קלאסי" של המחברת או "משחק הקופסה"), עד כמה היריב קולע ומי יורה ראשון; הציבו את הצי או השאירו את האקראי, וירו.
 - **פרפרנס.** פתחו את **Games → Preferans**, בחרו את הגדרות השולחן ושחקו פוליה נגד בוטים עם אופי. רעננו את הדף באמצע חלוקה: המשחק ממשיך מהמקום שבו עצרתם.
 - **Coming soon.** שאר כרטיסי המשחקים הם תצוגה מקדימה.
 
@@ -280,6 +285,7 @@ npm run dev --workspace client
 - אפשר להוריד את המשחק כקובץ PGN, הפורמט המקובל לרישום משחקי שחמט.
 - המנוע רץ ב-Web Worker, ולכן הלוח לא נתקע בזמן שהמחשב חושב.
 - פוקר: טקסס הולדם ללא הגבלה, טורניר הדחה לשניים עד שישה עם בליינדים עולים וקופות צד; עשרה קבועים של המאורה, לכל אחד סגנון פוקר משלו; הערכת יד משלנו, שנבדקה על כל 2 598 960 הידיים של חמישה קלפים.
+- צוללות: שתי מערכות חוקים ושני מתגים ביניהן, גיבור מהמאורה כיריב, שלוש רמות קליעה הוגנות (הטובה ביותר מחשבת היכן הכי סביר שספינה שוכבת); הצי מוצב באצבע ובעכבר באותה מידה.
 - גיבורי המאורה: חבורה אחת של 91 דמויות לכל המשחקים — היריב שלכם ליד לוח השחמט, בשולחן הפרפרנס ובשולחן הפוקר. מתחת לעכבר הדיוקן גדל פי שניים וחצי, ולחיצה פותחת את כרטיס הגיבור עם התמונה והביוגרפיה.
 - פרפרנס: חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן, כל אפשרויות התפריט; 91 דמויות כיריבים, שלעולם אינן מציצות בקלפים נסתרים.
   - הגדרות שולחן: אורך הפולה, מחירי הראספסים, חצי ויסט, «здесь».
@@ -372,7 +378,7 @@ npm run dev --workspace client
   - משחק בשניים ובארבעה;
   - הכרזות מכוילות יותר לבוטים;
   - משחק ברשת.
-- **המשחקים הבאים:** דמקה, אחר כך פוקר ושאר האוסף, כל אחד בתיקייה משלו.
+- **המשחקים הבאים:** דמקה, אחר כך שאר האוסף, כל אחד בתיקייה משלו.
 - **שחמט:**
   - שמירה והמשך;
   - פקדים למסך קטן, מיקוד מקלדת וחיווי חשיבת המנוע;
@@ -396,7 +402,7 @@ npm run dev --workspace client
 
 ## Español
 
-Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez contra el motor Stockfish, al póker Texas hold'em sin límite (un torneo de dos a seis) y al preferans (reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa) contra bots con carácter. Hay más juegos previstos; en la colección aparecen como "Coming soon".
+Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez contra el motor Stockfish, al póker Texas hold'em sin límite (un torneo de dos a seis) y al preferans (reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa) contra bots con carácter, y a la batalla naval (reglas de cuaderno o de caja) contra un héroe de la guarida de vampiros. Hay más juegos previstos; en la colección aparecen como "Coming soon".
 
 **Demo en vivo:** https://dubnovalexey.github.io/cosmo-game-hub/
 
@@ -404,6 +410,7 @@ Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez 
 
 - **Ajedrez.** Abre **Games → Chess**, empieza una partida y haz una jugada legal: verás la respuesta del motor, los relojes y el historial de jugadas. Después de jugar, prueba la descarga en PGN.
 - **Póker.** Abre **Games → Poker**, elige cuántos habituales se sientan, las fichas y la velocidad de las ciegas, y juega un torneo. Solo fichas de juego.
+- **Batalla naval.** Abre **Games → Sea Battle**, elige las reglas (la «Clásica» de cuaderno o el «Juego de caja»), lo bien que dispara el rival y quién dispara primero; coloca la flota o quédate con la del azar, y dispara.
 - **Preferans.** Abre **Games → Preferans**, elige las opciones de la mesa y juega una pulya contra bots con carácter. Recarga la página en mitad de una mano: la partida continúa donde la dejaste.
 - **Coming soon.** Las demás tarjetas son avances de juegos futuros.
 
@@ -416,6 +423,7 @@ Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez 
 - La partida terminada se puede descargar como archivo PGN, el formato estándar de notación de ajedrez.
 - El motor funciona en un Web Worker, así que el tablero sigue respondiendo mientras el ordenador piensa.
 - Póker: Texas hold'em sin límite, torneo de eliminación de dos a seis con ciegas que suben y botes secundarios; diez habituales de la guarida con su propio estilo de póker; un evaluador de manos propio, comprobado con las 2 598 960 manos de cinco cartas.
+- Batalla naval: dos reglamentos y dos interruptores entre ellos, un héroe de la guarida como rival, tres niveles de puntería limpios (el mejor calcula dónde es más probable que haya un barco); la flota se coloca igual con el dedo que con el ratón.
 - Héroes de la guarida: una sola compañía de 91 personajes para todos los juegos: tu rival junto al tablero de ajedrez, en la mesa de preferans y en la de póker. Bajo el ratón el retrato crece dos veces y media; una pulsación abre la ficha del héroe con la imagen y la biografía.
 - Preferans: reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa, todas las opciones del menú; 91 personajes como rivales, que nunca miran las cartas ocultas.
   - Opciones de mesa: longitud del pool, precios de las manos sin contrato («raspasy»), medio whist, «здесь».
@@ -500,7 +508,7 @@ Para compilar el sitio estático: `npm run build --workspace client` (el resulta
   - partidas de dos y de cuatro jugadores;
   - una subasta de los bots mejor calibrada;
   - juego en línea.
-- **Próximos juegos:** las damas, después el póquer y el resto de la colección, cada uno en su propia carpeta.
+- **Próximos juegos:** las damas, después el resto de la colección, cada uno en su propia carpeta.
 - **Ajedrez:**
   - guardar y continuar;
   - controles para pantallas pequeñas, foco de teclado e indicador de que el motor está pensando;
@@ -522,7 +530,7 @@ Para compilar el sitio estático: `npm run build --workspace client` (el resulta
 
 ## Français
 
-Une plateforme web de jeux de logique classiques. On peut déjà jouer aux échecs contre le moteur Stockfish, au poker Texas hold'em sans limite (un tournoi de deux à six) et à la préférence (preferans : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table) contre des bots pleins de caractère. D'autres jeux sont prévus ; ils apparaissent dans la collection avec la mention « Coming soon ».
+Une plateforme web de jeux de logique classiques. On peut déjà jouer aux échecs contre le moteur Stockfish, au poker Texas hold'em sans limite (un tournoi de deux à six) et à la préférence (preferans : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table) contre des bots pleins de caractère, et à la bataille navale (règles du cahier ou de la boîte) contre un héros du repaire de vampires. D'autres jeux sont prévus ; ils apparaissent dans la collection avec la mention « Coming soon ».
 
 **Démo en ligne :** https://dubnovalexey.github.io/cosmo-game-hub/
 
@@ -530,6 +538,7 @@ Une plateforme web de jeux de logique classiques. On peut déjà jouer aux éche
 
 - **Échecs.** Ouvrez **Games → Chess**, commencez une partie et jouez un coup légal : vous verrez la réponse du moteur, les pendules et l'historique des coups. Après la partie, essayez le téléchargement PGN.
 - **Poker.** Ouvrez **Games → Poker**, choisissez combien d'habitués s'assoient, les jetons et la vitesse des blindes, et jouez un tournoi. Jetons de jeu seulement.
+- **Bataille navale.** Ouvrez **Games → Sea Battle**, choisissez les règles (« Classique » du cahier ou « Jeu de boîte »), l'adresse de l'adversaire et qui tire le premier ; disposez la flotte ou gardez celle du hasard, et tirez.
 - **Préférence.** Ouvrez **Games → Preferans**, choisissez les options de la table et jouez une poule contre des bots pleins de caractère. Rechargez la page au milieu d'une donne : la partie reprend là où vous l'avez laissée.
 - **Coming soon.** Les autres cartes de jeux sont des aperçus.
 
@@ -542,6 +551,7 @@ Une plateforme web de jeux de logique classiques. On peut déjà jouer aux éche
 - La partie terminée peut être téléchargée au format PGN, la notation standard des échecs.
 - Le moteur tourne dans un Web Worker : l'échiquier reste réactif pendant que l'ordinateur réfléchit.
 - Poker : Texas hold'em sans limite, tournoi à élimination de deux à six avec des blindes qui montent et des pots annexes ; dix habitués du repaire, chacun avec sa manière ; notre propre évaluateur de mains, vérifié sur les 2 598 960 mains de cinq cartes.
+- Bataille navale : deux règlements et deux interrupteurs entre eux, un héros du repaire pour adversaire, trois niveaux de tir honnêtes (le meilleur calcule où un navire a le plus de chances de se trouver) ; la flotte se dispose au doigt comme à la souris.
 - Héros du repaire : une seule compagnie de 91 personnages pour tous les jeux — votre adversaire devant l'échiquier, à la table de préférence et à celle de poker. Sous la souris le portrait grandit deux fois et demie ; un appui ouvre la fiche du héros avec l'image et la biographie.
 - Préférence : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table, toutes les options du menu ; 91 personnages comme adversaires, qui ne regardent jamais les cartes cachées.
   - Options de table : longueur de la poule, prix des donnes sans contrat (« raspasy »), demi-whist, « здесь ».
@@ -626,7 +636,7 @@ Pour construire le site statique : `npm run build --workspace client` (le résul
   - les parties à deux et à quatre joueurs ;
   - des enchères des bots mieux calibrées ;
   - le jeu en ligne.
-- **Prochains jeux :** les dames, puis le poker et le reste de la collection, chacun dans son propre dossier.
+- **Prochains jeux :** les dames, puis le reste de la collection, chacun dans son propre dossier.
 - **Échecs :**
   - sauvegarder et reprendre ;
   - commandes pour petits écrans, focus clavier et indicateur de réflexion du moteur ;

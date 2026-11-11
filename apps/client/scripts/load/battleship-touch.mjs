@@ -132,7 +132,7 @@ try {
     await sleep(700);
     await audit('battle');
     // The battle: shoot at the first cells that may be shot at, in a scattered order, until somebody wins.
-    const enemyCell = `() => { const cells = [...document.querySelectorAll('#battleship-room [class*="_seaEnemy_"] button:not(:disabled)')]; return cells.length ? cells[(cells.length * 7 + ${'${shots}'} * 37) % cells.length] : null; }`;
+    const enemyCell = shot => `() => { const cells = [...document.querySelectorAll('#battleship-room [class*="_seaEnemy_"] button:not(:disabled)')]; return cells.length ? cells[(cells.length * 7 + ${shot} * 37) % cells.length] : null; }`;
     let waited = 0;
     for (;;) {
         const state = await page.evaluate(`({ over: !!document.querySelector('#battleship-room section[role=status]'), open: document.querySelectorAll('#battleship-room [class*="_seaEnemy_"] button:not(:disabled)').length })`);
@@ -146,7 +146,7 @@ try {
         waited = 0;
         if (shots === 6) { await audit('battle, shot 6'); await shot('battle'); }
         if (shots === 30) await audit('battle, shot 30');
-        await tap(enemyCell.replace('${shots}', String(shots)));
+        await tap(enemyCell(shots));
         shots += 1;
         await sleep(120);
         if (shots > 400) throw new Error('STALL: the battle does not end');

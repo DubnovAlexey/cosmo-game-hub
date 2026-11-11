@@ -15,7 +15,7 @@
 ### 1. Назначение
 
 Cosmo Game Hub — статический сайт на Astro (GitHub Pages) с коллекцией классических игр.
-- **Каталог.** В нём восемь игр. Шахматы и преферанс уже играются; шашки, покер, го, монополия, крестики-нолики и змейка — следующие.
+- **Каталог.** В нём девять игр. Шахматы, преферанс, покер и морской бой уже играются; шашки, го, монополия, крестики-нолики и змейка — следующие.
 - **Как устроена игра.** Каждая игра — React-остров, тяжёлые вычисления идут в Web Worker.
 
 Что должна обеспечить архитектура:
@@ -40,6 +40,7 @@ cosmo-game-hub/
     ├── public/games/chess/       файлы с постоянным адресом: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — обложка в каталоге (её рисует scripts/preferans-cover.mjs)
     ├── public/games/poker/       cover.svg — обложка; portraits/ — десять завсегдатаев покерного стола
+    ├── public/games/battleship/  cover.svg — обложка морского боя, нарисована вручную
     ├── scripts/                  preferans-cover.mjs — обложка преферанса; load/ — нагрузочные проверки (npm run load)
     └── src/
         ├── pages/                маршруты: index, games, leaderboard, about, games/chess, games/preferans, games/poker
@@ -61,7 +62,8 @@ cosmo-game-hub/
         └── games/
             ├── chess/            index.ts · components/ · hooks/ · engine/ · assets/ · tests/ · README.md
             ├── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
-            └── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            ├── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            └── battleship/       index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · tests/ · README.md · RULES.md
 ```
 
 ### 3. Стек и почему именно он
@@ -538,6 +540,7 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
 | 10.11.2026 | Боты покера: эквити по Монте-Карло против диапазонов по торговле, шансы банка, размеры ставок как у людей, «пуш или фолд», открывающий рейз; десять завсегдатаев логова со своими манерами | Боты не читают чужие карты; манеры видны в замере `poker-bots.mjs` (VPIP, PFR, агрессия) |
 | 10.11.2026 | Покерный стол в облике логова; портреты и рубашка скопированы из преферанса | Тот же клуб; игры не импортируют друг друга, общий список персонажей — открытая задача |
 | 10.11.2026 | Проверки касаний сравнивают ширину страницы с экраном, а не с `innerWidth` | На планшете выступ в 4 px расширял страницу, видимая область сдвигалась на 32 px, и касание кнопки попадало в ползунок под ней |
+| 11.11.2026 | Морской бой (`games/battleship/`): тетрадная «Классика» и коробочные «Международные» с двумя переключателями, соперник — общий герой логова, три честных уровня меткости | Следующая игра после покера по решению Алексея; правила — данные, поэтому обе игры и их смеси живут в одном движке; наводчик видит только то, что видит человек |
 
 ### 19. Логово, все опции и игра пальцем (09.11.2026)
 
@@ -619,6 +622,43 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
   - Защитник воображает играющего таким, какой он есть: его взятки сверх заказа сходятся с настоящими (14% / 41% / 45% против 13% / 41% / 47%).
 - **Проверки.** `npm test` — 130 теста. Новые: места покера на обоих экранах, сдвиг подписи внутрь экрана, место всплывающей карточки, пограничная рука в торговле.
 
+### 22. Морской бой (11.11.2026)
+
+- **Что.** Морской бой против героя логова (`games/battleship/`): следующая игра после покера, решение Алексея 10.11. На Рабочем столе для неё заведена папка «Морской бой»: туда Алексей складывает картинки, значки и видео для игры. Так теперь начинается каждый новый проект.
+- **Правила — данные** (`engine/rules.ts`).
+  - «Классика» — тетрадная игра: десять кораблей (4, 3, 3, 2, 2, 2, 1, 1, 1, 1), корабли не касаются даже углами, попал — стреляй ещё.
+  - «Международные» — коробочная игра: пять кораблей (5, 4, 3, 3, 2), вплотную можно, один выстрел за ход.
+  - «Вплотную» и «стреляй ещё» — отдельные переключатели меню, поэтому смесь правил не требует нового кода.
+- **Движок** — чистый TypeScript без React, состояние — обычный JSON:
+  - `board.ts` — клетка числом (строка × размер + колонка), корабль — список клеток, отметки моря: не стреляли, мимо, ранен, потоплен, заведомо пусто. Если корабли не могут касаться, вода вокруг потопленного открывается сама — так делает человек в тетради;
+  - `battle.ts` — чей ход, журнал выстрелов, победитель. `fire` возвращает новое состояние и не трогает старое: сохранение и повтор боя ничего не стоят;
+  - `ai/gunner.ts` — наводчик. Он получает только отметки моря и список кораблей на плаву — ровно то, что видит человек.
+- **Три наводчика.**
+  - «Юнга» стреляет наугад, после попадания пробует соседние клетки и иногда о нём забывает: слабый, но не глупый.
+  - «Штурман» стреляет с шагом в самый короткий корабль на плаву (сквозь такую сетку корабль не проскользнёт) и добивает раненого по его линии.
+  - «Адмирал» для каждой клетки считает, сколькими способами оставшиеся корабли могут лечь через неё, не нарушая правил и уже известного, и стреляет в самую вероятную. Свой флот он прижимает к краям: запретная вода вокруг длинных кораблей уходит за пределы моря, и катерам остаётся больше места, чтобы прятаться (старый школьный приём; он что-то значит только там, где корабли не касаются).
+  - Замер на 600 случайных флотах, выстрелов до потопления всего флота:
+
+  | | вслепую | юнга | штурман | адмирал |
+  |---|---|---|---|---|
+  | международные | 95 | 63 | 51 | 45 |
+  | классика | 75 | 62 | 58 | 55 |
+
+  - В классике уровни ближе друг к другу: четыре катера находятся в основном удачей, а вода вокруг каждого потопленного открывается бесплатно.
+- **Море на экране** (`components/SeaBoard.tsx`) — сетка CSS. Каждая клетка — кнопка с названием для диктора («Б4, мимо»), корабль — один элемент на несколько клеток под ними.
+  - Ошибка первого дня: корабль называл своё место в сетке, а клетки шли автоматическим потоком и уступали ему место. Море разъезжалось, часть клеток сжималась до 18 px, нажатие на корабль попадало в чужую клетку. Теперь каждая буква, число и клетка сама называет своё место.
+  - Геометрия не идёт за языком: на иврите страница идёт справа налево, но первая колонка моря остаётся слева.
+- **Расстановка** одинакова для пальца и мыши. Случайный флот уже стоит, поэтому «В бой!» работает сразу; нажатие на корабль берёт его в руку, нажатие на море ставит; «Повернуть» или клавиша R меняет направление. Мышь видит место корабля заранее: зелёное — можно, красное — нельзя. Подсказка и сообщение об ошибке делят одну строку постоянной высоты, поэтому море не прыгает под пальцем.
+- **Телефон и компьютер устроены по-разному.**
+  - Телефон: кнопки расстановки лежат сразу под морем (док отдаёт свои строки палубе через `display: contents`, порядок задаёт `order`). В бою море соперника во всю ширину, своё — 60% ширины под ним: оба видны без прокрутки. Итог боя стоит над морями.
+  - Широкий экран: моря рядом, как на листе тетради; при расстановке док стоит справа от моря. На низком экране ноутбука море уступает часть размера (`100vh − 260px`), чтобы помещаться целиком.
+- **Соперник** — случайный общий герой (`shared/characters`); «Другой соперник» тянет жребий заново. Портрет растёт под мышью и открывает карточку героя. Перед каждым выстрелом соперник «целится» 0,75 с, и рамка портрета светится: глаз успевает за серией выстрелов.
+- **Сохранение** — после каждого изменения, по кнопке и при сворачивании страницы. Законченный бой стирает своё сохранение, итог попадает в историю один раз.
+- **Проверки.** `npm test` — 146 тестов, из них 16 у морского боя: доска и правила, наводчики, пять языков.
+  - `scripts/load/battleship-touch.mjs` играет целый бой пальцем или мышью: снимает корабль, ставит обратно, поворачивает, стреляет до конца и проверяет каждую кнопку под пальцем.
+  - `layout-audit.mjs --game battleship` смотрит вёрстку меню, расстановки, боя и меню поверх боя на пяти языках.
+  - Тест переводов в первый же запуск нашёл обычные пробелы перед «: ; ! %» во французском словаре; они заменены неразрывными.
+
 [↑ К выбору языка](#top)
 
 ---
@@ -632,7 +672,7 @@ This reference is for internal reading and for specialists who want to see how t
 ### 1. Purpose
 
 Cosmo Game Hub is a static Astro site on GitHub Pages with a collection of classic games.
-- **Catalog.** It has eight games. Chess and preferans are playable; checkers, poker, go, monopoly, tic-tac-toe and snake come next.
+- **Catalog.** It has nine games. Chess, preferans, poker and the sea battle are playable; checkers, go, monopoly, tic-tac-toe and snake come next.
 - **How a game is built.** Each game is a React island; heavy computation runs in a Web Worker.
 
 What the architecture must provide:
@@ -657,6 +697,7 @@ cosmo-game-hub/
     ├── public/games/chess/       files with a fixed URL: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — the catalog cover (drawn by scripts/preferans-cover.mjs)
     ├── public/games/poker/       cover.svg — the cover; portraits/ — the ten regulars of the poker table
+    ├── public/games/battleship/  cover.svg — the cover of the sea battle, drawn by hand
     ├── scripts/                  preferans-cover.mjs — the preferans cover; load/ — the load tests (npm run load)
     └── src/
         ├── pages/                routes: index, games, leaderboard, about, games/chess, games/preferans, games/poker
@@ -678,7 +719,8 @@ cosmo-game-hub/
         └── games/
             ├── chess/            index.ts · components/ · hooks/ · engine/ · assets/ · tests/ · README.md
             ├── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
-            └── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            ├── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            └── battleship/       index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · tests/ · README.md · RULES.md
 ```
 
 ### 3. The stack and why
@@ -1155,6 +1197,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 | 10.11.2026 | Poker bots: Monte Carlo equity against ranges read from the betting, pot odds, human bet sizes, push-or-fold, the opening raise; ten regulars of the lair with manners of their own | The bots never read hidden cards; the manners show in the `poker-bots.mjs` measurement (VPIP, PFR, aggression) |
 | 10.11.2026 | The poker table in the lair's look; portraits and the back copied from preferans | The same club; games never import each other, a shared list of characters is an open task |
 | 10.11.2026 | The touch checks compare the page width with the screen, not with `innerWidth` | On a tablet a 4 px overflow widened the page, the visual viewport slid 32 px, and a tap on a button landed on the slider under it |
+| 11.11.2026 | Sea battle (`games/battleship/`): the notebook «Classic» and the «Boxed game» with two switches, a shared hero of the lair as the opponent, three fair levels of gunnery | The next game after poker, Alexey's decision; the rules are data, so both games and their mixes live in one engine; the gunner sees only what a person sees |
 
 ### 19. The lair, every option and playing by finger (09.11.2026)
 
@@ -1236,6 +1279,43 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
   - A defender imagines the declarer as he is: his tricks above the contract match the real ones (14% / 41% / 45% against 13% / 41% / 47%).
 - **Checks.** `npm test` — 130 tests. New: the poker seats on both screens, the shift of a caption into the screen, the place of the floating card, the borderline hand in the bidding.
 
+### 22. Sea battle (11.11.2026)
+
+- **What.** A sea battle against a hero of the lair (`games/battleship/`): the next game after poker, Alexey's decision of 10.11. A folder «Морской бой» was made on the Desktop for it: Alexey drops pictures, icons and videos for the game there. Every new project begins this way now.
+- **The rules are data** (`engine/rules.ts`).
+  - «Classic» is the notebook game: ten ships (4, 3, 3, 2, 2, 2, 1, 1, 1, 1), ships never touch even by a corner, a hit gives another shot.
+  - «Boxed game» is the game sold in a box: five ships (5, 4, 3, 3, 2), ships may lie side by side, one shot per turn.
+  - «Side by side» and «shoot again» are separate switches of the menu, so a mix of the rules needs no new code.
+- **The engine** is pure TypeScript without React, the state is plain JSON:
+  - `board.ts` — a cell is a number (row × size + column), a ship is a list of cells, the marks of a sea: not shot at, miss, hit, sunk, known to be empty. If ships may not touch, the water round a sunk ship is opened by itself, the way a person does it in a notebook;
+  - `battle.ts` — whose turn it is, the log of the shots, the winner. `fire` returns a new state and leaves the old one alone: saving and replaying a battle cost nothing;
+  - `ai/gunner.ts` — the gunner. It is given only the marks of the sea and the list of ships afloat: exactly what a person sees.
+- **Three gunners.**
+  - The «cabin boy» shoots at random, tries the neighbouring cells after a hit and now and then forgets about it: weak, but not silly.
+  - The «navigator» shoots with a step as long as the shortest ship afloat (no ship slips through such a net) and finishes a wounded ship along its line.
+  - The «admiral» counts for every cell in how many ways the remaining ships can lie over it without breaking the rules or what is already known, and shoots at the likeliest one. Its own fleet is pressed to the edges: the forbidden water round the long ships falls outside the sea, and the boats have more room to hide (the old schoolyard trick; it means something only where ships may not touch).
+  - Measured on 600 random fleets, shots needed to sink a whole fleet:
+
+  | | blindly | cabin boy | navigator | admiral |
+  |---|---|---|---|---|
+  | boxed game | 95 | 63 | 51 | 45 |
+  | classic | 75 | 62 | 58 | 55 |
+
+  - In the classic game the levels lie closer together: four single-deck boats are found mostly by luck, and the water round every sunk ship is opened for free.
+- **A sea on the screen** (`components/SeaBoard.tsx`) is a CSS grid. Every cell is a button with a spoken name («B4, miss»), a ship is one element over several cells under them.
+  - The mistake of the first day: a ship named its place in the grid, while the cells went in the automatic flow and stepped aside for it. The sea slid apart, some cells shrank to 18 px, a press on a ship landed on another cell. Now every letter, number and cell names its own place.
+  - The geometry does not follow the language: in Hebrew the page runs right to left, but the first column of a sea stays on the left.
+- **Setting the fleet out** is the same by finger and by mouse. A random fleet already lies on the sea, so «To battle!» works at once; a press on a ship takes it into the hand, a press on the sea puts it down; «Turn» or the key R changes the direction. A mouse sees the ship's place beforehand: green — it may, red — it may not. The hint and the word about a wrong press share one line of a fixed height, so the sea never jumps under the finger.
+- **A phone and a computer are built differently.**
+  - A phone: the buttons of the fleet lie right under the sea (the dock gives its lines to the deck with `display: contents`, `order` puts them in place). In a battle the opponent's sea is full width and your own is 60% of the width under it: both are seen without scrolling. The result of the battle stands above the seas.
+  - A wide screen: the seas lie side by side like a notebook sheet; while the fleet is set out the dock stands to the right of the sea. On a low laptop screen a sea gives up some of its size (`100vh − 260px`) to fit whole.
+- **The opponent** is a shared hero drawn by lot (`shared/characters`); «Another opponent» draws again. The portrait grows under the mouse and opens the hero's card. Before every shot the opponent «aims» for 0.75 s and the portrait's frame glows: the eye keeps up with a series of shots.
+- **Saving** — after every change, with the button and when the page hides. A finished battle removes its save, and its result goes to the history once.
+- **Checks.** `npm test` — 146 tests, 16 of them for the sea battle: the board and the rules, the gunners, the five languages.
+  - `scripts/load/battleship-touch.mjs` plays a whole battle by finger or by mouse: it takes a ship off, puts it back, turns it, shoots to the end and checks every button under the finger.
+  - `layout-audit.mjs --game battleship` looks at the layout of the menu, the fleet, the battle and the menu over the battle in five languages.
+  - On its very first run the test of the translations found plain spaces before «: ; ! %» in the French dictionary; they were replaced with no-break ones.
+
 [↑ Back to the languages](#top)
 
 ---
@@ -1251,7 +1331,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 ### 1. מטרה
 
 הפרויקט Cosmo Game Hub הוא אתר סטטי שבנוי ב-Astro ומתארח ב-GitHub Pages, ובו אוסף של משחקים קלאסיים.
-- **הקטלוג.** יש בו שמונה משחקים. שחמט ופרפרנס כבר זמינים למשחק; דמקה, פוקר, גו, מונופול, איקס עיגול ונחש יבואו בהמשך.
+- **הקטלוג.** יש בו תשעה משחקים. שחמט, פרפרנס, פוקר וצוללות כבר זמינים למשחק; דמקה, גו, מונופול, איקס עיגול ונחש יבואו בהמשך.
 - **איך בנוי משחק.** כל משחק הוא "אי" של React, וחישובים כבדים רצים ב-Web Worker.
 
 מה הארכיטקטורה צריכה להבטיח:
@@ -1278,6 +1358,7 @@ cosmo-game-hub/
     ├── public/games/chess/       קבצים בכתובת קבועה: מנוע השחמט, הרישיון, תמונת השער
     ├── public/games/preferans/   כריכת הפרפרנס בקטלוג (מצייר אותה scripts/preferans-cover.mjs)
     ├── public/games/poker/       כריכת הפוקר; portraits/ — עשרת הקבועים של שולחן הפוקר
+    ├── public/games/battleship/  כריכת הצוללות, מצוירת ביד
     ├── scripts/                  כריכת הפרפרנס (preferans-cover.mjs); בדיקות העומס (load/, npm run load)
     └── src/
         ├── pages/                נתיבי האתר: הבית, המשחקים, המובילים, אודות ודף לכל משחק
@@ -1299,7 +1380,8 @@ cosmo-game-hub/
         └── games/
             ├── chess/            שחמט: רכיבים, מצב, מנוע, מדיה, בדיקות, תיאור
             ├── preferans/        פרפרנס: רכיבים, מצב, מנוע עם בינה, שפות, תמונות, בדיקות, תיאור, חוקים
-            └── poker/            פוקר: הקבועים, רכיבים, מצב, מנוע עם בינה, שפות, תמונות, בדיקות, תיאור, חוקים
+            ├── poker/            פוקר: הקבועים, רכיבים, מצב, מנוע עם בינה, שפות, תמונות, בדיקות, תיאור, חוקים
+            └── battleship/       צוללות: רכיבים, מצב, מנוע עם תותחן, שפות, בדיקות, תיאור, חוקים
 ```
 
 </div>
@@ -1778,6 +1860,7 @@ cosmo-game-hub/
 | 10.11.2026 | בוטי פוקר: אקוויטי במונטה קרלו מול טווחים שנקראים מההימורים, סיכויי קופה, גודלי הימור אנושיים, פוש או פולד, רייז פתיחה; עשרה קבועים של המאורה, לכל אחד סגנון משלו | הבוטים לא קוראים קלפים נסתרים; הסגנונות נראים במדידה של `poker-bots.mjs` ‏(VPIP, ‏PFR, אגרסיביות) |
 | 10.11.2026 | שולחן הפוקר במראה המאורה; הדיוקנים וגב הקלף הועתקו מהפרפרנס | אותו מועדון; משחקים לא מייבאים זה מזה, רשימת דמויות משותפת היא משימה פתוחה |
 | 10.11.2026 | בדיקות הנגיעה משוות את רוחב הדף למסך ולא ל-`innerWidth` | בטאבלט בליטה של 4 פיקסלים הרחיבה את הדף, האזור הנראה זז ב-32 פיקסלים, ונגיעה בכפתור נחתה על המחוון שמתחתיו |
+| 11.11.2026 | צוללות (`games/battleship/`): "קלאסי" של המחברת ו"משחק הקופסה" עם שני מתגים, גיבור משותף מהמאורה כיריב, שלוש רמות קליעה הוגנות | המשחק הבא אחרי הפוקר, החלטה של אלכסיי; החוקים הם נתונים, ולכן שני המשחקים והשילובים ביניהם חיים במנוע אחד; התותחן רואה רק מה שאדם רואה |
 
 ### 19. המאורה, כל האפשרויות ומשחק באצבע (09.11.2026)
 
@@ -1859,6 +1942,43 @@ cosmo-game-hub/
   - מגן מדמיין את המכריז כפי שהוא: הלקיחות שלו מעל החוזה תואמות את האמיתיות (14% / 41% / 45% מול 13% / 41% / 47%).
 - **בדיקות.** ‏`npm test` — ‏130 בדיקות. חדשות: מקומות הפוקר בשני המסכים, הזזת כיתוב אל תוך המסך, מקום הכרטיס הצף, יד גבולית במכרז.
 
+### 22. צוללות (11.11.2026)
+
+- **מה.** צוללות נגד גיבור מהמאורה (`games/battleship/`): המשחק הבא אחרי הפוקר, החלטה של אלכסיי מ-10.11. על שולחן העבודה נפתחה בשבילו תיקייה «Морской бой»: אלכסיי שם בה תמונות, סמלים וסרטונים למשחק. כך מתחיל מעכשיו כל פרויקט חדש.
+- **החוקים הם נתונים** (`engine/rules.ts`).
+  - "קלאסי" הוא משחק המחברת: עשר ספינות (4, ‏3, ‏3, ‏2, ‏2, ‏2, ‏1, ‏1, ‏1, ‏1), ספינות אינן נוגעות זו בזו גם לא בפינה, פגיעה נותנת ירייה נוספת.
+  - "משחק הקופסה" הוא המשחק שנמכר בקופסה: חמש ספינות (5, ‏4, ‏3, ‏3, ‏2), ספינות יכולות לעמוד צמודות, ירייה אחת בתור.
+  - "צמודות" ו"ירייה נוספת" הם מתגים נפרדים בתפריט, ולכן שילוב חוקים אינו דורש קוד חדש.
+- **המנוע** הוא TypeScript טהור בלי React, והמצב הוא JSON רגיל:
+  - `board.ts` — משבצת היא מספר (שורה × גודל + עמודה), ספינה היא רשימת משבצות, וסימני הים: לא ירו, החטאה, פגיעה, טבעה, ריק בוודאות. אם ספינות אינן יכולות לגעת, המים סביב ספינה שטבעה נפתחים מעצמם — כמו שאדם עושה במחברת;
+  - `battle.ts` — תור מי, יומן היריות, המנצח. `fire` מחזיר מצב חדש ואינו נוגע בישן: שמירה ושחזור של קרב אינם עולים דבר;
+  - `ai/gunner.ts` — התותחן. הוא מקבל רק את סימני הים ואת רשימת הספינות הצפות: בדיוק מה שאדם רואה.
+- **שלושה תותחנים.**
+  - "נער הסיפון" יורה באקראי, אחרי פגיעה מנסה את המשבצות הסמוכות ולפעמים שוכח ממנה: חלש, אבל לא טיפש.
+  - "הנווט" יורה בדילוגים באורך הספינה הקצרה ביותר שעוד צפה (שום ספינה לא חומקת דרך רשת כזאת) ומחסל ספינה פגועה לאורך הקו שלה.
+  - "האדמירל" מחשב לכל משבצת בכמה דרכים הספינות שנותרו יכולות לשכב עליה בלי להפר את החוקים ואת מה שכבר ידוע, ויורה למשבצת הסבירה ביותר. את הצי שלו הוא מצמיד לשוליים: המים האסורים סביב הספינות הארוכות נופלים מחוץ לים, ולסירות נשאר יותר מקום להסתתר (תעלול ישן מחצר בית הספר; יש לו משמעות רק כשספינות אינן נוגעות).
+  - מדידה על 600 ציים אקראיים, מספר היריות עד הטבעת צי שלם:
+
+  | | בעיניים עצומות | נער סיפון | נווט | אדמירל |
+  |---|---|---|---|---|
+  | משחק הקופסה | 95 | 63 | 51 | 45 |
+  | קלאסי | 75 | 62 | 58 | 55 |
+
+  - במשחק הקלאסי הרמות קרובות יותר זו לזו: את ארבע הסירות מוצאים בעיקר במזל, והמים סביב כל ספינה שטבעה נפתחים בחינם.
+- **ים על המסך** (`components/SeaBoard.tsx`) הוא רשת CSS. כל משבצת היא כפתור עם שם לקורא מסך ("ב4, החטאה"), וספינה היא רכיב אחד על כמה משבצות, מתחתיהן.
+  - הטעות של היום הראשון: ספינה נקבה במקומה ברשת, ואילו המשבצות זרמו אוטומטית ופינו לה מקום. הים התפרק, חלק מהמשבצות התכווצו ל-18 px, ולחיצה על ספינה פגעה במשבצת אחרת. עכשיו כל אות, מספר ומשבצת נוקבים במקומם בעצמם.
+  - הגאומטריה אינה הולכת אחרי השפה: בעברית הדף נכתב מימין לשמאל, אבל העמודה הראשונה של הים נשארת משמאל.
+- **הצבת הצי** זהה באצבע ובעכבר. צי אקראי כבר שוכב על הים, ולכן "לקרב!" עובד מיד; לחיצה על ספינה לוקחת אותה ליד, לחיצה על הים מניחה אותה; "לסובב" או המקש R משנים כיוון. העכבר רואה את מקום הספינה מראש: ירוק — אפשר, אדום — אי אפשר. הרמז וההודעה על לחיצה שגויה חולקים שורה אחת בגובה קבוע, ולכן הים אינו קופץ מתחת לאצבע.
+- **טלפון ומחשב בנויים אחרת.**
+  - טלפון: כפתורי ההצבה נמצאים מיד מתחת לים (המספנה מוסרת את השורות שלה לסיפון בעזרת `display: contents`, ו-`order` קובע את הסדר). בקרב הים של היריב ברוחב מלא, והים שלכם ב-60% מהרוחב מתחתיו: שניהם נראים בלי גלילה. תוצאת הקרב עומדת מעל הימים.
+  - מסך רחב: הימים שוכבים זה לצד זה כמו בדף מחברת; בזמן ההצבה המספנה עומדת לצד הים. במסך נמוך של מחשב נייד הים מוותר על חלק מגודלו (`100vh − 260px`) כדי להיכנס בשלמותו.
+- **היריב** הוא גיבור משותף שנבחר בהגרלה (`shared/characters`); "יריב אחר" מגריל שוב. הדיוקן גדל מתחת לעכבר ופותח את כרטיס הגיבור. לפני כל ירייה היריב "מכוון" 0.75 שניות ומסגרת הדיוקן זוהרת: העין מספיקה לעקוב אחרי סדרת יריות.
+- **שמירה** — אחרי כל שינוי, בכפתור וכשהדף מוסתר. קרב שהסתיים מוחק את השמירה שלו, והתוצאה נכנסת להיסטוריה פעם אחת.
+- **בדיקות.** `npm test` — ‏146 בדיקות, מהן 16 של הצוללות: הלוח והחוקים, התותחנים, חמש השפות.
+  - `scripts/load/battleship-touch.mjs` משחק קרב שלם באצבע או בעכבר: מרים ספינה, מחזיר אותה, מסובב, יורה עד הסוף ובודק כל כפתור מתחת לאצבע.
+  - `layout-audit.mjs --game battleship` בודק את הפריסה של התפריט, ההצבה, הקרב והתפריט שמעל הקרב בחמש שפות.
+  - בדיקת התרגומים מצאה כבר בהרצה הראשונה רווחים רגילים לפני «: ; ! %» במילון הצרפתי; הם הוחלפו ברווחים קשיחים.
+
 [↑ חזרה לבחירת השפה](#top)
 
 </div>
@@ -1874,7 +1994,7 @@ Esta referencia es para lectura interna y para especialistas que quieran ver có
 ### 1. Propósito
 
 Cosmo Game Hub es un sitio estático de Astro en GitHub Pages con una colección de juegos clásicos.
-- **Catálogo.** Tiene ocho juegos. Ya se puede jugar al ajedrez y al preferans; las damas, el póquer, el go, el monopoly, el tres en raya y la serpiente vienen después.
+- **Catálogo.** Tiene nueve juegos. Ya se puede jugar al ajedrez, al preferans, al póker y a la batalla naval; las damas, el go, el monopoly, el tres en raya y la serpiente vienen después.
 - **Cómo está hecho un juego.** Cada juego es una isla de React; el cálculo pesado se ejecuta en un Web Worker.
 
 Qué debe garantizar la arquitectura:
@@ -1899,6 +2019,7 @@ cosmo-game-hub/
     ├── public/games/chess/       archivos con URL fija: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — la portada del catálogo (la dibuja scripts/preferans-cover.mjs)
     ├── public/games/poker/       cover.svg — la portada; portraits/ — los diez habituales de la mesa de póker
+    ├── public/games/battleship/  cover.svg — la portada de la batalla naval, dibujada a mano
     ├── scripts/                  preferans-cover.mjs — la portada del preferans; load/ — las pruebas de carga (npm run load)
     └── src/
         ├── pages/                rutas: index, games, leaderboard, about, games/chess, games/preferans, games/poker
@@ -1920,7 +2041,8 @@ cosmo-game-hub/
         └── games/
             ├── chess/            index.ts · components/ · hooks/ · engine/ · assets/ · tests/ · README.md
             ├── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
-            └── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            ├── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            └── battleship/       index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · tests/ · README.md · RULES.md
 ```
 
 ### 3. El stack y por qué
@@ -2397,6 +2519,7 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
 | 10.11.2026 | Bots de póker: equity por Monte Carlo contra rangos leídos de las apuestas, probabilidades del bote, apuestas del tamaño de una persona, push o fold, la subida de apertura; diez habituales de la guarida con su propio estilo | Los bots nunca leen cartas ocultas; los estilos se ven en la medición de `poker-bots.mjs` (VPIP, PFR, agresividad) |
 | 10.11.2026 | La mesa de póker con el aspecto de la guarida; retratos y reverso copiados del preferans | El mismo club; los juegos no se importan entre sí, una lista común de personajes es una tarea abierta |
 | 10.11.2026 | Las pruebas táctiles comparan el ancho de la página con la pantalla, no con `innerWidth` | En una tableta un saliente de 4 px ensanchaba la página, la vista visible se desplazaba 32 px y un toque en un botón caía en el deslizador de debajo |
+| 11.11.2026 | Batalla naval (`games/battleship/`): la «Clásica» de cuaderno y el «Juego de caja» con dos interruptores, un héroe común de la guarida como rival, tres niveles de puntería limpios | El siguiente juego después del póker, decisión de Alexey; las reglas son datos, así que los dos juegos y sus mezclas viven en un solo motor; el artillero ve solo lo que ve una persona |
 
 ### 19. La guarida, todas las opciones y el juego con el dedo (09.11.2026)
 
@@ -2478,6 +2601,43 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
   - Un defensor imagina al declarante tal como es: sus bazas por encima del contrato coinciden con las reales (14% / 41% / 45% frente a 13% / 41% / 47%).
 - **Pruebas.** `npm test`: 130 pruebas. Nuevas: los asientos del póker en las dos pantallas, el desplazamiento de un texto hacia dentro de la pantalla, el sitio de la ficha flotante, la mano dudosa en la subasta.
 
+### 22. Batalla naval (11.11.2026)
+
+- **Qué.** Una batalla naval contra un héroe de la guarida (`games/battleship/`): el siguiente juego después del póker, decisión de Alexey del 10.11. En el Escritorio se creó para ella la carpeta «Морской бой»: allí Alexey deja imágenes, iconos y vídeos para el juego. Así empieza ahora cada proyecto nuevo.
+- **Las reglas son datos** (`engine/rules.ts`).
+  - «Clásica» es el juego de cuaderno: diez barcos (4, 3, 3, 2, 2, 2, 1, 1, 1, 1), los barcos no se tocan ni por una esquina, un acierto da otro disparo.
+  - «Juego de caja» es el que se vende en caja: cinco barcos (5, 4, 3, 3, 2), los barcos pueden estar pegados, un disparo por turno.
+  - «Pegados» y «otro disparo» son interruptores separados del menú, así que una mezcla de reglas no necesita código nuevo.
+- **El motor** es TypeScript puro sin React y el estado es JSON normal:
+  - `board.ts` — una casilla es un número (fila × tamaño + columna), un barco es una lista de casillas, y las marcas del mar: sin disparar, agua, tocado, hundido, vacío seguro. Si los barcos no pueden tocarse, el agua alrededor de un barco hundido se descubre sola, como hace una persona en el cuaderno;
+  - `battle.ts` — de quién es el turno, el registro de disparos, el ganador. `fire` devuelve un estado nuevo y no toca el anterior: guardar y repetir un combate no cuesta nada;
+  - `ai/gunner.ts` — el artillero. Recibe solo las marcas del mar y la lista de barcos a flote: exactamente lo que ve una persona.
+- **Tres artilleros.**
+  - El «grumete» dispara al azar, tras un acierto prueba las casillas vecinas y a veces se olvida de él: flojo, pero no tonto.
+  - El «piloto» dispara a saltos del largo del barco más corto a flote (ningún barco se escapa por esa red) y remata un barco tocado a lo largo de su línea.
+  - El «almirante» calcula para cada casilla de cuántas maneras pueden estar sobre ella los barcos que quedan sin romper las reglas ni lo ya sabido, y dispara a la más probable. Su propia flota la aprieta contra los bordes: el agua prohibida alrededor de los barcos largos cae fuera del mar y a las lanchas les queda más sitio para esconderse (el viejo truco del patio del colegio; solo significa algo donde los barcos no se tocan).
+  - Medición sobre 600 flotas al azar, disparos necesarios para hundir una flota entera:
+
+  | | a ciegas | grumete | piloto | almirante |
+  |---|---|---|---|---|
+  | juego de caja | 95 | 63 | 51 | 45 |
+  | clásica | 75 | 62 | 58 | 55 |
+
+  - En el juego clásico los niveles quedan más juntos: las cuatro lanchas se encuentran sobre todo por suerte, y el agua alrededor de cada barco hundido se descubre gratis.
+- **Un mar en la pantalla** (`components/SeaBoard.tsx`) es una rejilla CSS. Cada casilla es un botón con nombre para el lector de pantalla («B4, agua») y un barco es un solo elemento sobre varias casillas, por debajo de ellas.
+  - El error del primer día: un barco nombraba su sitio en la rejilla, mientras las casillas iban en el flujo automático y le cedían el sitio. El mar se desarmaba, algunas casillas se encogían hasta 18 px y pulsar un barco caía en otra casilla. Ahora cada letra, número y casilla nombra su propio sitio.
+  - La geometría no sigue al idioma: en hebreo la página va de derecha a izquierda, pero la primera columna del mar sigue a la izquierda.
+- **La colocación** es igual con el dedo que con el ratón. Una flota al azar ya está en el mar, así que «¡Al combate!» funciona enseguida; pulsar un barco lo toma en la mano, pulsar el mar lo coloca; «Girar» o la tecla R cambia la dirección. El ratón ve de antemano el sitio del barco: verde, se puede; rojo, no se puede. La pista y el aviso de una pulsación errónea comparten una línea de altura fija, así que el mar no salta bajo el dedo.
+- **Un teléfono y un ordenador están hechos de forma distinta.**
+  - Teléfono: los botones de la flota están justo debajo del mar (el muelle entrega sus líneas a la cubierta con `display: contents` y `order` las ordena). En combate el mar del rival ocupa todo el ancho y el tuyo, el 60 % del ancho debajo: ambos se ven sin desplazarse. El resultado del combate queda encima de los mares.
+  - Pantalla ancha: los mares están uno junto al otro, como en una hoja de cuaderno; durante la colocación el muelle queda a la derecha del mar. En la pantalla baja de un portátil el mar cede parte de su tamaño (`100vh − 260px`) para caber entero.
+- **El rival** es un héroe común elegido por sorteo (`shared/characters`); «Otro rival» vuelve a sortear. El retrato crece bajo el ratón y abre la ficha del héroe. Antes de cada disparo el rival «apunta» 0,75 s y el marco del retrato brilla: el ojo sigue una serie de disparos.
+- **Guardado** — tras cada cambio, con el botón y cuando la página se oculta. Un combate terminado borra su guardado y su resultado entra en el historial una sola vez.
+- **Pruebas.** `npm test`: 146 pruebas, 16 de ellas de la batalla naval: el tablero y las reglas, los artilleros, los cinco idiomas.
+  - `scripts/load/battleship-touch.mjs` juega un combate entero con el dedo o con el ratón: quita un barco, lo vuelve a poner, lo gira, dispara hasta el final y comprueba cada botón bajo el dedo.
+  - `layout-audit.mjs --game battleship` mira la maquetación del menú, de la colocación, del combate y del menú sobre el combate en cinco idiomas.
+  - La prueba de las traducciones encontró en su primera ejecución espacios normales antes de «: ; ! %» en el diccionario francés; se sustituyeron por espacios de no separación.
+
 [↑ Volver a los idiomas](#top)
 
 ---
@@ -2491,7 +2651,7 @@ Cette référence est destinée à la lecture interne et aux spécialistes qui v
 ### 1. Objet
 
 Cosmo Game Hub est un site statique Astro hébergé sur GitHub Pages, avec une collection de jeux classiques.
-- **Catalogue.** Il compte huit jeux. Les échecs et la préférence (preferans) sont jouables ; les dames, le poker, le go, le monopoly, le morpion et le serpent suivront.
+- **Catalogue.** Il compte neuf jeux. Les échecs, la préférence (preferans), le poker et la bataille navale sont jouables ; les dames, le go, le monopoly, le morpion et le serpent suivront.
 - **Comment un jeu est construit.** Chaque jeu est un îlot React ; les calculs lourds tournent dans un Web Worker.
 
 Ce que l'architecture doit garantir :
@@ -2516,6 +2676,7 @@ cosmo-game-hub/
     ├── public/games/chess/       fichiers à URL fixe : stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — la couverture du catalogue (dessinée par scripts/preferans-cover.mjs)
     ├── public/games/poker/       cover.svg — la couverture ; portraits/ — les dix habitués de la table de poker
+    ├── public/games/battleship/  cover.svg — la couverture de la bataille navale, dessinée à la main
     ├── scripts/                  preferans-cover.mjs — la couverture de la préférence ; load/ — les tests de charge (npm run load)
     └── src/
         ├── pages/                routes : index, games, leaderboard, about, games/chess, games/preferans, games/poker
@@ -2537,7 +2698,8 @@ cosmo-game-hub/
         └── games/
             ├── chess/            index.ts · components/ · hooks/ · engine/ · assets/ · tests/ · README.md
             ├── preferans/        index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
-            └── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            ├── poker/            index.ts · characters.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · assets/ · tests/ · README.md · RULES.md
+            └── battleship/       index.ts · components/ · hooks/ · engine/ (+ ai/) · i18n/ · tests/ · README.md · RULES.md
 ```
 
 ### 3. La pile technique et pourquoi
@@ -3014,6 +3176,7 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
 | 10.11.2026 | Bots de poker : équité par Monte-Carlo contre des fourchettes lues dans les enchères, cote du pot, mises de taille humaine, push or fold, relance d'ouverture ; dix habitués du repaire avec chacun sa manière | Les bots ne lisent jamais les cartes cachées ; leurs manières se voient dans la mesure de `poker-bots.mjs` (VPIP, PFR, agressivité) |
 | 10.11.2026 | La table de poker à l'allure du repaire ; portraits et dos copiés de la préférence | Le même club ; les jeux ne s'importent pas entre eux, une liste commune de personnages est une tâche ouverte |
 | 10.11.2026 | Les vérifications au toucher comparent la largeur de la page à l'écran, pas à `innerWidth` | Sur une tablette, un débord de 4 px élargissait la page, la zone visible glissait de 32 px et un toucher sur un bouton tombait sur le curseur en dessous |
+| 11.11.2026 | Bataille navale (`games/battleship/`) : « Classique » du cahier et « Jeu de boîte » avec deux interrupteurs, un héros commun du repaire pour adversaire, trois niveaux de tir honnêtes | Le jeu suivant après le poker, décision d'Alexey ; les règles sont des données, donc les deux jeux et leurs mélanges vivent dans un seul moteur ; le canonnier ne voit que ce que voit une personne |
 
 ### 19. Le repaire, toutes les options et le jeu au doigt (09.11.2026)
 
@@ -3094,5 +3257,42 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
   - L'objectif précédent « un whist qui manque son obligation au plus 15 % du temps » est abandonné : ce n'était pas la bonne mesure. Un whist risqué paie quand il rapporte en moyenne plus qu'un jeu laissé passer — et la mesure imprime maintenant exactement cette valeur.
   - Un défenseur imagine le déclarant tel qu'il est : ses levées au-dessus du contrat concordent avec les vraies (14% / 41% / 45% contre 13% / 41% / 47%).
 - **Vérifications.** `npm test` — 130 tests. Nouveaux : les places du poker sur les deux écrans, le décalage d'une légende dans l'écran, la place de la fiche flottante, la main limite aux enchères.
+
+### 22. Bataille navale (11.11.2026)
+
+- **Quoi.** Une bataille navale contre un héros du repaire (`games/battleship/`) : le jeu suivant après le poker, décision d'Alexey du 10.11. Un dossier «Морской бой» a été créé pour elle sur le Bureau : Alexey y dépose des images, des icônes et des vidéos pour le jeu. Chaque nouveau projet commence désormais ainsi.
+- **Les règles sont des données** (`engine/rules.ts`).
+  - « Classique », c'est le jeu de cahier : dix navires (4, 3, 3, 2, 2, 2, 1, 1, 1, 1), les navires ne se touchent jamais, même par un coin, un coup au but donne un autre tir.
+  - « Jeu de boîte », c'est celui vendu en boîte : cinq navires (5, 4, 3, 3, 2), les navires peuvent être côte à côte, un tir par tour.
+  - « Côte à côte » et « on rejoue » sont des interrupteurs séparés du menu : un mélange de règles ne demande aucun code nouveau.
+- **Le moteur** est du TypeScript pur sans React, l'état est du JSON ordinaire :
+  - `board.ts` — une case est un nombre (ligne × taille + colonne), un navire est une liste de cases, et les marques de la mer : pas de tir, à l'eau, touché, coulé, vide à coup sûr. Si les navires ne peuvent pas se toucher, l'eau autour d'un navire coulé se découvre d'elle-même, comme on le fait sur un cahier ;
+  - `battle.ts` — à qui le tour, le journal des tirs, le vainqueur. `fire` renvoie un nouvel état sans toucher à l'ancien : enregistrer et rejouer un combat ne coûte rien ;
+  - `ai/gunner.ts` — le canonnier. Il ne reçoit que les marques de la mer et la liste des navires à flot : exactement ce que voit une personne.
+- **Trois canonniers.**
+  - Le « mousse » tire au hasard, essaie les cases voisines après un coup au but et l'oublie parfois : faible, mais pas sot.
+  - Le « navigateur » tire par bonds de la longueur du plus court navire à flot (aucun navire ne passe à travers un tel filet) et achève un navire touché le long de sa ligne.
+  - L'« amiral » calcule pour chaque case de combien de façons les navires restants peuvent s'y trouver sans enfreindre les règles ni ce qui est déjà connu, et tire sur la plus probable. Il serre sa propre flotte contre les bords : l'eau interdite autour des longs navires tombe hors de la mer et les vedettes ont plus de place pour se cacher (la vieille ruse de cour d'école ; elle ne compte que là où les navires ne se touchent pas).
+  - Mesure sur 600 flottes au hasard, tirs nécessaires pour couler une flotte entière :
+
+  | | à l'aveugle | mousse | navigateur | amiral |
+  |---|---|---|---|---|
+  | jeu de boîte | 95 | 63 | 51 | 45 |
+  | classique | 75 | 62 | 58 | 55 |
+
+  - Dans le jeu classique les niveaux sont plus proches : les quatre vedettes se trouvent surtout par chance, et l'eau autour de chaque navire coulé se découvre gratuitement.
+- **Une mer à l'écran** (`components/SeaBoard.tsx`) est une grille CSS. Chaque case est un bouton avec un nom pour le lecteur d'écran (« B4, à l'eau »), un navire est un seul élément sur plusieurs cases, sous elles.
+  - L'erreur du premier jour : un navire nommait sa place dans la grille, tandis que les cases suivaient le flux automatique et lui cédaient la place. La mer se disloquait, certaines cases rétrécissaient à 18 px, un appui sur un navire tombait sur une autre case. Désormais chaque lettre, chaque nombre et chaque case nomme sa propre place.
+  - La géométrie ne suit pas la langue : en hébreu la page va de droite à gauche, mais la première colonne de la mer reste à gauche.
+- **La mise en place** est la même au doigt et à la souris. Une flotte au hasard est déjà sur la mer : « Au combat ! » fonctionne aussitôt ; un appui sur un navire le prend en main, un appui sur la mer le pose ; « Tourner » ou la touche R change la direction. La souris voit d'avance la place du navire : vert, c'est possible ; rouge, c'est impossible. L'indice et le message d'un appui fautif partagent une ligne de hauteur fixe : la mer ne saute pas sous le doigt.
+- **Un téléphone et un ordinateur sont construits différemment.**
+  - Téléphone : les boutons de la flotte sont juste sous la mer (le dock donne ses lignes au pont avec `display: contents`, `order` les range). Au combat, la mer de l'adversaire prend toute la largeur et la vôtre 60 % de la largeur en dessous : les deux se voient sans défilement. Le résultat du combat se tient au-dessus des mers.
+  - Écran large : les mers sont côte à côte, comme sur une feuille de cahier ; pendant la mise en place, le dock se tient à droite de la mer. Sur l'écran bas d'un portable, la mer cède une partie de sa taille (`100vh − 260px`) pour tenir en entier.
+- **L'adversaire** est un héros commun tiré au sort (`shared/characters`) ; « Un autre adversaire » tire de nouveau. Le portrait grandit sous la souris et ouvre la fiche du héros. Avant chaque tir l'adversaire « vise » pendant 0,75 s et le cadre du portrait luit : l'œil suit une série de tirs.
+- **Sauvegarde** — après chaque changement, avec le bouton et quand la page se cache. Un combat terminé efface sa sauvegarde, et son résultat entre une seule fois dans l'historique.
+- **Vérifications.** `npm test` — 146 tests, dont 16 pour la bataille navale : le plateau et les règles, les canonniers, les cinq langues.
+  - `scripts/load/battleship-touch.mjs` joue un combat entier au doigt ou à la souris : il retire un navire, le repose, le tourne, tire jusqu'au bout et vérifie chaque bouton sous le doigt.
+  - `layout-audit.mjs --game battleship` regarde la mise en page du menu, de la mise en place, du combat et du menu par-dessus le combat en cinq langues.
+  - Dès sa première exécution, le test des traductions a trouvé des espaces ordinaires devant « : ; ! % » dans le dictionnaire français ; elles ont été remplacées par des espaces insécables.
 
 [↑ Retour aux langues](#top)
