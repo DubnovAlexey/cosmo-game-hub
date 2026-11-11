@@ -9,10 +9,11 @@
 Battleship on the night sea of the vampire lair: your fleet against the fleet of one of the dwellers of the crypt. The rules: [RULES.md](RULES.md).
 
 - **Two well-known games in one.** «Classic» is the notebook game: ten ships (4, 3, 3, 2, 2, 2 and four boats), ships never touch even by a corner, a hit gives another shot. «Boxed game» is the game sold in a box: five ships (5, 4, 3, 3, 2), ships may lie side by side, one shot per turn. Two switches on the menu mix them.
-- **A hero of the lair as the opponent.** One of the shared heroes of the hub is drawn by lot; «Another opponent» draws again. The portrait grows under the mouse, a press opens the hero's card.
+- **A hero of the lair as the opponent.** One of the shared heroes of the hub is drawn by lot; «Another opponent» draws again; every second battle is fought against the sea folk — Captain Galleon and the four pirates who came to the lair for this game. The portrait grows under the mouse, a press opens the hero's card.
 - **Three levels of gunnery, all fair.** The gunner sees only what a person sees: the marks on the sea and which ships are still afloat. «Like a cabin boy» shoots at random and now and then forgets a wounded ship; «like a navigator» combs the sea in a pattern no ship slips through and finishes a ship along its line; «like an admiral» counts where a ship is likeliest to lie and hides its own fleet more cunningly.
 - **The fleet is set out by finger and by mouse alike.** A random fleet waits on the sea, so «To battle!» works at once. A press on a ship takes it into the hand, a press on the sea puts it down, «Turn» (or the key R) changes its direction; a mouse also sees in green or red where the ship would stand.
 - **A phone is not a small computer.** On a phone the buttons of the fleet lie right under the sea; in a battle the opponent's sea is full width and your own sea is a smaller chart under it, so both are seen without scrolling. On a wide screen the seas lie side by side like a notebook sheet.
+- **The pictures are Alexey's** (his folder «Морской бой»): the cover is a pirate ship in space beside a chart of the battle, the end of a battle shows a ship under the golden moon or a wreck in green fog — always whole.
 - **Saved after every shot**, with the «Save» button and when the page hides; «Continue the battle» on the menu.
 - **Five languages** (RU, EN, HE, ES, FR). The letters of the columns follow the language: А–К without Ё and Й in Russian, A–J in Latin, א–י in Hebrew; the chart itself keeps column А on the left in Hebrew too.
 
@@ -29,10 +30,11 @@ Battleship on the night sea of the vampire lair: your fleet against the fleet of
 Морской бой на ночном море вампирского логова: ваш флот против флота одного из обитателей склепа. Правила: [RULES.md](RULES.md).
 
 - **Две известные игры в одной.** «Классика» — тетрадная игра: десять кораблей (4, 3, 3, 2, 2, 2 и четыре катера), корабли не касаются даже углами, попал — стреляй ещё. «Международные» — коробочная игра: пять кораблей (5, 4, 3, 3, 2), корабли могут стоять вплотную, один выстрел за ход. Два переключателя в меню смешивают их.
-- **Соперник — герой логова.** Один из общих героев хаба выбирается по жребию; «Другой соперник» тянет жребий заново. Портрет растёт под мышью, нажатие открывает карточку героя.
+- **Соперник — герой логова.** Один из общих героев хаба выбирается по жребию; «Другой соперник» тянет жребий заново; каждый второй бой — против морского народа: Капитана Галеона и четырёх пиратов, приплывших в логово ради этой игры. Портрет растёт под мышью, нажатие открывает карточку героя.
 - **Три уровня меткости, все честные.** Наводчик видит только то, что видит человек: отметки на море и какие корабли ещё на плаву. «Как юнга» стреляет наугад и иногда забывает про раненый корабль; «как штурман» прочёсывает море по сетке, сквозь которую не проскользнёт ни один корабль, и добивает корабль по его линии; «как адмирал» считает, где кораблю лежать вероятнее всего, и свой флот прячет хитрее.
 - **Флот расставляется пальцем и мышью одинаково.** Случайный флот уже ждёт на море, поэтому «В бой!» работает сразу. Нажатие на корабль берёт его в руку, нажатие на море ставит его, «Повернуть» (или клавиша R) меняет направление; мышь ещё и видит зелёным или красным, где встанет корабль.
 - **Телефон — не маленький компьютер.** На телефоне кнопки расстановки лежат сразу под морем; в бою море соперника во всю ширину, а своё море — карта поменьше под ним: оба видны без прокрутки. На широком экране моря лежат рядом, как на листе тетради.
+- **Картинки — Алексея** (его папка «Морской бой»): на обложке пиратский корабль в космосе рядом с картой боя, в конце боя — корабль под золотой луной или разбитый корабль в зелёном тумане, всегда целиком.
 - **Сохранение после каждого выстрела**, по кнопке «Сохранить» и при сворачивании страницы; «Продолжить бой» в меню.
 - **Пять языков** (RU, EN, HE, ES, FR). Буквы колонок идут за языком: А–К без Ё и Й по-русски, A–J латиницей, א–י на иврите; сама карта и на иврите держит колонку А слева.
 
@@ -51,10 +53,11 @@ Battleship on the night sea of the vampire lair: your fleet against the fleet of
 צוללות בים הלילי של מאורת הערפדים: הצי שלכם מול הצי של אחד מדיירי המרתף. החוקים: [RULES.md](RULES.md).
 
 - **שני משחקים מוכרים באחד.** "קלאסי" הוא משחק המחברת: עשר ספינות (4, ‏3, ‏3, ‏2, ‏2, ‏2 וארבע סירות), ספינות אינן נוגעות זו בזו גם לא בפינה, פגיעה נותנת ירייה נוספת. "משחק הקופסה" הוא המשחק שנמכר בקופסה: חמש ספינות (5, ‏4, ‏3, ‏3, ‏2), ספינות יכולות לעמוד צמודות, ירייה אחת בתור. שני מתגים בתפריט מערבבים ביניהם.
-- **היריב הוא גיבור מהמאורה.** אחד מהגיבורים המשותפים של האתר נבחר בהגרלה; "יריב אחר" מגריל שוב. הדיוקן גדל מתחת לעכבר, ולחיצה פותחת את כרטיס הגיבור.
+- **היריב הוא גיבור מהמאורה.** אחד מהגיבורים המשותפים של האתר נבחר בהגרלה; "יריב אחר" מגריל שוב; כל קרב שני הוא נגד אנשי הים — קפטן גליון וארבעת הפיראטים שהגיעו למאורה בשביל המשחק הזה. הדיוקן גדל מתחת לעכבר, ולחיצה פותחת את כרטיס הגיבור.
 - **שלוש רמות קליעה, כולן הוגנות.** התותחן רואה רק מה שאדם רואה: הסימנים על הים ואילו ספינות עדיין צפות. "כמו נער סיפון" יורה באקראי ולפעמים שוכח ספינה פגועה; "כמו נווט" סורק את הים בתבנית ששום ספינה לא חומקת דרכה ומחסל ספינה לאורך הקו שלה; "כמו אדמירל" מחשב היכן הכי סביר שספינה שוכבת, ומסתיר את הצי שלו בעורמה רבה יותר.
 - **הצי מוצב באצבע ובעכבר באותה מידה.** צי אקראי כבר מחכה על הים, ולכן "לקרב!" עובד מיד. לחיצה על ספינה לוקחת אותה ליד, לחיצה על הים מניחה אותה, "לסובב" (או המקש R) משנה את הכיוון; העכבר גם רואה בירוק או באדום היכן הספינה תעמוד.
 - **טלפון אינו מחשב קטן.** בטלפון כפתורי ההצבה נמצאים מיד מתחת לים; בקרב הים של היריב ברוחב מלא והים שלכם הוא מפה קטנה יותר מתחתיו, כך ששניהם נראים בלי גלילה. במסך רחב הימים שוכבים זה לצד זה כמו בדף מחברת.
+- **התמונות של אלכסיי** (התיקייה שלו «Морской бой»): על הכריכה ספינת פיראטים בחלל ליד מפת הקרב, ובסוף הקרב ספינה תחת ירח זהוב או ספינה הרוסה בערפל ירוק — תמיד בשלמותן.
 - **נשמר אחרי כל ירייה**, בכפתור "לשמור" וכשהדף מוסתר; "להמשיך בקרב" בתפריט.
 - **חמש שפות** (RU, EN, HE, ES, FR). אותיות העמודות הולכות אחרי השפה: А–К ברוסית, A–J בלטינית, א–י בעברית; המפה עצמה שומרת גם בעברית את העמודה הראשונה משמאל.
 
@@ -73,10 +76,11 @@ Battleship on the night sea of the vampire lair: your fleet against the fleet of
 Batalla naval en el mar nocturno de la guarida de vampiros: tu flota contra la flota de uno de los habitantes de la cripta. Las reglas: [RULES.md](RULES.md).
 
 - **Dos juegos conocidos en uno.** «Clásica» es el juego de cuaderno: diez barcos (4, 3, 3, 2, 2, 2 y cuatro lanchas), los barcos no se tocan ni por una esquina, un acierto da otro disparo. «Juego de caja» es el que se vende en caja: cinco barcos (5, 4, 3, 3, 2), los barcos pueden estar pegados, un disparo por turno. Dos interruptores del menú los mezclan.
-- **Un héroe de la guarida como rival.** Se sortea uno de los héroes comunes del sitio; «Otro rival» vuelve a sortear. El retrato crece bajo el ratón y una pulsación abre la ficha del héroe.
+- **Un héroe de la guarida como rival.** Se sortea uno de los héroes comunes del sitio; «Otro rival» vuelve a sortear; una de cada dos batallas es contra la gente del mar: el Capitán Galeón y los cuatro piratas que llegaron a la guarida por este juego. El retrato crece bajo el ratón y una pulsación abre la ficha del héroe.
 - **Tres niveles de puntería, todos limpios.** El artillero ve solo lo que ve una persona: las marcas en el mar y qué barcos siguen a flote. «Como un grumete» dispara al azar y a veces olvida un barco tocado; «como un piloto» peina el mar con un patrón por el que no se escapa ningún barco y remata un barco a lo largo de su línea; «como un almirante» calcula dónde es más probable que haya un barco y esconde su propia flota con más astucia.
 - **La flota se coloca igual con el dedo que con el ratón.** Una flota al azar ya espera en el mar, así que «¡Al combate!» funciona enseguida. Pulsar un barco lo toma en la mano, pulsar el mar lo coloca, «Girar» (o la tecla R) cambia su dirección; el ratón además ve en verde o en rojo dónde quedaría el barco.
 - **Un teléfono no es un ordenador pequeño.** En el teléfono los botones de la flota están justo debajo del mar; en combate el mar del rival ocupa todo el ancho y el tuyo es una carta más pequeña debajo, de modo que ambos se ven sin desplazarse. En una pantalla ancha los mares están uno junto al otro, como en una hoja de cuaderno.
+- **Las imágenes son de Alexey** (su carpeta «Морской бой»): en la portada, un barco pirata en el espacio junto a la carta de batalla; al final del combate, un barco bajo la luna dorada o un naufragio en niebla verde, siempre enteros.
 - **Se guarda tras cada disparo**, con el botón «Guardar» y cuando la página se oculta; «Continuar la batalla» en el menú.
 - **Cinco idiomas** (RU, EN, HE, ES, FR). Las letras de las columnas siguen al idioma: А–К en ruso, A–J en latín, א–י en hebreo; la carta mantiene la primera columna a la izquierda también en hebreo.
 
@@ -93,10 +97,11 @@ Batalla naval en el mar nocturno de la guarida de vampiros: tu flota contra la f
 Bataille navale sur la mer nocturne du repaire de vampires : votre flotte contre celle d’un des habitants de la crypte. Les règles : [RULES.md](RULES.md).
 
 - **Deux jeux connus en un.** « Classique », c’est le jeu de cahier : dix navires (4, 3, 3, 2, 2, 2 et quatre vedettes), les navires ne se touchent jamais, même par un coin, un coup au but donne un autre tir. « Jeu de boîte », c’est celui vendu en boîte : cinq navires (5, 4, 3, 3, 2), les navires peuvent être côte à côte, un tir par tour. Deux interrupteurs du menu les mélangent.
-- **Un héros du repaire pour adversaire.** L’un des héros communs du site est tiré au sort ; « Un autre adversaire » tire de nouveau. Le portrait grandit sous la souris, un appui ouvre la fiche du héros.
+- **Un héros du repaire pour adversaire.** L’un des héros communs du site est tiré au sort ; « Un autre adversaire » tire de nouveau ; une bataille sur deux se livre contre les gens de la mer : le Capitaine Galion et les quatre pirates venus au repaire pour ce jeu. Le portrait grandit sous la souris, un appui ouvre la fiche du héros.
 - **Trois niveaux de tir, tous honnêtes.** Le canonnier ne voit que ce que voit une personne : les marques sur la mer et les navires encore à flot. « Comme un mousse » tire au hasard et oublie parfois un navire touché ; « comme un navigateur » ratisse la mer selon un motif qu’aucun navire ne traverse et achève un navire le long de sa ligne ; « comme un amiral » calcule où un navire a le plus de chances de se trouver et cache sa propre flotte avec plus de ruse.
 - **La flotte se dispose au doigt comme à la souris.** Une flotte au hasard attend déjà sur la mer : « Au combat ! » fonctionne aussitôt. Un appui sur un navire le prend en main, un appui sur la mer le pose, « Tourner » (ou la touche R) change sa direction ; la souris voit en plus, en vert ou en rouge, où le navire se placerait.
 - **Un téléphone n’est pas un petit ordinateur.** Sur un téléphone, les boutons de la flotte sont juste sous la mer ; au combat, la mer de l’adversaire prend toute la largeur et la vôtre est une carte plus petite en dessous : les deux se voient sans défilement. Sur un écran large, les mers sont côte à côte, comme sur une feuille de cahier.
+- **Les images sont d’Alexey** (son dossier « Морской бой ») : sur la couverture, un navire pirate dans l’espace à côté de la carte de bataille ; à la fin du combat, un navire sous la lune dorée ou une épave dans le brouillard vert, toujours entiers.
 - **Enregistré après chaque tir**, avec le bouton « Enregistrer » et quand la page se cache ; « Continuer la bataille » dans le menu.
 - **Cinq langues** (RU, EN, HE, ES, FR). Les lettres des colonnes suivent la langue : А–К en russe, A–J en latin, א–י en hébreu ; la carte garde la première colonne à gauche, même en hébreu.
 

@@ -26,10 +26,10 @@ A web platform for classic logic games. Chess against the Stockfish engine, pref
 - A game-over screen for victory, defeat and draw.
 - The finished game can be downloaded as a PGN file, the standard format of chess notation.
 - The engine runs in a Web Worker, so the board stays responsive while the computer thinks.
-- Preferans: Sochi, Leningrad, Rostov and Classic rules, two to four at the table, every table option of the menu; 91 characters as opponents, and they never look at hidden cards.
+- Preferans: Sochi, Leningrad, Rostov and Classic rules, two to four at the table, every table option of the menu; 95 characters as opponents, and they never look at hidden cards.
 - Poker: no-limit Texas hold'em, a sit-and-go of two to six with rising blinds and side pots; ten regulars of the lair with poker manners of their own; our own hand evaluator, checked on all 2 598 960 five-card hands.
 - Sea Battle: battleship with two rule sets and two switches between them, a hero of the lair as the opponent, three fair levels of gunnery (the best one counts where a ship is likeliest to lie); the fleet is set out by finger and by mouse alike.
-- Heroes of the lair: one company of 91 characters for all the games — your opponent at the chess board, at the preferans and the poker tables. Under the mouse a portrait grows two and a half times; a press opens the hero's card with the picture and the biography.
+- Heroes of the lair: one company of 95 characters for all the games — your opponent at the chess board, at the preferans and the poker tables and on the night sea (four pirates came for the sea battle). Under the mouse a portrait grows two and a half times; a press opens the hero's card with the picture and the biography.
   - Table options: pool length, all-pass prices, half-whist, «здесь».
   - A score sheet with pool, mountain and whists.
   - The game is saved after every move.
@@ -156,8 +156,8 @@ To build the static site: `npm run build --workspace client` (the result goes to
 - Движок работает в Web Worker, поэтому доска не замирает, пока компьютер думает.
 - Покер: безлимитный техасский холдем, турнир на выбывание от двух до шести с растущими блайндами и побочными банками; десять завсегдатаев логова со своими покерными манерами; своя оценка руки, проверенная на всех 2 598 960 пятикарточных руках.
 - Морской бой: два набора правил и два переключателя между ними, соперник — герой логова, три честных уровня меткости (лучший считает, где кораблю лежать вероятнее всего); флот расставляется пальцем и мышью одинаково.
-- Герои логова: одна компания из 91 персонажа на все игры — ваш соперник у шахматной доски, за столом преферанса и покера. Под мышью портрет вырастает в два с половиной раза, нажатие раскрывает карточку героя с картинкой и биографией.
-- Преферанс: Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом, все опции меню; соперников — 91 герой, и никто из них никогда не подглядывает в чужие карты.
+- Герои логова: одна компания из 95 персонажей на все игры — ваш соперник у шахматной доски, за столом преферанса и покера и на ночном море (ради морского боя приплыли четыре пирата). Под мышью портрет вырастает в два с половиной раза, нажатие раскрывает карточку героя с картинкой и биографией.
+- Преферанс: Сочинка, Ленинградка, Ростовка и Классика, от двух до четырёх за столом, все опции меню; соперников — 95 героев, и никто из них никогда не подглядывает в чужие карты.
   - Настройки стола: длина пули, цены распасов, полвиста, «здесь».
   - Запись с пулей, горой и вистами.
   - Сохранение после каждого хода.
@@ -286,8 +286,8 @@ npm run dev --workspace client
 - המנוע רץ ב-Web Worker, ולכן הלוח לא נתקע בזמן שהמחשב חושב.
 - פוקר: טקסס הולדם ללא הגבלה, טורניר הדחה לשניים עד שישה עם בליינדים עולים וקופות צד; עשרה קבועים של המאורה, לכל אחד סגנון פוקר משלו; הערכת יד משלנו, שנבדקה על כל 2 598 960 הידיים של חמישה קלפים.
 - צוללות: שתי מערכות חוקים ושני מתגים ביניהן, גיבור מהמאורה כיריב, שלוש רמות קליעה הוגנות (הטובה ביותר מחשבת היכן הכי סביר שספינה שוכבת); הצי מוצב באצבע ובעכבר באותה מידה.
-- גיבורי המאורה: חבורה אחת של 91 דמויות לכל המשחקים — היריב שלכם ליד לוח השחמט, בשולחן הפרפרנס ובשולחן הפוקר. מתחת לעכבר הדיוקן גדל פי שניים וחצי, ולחיצה פותחת את כרטיס הגיבור עם התמונה והביוגרפיה.
-- פרפרנס: חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן, כל אפשרויות התפריט; 91 דמויות כיריבים, שלעולם אינן מציצות בקלפים נסתרים.
+- גיבורי המאורה: חבורה אחת של 95 דמויות לכל המשחקים — היריב שלכם ליד לוח השחמט, בשולחן הפרפרנס, בשולחן הפוקר ובים הלילי (ארבעה פיראטים הגיעו בשביל הצוללות). מתחת לעכבר הדיוקן גדל פי שניים וחצי, ולחיצה פותחת את כרטיס הגיבור עם התמונה והביוגרפיה.
+- פרפרנס: חוקי סוצ׳י, לנינגרד, רוסטוב וקלאסיקה, שניים עד ארבעה ליד השולחן, כל אפשרויות התפריט; 95 דמויות כיריבים, שלעולם אינן מציצות בקלפים נסתרים.
   - הגדרות שולחן: אורך הפולה, מחירי הראספסים, חצי ויסט, «здесь».
   - דף ניקוד עם פולה, הר וויסטים.
   - שמירה אחרי כל מהלך.
@@ -424,8 +424,8 @@ Una plataforma web de juegos de lógica clásicos. Ya se puede jugar al ajedrez 
 - El motor funciona en un Web Worker, así que el tablero sigue respondiendo mientras el ordenador piensa.
 - Póker: Texas hold'em sin límite, torneo de eliminación de dos a seis con ciegas que suben y botes secundarios; diez habituales de la guarida con su propio estilo de póker; un evaluador de manos propio, comprobado con las 2 598 960 manos de cinco cartas.
 - Batalla naval: dos reglamentos y dos interruptores entre ellos, un héroe de la guarida como rival, tres niveles de puntería limpios (el mejor calcula dónde es más probable que haya un barco); la flota se coloca igual con el dedo que con el ratón.
-- Héroes de la guarida: una sola compañía de 91 personajes para todos los juegos: tu rival junto al tablero de ajedrez, en la mesa de preferans y en la de póker. Bajo el ratón el retrato crece dos veces y media; una pulsación abre la ficha del héroe con la imagen y la biografía.
-- Preferans: reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa, todas las opciones del menú; 91 personajes como rivales, que nunca miran las cartas ocultas.
+- Héroes de la guarida: una sola compañía de 95 personajes para todos los juegos: tu rival junto al tablero de ajedrez, en la mesa de preferans, en la de póker y en el mar nocturno (cuatro piratas llegaron para la batalla naval). Bajo el ratón el retrato crece dos veces y media; una pulsación abre la ficha del héroe con la imagen y la biografía.
+- Preferans: reglas de Sochi, Leningrado, Rostov y Clásica, de dos a cuatro en la mesa, todas las opciones del menú; 95 personajes como rivales, que nunca miran las cartas ocultas.
   - Opciones de mesa: longitud del pool, precios de las manos sin contrato («raspasy»), medio whist, «здесь».
   - Una hoja de puntuación con pool, montaña y whists.
   - La partida se guarda después de cada jugada.
@@ -552,8 +552,8 @@ Une plateforme web de jeux de logique classiques. On peut déjà jouer aux éche
 - Le moteur tourne dans un Web Worker : l'échiquier reste réactif pendant que l'ordinateur réfléchit.
 - Poker : Texas hold'em sans limite, tournoi à élimination de deux à six avec des blindes qui montent et des pots annexes ; dix habitués du repaire, chacun avec sa manière ; notre propre évaluateur de mains, vérifié sur les 2 598 960 mains de cinq cartes.
 - Bataille navale : deux règlements et deux interrupteurs entre eux, un héros du repaire pour adversaire, trois niveaux de tir honnêtes (le meilleur calcule où un navire a le plus de chances de se trouver) ; la flotte se dispose au doigt comme à la souris.
-- Héros du repaire : une seule compagnie de 91 personnages pour tous les jeux — votre adversaire devant l'échiquier, à la table de préférence et à celle de poker. Sous la souris le portrait grandit deux fois et demie ; un appui ouvre la fiche du héros avec l'image et la biographie.
-- Préférence : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table, toutes les options du menu ; 91 personnages comme adversaires, qui ne regardent jamais les cartes cachées.
+- Héros du repaire : une seule compagnie de 95 personnages pour tous les jeux — votre adversaire devant l'échiquier, à la table de préférence, à celle de poker et sur la mer nocturne (quatre pirates sont venus pour la bataille navale). Sous la souris le portrait grandit deux fois et demie ; un appui ouvre la fiche du héros avec l'image et la biographie.
+- Préférence : règles de Sotchi, Leningrad, Rostov et Classique, de deux à quatre à table, toutes les options du menu ; 95 personnages comme adversaires, qui ne regardent jamais les cartes cachées.
   - Options de table : longueur de la poule, prix des donnes sans contrat (« raspasy »), demi-whist, « здесь ».
   - Une feuille de marque avec poule, montagne et whists.
   - La partie est sauvegardée après chaque coup.

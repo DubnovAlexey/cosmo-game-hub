@@ -40,7 +40,7 @@ cosmo-game-hub/
     ├── public/games/chess/       файлы с постоянным адресом: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — обложка в каталоге (её рисует scripts/preferans-cover.mjs)
     ├── public/games/poker/       cover.svg — обложка; portraits/ — десять завсегдатаев покерного стола
-    ├── public/games/battleship/  cover.svg — обложка морского боя, нарисована вручную
+    ├── public/games/battleship/  cover.webp — обложка (космический пиратский корабль Алексея); victory/defeat.webp — конец боя
     ├── scripts/                  preferans-cover.mjs — обложка преферанса; load/ — нагрузочные проверки (npm run load)
     └── src/
         ├── pages/                маршруты: index, games, leaderboard, about, games/chess, games/preferans, games/poker
@@ -658,6 +658,14 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
   - `scripts/load/battleship-touch.mjs` играет целый бой пальцем или мышью: снимает корабль, ставит обратно, поворачивает, стреляет до конца и проверяет каждую кнопку под пальцем.
   - `layout-audit.mjs --game battleship` смотрит вёрстку меню, расстановки, боя и меню поверх боя на пяти языках.
   - Тест переводов в первый же запуск нашёл обычные пробелы перед «: ; ! %» во французском словаре; они заменены неразрывными.
+- **Картинки Алексея** (11.11.2026, вечер; его папка «Морской бой», 31 файл). Я разложил их по местам и отобрал; он ответил «Ставь свой выбор».
+  - Обложка — космический пиратский корабль: подходит к названию Cosmo Game Hub. Её собирает безголовый Chrome из страницы: корабль справа, его же размытая туманность на всю обложку, карта боя слева. Каталог обрезает обложку по высоте и кладёт значок «Новинка» в правый верхний угол, поэтому корабль опущен и сдвинут влево: череп на парусах остаётся открытым.
+  - Конец боя: корабль под золотой луной — победа, разбитый корабль в зелёном тумане — поражение. Картинка целиком в серебряной рамке, задана только её высота (200 px, на телефоне 150 px); на телефоне она встаёт над словами.
+  - Четыре пирата — новые герои логова, гости с моря: Капитан Красноглаз, Шкипер Сундук, Капитан Прилив, Старик Абордаж. Теперь героев 95 (53 обитателя и 42 гостя); у каждого биография на пяти языках, в преферансе — своя манера.
+  - Вместе с Капитаном Галеоном они — морской народ (`SEA_FOLK` в `shared/characters/roster.ts`): каждый второй морской бой идёт против него, иначе среди 95 героев пиратов почти не встретить.
+  - Не взяты: картинки с водяными знаками (Dreamstime, tehnari.ru, логотип телеканала), Барбосса из «Пиратов Карибского моря» (герой фильма), весёлые пираты с ромом (сказочно для логова), дневные картинки в 225 px, настоящие военные корабли (не к стилю; можно позже как режим «современный флот»).
+  - Библиотеки для картинок на компьютере нет, поэтому уменьшение и перевод в WebP делает тот же безголовый Chrome: картинка рисуется на холсте и сохраняется. Картинки передаются как данные: картинка с диска file:// «пачкает» холст, и браузер не отдаёт его.
+  - Проверки: новый тест `shared/tests/characters.test.ts` (у каждого из 95 героев есть картинка и тексты на пяти языках, морской народ — гости логова); `battleship-touch.mjs` с `AIM=hit` стреляет туда, где лежат корабли соперника (читает сохранение), поэтому проверяется и экран победы.
 
 [↑ К выбору языка](#top)
 
@@ -697,7 +705,7 @@ cosmo-game-hub/
     ├── public/games/chess/       files with a fixed URL: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — the catalog cover (drawn by scripts/preferans-cover.mjs)
     ├── public/games/poker/       cover.svg — the cover; portraits/ — the ten regulars of the poker table
-    ├── public/games/battleship/  cover.svg — the cover of the sea battle, drawn by hand
+    ├── public/games/battleship/  cover.webp — the cover (Alexey's pirate ship in space); victory/defeat.webp — the end of a battle
     ├── scripts/                  preferans-cover.mjs — the preferans cover; load/ — the load tests (npm run load)
     └── src/
         ├── pages/                routes: index, games, leaderboard, about, games/chess, games/preferans, games/poker
@@ -1315,6 +1323,14 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
   - `scripts/load/battleship-touch.mjs` plays a whole battle by finger or by mouse: it takes a ship off, puts it back, turns it, shoots to the end and checks every button under the finger.
   - `layout-audit.mjs --game battleship` looks at the layout of the menu, the fleet, the battle and the menu over the battle in five languages.
   - On its very first run the test of the translations found plain spaces before «: ; ! %» in the French dictionary; they were replaced with no-break ones.
+- **Alexey's pictures** (11.11.2026, evening; his folder «Морской бой», 31 files). I sorted them by place and picked; he answered «Ставь свой выбор» (put your choice in).
+  - The cover is a pirate ship in space: it suits the name Cosmo Game Hub. Headless Chrome composes it from a page: the ship on the right, its own blurred nebula over the whole cover, a chart of the battle on the left. The catalog crops a cover in height and puts the «New» badge in the top right corner, so the ship is lowered and moved left: the skull on the sails stays in sight.
+  - The end of a battle: a ship under the golden moon for a victory, a wreck in green fog for a defeat. The picture is whole in a silver frame, only its height is set (200 px, 150 px on a phone); on a phone it stands above the words.
+  - Four pirates are new heroes of the lair, guests from the sea: Captain Redeye, Skipper Strongbox, Captain Tide, Old Grapnel. There are 95 heroes now (53 dwellers and 42 guests); each has a biography in five languages and a manner of its own at the preferans table.
+  - With Captain Galleon they are the sea folk (`SEA_FOLK` in `shared/characters/roster.ts`): every second sea battle is fought against them, otherwise a pirate would hardly be met among 95 heroes.
+  - Left out: pictures with watermarks (Dreamstime, tehnari.ru, a TV logo), Barbossa from «Pirates of the Caribbean» (a film character), merry pirates with rum (too much of a fairy tale for the lair), daytime pictures of 225 px, real warships (not the style; maybe later as a «modern fleet» mode).
+  - There is no image library on the computer, so the same headless Chrome scales the pictures down and turns them into WebP: a picture is drawn on a canvas and saved. The pictures go in as data: a file:// picture from the disk taints the canvas and the browser refuses to give it back.
+  - Checks: a new test `shared/tests/characters.test.ts` (each of the 95 heroes has a picture and texts in five languages, the sea folk are guests of the lair); `battleship-touch.mjs` with `AIM=hit` shoots where the opponent's ships lie (it reads the save), so the victory screen is checked too.
 
 [↑ Back to the languages](#top)
 
@@ -1358,7 +1374,7 @@ cosmo-game-hub/
     ├── public/games/chess/       קבצים בכתובת קבועה: מנוע השחמט, הרישיון, תמונת השער
     ├── public/games/preferans/   כריכת הפרפרנס בקטלוג (מצייר אותה scripts/preferans-cover.mjs)
     ├── public/games/poker/       כריכת הפוקר; portraits/ — עשרת הקבועים של שולחן הפוקר
-    ├── public/games/battleship/  כריכת הצוללות, מצוירת ביד
+    ├── public/games/battleship/  cover.webp — הכריכה (ספינת הפיראטים בחלל של אלכסיי); victory/defeat.webp — סוף הקרב
     ├── scripts/                  כריכת הפרפרנס (preferans-cover.mjs); בדיקות העומס (load/, npm run load)
     └── src/
         ├── pages/                נתיבי האתר: הבית, המשחקים, המובילים, אודות ודף לכל משחק
@@ -1978,6 +1994,14 @@ cosmo-game-hub/
   - `scripts/load/battleship-touch.mjs` משחק קרב שלם באצבע או בעכבר: מרים ספינה, מחזיר אותה, מסובב, יורה עד הסוף ובודק כל כפתור מתחת לאצבע.
   - `layout-audit.mjs --game battleship` בודק את הפריסה של התפריט, ההצבה, הקרב והתפריט שמעל הקרב בחמש שפות.
   - בדיקת התרגומים מצאה כבר בהרצה הראשונה רווחים רגילים לפני «: ; ! %» במילון הצרפתי; הם הוחלפו ברווחים קשיחים.
+- **התמונות של אלכסיי** (11.11.2026, ערב; התיקייה שלו «Морской бой», ‏31 קבצים). מיינתי אותן לפי מקום ובחרתי; הוא ענה «Ставь свой выбор» (שים את הבחירה שלך).
+  - הכריכה היא ספינת פיראטים בחלל: היא מתאימה לשם Cosmo Game Hub. ‏Chrome ללא ממשק מרכיב אותה מדף: הספינה מימין, הערפילית המטושטשת שלה על כל הכריכה, מפת הקרב משמאל. הקטלוג חותך כריכה לגובה ושם את התג "חדש" בפינה הימנית העליונה, ולכן הספינה הורדה והוזזה שמאלה: הגולגולת על המפרשים נשארת גלויה.
+  - סוף הקרב: ספינה תחת ירח זהוב — ניצחון, ספינה הרוסה בערפל ירוק — תבוסה. התמונה שלמה במסגרת כסף, רק הגובה שלה קבוע (200 px, בטלפון 150 px); בטלפון היא עומדת מעל המילים.
+  - ארבעה פיראטים הם גיבורים חדשים של המאורה, אורחים מהים: קפטן עין־אדומה, הסקיפר תיבה, קפטן גאות, הזקן אנקול. עכשיו יש 95 גיבורים (53 דיירים ו-42 אורחים); לכל אחד ביוגרפיה בחמש שפות וסגנון משלו בשולחן הפרפרנס.
+  - יחד עם קפטן גליון הם אנשי הים (`SEA_FOLK` ב-`shared/characters/roster.ts`): כל קרב ימי שני הוא נגדם, אחרת כמעט לא היו פוגשים פיראט בין 95 גיבורים.
+  - לא נלקחו: תמונות עם סימני מים (Dreamstime, ‏tehnari.ru, לוגו של ערוץ טלוויזיה), ברבוסה מ"שודדי הקאריביים" (דמות מסרט), פיראטים עליזים עם רום (אגדתי מדי למאורה), תמונות יום של 225 px, ספינות מלחמה אמיתיות (לא בסגנון; אולי בהמשך כמצב "צי מודרני").
+  - אין במחשב ספריית תמונות, ולכן אותו Chrome ללא ממשק מקטין את התמונות וממיר אותן ל-WebP: התמונה מצוירת על קנבס ונשמרת. התמונות נכנסות כנתונים: תמונה מהדיסק בכתובת file:// "מלכלכת" את הקנבס, והדפדפן מסרב להחזיר אותו.
+  - בדיקות: בדיקה חדשה `shared/tests/characters.test.ts` (לכל אחד מ-95 הגיבורים יש תמונה וטקסטים בחמש שפות, אנשי הים הם אורחי המאורה); `battleship-touch.mjs` עם `AIM=hit` יורה למקום שבו שוכבות ספינות היריב (הוא קורא את השמירה), ולכן נבדק גם מסך הניצחון.
 
 [↑ חזרה לבחירת השפה](#top)
 
@@ -2019,7 +2043,7 @@ cosmo-game-hub/
     ├── public/games/chess/       archivos con URL fija: stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — la portada del catálogo (la dibuja scripts/preferans-cover.mjs)
     ├── public/games/poker/       cover.svg — la portada; portraits/ — los diez habituales de la mesa de póker
-    ├── public/games/battleship/  cover.svg — la portada de la batalla naval, dibujada a mano
+    ├── public/games/battleship/  cover.webp — la portada (el barco pirata espacial de Alexey); victory/defeat.webp — el final del combate
     ├── scripts/                  preferans-cover.mjs — la portada del preferans; load/ — las pruebas de carga (npm run load)
     └── src/
         ├── pages/                rutas: index, games, leaderboard, about, games/chess, games/preferans, games/poker
@@ -2637,6 +2661,14 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
   - `scripts/load/battleship-touch.mjs` juega un combate entero con el dedo o con el ratón: quita un barco, lo vuelve a poner, lo gira, dispara hasta el final y comprueba cada botón bajo el dedo.
   - `layout-audit.mjs --game battleship` mira la maquetación del menú, de la colocación, del combate y del menú sobre el combate en cinco idiomas.
   - La prueba de las traducciones encontró en su primera ejecución espacios normales antes de «: ; ! %» en el diccionario francés; se sustituyeron por espacios de no separación.
+- **Las imágenes de Alexey** (11.11.2026, por la tarde; su carpeta «Морской бой», 31 archivos). Las ordené por sitio y elegí; él respondió «Ставь свой выбор» (pon tu elección).
+  - La portada es un barco pirata en el espacio: encaja con el nombre Cosmo Game Hub. Chrome sin interfaz la compone a partir de una página: el barco a la derecha, su propia nebulosa difuminada sobre toda la portada, la carta de batalla a la izquierda. El catálogo recorta la portada en altura y pone la insignia «Nuevo» en la esquina superior derecha, así que el barco está más bajo y desplazado a la izquierda: la calavera de las velas sigue a la vista.
+  - El final del combate: un barco bajo la luna dorada para la victoria, un naufragio en niebla verde para la derrota. La imagen va entera en un marco de plata, solo se fija su altura (200 px, 150 px en el teléfono); en el teléfono queda encima de las palabras.
+  - Cuatro piratas son nuevos héroes de la guarida, invitados del mar: el Capitán Ojorrojo, el Patrón Cofre, el Capitán Marea y el Viejo Abordaje. Ahora hay 95 héroes (53 habitantes y 42 invitados); cada uno tiene biografía en cinco idiomas y su propia manera en la mesa de preferans.
+  - Junto con el Capitán Galeón son la gente del mar (`SEA_FOLK` en `shared/characters/roster.ts`): una de cada dos batallas navales es contra ellos; si no, entre 95 héroes casi nunca saldría un pirata.
+  - Descartadas: imágenes con marcas de agua (Dreamstime, tehnari.ru, el logotipo de un canal de televisión), Barbossa de «Piratas del Caribe» (un personaje de película), piratas alegres con ron (demasiado de cuento para la guarida), imágenes diurnas de 225 px, buques de guerra reales (no son del estilo; quizá más adelante como modo «flota moderna»).
+  - En el ordenador no hay biblioteca de imágenes, así que el mismo Chrome sin interfaz reduce las imágenes y las pasa a WebP: la imagen se dibuja en un lienzo y se guarda. Las imágenes entran como datos: una imagen del disco con file:// «ensucia» el lienzo y el navegador se niega a devolverlo.
+  - Pruebas: una prueba nueva `shared/tests/characters.test.ts` (cada uno de los 95 héroes tiene imagen y textos en cinco idiomas, la gente del mar son invitados de la guarida); `battleship-touch.mjs` con `AIM=hit` dispara donde están los barcos del rival (lee el guardado), así que también se comprueba la pantalla de victoria.
 
 [↑ Volver a los idiomas](#top)
 
@@ -2676,7 +2708,7 @@ cosmo-game-hub/
     ├── public/games/chess/       fichiers à URL fixe : stockfish.js, COPYING.txt, README.md, cover.webp
     ├── public/games/preferans/   cover.svg — la couverture du catalogue (dessinée par scripts/preferans-cover.mjs)
     ├── public/games/poker/       cover.svg — la couverture ; portraits/ — les dix habitués de la table de poker
-    ├── public/games/battleship/  cover.svg — la couverture de la bataille navale, dessinée à la main
+    ├── public/games/battleship/  cover.webp — la couverture (le navire pirate spatial d’Alexey) ; victory/defeat.webp — la fin du combat
     ├── scripts/                  preferans-cover.mjs — la couverture de la préférence ; load/ — les tests de charge (npm run load)
     └── src/
         ├── pages/                routes : index, games, leaderboard, about, games/chess, games/preferans, games/poker
@@ -3294,5 +3326,13 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
   - `scripts/load/battleship-touch.mjs` joue un combat entier au doigt ou à la souris : il retire un navire, le repose, le tourne, tire jusqu'au bout et vérifie chaque bouton sous le doigt.
   - `layout-audit.mjs --game battleship` regarde la mise en page du menu, de la mise en place, du combat et du menu par-dessus le combat en cinq langues.
   - Dès sa première exécution, le test des traductions a trouvé des espaces ordinaires devant « : ; ! % » dans le dictionnaire français ; elles ont été remplacées par des espaces insécables.
+- **Les images d'Alexey** (11.11.2026, soir ; son dossier « Морской бой », 31 fichiers). Je les ai rangées par emplacement et choisies ; il a répondu « Ставь свой выбор » (mets ton choix).
+  - La couverture est un navire pirate dans l'espace : elle va avec le nom Cosmo Game Hub. Chrome sans interface la compose à partir d'une page : le navire à droite, sa propre nébuleuse floutée sur toute la couverture, la carte de bataille à gauche. Le catalogue rogne une couverture en hauteur et place le badge « Nouveau » dans le coin supérieur droit, donc le navire est descendu et décalé vers la gauche : le crâne sur les voiles reste visible.
+  - La fin du combat : un navire sous la lune dorée pour une victoire, une épave dans le brouillard vert pour une défaite. L'image est entière dans un cadre d'argent, seule sa hauteur est fixée (200 px, 150 px sur un téléphone) ; sur un téléphone elle se place au-dessus des mots.
+  - Quatre pirates sont de nouveaux héros du repaire, des invités venus de la mer : le Capitaine Œil-Rouge, Maître Coffre, le Capitaine Marée et le Vieil Abordage. Il y a désormais 95 héros (53 habitants et 42 invités) ; chacun a une biographie en cinq langues et sa propre manière à la table de préférence.
+  - Avec le Capitaine Galion, ils forment les gens de la mer (`SEA_FOLK` dans `shared/characters/roster.ts`) : une bataille navale sur deux se livre contre eux, sinon on ne croiserait presque jamais un pirate parmi 95 héros.
+  - Écartées : les images à filigrane (Dreamstime, tehnari.ru, le logo d'une chaîne de télévision), Barbossa de « Pirates des Caraïbes » (un personnage de film), les pirates joyeux avec du rhum (trop conte de fées pour le repaire), les images de jour de 225 px, les vrais navires de guerre (pas dans le style ; peut-être plus tard en mode « flotte moderne »).
+  - Il n'y a pas de bibliothèque d'images sur l'ordinateur, donc le même Chrome sans interface réduit les images et les convertit en WebP : l'image est dessinée sur un canevas puis enregistrée. Les images entrent comme données : une image du disque en file:// « salit » le canevas et le navigateur refuse de le rendre.
+  - Vérifications : un nouveau test `shared/tests/characters.test.ts` (chacun des 95 héros a une image et des textes en cinq langues, les gens de la mer sont des invités du repaire) ; `battleship-touch.mjs` avec `AIM=hit` tire là où se trouvent les navires adverses (il lit la sauvegarde), donc l'écran de victoire est vérifié aussi.
 
 [↑ Retour aux langues](#top)
