@@ -170,9 +170,6 @@
    [RU] На компьютере ваше море слева, море соперника справа — как на листе тетради. */
 @media (min-width: 701px) {
     .seaEnemy { order: 2; }
-    /* [EN] On a low screen (a laptop) a sea gives up some of its size so that both seas stay on the screen.
-       [RU] На низком экране (ноутбук) море уступает часть размера, чтобы оба моря оставались на экране. */
-    .sea { max-width: min(480px, max(320px, calc(100vh - 260px))); }
 }
 /* [EN] Setting the fleet out on a wide screen: the sea on the left, the dock with the ships and the buttons beside it,
         so the sea is not pushed below the edge of a laptop's screen.
@@ -181,12 +178,19 @@
 @media (min-width: 901px) {
     .deckPlacing { grid-template-columns: minmax(0, auto) minmax(0, 1fr); align-items: start; }
     .deckPlacing .captain { grid-column: 1 / -1; }
-    .deckPlacing .seas { grid-column: 1; grid-row: 2; width: min(480px, max(320px, calc(100vh - 260px))); }
+    /* [EN] The same width as a sea takes (see .sea). [RU] Та же ширина, которую занимает море (см. .sea). */
+    .deckPlacing .seas { grid-column: 1; grid-row: 2; width: min(560px, max(320px, calc(100vh - 300px))); }
     .deckPlacing .dock { grid-column: 2; grid-row: 2; }
 }
 
 /* ===== 4. A sea / Море ===== */
-.sea { display: grid; gap: 6px; width: 100%; max-width: 480px; min-width: 0; }
+/* [EN] A sea is as large as the screen lets it be: up to 560 px on a big monitor; on a low screen (a laptop, a phone
+        on its side) it gives up some of its size so that it stays on the screen whole. The phone's own sizes are in
+        section 7.
+   [RU] Море настолько большое, насколько позволяет экран: до 560 px на большом мониторе; на низком экране (ноутбук,
+        телефон на боку) оно уступает часть размера, чтобы целиком оставаться на экране. Размеры телефона — в
+        разделе 7. */
+.sea { --sea-width: min(560px, max(320px, calc(100vh - 300px))); display: grid; gap: 6px; width: 100%; max-width: var(--sea-width); min-width: 0; }
 .seaTitle { margin: 0; color: #e3dccb; font: 400 1.4rem/1.2 var(--quill), cursive; text-align: center; }
 .grid {
     --sea-size: 10;
