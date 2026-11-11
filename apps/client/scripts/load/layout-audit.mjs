@@ -1,22 +1,29 @@
-// [EN] FILE: apps/client/scripts/load/layout-audit.mjs — looks at the card tables the way a person looks at a screen:
-//      on phones (upright and on their side), tablets and computers, with every number of players, it opens every
-//      portrait's caption and checks three things.
+// [EN] FILE: apps/client/scripts/load/layout-audit.mjs — looks at the card tables and the sea battle the way a person
+//      looks at a screen: on phones (upright and on their side), tablets and computers, with every number of
+//      players, it opens every portrait's caption and checks three things.
 //        1. No text goes past the screen or is cut by a box around it (a caption cut by the screen edge on a phone,
 //           Alexey, 10.11.2026).
 //        2. No text is hidden under something painted over it (a card over «Префлоп · Банк 30», a card over a bet).
 //        3. On the poker oval no seat lies on the board, the pot, a bet or another seat.
 //      Text inside playing cards is skipped here (fanned cards overlap on purpose); the poker check covers the
 //      board cards themselves. Needs the production build served (see run-all.mjs). Usage:
-//        node apps/client/scripts/load/layout-audit.mjs [--game poker|preferans|all] [--screens 393x852,1366x768]
-//            [--players 2,3,4,5,6] [--languages ru,he] [--shots <folder>] [--hands 2]
-// [RU] ФАЙЛ: смотрит на карточные столы так, как человек смотрит на экран: на телефонах (стоя и лёжа), планшетах и
-//      компьютерах, при любом числе игроков, раскрывает подпись каждого портрета и проверяет три вещи.
+//        node apps/client/scripts/load/layout-audit.mjs [--game poker|preferans|cards|battleship|all]
+//            [--screens 393x852,1366x768] [--players 2,3,4,5,6] [--languages ru,he] [--shots <folder>] [--hands 2]
+//            [--to-the-end]
+//      The sea battle is looked at in its menu, while the fleet is set out (a ship in hand, a wrong press), in the
+//      battle and in the menu opened over it; with --to-the-end the battle is fought to its last shot and the
+//      result is looked at too (about a minute for a screen).
+// [RU] ФАЙЛ: смотрит на карточные столы и морской бой так, как человек смотрит на экран: на телефонах (стоя и лёжа),
+//      планшетах и компьютерах, при любом числе игроков, раскрывает подпись каждого портрета и проверяет три вещи.
 //        1. Никакой текст не выходит за экран и не обрезается рамкой вокруг (подпись, обрезанная краем экрана на
 //           телефоне, Алексей, 10.11.2026).
 //        2. Никакой текст не спрятан под чем-то нарисованным поверх (карта на «Префлоп · Банк 30», карта на ставке).
 //        3. На покерном овале ни одно место не лежит на доске, банке, ставке или другом месте.
 //      Текст внутри игральных карт здесь пропускается (карты веером перекрываются нарочно); сами карты доски
 //      проверяет покерная проверка. Нужна отданная сервером продакшен-сборка (см. run-all.mjs).
+//      Морской бой осматривается в меню, при расстановке флота (корабль «в руке», ошибочное нажатие), в бою и в
+//      меню, открытом поверх боя; с --to-the-end бой доводится до последнего выстрела и осматривается итог
+//      (около минуты на экран).
 import fs from 'node:fs';
 import path from 'node:path';
 import { BASE, launch, open, sleep } from './cdp.mjs';
@@ -33,6 +40,7 @@ const PLAYERS = option('players', '2,3,4,5,6').split(',').map(Number);
 const LANGUAGES = option('languages', 'ru').split(',');
 const SHOTS = option('shots', null);
 const HANDS = Number(option('hands', '1'));
+const TO_THE_END = process.argv.includes('--to-the-end');
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
 
 /** [EN] A phone or a tablet is touched; a computer is clicked. [RU] Телефон и планшет трогают пальцем, на компьютере щёлкают. */
@@ -365,6 +373,74 @@ async function preferans(page, touch, where, players, language) {
     await captions(page, touch, `${where} ${players}p`, '#preferans-room', '#preferans-room button[aria-controls][aria-expanded]', `preferans-${where}-${players}p-${language}`);
 }
 
+// ===== Sea battle / Морской бой =====
+async function battleship(page, touch, where, language) {
+    // [EN] Nothing here is found by its words, so every language is driven the same way: the buttons are found by
+    //      their place and their classes. [RU] Здесь ничто не ищется по словам, поэтому любой язык ведётся одинаково:
+    //      кнопки ищутся по месту и по классам.
+    const room = '#battleship-room';
+    const look = async (what, name) => {
+        note(`${where} sea ${what}`, await page.evaluate(`${TEXT_AUDIT}('${room}')`));
+        if (name) await shot(page, `battleship-${where}-${language}-${name}`);
+    };
+    const countOf = selector => page.evaluate(`document.querySelectorAll(${JSON.stringify(`${room} ${selector}`)}).length`);
+    if (language !== 'ru') await setLanguage(page, language);
+    // The menu: as it opens, the opponent's card, the other set of rules.
+    await look('menu', 'menu');
+    await captions(page, touch, `${where} sea menu`, room, `${room} [role=dialog] [class*="_portrait_"]`, `battleship-${where}-${language}-menu`);
+    await tap(page, touch, `() => document.querySelectorAll('${room} [role=dialog] [class*="_choices_"]')[0]?.querySelectorAll('button')[1]`);
+    await sleep(200);
+    await look('menu, the other rules');
+    await tap(page, touch, `() => document.querySelectorAll('${room} [role=dialog] [class*="_choices_"]')[0]?.querySelectorAll('button')[0]`);
+    await tap(page, touch, `() => document.querySelector('${room} [class*="_menuActions_"] [class*="buttonPrimary"]')`);
+    await sleep(600);
+    // The fleet: as it lies, then with a ship in hand and a press where it cannot stand.
+    await page.evaluate(`window.scrollTo(0, 0)`);
+    await look('fleet', 'fleet');
+    const cellOf = hull => `() => { const hull = ${hull}; if (!hull) return null; const column = parseInt(hull.style.gridColumnStart, 10) - 2, row = parseInt(hull.style.gridRowStart, 10) - 2; const cells = hull.parentElement.querySelectorAll('button'); return cells[row * Math.sqrt(cells.length) + column] ?? null; }`;
+    const hulls = `document.querySelectorAll('${room} [class*="_hull_"]')`;
+    await tap(page, touch, cellOf(`${hulls}[0]`));
+    await sleep(250);
+    // [EN] The ship in hand is pressed onto the bow of another ship's neighbour: it may not stand there. [RU] Корабль из руки ставится рядом с другим кораблём: там ему стоять нельзя.
+    await tap(page, touch, `() => { const hull = ${hulls}[0]; if (!hull) return null; const column = parseInt(hull.style.gridColumnStart, 10) - 2, row = parseInt(hull.style.gridRowStart, 10) - 2; const cells = hull.parentElement.querySelectorAll('button'); const size = Math.sqrt(cells.length); return cells[(row > 0 ? row - 1 : row + 1) * size + column] ?? null; }`);
+    await sleep(250);
+    await look('fleet, a ship in hand', 'fleet-hand');
+    await tap(page, touch, `() => document.querySelectorAll('${room} [class*="_dockActions_"] button')[1]`);
+    await sleep(250);
+    await tap(page, touch, `() => document.querySelector('${room} [class*="_dockActions_"] [class*="buttonPrimary"]:not(:disabled)')`);
+    await sleep(700);
+    if (await countOf('[class*="_seaEnemy_"]') === 0) { note(`${where} sea battle`, ['the battle did not begin']); return; }
+    // The battle: the first look, six shots, the opponent's card, the menu over the battle.
+    const target = shots => `() => { const cells = [...document.querySelectorAll('${room} [class*="_seaEnemy_"] button:not(:disabled)')]; return cells.length ? cells[(cells.length * 7 + ${shots} * 37) % cells.length] : null; }`;
+    const over = () => page.evaluate(`!!document.querySelector('${room} section[role=status]')`);
+    let shots = 0;
+    for (let waited = 0; waited < 60000 && !(await over()); ) {
+        if (await countOf('[class*="_seaEnemy_"] button:not(:disabled)') === 0) { await sleep(250); waited += 250; continue; }
+        waited = 0;
+        if (shots === 0) { await scrollTo(page, `${room} [class*="_seaEnemy_"]`); await sleep(150); await look('battle', 'battle'); }
+        if (shots === 6) {
+            await look('battle, six shots', 'battle-6');
+            await captions(page, touch, `${where} sea battle`, room, `${room} [class*="_captain_"] [class*="_portrait_"]`, `battleship-${where}-${language}-battle`);
+            await page.evaluate(`window.scrollTo(0, document.body.scrollHeight)`);
+            await sleep(150);
+            await look('battle, the log');
+            if (!TO_THE_END) break;
+        }
+        await tap(page, touch, target(shots));
+        shots += 1;
+        await sleep(140);
+    }
+    if (await over()) {
+        await scrollTo(page, `${room} section[role=status]`);
+        await sleep(200);
+        await look('result', 'result');
+        return;
+    }
+    await tap(page, touch, `() => [...document.querySelectorAll('${room} [class*="_settings_"] button')].pop()`);
+    await sleep(350);
+    await look('menu over the battle', 'menu-battle');
+}
+
 const page = await launch();
 const errors = [];
 page.on('Runtime.exceptionThrown', event => errors.push(event.exceptionDetails?.exception?.description ?? 'exception'));
@@ -379,15 +455,20 @@ try {
         await page.send('Emulation.setTouchEmulationEnabled', touch ? { enabled: true, maxTouchPoints: 5 } : { enabled: false });
         const where = `${width}x${height}`;
         for (const language of LANGUAGES) {
-            if (GAME === 'all' || GAME === 'poker') {
+            if (GAME === 'all' || GAME === 'cards' || GAME === 'poker') {
                 await page.evaluate(`(() => { try { sessionStorage.removeItem('seeded'); } catch {} return true; })()`).catch(() => {});
                 await open(page, `${BASE}/games/poker/`, 1800);
                 for (const players of PLAYERS) await poker(page, touch, where, players, language);
             }
-            if (GAME === 'all' || GAME === 'preferans') {
+            if (GAME === 'all' || GAME === 'cards' || GAME === 'preferans') {
                 await page.evaluate(`(() => { try { sessionStorage.removeItem('seeded'); } catch {} return true; })()`).catch(() => {});
                 await open(page, `${BASE}/games/preferans/`, 2200);
                 for (const players of PLAYERS) await preferans(page, touch, where, players, language);
+            }
+            if (GAME === 'all' || GAME === 'battleship') {
+                await page.evaluate(`(() => { try { sessionStorage.removeItem('seeded'); } catch {} return true; })()`).catch(() => {});
+                await open(page, `${BASE}/games/battleship/`, 2200);
+                await battleship(page, touch, where, language);
             }
         }
         process.stdout.write(`${where} `);
