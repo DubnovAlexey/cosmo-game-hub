@@ -44,6 +44,11 @@ export const SeaBoard: React.FC<SeaBoardProps> = ({
 }) => {
     const previewCells = new Set(preview?.cells ?? []);
     const grid = { '--sea-size': size } as React.CSSProperties;
+    // [EN] Every letter, number and cell names its own place in the grid. Left to the automatic flow, they would step
+    //      aside for the ships (a ship names its place and takes it), and the whole sea would slide apart.
+    // [RU] Каждая буква, число и клетка сама называет своё место в сетке. В автоматическом потоке они уступали бы
+    //      место кораблям (корабль называет своё место и занимает его), и всё море разъезжалось бы.
+    const at = (column: number, row: number): React.CSSProperties => ({ gridColumn: column, gridRow: row });
     const hull = (ship: Ship, wreck: boolean, key: string) => {
         const first = ship.cells[0];
         const horizontal = isHorizontal(ship, size);
@@ -60,10 +65,10 @@ export const SeaBoard: React.FC<SeaBoardProps> = ({
             <h2 className={styles.seaTitle}>{title}</h2>
             <div className={styles.grid} style={grid} onMouseLeave={onHover ? () => onHover(null) : undefined}>
                 <span className={styles.corner} aria-hidden="true" />
-                {columns.slice(0, size).map(letter => <span key={letter} className={styles.axis} aria-hidden="true">{letter}</span>)}
+                {columns.slice(0, size).map((letter, column) => <span key={letter} className={styles.axis} style={at(column + 2, 1)} aria-hidden="true">{letter}</span>)}
                 {Array.from({ length: size }, (_, row) => (
                     <React.Fragment key={row}>
-                        <span className={styles.axis} aria-hidden="true">{row + 1}</span>
+                        <span className={styles.axis} style={at(1, row + 2)} aria-hidden="true">{row + 1}</span>
                         {Array.from({ length: size }, (__, column) => {
                             const cell = row * size + column;
                             const mark = marks ? marks[cell] : 0;
@@ -76,7 +81,7 @@ export const SeaBoard: React.FC<SeaBoardProps> = ({
                                 can ? styles.cellOpen : '',
                             ].filter(Boolean).join(' ');
                             return (
-                                <button key={cell} type="button" className={classes} disabled={!can} aria-label={cellLabel(cell)}
+                                <button key={cell} type="button" className={classes} style={at(column + 2, row + 2)} disabled={!can} aria-label={cellLabel(cell)}
                                     onClick={can && onPress ? () => onPress(cell) : undefined}
                                     onMouseEnter={onHover ? () => onHover(cell) : undefined} onFocus={onHover ? () => onHover(cell) : undefined} />
                             );
