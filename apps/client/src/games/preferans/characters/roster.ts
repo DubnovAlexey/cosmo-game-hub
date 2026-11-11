@@ -129,6 +129,14 @@ export const ROSTER: readonly CharacterInfo[] = Object.freeze([
   manner('gora', [-0.3, 1.15, 0, 1.4]),
   manner('kaznachey', [0.1, 1.0, 0, 1.2]),
   manner('galeon', [0.45, 0.9, 0, 0.8]),
+  // [EN] The crew of the sea battle (11.11.2026): Redeye squints at the talon for ages, Strongbox hoards and risks
+  //      nothing, Tide comes and goes (and loves a misère), Old Grapnel boards every auction.
+  // [RU] Команда морского боя (11.11.2026): Красноглаз вечно щурится на прикуп, Сундук копит и ничем не рискует,
+  //      Прилив приходит и уходит (и любит мизер), Старик Абордаж берёт на абордаж любую торговлю.
+  manner('krasnoglaz', [0.25, 0.9, 0, 1.3]),
+  manner('sunduk', [-0.25, 1.15, 0, 1.2]),
+  manner('priliv', [0.1, 0.95, 1, 1.0]),
+  manner('abordazh', [0.45, 0.85, 0, 0.8]),
 ]);
 /** The dummy («болван») of a game for two: a scarecrow skeleton drawn for the game (shared/characters/dummy.svg). */
 export const DUMMY: CharacterInfo = manner('dummy', [0, 1, 0, 1]);

@@ -5,11 +5,16 @@
 //      would press it: a covered or too small control, a tap that lands on something else and a page wider than
 //      the screen are reported.
 //      Run: node apps/client/scripts/load/battleship-touch.mjs <width> <height> <rules: classic|western> <shot-prefix>
+//      With AIM=hit the shots go where the opponent's ships lie (read from the save in the browser storage), so the
+//      battle ends in a victory and its screen is checked too; without it the shots are blind and the battle is
+//      usually lost.
 // [RU] ФАЙЛ: целый морской бой на экране настоящими касаниями (эмуляция касаний и события касания CDP, без мыши) или,
 //      с INPUT=mouse, мышью: меню, флот (корабль снимается с моря и ставится обратно, флот расставляется случайно),
 //      затем выстрелы по морю соперника, пока один из флотов не потоплен. На каждом шаге каждая видимая кнопка
 //      проверяется там, куда нажмёт палец: закрытая или слишком мелкая кнопка, касание мимо цели и страница шире
-//      экрана попадают в отчёт.
+//      экрана попадают в отчёт. С AIM=hit выстрелы идут туда, где лежат корабли соперника (они читаются из сохранения
+//      в хранилище браузера), поэтому бой кончается победой и проверяется и её экран; без него выстрелы вслепую и бой
+//      обычно проигран.
 import fs from 'node:fs';
 import { BASE, launch, open, sleep } from './cdp.mjs';
 
@@ -17,6 +22,7 @@ const W = Number(process.argv[2] ?? 390), H = Number(process.argv[3] ?? 844);
 const RULES = process.argv[4] ?? 'classic';
 const PREFIX = process.argv[5] ?? null;
 const MOUSE = process.env.INPUT === 'mouse';
+const AIM = process.env.AIM === 'hit';
 const page = await launch();
 const errors = [];
 const problems = new Map();
@@ -132,7 +138,10 @@ try {
     await sleep(700);
     await audit('battle');
     // The battle: shoot at the first cells that may be shot at, in a scattered order, until somebody wins.
-    const enemyCell = shot => `() => { const cells = [...document.querySelectorAll('#battleship-room [class*="_seaEnemy_"] button:not(:disabled)')]; return cells.length ? cells[(cells.length * 7 + ${shot} * 37) % cells.length] : null; }`;
+    const blindCell = shot => `() => { const cells = [...document.querySelectorAll('#battleship-room [class*="_seaEnemy_"] button:not(:disabled)')]; return cells.length ? cells[(cells.length * 7 + ${shot} * 37) % cells.length] : null; }`;
+    // [EN] A deck of the opponent not hit yet: the cells of a sea are its buttons in order. [RU] Ещё не подбитая палуба соперника: клетки моря — его кнопки по порядку.
+    const aimedCell = () => `() => { const save = JSON.parse(localStorage.getItem('cosmo-game-hub:battleship:save') || 'null'); const side = save?.data?.battle?.sides?.[1]; const cells = document.querySelectorAll('#battleship-room [class*="_seaEnemy_"] button'); const deck = side?.ships.flatMap(ship => ship.cells).find(cell => side.marks[cell] === 0 && !cells[cell]?.disabled); return deck === undefined ? null : cells[deck]; }`;
+    const enemyCell = shot => (AIM ? aimedCell() : blindCell(shot));
     let waited = 0;
     for (;;) {
         const state = await page.evaluate(`({ over: !!document.querySelector('#battleship-room section[role=status]'), open: document.querySelectorAll('#battleship-room [class*="_seaEnemy_"] button:not(:disabled)').length })`);

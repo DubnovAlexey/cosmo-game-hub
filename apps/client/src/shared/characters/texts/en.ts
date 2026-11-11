@@ -96,5 +96,9 @@ export const CHARACTERS_EN: Readonly<Record<CharacterId, CharacterText>> = {
     gora: { name: 'Mister Mountain', bio: 'A guest from the desert — a huge skull of sandstone. They say he is made of everyone who went three down, and he is still growing.' },
     kaznachey: { name: 'Treasurer Knuckles', bio: 'A guest from the other side of the bank. Counts whists on his knuckle bones and pays in skull dollars, accepted in any crypt.' },
     galeon: { name: 'Captain Galleon', bio: 'Moors at the table on a flying galleon twined with roses — only under a blood moon. Opens every auction with a boarding, that is, with a ten.' },
+    krasnoglaz: { name: 'Captain Redeye', bio: 'The sea took his ship, his crew and his face and left him only the red eyes. In the dark they glow like two hits on a battle chart, and he squints at the talon so long that the talon gets nervous.' },
+    sunduk: { name: 'Skipper Strongbox', bio: 'Has sat on his chest in an undersea cave for three hundred years. Even he has forgotten what is inside: the key sank with his last tooth. He stakes the chest in every game and has never lost it — nobody can open it anyway.' },
+    priliv: { name: 'Captain Tide', bio: 'Drowned in the storm of 1702 and has come in with every high tide since. He leaves wet footprints on the score sheet and finds the boats of a sea battle by the smell of salt.' },
+    abordazh: { name: 'Old Grapnel', bio: 'The oldest pirate of the seven seas. The raven on his shoulder counts his tricks out loud and sometimes lies in his favour. He opens every game with a cry of “Board them!”, even at chess, and the pawns jump overboard by themselves.' },
     dummy: { name: 'Dummy', bio: 'The third at the table when you are two: a scarecrow skeleton in a ragged cloak. Always passes, never argues and shows no cards until the defender takes him over.' },
 };

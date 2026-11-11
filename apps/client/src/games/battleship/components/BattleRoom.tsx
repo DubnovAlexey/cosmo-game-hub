@@ -14,6 +14,7 @@ import { characterFacts } from '@shared/characters/roster';
 import type { CharacterTexts } from '@shared/characters/texts';
 import { CharacterFace } from '@shared/components/CharacterCard';
 import { LanguageSwitch } from '@shared/components/LanguageSwitch';
+import { withBase } from '@shell/utils/withBase';
 import type { Language } from '@shared/i18n/languages';
 import {
     UNKNOWN, accuracy, afloat, cellsOfPlacement, columnOf, isHorizontal, isSunk, placementProblem, rowOf,
@@ -178,9 +179,17 @@ export const BattleRoom: React.FC<BattleRoomProps> = ({ language, onLanguage, te
 
                         {winner !== null && (
                             <section className={styles.result} role="status">
-                                <p className={styles.resultLine}>{winner === YOU ? t.result.won : t.result.lost(who)}</p>
-                                <p className={styles.hint}>{t.result.stats(stats.shots, stats.hits)}</p>
-                                <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} onClick={openMenu}>{t.result.again}</button>
+                                {/* [EN] The picture of the end, whole (Alexey's folder «Морской бой»): a ship under the golden
+                                         moon for a victory, a wreck in green fog for a defeat.
+                                    [RU] Картинка конца боя, целиком (папка Алексея «Морской бой»): корабль под золотой луной
+                                         — победа, разбитый корабль в зелёном тумане — поражение. */}
+                                <img className={styles.resultArt} src={withBase(winner === YOU ? 'games/battleship/victory.webp' : 'games/battleship/defeat.webp')}
+                                    width={winner === YOU ? 426 : 600} height={winner === YOU ? 720 : 337} alt="" decoding="async" draggable={false} />
+                                <div className={styles.resultText}>
+                                    <p className={styles.resultLine}>{winner === YOU ? t.result.won : t.result.lost(who)}</p>
+                                    <p className={styles.hint}>{t.result.stats(stats.shots, stats.hits)}</p>
+                                    <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} onClick={openMenu}>{t.result.again}</button>
+                                </div>
                             </section>
                         )}
 

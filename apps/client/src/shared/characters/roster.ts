@@ -1,21 +1,22 @@
 // [EN] FILE: shared/characters/roster.ts — who lives in the lair: the same company sits down at every table of the hub
-//      (preferans, poker, chess), so the characters belong to no single game. The lair has fifty-three dwellers
-//      (vampires, ghouls, necromancers, a masked empress, a weeping queen…) and thirty-eight guests from the
+//      (preferans, poker, chess, the sea battle), so the characters belong to no single game. The lair has fifty-three
+//      dwellers (vampires, ghouls, necromancers, a masked empress, a weeping queen…) and forty-two guests from the
 //      neighbouring worlds (an alchemist, a zombie from Marseille, aliens, a raccoon, a ronin from an old print, a neon
-//      vampire…). Here is only what does not depend on a game or a language: the name of the record, the grammatical
+//      vampire, four dead pirates…). Here is only what does not depend on a game or a language: the name of the record, the grammatical
 //      gender, dweller or guest, and where the picture lies. Names and biographies — texts/*.ts; how a character
 //      plays — in each game (games/preferans/characters/roster.ts, games/poker/characters.ts, games/chess/…).
-//      Pictures: Alexey's own collection (Desktop «Favicon», 08–09.11.2026; some from StockCake, free to use), whole,
+//      Pictures: Alexey's own collection (Desktop «Favicon», 08–09.11.2026; some from StockCake, free to use; the
+//      pirates — Desktop «Морской бой», 11.11.2026), whole,
 //      with their backgrounds, only scaled down, in public/shared/characters — one copy for all the games.
 //      Pure data without React, so the Node tests use it too.
-// [RU] ФАЙЛ: кто живёт в логове: одна и та же компания садится за любой стол хаба (преферанс, покер, шахматы),
-//      поэтому герои не принадлежат ни одной игре. В логове пятьдесят три обитателя (вампиры, упыри, некроманты,
-//      императрица в маске, плачущая королева…) и тридцать восемь гостей из соседних миров (алхимик, зомби из
-//      Марселя, пришельцы, енот, ронин со старой гравюры, неоновый вампир…). Здесь только то, что не зависит от игры
+// [RU] ФАЙЛ: кто живёт в логове: одна и та же компания садится за любой стол хаба (преферанс, покер, шахматы,
+//      морской бой), поэтому герои не принадлежат ни одной игре. В логове пятьдесят три обитателя (вампиры, упыри,
+//      некроманты, императрица в маске, плачущая королева…) и сорок два гостя из соседних миров (алхимик, зомби из
+//      Марселя, пришельцы, енот, ронин со старой гравюры, неоновый вампир, четыре мёртвых пирата…). Здесь только то, что не зависит от игры
 //      и языка: имя записи, грамматический род, обитатель или гость и где лежит картинка. Имена и биографии —
 //      texts/*.ts; как герой играет — в каждой игре (games/preferans/characters/roster.ts, games/poker/characters.ts,
 //      games/chess/…). Картинки: собственная коллекция Алексея (Рабочий стол «Favicon», 08–09.11.2026; часть со
-//      StockCake, свободная лицензия), целиком, со своим фоном, только уменьшенные, в public/shared/characters — одна
+//      StockCake, свободная лицензия; пираты — Рабочий стол «Морской бой», 11.11.2026), целиком, со своим фоном, только уменьшенные, в public/shared/characters — одна
 //      копия на все игры. Чистые данные без React, поэтому их используют и тесты Node.
 
 export type CharacterId =
@@ -32,6 +33,8 @@ export type CharacterId =
   | 'aurelia' | 'morrigan' | 'elza' | 'polunoch' | 'shadow' | 'gadyuka' | 'sobor' | 'crystal' | 'stilet' | 'rosa'
   | 'banshee' | 'miko' | 'tryasina' | 'agafon' | 'plakalshchitsa' | 'fantom' | 'nebula' | 'undina' | 'okun' | 'gora'
   | 'kaznachey' | 'galeon'
+  /** The crew of the sea battle (11.11.2026): four pirates from the folder «Морской бой», guests from the sea. */
+  | 'krasnoglaz' | 'sunduk' | 'priliv' | 'abordazh'
   /** The dummy of a game for two: never picked as an opponent, it sits in the third seat. */
   | 'dummy';
 
@@ -135,7 +138,14 @@ export const CHARACTERS: Readonly<Record<Exclude<CharacterId, 'dummy'>, Characte
   gora: { female: false, guest: true },
   kaznachey: { female: false, guest: true },
   galeon: { female: false, guest: true },
+  krasnoglaz: { female: false, guest: true },
+  sunduk: { female: false, guest: true },
+  priliv: { female: false, guest: true },
+  abordazh: { female: false, guest: true },
 });
+
+/** [EN] The sea folk: the guests who came by sea (Captain Galleon and the crew of the sea battle). [RU] Морской народ: гости, приплывшие морем (Капитан Галеон и команда морского боя). */
+export const SEA_FOLK: readonly Exclude<CharacterId, 'dummy'>[] = Object.freeze(['galeon', 'krasnoglaz', 'sunduk', 'priliv', 'abordazh']);
 
 /** [EN] The dummy of a game for two: a scarecrow skeleton drawn for the game. [RU] Болван игры вдвоём: скелет-пугало, нарисованный для игры. */
 const DUMMY_FACTS: CharacterFacts = Object.freeze({ female: false, guest: true });

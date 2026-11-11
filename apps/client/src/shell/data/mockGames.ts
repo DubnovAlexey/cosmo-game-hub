@@ -75,9 +75,11 @@ export const games: Game[] = [
         description: "Battleship on a night sea: the classic notebook rules or the boxed ones, a hero of the vampire lair as the opponent, three levels of gunnery. Set out your fleet and find the other one first.",
         badge: "New",
         gameUrl: "/games/battleship",
-        // [EN] Two iron ships on a night chart and a burning hit, drawn by hand (public/games/battleship/cover.svg).
-        // [RU] Два железных корабля на ночной карте и горящее попадание, нарисовано вручную (public/games/battleship/cover.svg).
-        coverUrl: "/games/battleship/cover.svg",
+        // [EN] A pirate ship in space from Alexey's folder «Морской бой» (11.11.2026) beside a chart of the battle
+        //      (public/games/battleship/cover.webp).
+        // [RU] Пиратский корабль в космосе из папки Алексея «Морской бой» (11.11.2026) рядом с картой боя
+        //      (public/games/battleship/cover.webp).
+        coverUrl: "/games/battleship/cover.webp",
         status: "playable",
         icon: "⚓"
     },

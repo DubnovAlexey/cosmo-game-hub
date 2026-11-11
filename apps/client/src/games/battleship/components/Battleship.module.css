@@ -303,16 +303,35 @@
 .log li + li { margin-top: 2px; }
 .logHit { color: #ffb38a; }
 .logSunk { color: #ff7a6a; }
+/* [EN] The end of a battle: the picture in a silver frame beside the words; where both do not fit in one row (a
+        phone), the picture stands above them. The picture is always whole — only its height is set.
+   [RU] Конец боя: картинка в серебряной рамке рядом со словами; где обе не помещаются в одну строку (телефон),
+        картинка встаёт над ними. Картинка всегда целиком — задана только её высота. */
 .result {
-    display: grid;
-    justify-items: center;
-    gap: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px 22px;
     padding: 12px 16px 14px;
     border: 1px solid transparent;
     border-radius: 4px;
     background: linear-gradient(180deg, rgba(40, 21, 30, 0.97) 0%, rgba(16, 8, 12, 0.97) 100%) padding-box, var(--candle-edge) border-box;
     text-align: center;
 }
+.resultArt {
+    display: block;
+    flex: none;
+    width: auto;
+    height: 200px;
+    max-width: 100%;
+    object-fit: contain;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    background: #0c070a padding-box, var(--silver-edge) border-box;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+}
+.resultText { display: grid; flex: 1 1 260px; justify-items: center; gap: 8px; min-width: 0; max-width: 560px; }
 .resultLine { margin: 0; color: #f3e7c6; font: 400 1.6rem/1.3 var(--quill), cursive; unicode-bidi: plaintext; }
 
 /* ===== 6. Menu / Меню ===== */
@@ -356,6 +375,7 @@
     .sea { max-width: 100%; }
     .grid { padding: 4px 6px 6px 2px; }
     .panels { grid-template-columns: minmax(0, 1fr); }
+    .resultArt { height: 150px; }
     .dockActions .button, .dockShips .button { padding: 6px 10px; font-size: 0.95rem; }
     /* [EN] Setting the fleet out by finger: the hint, then the sea, then the ships and the buttons right under it, so
             «Turn» is under the thumb while the sea is on the screen. The dock gives up its own frame: its lines

@@ -7,7 +7,7 @@
 //      паузы, сохранение после каждого изменения и итог. Движок чистый (engine/*.ts); этот хук только держит его
 //      состояние в React и в хранилище браузера.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CHARACTER_IDS, isCharacterId, type CharacterId } from '@shared/characters/roster';
+import { CHARACTER_IDS, SEA_FOLK, isCharacterId, type CharacterId } from '@shared/characters/roster';
 import { addGameResult, clearGameSave, loadGame, saveGame } from '@shared/utils/storageEngine';
 import {
     RULE_SETS, accuracy, afloat, cellsOfPlacement, chooseShot, createRandom, customizeRules, fire, isFleetLegal, newBattle, otherSeat, placementProblem,
@@ -46,9 +46,18 @@ export interface BattleSave {
 export interface BattleResultSummary { readonly won: boolean; readonly shots: number; readonly hits: number; readonly opponent: OpponentId; readonly rules: RulesId; readonly level: GunnerLevel }
 
 const freshSeed = (): number => (Math.floor(Math.random() * 0x7fffffff) ^ Date.now()) >>> 0;
-/** [EN] Somebody of the lair at random, not the one who sat here before. [RU] Кто-то из логова наугад, но не тот, кто сидел здесь только что. */
+/** [EN] How often the opponent of a sea battle comes from the sea folk (the pirates and Captain Galleon). [RU] Как часто соперник морского боя приходит из морского народа (пираты и Капитан Галеон). */
+export const SEA_FOLK_SHARE = 0.5;
+
+/**
+ * [EN] Somebody of the lair at random, not the one who sat here before. Every second battle is fought against the sea
+ *      folk: the pirates came to the lair for this game, and among 95 heroes they would be met too seldom.
+ * [RU] Кто-то из логова наугад, но не тот, кто сидел здесь только что. Каждый второй бой — против морского народа:
+ *      пираты пришли в логово ради этой игры, а среди 95 героев встречались бы слишком редко.
+ */
 export function pickOpponent(previous: OpponentId | null = null, random: () => number = Math.random): OpponentId {
-    const others = CHARACTER_IDS.filter(id => id !== previous);
+    const pool = random() < SEA_FOLK_SHARE ? SEA_FOLK : CHARACTER_IDS;
+    const others = pool.filter(id => id !== previous);
     return others[Math.floor(random() * others.length)] ?? CHARACTER_IDS[0];
 }
 

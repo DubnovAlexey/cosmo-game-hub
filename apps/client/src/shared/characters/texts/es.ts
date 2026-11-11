@@ -95,5 +95,9 @@ export const CHARACTERS_ES: Readonly<Record<CharacterId, CharacterText>> = {
     gora: { name: 'Señor Montaña', bio: 'Invitado del desierto: un enorme cráneo de arenisca. Dicen que está hecho de todos los que se quedaron a tres, y aún crece.' },
     kaznachey: { name: 'Tesorero Nudillos', bio: 'Invitado del otro lado del banco. Cuenta los whists con los nudillos y paga con dólares de calavera, que se aceptan en cualquier cripta.' },
     galeon: { name: 'Capitán Galeón', bio: 'Atraca junto a la mesa en un galeón volador cubierto de rosas, solo con luna de sangre. Abre toda subasta con un abordaje, es decir, con un diez.' },
+    krasnoglaz: { name: 'Capitán Ojorrojo', bio: 'El mar se llevó su barco, su tripulación y su cara, y solo le dejó los ojos rojos. En la oscuridad arden como dos tocados en la carta de batalla, y mira el talón con los ojos entornados tanto rato que el talón se pone nervioso.' },
+    sunduk: { name: 'Patrón Cofre', bio: 'Lleva trescientos años sentado sobre su cofre en una cueva submarina. Ni él recuerda qué hay dentro: la llave se hundió con su último diente. Apuesta el cofre en cada partida y nunca lo ha perdido; total, nadie consigue abrirlo.' },
+    priliv: { name: 'Capitán Marea', bio: 'Se ahogó en la tormenta de 1702 y desde entonces vuelve con cada pleamar. Deja huellas mojadas en la hoja de anotación y encuentra las lanchas de la batalla naval por el olor a sal.' },
+    abordazh: { name: 'Viejo Abordaje', bio: 'El pirata más viejo de los siete mares. El cuervo de su hombro cuenta sus bazas en voz alta y a veces miente a su favor. Empieza cada partida gritando «¡Al abordaje!», incluso al ajedrez, y los peones saltan solos por la borda.' },
     dummy: { name: 'Muerto', bio: 'El tercero en la mesa cuando sois dos: un esqueleto espantapájaros con capa raída. Siempre pasa, nunca discute y no enseña sus cartas hasta que el defensor juega por él.' },
 };
