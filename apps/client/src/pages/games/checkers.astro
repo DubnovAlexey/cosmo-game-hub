@@ -5,7 +5,11 @@ import Layout from '@shell/layouts/Layout.astro';
 import { CheckersGame } from '@games/checkers';
 ---
 
-<Layout title="Checkers | Cosmo Game Hub" titleKey="title.checkers" scrollToTop={false}>
+<!-- [EN] Its own favicon: Alexey's 999.jpg from his folder «Шашки» (the cover, his choice of 11.11.2026) — the middle
+     square of the whole height: the dead warrior, the nosferatu and the board between them.
+     [RU] Свой фавикон: 999.jpg из папки Алексея «Шашки» (обложка, его выбор 11.11.2026) — средний квадрат во всю
+     высоту: мёртвый воин, носферату и доска между ними. -->
+<Layout title="Checkers | Cosmo Game Hub" titleKey="title.checkers" scrollToTop={false} favicon="/games/checkers/favicon">
     <!-- [EN] client:only — the game keeps its state and its saves in the browser. -->
     <!-- [RU] client:only — игра хранит состояние и сохранения в браузере. -->
     <CheckersGame client:only="react" />

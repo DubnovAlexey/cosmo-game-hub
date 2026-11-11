@@ -27,11 +27,18 @@ interface Props {
      * [RU] Плавающая кнопка «наверх»; страницы игр её выключают, чтобы на телефоне она не закрывала кнопки игры.
      */
     scrollToTop?: boolean;
+    /**
+     * [EN] A game's own favicon: the path without the extension, next to which favicon.webp (192 px) and favicon.png
+     *      (64 px) lie, e.g. '/games/checkers/favicon'. Without it the page shows the hub's crystal.
+     * [RU] Собственный фавикон игры: путь без расширения, рядом с которым лежат favicon.webp (192 px) и favicon.png
+     *      (64 px), например '/games/checkers/favicon'. Без него страница показывает кристалл хаба.
+     */
+    favicon?: string;
 }
 
 // [EN] Destructure the title from Astro.props
 // [RU] Деструктуризируем title из Astro.props
-const {title, titleKey, scrollToTop = true} = Astro.props;
+const {title, titleKey, scrollToTop = true, favicon = '/favicon'} = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -58,8 +65,8 @@ const {title, titleKey, scrollToTop = true} = Astro.props;
          UNIVERSE planet, PNG 64 px for the tab. withBase keeps the path inside /cosmo-game-hub/ on GitHub Pages (no 404). -->
     <!-- [RU] Фавикон: красный кристалл-октаэдр, похожий на восьмигранный игральный кубик. WebP 192 px для чётких экранов и
          планеты в UNIVERSE, PNG 64 px для вкладки. withBase держит путь внутри /cosmo-game-hub/ на GitHub Pages (без 404). -->
-    <link rel="icon" type="image/webp" sizes="192x192" href={withBase('/favicon.webp')} />
-    <link rel="icon" type="image/png" sizes="64x64" href={withBase('/favicon.png')} />
+    <link rel="icon" type="image/webp" sizes="192x192" href={withBase(`${favicon}.webp`)} />
+    <link rel="icon" type="image/png" sizes="64x64" href={withBase(`${favicon}.png`)} />
 
     <!-- [EN] Dynamic title injection -->
     <!-- [RU] Динамическая вставка заголовка -->
