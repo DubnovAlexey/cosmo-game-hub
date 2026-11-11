@@ -44,7 +44,7 @@ const en: BattleTexts = {
   placing: {
     title: 'Set out your fleet',
     hint: 'Pick a ship, then a cell of the sea. Press a ship on the sea to take it off.',
-    rotate: 'Turn',
+    rotate: direction => `Turn: ${direction}`,
     across: 'across',
     down: 'down',
     random: 'Set out at random',

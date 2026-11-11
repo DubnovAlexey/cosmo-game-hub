@@ -44,7 +44,7 @@ const es: BattleTexts = {
   placing: {
     title: 'Coloca tu flota',
     hint: 'Elige un barco y luego una casilla del mar. Pulsa un barco colocado para quitarlo.',
-    rotate: 'Girar',
+    rotate: direction => `Girar: ${direction}`,
     across: 'en horizontal',
     down: 'en vertical',
     random: 'Colocar al azar',

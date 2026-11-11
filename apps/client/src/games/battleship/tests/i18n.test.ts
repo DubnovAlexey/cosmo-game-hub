@@ -33,7 +33,7 @@ const strings = (value: unknown, out: string[] = []): string[] => {
 };
 /** [EN] The sentences that are built from a name, a cell or a number. [RU] Фразы, которые собираются из имени, клетки или числа. */
 const built = (t: BattleTexts): string[] => [
-  t.header.savedAt('04:13'), t.setup.savedLine('10.11'), t.placing.dock(t.ships[3], 2), t.battle.theirTurn(LADY), t.battle.afloat(t.ships[4], 1),
+  t.header.savedAt('04:13'), t.setup.savedLine('10.11'), t.placing.rotate(t.placing.down), t.placing.dock(t.ships[3], 2), t.battle.theirTurn(LADY), t.battle.afloat(t.ships[4], 1),
   t.battle.miss(t.battle.you, 'B4'), t.battle.hit(LADY.name, 'B4'), t.battle.sunk(LADY.name, 'B4', t.ships[2]), t.cell.label('B4', t.cell.miss),
   t.result.lost(LADY), t.result.lost(CAPTAIN), t.result.stats(40, 17), t.hero.about(LADY.name),
 ];
@@ -73,6 +73,7 @@ test('sentences agree with the opponent', () => {
   assert.match(he.result.lost(CAPTAIN), /הטביע /);
   assert.equal(ru.battle.sunk('Вы', 'Б4', ru.ships[2]), 'Вы: Б4 — убит (эсминец)');
   assert.equal(ru.cell.label('Б4', ru.cell.miss), 'Б4, мимо');
+  assert.equal(ru.placing.rotate(ru.placing.down), 'Повернуть: по вертикали');
   assert.equal(ru.result.stats(40, 17), 'Ваших выстрелов: 40, попаданий: 17 (43%).');
   // [EN] No shots yet: no division by zero on the screen. [RU] Выстрелов ещё не было: никакого деления на ноль на экране.
   for (const t of ALL) assert.doesNotMatch(t.result.stats(0, 0), /NaN|Infinity/, t.language);

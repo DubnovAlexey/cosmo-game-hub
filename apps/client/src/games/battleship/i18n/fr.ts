@@ -44,7 +44,7 @@ const fr: BattleTexts = {
   placing: {
     title: 'Disposez votre flotte',
     hint: 'Choisissez un navire, puis une case de la mer. Appuyez sur un navire posé pour le retirer.',
-    rotate: 'Tourner',
+    rotate: direction => `Tourner : ${direction}`,
     across: 'à l’horizontale',
     down: 'à la verticale',
     random: 'Disposer au hasard',

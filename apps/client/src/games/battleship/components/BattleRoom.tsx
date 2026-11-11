@@ -168,7 +168,7 @@ export const BattleRoom: React.FC<BattleRoomProps> = ({ language, onLanguage, te
                                     {toPlace.length === 0 && <span className={styles.ready}>{t.placing.ready}</span>}
                                 </div>
                                 <div className={styles.dockActions}>
-                                    <button type="button" className={styles.button} onClick={() => setAcross(value => !value)}>{t.placing.rotate}: {across ? t.placing.across : t.placing.down}</button>
+                                    <button type="button" className={styles.button} onClick={() => setAcross(value => !value)}>{t.placing.rotate(across ? t.placing.across : t.placing.down)}</button>
                                     <button type="button" className={styles.button} onClick={() => { game.randomize(); setProblem(null); }}>{t.placing.random}</button>
                                     <button type="button" className={styles.button} disabled={fleet.length === 0} onClick={() => { game.clear(); setProblem(null); }}>{t.placing.clear}</button>
                                     <button type="button" className={`${styles.button} ${styles.buttonPrimary}`} disabled={toPlace.length > 0} onClick={game.startBattle}>{t.placing.start}</button>

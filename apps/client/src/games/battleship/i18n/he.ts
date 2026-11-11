@@ -44,7 +44,7 @@ const he: BattleTexts = {
   placing: {
     title: 'הציבו את הצי',
     hint: 'בחרו ספינה ואז משבצת בים. לחצו על ספינה שהוצבה כדי להרים אותה.',
-    rotate: 'לסובב',
+    rotate: direction => `לסובב: ${direction}`,
     across: 'לרוחב',
     down: 'לאורך',
     random: 'להציב באקראי',

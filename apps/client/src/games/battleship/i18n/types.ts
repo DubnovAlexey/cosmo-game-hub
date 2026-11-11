@@ -52,7 +52,8 @@ export interface BattleTexts {
   readonly placing: {
     readonly title: string;
     readonly hint: string;
-    readonly rotate: string;
+    /** «Повернуть: по вертикали»: the button that turns the ship in hand, with the direction it has now. */
+    readonly rotate: (direction: string) => string;
     readonly across: string;
     readonly down: string;
     readonly random: string;
