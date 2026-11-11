@@ -150,7 +150,9 @@ const TEXT_AUDIT = `((rootSelector) => {
         for (let box = owner; box && box !== root; box = box.parentElement) {
           const bs = getComputedStyle(box);
           const plate = alpha(bs.backgroundColor) > 0.05 || bs.backgroundImage !== 'none' || parseFloat(bs.borderTopWidth) > 0;
-          if (!plate || bs.display === 'inline') continue;
+          // [EN] A box with «display: contents» draws nothing: it is no plate (the dock of the sea battle on a phone).
+          // [RU] Блок с «display: contents» ничего не рисует: это не табличка (док морского боя на телефоне).
+          if (!plate || bs.display === 'inline' || bs.display === 'contents') continue;
           const b = box.getBoundingClientRect();
           // [EN] What is seen of the line (a name cut by its own dots on purpose is seen only inside its box).
           // [RU] То, что видно от строки (имя, нарочно обрезанное многоточием, видно только внутри своей рамки).
