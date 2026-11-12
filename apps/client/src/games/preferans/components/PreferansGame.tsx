@@ -21,6 +21,7 @@ import '@fontsource/cormorant-garamond/700.css';
 import '@fontsource/cormorant-garamond/600-italic.css';
 import { directionOf } from '@shared/i18n/languages';
 import { useLanguage } from '@shared/i18n/useLanguage';
+import { Surprises } from '@shared/surprises/Surprises';
 import { loadDictionary, type DictionaryFactory } from '../i18n/index.ts';
 import { PreferansTable } from './PreferansTable';
 import styles from './Preferans.module.css';
@@ -41,6 +42,7 @@ export const PreferansGame: React.FC = () => {
     return (
         <div lang={factory.language} dir={directionOf(language)}>
             <PreferansTable language={language} onLanguage={setLanguage} texts={factory.make} />
+            <Surprises set="preferans" />
         </div>
     );
 };

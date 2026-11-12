@@ -32,6 +32,14 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
     'nav.login': t('Login · soon', 'Вход · скоро', 'כניסה · בקרוב', 'Entrar · pronto', 'Connexion · bientôt'),
     'nav.loginTitle': t('Player accounts are coming soon', 'Аккаунты игроков появятся скоро', 'חשבונות שחקנים יגיעו בקרוב', 'Las cuentas de jugador llegarán pronto', 'Les comptes joueurs arrivent bientôt'),
     'nav.language': t('Language', 'Язык', 'שפה', 'Idioma', 'Langue'),
+    'nav.surprises': t('Surprises', 'Неожиданности', 'הפתעות', 'Sorpresas', 'Surprises'),
+    'nav.surprisesTitle': t(
+        'Ravens, black cats, comets and gulls now and then show up in the games — press to switch them off or on',
+        'В играх время от времени появляются вороны, чёрные коты, кометы и чайки — нажмите, чтобы выключить или включить',
+        'עורבים, חתולים שחורים, שביטים ושחפים מופיעים מדי פעם במשחקים — לחצו כדי לכבות או להדליק',
+        'Cuervos, gatos negros, cometas y gaviotas aparecen a veces en los juegos: pulsa para apagarlos o encenderlos',
+        'Corbeaux, chats noirs, comètes et mouettes surgissent parfois dans les jeux — appuyez pour les couper ou les remettre',
+    ),
 
     // Footer
     'footer.rights': t('© 2026 Cosmo Game Hub. All rights reserved.', '© 2026 Cosmo Game Hub. Все права защищены.', '© 2026 Cosmo Game Hub. כל הזכויות שמורות.', '© 2026 Cosmo Game Hub. Todos los derechos reservados.', '© 2026 Cosmo Game Hub. Tous droits réservés.'),
@@ -80,13 +88,13 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
         'משחק אסטרטגיה עתיק: הקיפו יותר שטח מהיריב.',
         'Antiguo juego de estrategia: rodea más territorio que tu rival.',
         'Ancien jeu de stratégie\u00a0: encerclez plus de territoire que l’adversaire.'),
-    'game.monopoly.title': t('Monopoly', 'Монополия', 'מונופול', 'Monopoly', 'Monopoly'),
-    'game.monopoly.description': t(
-        'Economic strategy board game. Buy properties, build hotels and bankrupt your friends.',
-        'Экономическая настольная игра. Покупайте участки, стройте отели и разоряйте друзей.',
-        'משחק לוח כלכלי. קנו נכסים, בנו מלונות ופשטו את הרגל של החברים.',
-        'Juego de mesa económico. Compra propiedades, construye hoteles y arruina a tus amigos.',
-        'Jeu de plateau économique. Achetez des terrains, bâtissez des hôtels, ruinez vos amis.'),
+    'game.rent.title': t('Blood Rent', 'Кровная рента', 'שכר דירה בדם', 'Renta de sangre', 'Loyer du sang'),
+    'game.rent.description': t(
+        'Our own trading board game of cosmic horror: buy up the sectors of a dead station, pay rent in credits — or in flesh on infected sectors — and outlive thirty monsters before the station collapses.',
+        'Наша собственная торговая настольная игра в жанре космического хоррора: скупайте сектора мёртвой станции, платите ренту кредитами — а на заражённых секторах плотью — и переживите тридцать чудовищ, пока станция не рухнула.',
+        'משחק לוח מסחרי משלנו של אימת חלל: קנו את הגזרות של תחנה מתה, שלמו שכירות בקרדיטים — ובגזרות נגועות בבשר — ושרדו שלושים מפלצות לפני שהתחנה קורסת.',
+        'Nuestro propio juego de mesa de comercio y horror cósmico: compra los sectores de una estación muerta, paga la renta en créditos —o en carne en los sectores infectados— y sobrevive a treinta monstruos antes de que la estación se derrumbe.',
+        'Notre propre jeu de plateau de commerce et d’horreur cosmique : achetez les secteurs d’une station morte, payez le loyer en crédits — ou en chair sur les secteurs infectés — et survivez à trente monstres avant l’effondrement de la station.'),
     'game.preferans.title': t('Preferans', 'Преферанс', 'פרפרנס', 'Preferans', 'Préférence'),
     'game.preferans.description': t(
         'The classic card game of bidding and whist: Sochi, Leningrad, Rostov and Classic rules, two to four at the table, against fair bots with characters in a vampire lair.',

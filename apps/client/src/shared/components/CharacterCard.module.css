@@ -31,15 +31,50 @@ div.card {
     text-transform: none;
     box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.5), inset 0 0 0 4px rgba(216, 219, 224, 0.12), 0 18px 40px rgba(0, 0, 0, 0.75);
 }
+/* [EN] A living portrait (Alexey, 12.11.2026: «делаем живыми все изображения»): the frame holds the border and cuts
+        the edges, the picture inside breathes — comes a little closer and drifts — and a warm light like a candle's
+        wanders over it. Still when the system asks for less motion.
+   [RU] Живой портрет (Алексей, 12.11.2026: «делаем живыми все изображения»): рамка держит кайму и обрезает края,
+        картинка внутри «дышит» — чуть приближается и смещается, — а по ней гуляет тёплый отсвет, как от свечи. Замирает,
+        когда система просит меньше движения. */
+.card .portrait {
+    position: relative;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 10px;
+    overflow: hidden;
+    line-height: 0;
+    border: 3px solid #0c070a;
+    box-shadow: 0 0 0 1px rgba(216, 219, 224, 0.35), 0 10px 24px rgba(0, 0, 0, 0.7);
+}
+.card .portrait::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 28% 22%, rgba(255, 196, 122, 0.35), rgba(255, 140, 60, 0.08) 45%, transparent 70%);
+    mix-blend-mode: soft-light;
+    animation: portraitLight 3.4s ease-in-out infinite;
+}
 .card .picture {
     display: block;
     width: auto;
     max-width: 100%;
     max-height: 260px;
-    margin: 0 auto 10px;
-    border: 3px solid #0c070a;
-    box-shadow: 0 0 0 1px rgba(216, 219, 224, 0.35), 0 10px 24px rgba(0, 0, 0, 0.7);
     filter: sepia(0.1) saturate(0.92) contrast(1.06);
+    transform-origin: 50% 38%;
+    animation: portraitBreath 8s ease-in-out infinite alternate;
+}
+@keyframes portraitBreath {
+    from { transform: scale(1) translate(0, 0); }
+    to { transform: scale(1.05) translate(-1.2%, -0.9%); }
+}
+@keyframes portraitLight {
+    0%, 100% { opacity: 0.55; }
+    38% { opacity: 0.95; }
+    52% { opacity: 0.62; }
+    71% { opacity: 1; }
 }
 .card .name { margin: 0; color: #f3dada; font: 400 1.75rem/1.15 var(--hero-quill), cursive; text-shadow: 0 0 12px rgba(176, 16, 31, 0.65), 0 1px 0 #000; }
 .card .tag {
@@ -54,6 +89,12 @@ div.card {
 }
 .card .text { margin: 0 0 8px; }
 /* [EN] What the hero is like in this very game (a poker line). [RU] Каков герой именно в этой игре (покерная реплика). */
+/* [EN] The hero about himself: a line in the first person, in the quotation marks of the page's language.
+   [RU] Герой о себе: строка от первого лица, в кавычках языка страницы. */
+.card .quote { display: block; margin: 0 0 8px; color: #e9c9a8; font-style: italic; quotes: '«' '»'; }
+.card .quote:lang(en) { quotes: '“' '”'; }
+.card .quote:lang(he) { quotes: '„' '”'; }
+.card .quote:lang(fr) { quotes: '«\00a0' '\00a0»'; }
 .card .note { margin: 0 0 8px; padding-inline-start: 10px; border-inline-start: 2px solid #8e0f1c; color: #ffcf7a; font-style: italic; }
 .card .manner { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin: 0 0 10px; padding: 6px 0 0; border-top: 1px solid rgba(144, 151, 161, 0.35); list-style: none; font-size: 0.92rem; font-variant: small-caps; }
 .card .manner b { color: #d9b7a8; font-weight: 700; }
@@ -73,10 +114,12 @@ div.card {
 /* [EN] A wide card: the picture on the left, two and a half times a small portrait of a list, the story beside it.
    [RU] Широкая карточка: слева картинка, в два с половиной раза крупнее маленького портрета списка, рядом рассказ. */
 div.card.wide { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 0 14px; width: min(480px, calc(100vw - 16px)); }
-.card.wide .picture { width: 195px; max-height: 300px; margin: 0; object-fit: contain; }
+.card.wide .portrait { margin: 0; }
+.card.wide .picture { width: 195px; max-height: 300px; object-fit: contain; }
 @media (max-width: 520px) {
     div.card.wide { display: block; width: min(310px, calc(100vw - 16px)); }
-    .card.wide .picture { width: auto; max-height: 220px; margin: 0 auto 10px; }
+    .card.wide .portrait { margin: 0 auto 10px; }
+    .card.wide .picture { width: auto; max-height: 220px; }
 }
 
 /* ===== 2. A face that grows under the mouse and opens the card / Лицо, которое растёт под мышью и раскрывает карточку ===== */
@@ -131,7 +174,24 @@ span.face { position: relative; display: inline-block; flex: none; line-height: 
 .card.peekGrow { transform-origin: 0 0; animation: heroGrow 0.3s cubic-bezier(0.2, 0.75, 0.25, 1) 0.1s both; }
 @keyframes heroGrow { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: none; } }
 
+/* [EN] The small picture at the table breathes too, slowly and barely (12.11.2026: «делаем живыми все изображения»):
+        the game's round or square frame hides the edge, so only the hero seems to draw breath. The phase is the
+        hero's own (breathDelay in CharacterCard.tsx).
+   [RU] Маленькая картинка за столом тоже дышит, медленно и едва заметно (12.11.2026: «делаем живыми все изображения»):
+        круглая или квадратная рамка игры прячет край, поэтому кажется, что вдыхает сам герой. Фаза у каждого своя
+        (breathDelay в CharacterCard.tsx). */
+.face > button > img:first-child {
+    transform-origin: 50% 80%;
+    animation: face-breath 2.4s ease-in-out infinite alternate;
+}
+@keyframes face-breath {
+    from { transform: scale(1); }
+    to { transform: scale(1.04) translateY(-1%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+    .face > button > img:first-child { animation: none; }
     .face > .zoom { transition: none; }
     .card.popover, .card.peek, .card.peekGrow { animation: none; }
+    .card .picture, .card .portrait::after { animation: none; }
 }

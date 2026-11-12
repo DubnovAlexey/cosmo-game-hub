@@ -213,7 +213,7 @@ export const CheckersRoom: React.FC<CheckersRoomProps> = ({ language, onLanguage
                         <div className={styles.captain}>
                             <CharacterFace className={styles.face} faceClassName={`${styles.portrait} ${play.thinking ? styles.portraitThinking : ''}`} side="start"
                                 label={t.hero.about(hero.name)} closeLabel={t.hero.close}
-                                story={{ id: opponent, name: hero.name, bio: hero.bio, tag: characterFacts(opponent).guest ? t.hero.guest : t.hero.dweller }} />
+                                story={{ id: opponent, name: hero.name, bio: hero.bio, quote: hero.quote, tag: characterFacts(opponent).guest ? t.hero.guest : t.hero.dweller }} />
                             <div className={styles.captainText}>
                                 <span className={styles.captainLabel}>{t.setup.opponent}</span>
                                 <span className={styles.captainName}>{hero.name}</span>

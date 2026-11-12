@@ -28,7 +28,7 @@ export interface Dictionary {
     /** [EN] You, then the opponents of this pool clockwise. [RU] Вы, затем соперники этой пули по часовой стрелке. */
     readonly seatNames: readonly string[];
     /** [EN] The whole company of the lair: names and humorous biographies. [RU] Все обитатели логова: имена и биографии с юмором. */
-    readonly characters: Readonly<Record<CharacterId, { readonly name: string; readonly bio: string }>>;
+    readonly characters: Readonly<Record<CharacterId, { readonly name: string; readonly bio: string; readonly quote?: string }>>;
     readonly portrait: {
         /** [EN] Tag of a guest from a neighbouring world. [RU] Пометка гостя из соседнего мира. */
         readonly guest: string;

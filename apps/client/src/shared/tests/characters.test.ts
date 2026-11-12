@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { BOARD_FOLK, CHARACTER_IDS, SEA_FOLK, characterFacts, portraitPath } from '../characters/roster.ts';
+import { BOARD_FOLK, CHARACTER_IDS, SEA_FOLK, SPACE_FOLK, characterFacts, portraitPath } from '../characters/roster.ts';
 import { CHARACTERS_EN } from '../characters/texts/en.ts';
 import { CHARACTERS_ES } from '../characters/texts/es.ts';
 import { CHARACTERS_FR } from '../characters/texts/fr.ts';
@@ -18,7 +18,7 @@ import { CHARACTERS_RU } from '../characters/texts/ru.ts';
 const PUBLIC = fileURLToPath(new URL('../../../public/', import.meta.url));
 
 test('every hero has a picture and words in five languages', () => {
-  assert.equal(CHARACTER_IDS.length, 116);
+  assert.equal(CHARACTER_IDS.length, 146);
   for (const id of CHARACTER_IDS) {
     assert.ok(existsSync(PUBLIC + portraitPath(id)), `${id}: no picture ${portraitPath(id)}`);
     const ru = CHARACTERS_RU[id];
@@ -45,6 +45,21 @@ test('the folk of the board are heroes of the lair, and a wide picture knows whe
   }
 });
 
+test('the space folk of «Кровная рента» are thirty guests of their own, neither pirates nor players of the board', () => {
+  assert.equal(SPACE_FOLK.length, 30);
+  assert.equal(new Set(SPACE_FOLK).size, SPACE_FOLK.length);
+  for (const id of SPACE_FOLK) {
+    assert.ok(CHARACTER_IDS.includes(id), id);
+    assert.equal(characterFacts(id).guest, true, `${id} came from space`);
+    assert.ok(!SEA_FOLK.includes(id) && !BOARD_FOLK.includes(id), id);
+  }
+  // [EN] No two heroes share a name in any language. [RU] Ни на одном языке у двух героев нет одинакового имени.
+  for (const texts of [CHARACTERS_RU, CHARACTERS_EN, CHARACTERS_HE, CHARACTERS_ES, CHARACTERS_FR]) {
+    const names = CHARACTER_IDS.map(id => texts[id].name);
+    assert.equal(new Set(names).size, names.length, names.filter((name, index) => names.indexOf(name) !== index).join(', '));
+  }
+});
+
 test('the sea folk are guests of the lair', () => {
   assert.equal(SEA_FOLK.length, 5);
   for (const id of SEA_FOLK) {
@@ -68,7 +83,25 @@ test('every biography is short: one or two sentences, as long as the first heroe
 
 test('French puts a no-break space before : ; ? ! in the biographies', () => {
   for (const id of CHARACTER_IDS) {
-    const { name, bio } = CHARACTERS_FR[id];
-    assert.doesNotMatch(`${name} ${bio}`, / [:;?!]/, id);
+    const { name, bio, quote = '' } = CHARACTERS_FR[id];
+    assert.doesNotMatch(`${name} ${bio} ${quote}`, / [:;?!]/, id);
   }
+});
+
+test('a hero speaks about himself in one short line, in all five languages or in none', () => {
+  // [EN] Alexey, 12.11.2026: «создаем им автобиографии» — the first-person line under the biography.
+  // [RU] Алексей, 12.11.2026: «создаем им автобиографии» — строка от первого лица под биографией.
+  const LIMITS = [['ru', CHARACTERS_RU, 100], ['en', CHARACTERS_EN, 110], ['he', CHARACTERS_HE, 90], ['es', CHARACTERS_ES, 110], ['fr', CHARACTERS_FR, 120]] as const;
+  for (const id of CHARACTER_IDS) {
+    const has = LIMITS.map(([, texts]) => Boolean(texts[id].quote));
+    assert.ok(has.every(Boolean) || !has.some(Boolean), `${id}: a quote in some languages only`);
+    for (const [language, texts, limit] of LIMITS) {
+      const { quote, bio } = texts[id];
+      if (quote === undefined) continue;
+      assert.ok(quote.length > 8 && quote.length <= limit, `${id} (${language}): ${quote.length} characters, at most ${limit}`);
+      assert.notEqual(quote, bio, `${id} (${language})`);
+    }
+  }
+  // [EN] Since 12.11.2026 every hero has its say. [RU] С 12.11.2026 слово есть у каждого героя.
+  for (const id of CHARACTER_IDS) assert.ok(CHARACTERS_RU[id].quote, `${id} has its say`);
 });

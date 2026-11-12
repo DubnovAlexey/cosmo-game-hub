@@ -54,7 +54,7 @@ export const ChessOpponent: React.FC<{ id: OpponentId; thinking: boolean; onAnot
     return (
         <div className={styles['opponent']} dir={language === 'he' ? 'rtl' : 'ltr'}>
             <CharacterFace className={styles['opponent-face']} faceClassName={styles['opponent-portrait']} side="start" label={words.about(name)} closeLabel={words.close}
-                story={{ id, name, bio, tag: characterFacts(id).guest ? words.guest : words.dweller }} />
+                story={{ id, name, bio, quote: texts[id].quote, tag: characterFacts(id).guest ? words.guest : words.dweller }} />
             <div className={styles['opponent-text']}>
                 <span className={styles['opponent-label']}>{words.opponent}</span>
                 <span className={styles['opponent-name']}>{name}{thinking && <em> · {words.thinking}</em>}</span>

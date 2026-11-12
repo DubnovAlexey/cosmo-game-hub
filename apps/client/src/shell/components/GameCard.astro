@@ -8,12 +8,16 @@ interface Props {
     badge?: string;
     gameUrl: string;
     coverUrl?: string;
+    covers?: readonly string[];
     status: 'playable' | 'soon';
     icon?: string;
 }
 
 // Destructure the properties from Astro.props
-const { title, description, badge, gameUrl, coverUrl, status, icon } = Astro.props;
+const { title, description, badge, gameUrl, coverUrl, covers = [], status, icon } = Astro.props;
+// [EN] The cover first, then our variants (shell/data/mockGames.ts); shell/utils/coverCycle.ts dissolves between them.
+// [RU] Сначала обложка, потом наши варианты (shell/data/mockGames.ts); shell/utils/coverCycle.ts перетекает между ними.
+const pictures = coverUrl ? [coverUrl, ...covers] : [];
 
 // [EN] The texts are keyed by the last part of the game's address («/games/preferans» → game.preferans.*), so the
 //      card follows the site language (shell/i18n/shellTexts.ts). [RU] Тексты — по последней части адреса игры
@@ -42,12 +46,18 @@ const shownBadge = isPlayable ? badge : 'Soon';
 
     {isPlayable ? (
             <a href={withBase(gameUrl)} tabindex="-1" aria-hidden="true" class="h-48 bg-gray-700 flex items-center justify-center relative overflow-hidden">
-            {coverUrl ? (
-                    <img
-                            src={withBase(coverUrl)}
-                            alt={`${title} cover`}
-                            class="w-full h-full object-cover"
-                    />
+            {pictures.length > 0 ? (
+                    <span class="cover-stack" data-cover-stack>
+                        {pictures.map((src, index) => (
+                                <img
+                                        src={withBase(src)}
+                                        alt={index === 0 ? `${title} cover` : ''}
+                                        loading={index === 0 ? 'eager' : 'lazy'}
+                                        decoding="async"
+                                        class:list={['cover-picture', { 'is-shown': index === 0 }]}
+                                />
+                        ))}
+                    </span>
             ) : (
                     <span class="text-7xl text-gray-500 select-none" aria-hidden="true">{icon ?? title.charAt(0)}</span>
             )}
@@ -64,12 +74,18 @@ const shownBadge = isPlayable ? badge : 'Soon';
             </a>
     ) : (
             <div class="h-48 bg-gray-700 flex items-center justify-center relative overflow-hidden">
-            {coverUrl ? (
-                    <img
-                            src={withBase(coverUrl)}
-                            alt={`${title} cover`}
-                            class="w-full h-full object-cover"
-                    />
+            {pictures.length > 0 ? (
+                    <span class="cover-stack" data-cover-stack>
+                        {pictures.map((src, index) => (
+                                <img
+                                        src={withBase(src)}
+                                        alt={index === 0 ? `${title} cover` : ''}
+                                        loading={index === 0 ? 'eager' : 'lazy'}
+                                        decoding="async"
+                                        class:list={['cover-picture', { 'is-shown': index === 0 }]}
+                                />
+                        ))}
+                    </span>
             ) : (
                     <span class="text-7xl text-gray-500 select-none" aria-hidden="true">{icon ?? title.charAt(0)}</span>
             )}
@@ -100,3 +116,8 @@ const shownBadge = isPlayable ? badge : 'Soon';
         )}
     </div>
 </article>
+
+<script>
+    import { startCoverCycle } from '../utils/coverCycle';
+    startCoverCycle();
+</script>

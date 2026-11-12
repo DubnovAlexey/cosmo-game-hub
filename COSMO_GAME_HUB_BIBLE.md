@@ -15,7 +15,7 @@
 ### 1. Назначение
 
 Cosmo Game Hub — статический сайт на Astro (GitHub Pages) с коллекцией классических игр.
-- **Каталог.** В нём девять игр. Шахматы, преферанс, покер и морской бой уже играются; шашки, го, монополия, крестики-нолики и змейка — следующие.
+- **Каталог.** В нём девять игр. Шахматы, шашки, преферанс, покер и морской бой уже играются; го, «Кровная рента» (наша собственная торговая игра в жанре космического хоррора — движок готов, стол следующий), крестики-нолики и змейка — следующие. С 12.11.2026 обложки живые: к обложке каждой игры добавлены наши варианты, сгенерированные на своей видеокарте, и карточка медленно перетекает между ними (`shell/utils/coverCycle.ts`).
 - **Как устроена игра.** Каждая игра — React-остров, тяжёлые вычисления идут в Web Worker.
 
 Что должна обеспечить архитектура:
@@ -715,7 +715,7 @@ This reference is for internal reading and for specialists who want to see how t
 ### 1. Purpose
 
 Cosmo Game Hub is a static Astro site on GitHub Pages with a collection of classic games.
-- **Catalog.** It has nine games. Chess, preferans, poker and the sea battle are playable; checkers, go, monopoly, tic-tac-toe and snake come next.
+- **Catalog.** It has nine games. Chess, checkers, preferans, poker and the sea battle are playable; go, «Blood Rent» (our own trading game of cosmic horror — the engine is ready, the table comes next), tic-tac-toe and snake come next. Since 12.11.2026 the covers are alive: our own variants, generated on our own GPU, stand beside the cover of every game, and the card slowly dissolves between them (`shell/utils/coverCycle.ts`).
 - **How a game is built.** Each game is a React island; heavy computation runs in a Web Worker.
 
 What the architecture must provide:
@@ -1417,7 +1417,7 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
 ### 1. מטרה
 
 הפרויקט Cosmo Game Hub הוא אתר סטטי שבנוי ב-Astro ומתארח ב-GitHub Pages, ובו אוסף של משחקים קלאסיים.
-- **הקטלוג.** יש בו תשעה משחקים. שחמט, פרפרנס, פוקר וצוללות כבר זמינים למשחק; דמקה, גו, מונופול, איקס עיגול ונחש יבואו בהמשך.
+- **הקטלוג.** יש בו תשעה משחקים. שחמט, דמקה, פרפרנס, פוקר וצוללות כבר זמינים למשחק; גו, «שכר דירה בדם» (משחק מסחר משלנו של אימת חלל — המנוע מוכן, השולחן הבא בתור), איקס עיגול ונחש יבואו בהמשך. מאז 12.11.2026 העטיפות חיות: ליד העטיפה של כל משחק עומדות גרסאות משלנו, שנוצרו בכרטיס המסך שלנו, והכרטיס עובר לאט ביניהן (`shell/utils/coverCycle.ts`).
 - **איך בנוי משחק.** כל משחק הוא "אי" של React, וחישובים כבדים רצים ב-Web Worker.
 
 מה הארכיטקטורה צריכה להבטיח:
@@ -2123,7 +2123,7 @@ Esta referencia es para lectura interna y para especialistas que quieran ver có
 ### 1. Propósito
 
 Cosmo Game Hub es un sitio estático de Astro en GitHub Pages con una colección de juegos clásicos.
-- **Catálogo.** Tiene nueve juegos. Ya se puede jugar al ajedrez, al preferans, al póker y a la batalla naval; las damas, el go, el monopoly, el tres en raya y la serpiente vienen después.
+- **Catálogo.** Tiene nueve juegos. Ya se puede jugar al ajedrez, a las damas, al preferans, al póker y a la batalla naval; el go, «Renta de sangre» (nuestro propio juego de comercio y horror cósmico: el motor está listo, la mesa viene después), el tres en raya y la serpiente vienen después. Desde el 12.11.2026 las portadas están vivas: junto a la portada de cada juego hay variantes nuestras, generadas en nuestra propia tarjeta gráfica, y la tarjeta pasa lentamente de una a otra (`shell/utils/coverCycle.ts`).
 - **Cómo está hecho un juego.** Cada juego es una isla de React; el cálculo pesado se ejecuta en un Web Worker.
 
 Qué debe garantizar la arquitectura:
@@ -2823,7 +2823,7 @@ Cette référence est destinée à la lecture interne et aux spécialistes qui v
 ### 1. Objet
 
 Cosmo Game Hub est un site statique Astro hébergé sur GitHub Pages, avec une collection de jeux classiques.
-- **Catalogue.** Il compte neuf jeux. Les échecs, la préférence (preferans), le poker et la bataille navale sont jouables ; les dames, le go, le monopoly, le morpion et le serpent suivront.
+- **Catalogue.** Il compte neuf jeux. Les échecs, les dames, la préférence (preferans), le poker et la bataille navale sont jouables ; le go, « Loyer du sang » (notre propre jeu de commerce et d’horreur cosmique — le moteur est prêt, la table suivra), le morpion et le serpent suivront. Depuis le 12.11.2026, les couvertures sont vivantes : à côté de la couverture de chaque jeu se trouvent nos propres variantes, générées sur notre propre carte graphique, et la carte passe lentement de l’une à l’autre (`shell/utils/coverCycle.ts`).
 - **Comment un jeu est construit.** Chaque jeu est un îlot React ; les calculs lourds tournent dans un Web Worker.
 
 Ce que l'architecture doit garantir :

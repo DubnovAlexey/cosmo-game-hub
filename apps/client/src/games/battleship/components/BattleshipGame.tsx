@@ -11,6 +11,7 @@ import '@fontsource/cormorant-garamond/600-italic.css';
 import { loadCharacterTexts, type CharacterTexts } from '@shared/characters/texts';
 import { directionOf } from '@shared/i18n/languages';
 import { useLanguage } from '@shared/i18n/useLanguage';
+import { Surprises } from '@shared/surprises/Surprises';
 import { loadBattleTexts, type BattleTexts } from '../i18n';
 import { BattleRoom } from './BattleRoom';
 import styles from './Battleship.module.css';
@@ -27,6 +28,7 @@ export const BattleshipGame: React.FC = () => {
     return (
         <div lang={loaded.texts.language} dir={directionOf(language)}>
             <BattleRoom language={language} onLanguage={setLanguage} texts={loaded.texts} people={loaded.people} />
+            <Surprises set="battleship" />
         </div>
     );
 };

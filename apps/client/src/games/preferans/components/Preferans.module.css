@@ -564,6 +564,21 @@ button.card { cursor: pointer; }
     border: 3px solid #0c070a;
     border-radius: 1px;
     filter: sepia(0.1) saturate(0.92) contrast(1.06);
+    animation: seat-candle 5.3s ease-in-out infinite;
+}
+/* [EN] The candles of the lair flicker on the portraits (12.11.2026: «делаем живыми все изображения»): the light on
+        each face breathes at its own phase (breathDelay), never all at once; the frame keeps still.
+   [RU] Свечи логова мерцают на портретах (12.11.2026: «делаем живыми все изображения»): свет на каждом лице дышит в
+        своей фазе (breathDelay), никогда не все разом; рамка неподвижна. */
+@keyframes seat-candle {
+    0%, 100% { filter: sepia(0.1) saturate(0.92) contrast(1.06) brightness(1); }
+    23% { filter: sepia(0.14) saturate(0.95) contrast(1.06) brightness(1.08); }
+    31% { filter: sepia(0.1) saturate(0.92) contrast(1.06) brightness(0.97); }
+    58% { filter: sepia(0.16) saturate(0.96) contrast(1.07) brightness(1.06); }
+    74% { filter: sepia(0.1) saturate(0.9) contrast(1.05) brightness(0.95); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .portrait img { animation: none; }
 }
 .portrait::before {
     content: '';
@@ -659,13 +674,18 @@ button.card { cursor: pointer; }
     clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 50%, 100% 100%, 0 100%);
 }
 .bioText { margin: 0 0 8px; }
+/* [EN] The hero about himself, in the quotation marks of the language. [RU] Герой о себе, в кавычках языка. */
+.bioQuote { display: block; margin: 0 0 8px; font-style: italic; opacity: 0.92; quotes: '«' '»'; }
+.bioQuote:lang(en) { quotes: '“' '”'; }
+.bioQuote:lang(he) { quotes: '„' '”'; }
+.bioQuote:lang(fr) { quotes: '«\00a0' '\00a0»'; }
 .bioManner { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin: 0 0 10px; padding: 6px 0 0; border-top: 1px solid rgba(144, 151, 161, 0.35); list-style: none; font-size: 0.92rem; font-variant: small-caps; }
 .bioManner b { color: #d9b7a8; font-weight: 700; }
 
 /* [EN] Opponents on the menu: small portraits pinned to the notebook page; the chosen ones circled in red pen with
         their seat number. [RU] Соперники в меню: маленькие портреты, приколотые к странице тетради; выбранные
         обведены красной ручкой с номером места. */
-.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 10px 8px; max-height: 300px; margin: 6px 0 10px; padding: 6px 4px; overflow-y: auto; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px 8px; max-height: 300px; margin: 6px 0 10px; padding: 6px 4px; overflow-y: auto; }
 .galleryItem {
     position: relative;
     display: flex;
@@ -688,6 +708,11 @@ button.card { cursor: pointer; }
 .galleryItem:nth-child(3n) { rotate: -0.4deg; }
 .galleryItem:hover, .galleryItem:focus-visible { rotate: 0deg; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28); outline: none; }
 .galleryItem img { display: block; width: 100%; height: 70px; object-fit: cover; border-radius: 1px; }
+/* [EN] A name with a long word («Зазеркальный Адмирал», «La Courtisane Cybernétique») is set a little smaller, so every
+        word stays whole inside its tile. [RU] Имя с длинным словом («Зазеркальный Адмирал», «La Courtisane
+        Cybernétique») набрано чуть мельче, чтобы каждое слово целиком помещалось в плитку. */
+.galleryItem > span { max-width: 100%; }
+.galleryItem > .galleryLong { font-size: 0.64rem; letter-spacing: -0.01em; }
 .galleryOn { border: 2px solid var(--ink-red); box-shadow: 0 0 0 3px rgba(163, 36, 44, 0.18), 0 4px 10px rgba(0, 0, 0, 0.25); }
 .galleryMark {
     position: absolute;

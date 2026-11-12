@@ -154,7 +154,7 @@ function seatsOf(cast: Cast) {
     const name = (seat: number): string => NAMES[seat];
     return { NAMES, TO, FOR, by, name };
 }
-const CHARACTER_TEXTS = Object.fromEntries([...ROSTER, DUMMY].map(({ id }) => [id, { name: CHARACTERS_RU[id].name, bio: CHARACTERS_RU[id].bio }])) as Dictionary['characters'];
+const CHARACTER_TEXTS = Object.fromEntries([...ROSTER, DUMMY].map(({ id }) => [id, { name: CHARACTERS_RU[id].name, bio: CHARACTERS_RU[id].bio, quote: CHARACTERS_RU[id].quote }])) as Dictionary['characters'];
 
 const closed = (reason: ClosedReason): string => {
     switch (reason.kind) {

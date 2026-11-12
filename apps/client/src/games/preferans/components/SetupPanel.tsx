@@ -42,6 +42,9 @@ const when = (timestamp: number, language: Language): string =>
     new Date(timestamp).toLocaleString(language, { dateStyle: 'short', timeStyle: 'short' });
 const STRENGTHS: readonly Choice<BotStrength>[] = [{ value: 'casual', ready: true }, { value: 'strong', ready: true }];
 
+/** [EN] Letters in the longest word of a name (a hyphen joins, it never breaks a word here). [RU] Букв в самом длинном слове имени. */
+const longestWord = (name: string): number => Math.max(...name.split(/\s+/).map(word => word.length));
+
 /** [EN] What / how / effect of one item. [RU] Что / как / к чему приводит. */
 const Explanation: React.FC<{ text: Explained; t: Dictionary }> = ({ text, t }) => (
     <>
@@ -156,14 +159,14 @@ const OpponentPicker: React.FC<{ value: readonly (CharacterId | null)[]; champio
                         <button key={id} type="button" className={`${styles.galleryItem} ${seat >= 0 ? styles.galleryOn : ''}`}
                             aria-pressed={seat >= 0} onClick={() => toggle(id)} {...peek.bind(id)}>
                             <img src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" style={portraitFocus(id)} />
-                            <span>{t.characters[id].name}</span>
+                            <span className={longestWord(t.characters[id].name) >= 10 ? styles.galleryLong : undefined}>{t.characters[id].name}</span>
                             {seat >= 0 && <b className={styles.galleryMark} aria-hidden="true">{seat + 1}</b>}
                         </button>
                     );
                 })}
             </div>
             <CharacterPeek grow anchor={peek.anchor} story={peek.id === null ? null : {
-                id: peek.id, name: t.characters[peek.id].name, bio: t.characters[peek.id].bio,
+                id: peek.id, name: t.characters[peek.id].name, bio: t.characters[peek.id].bio, quote: t.characters[peek.id].quote,
                 tag: characterInfo(peek.id).guest ? t.portrait.guest : t.portrait.dweller, manner: mannerOf(characterInfo(peek.id), t),
             }} />
             <div className={styles.row}>

@@ -1,0 +1,2109 @@
+/* [EN] FILE: shared/surprises/Surprises.module.css — the layer of «surprises» over a game and every choreography.
+        Each choreography belongs to one game only (logic.ts): chess, sea battle, preferans, poker, checkers. Clicks
+        and taps go through the layer. Where from, where to and how long comes from logic.ts as CSS variables; every
+        @keyframes lives in this module (a module cannot reach animations of another file).
+   [RU] ФАЙЛ: слой «неожиданностей» над игрой и все хореографии. Каждая принадлежит только одной игре (logic.ts):
+        шахматы, морской бой, преферанс, покер, шашки. Нажатия проходят сквозь слой. Откуда, куда и как долго —
+        приходит из logic.ts переменными CSS; все @keyframes — в этом модуле (модуль не достаёт анимации другого файла). */
+
+.layer {
+    position: fixed;
+    inset: 0;
+    z-index: 45; /* [EN] over the table, under result dialogs (55–60) and hero cards / [RU] над столом, под окнами итогов и карточками героев */
+    pointer-events: none;
+    overflow: hidden;
+
+    /* [EN] Defaults of every variable logic.ts sets (the real values come in the style attribute).
+       [RU] Значения по умолчанию всех переменных, которые ставит logic.ts (настоящие приходят в атрибуте style). */
+    --dur: 4s;
+    --delay: 0ms;
+    --x0: 0px;
+    --y0: 0px;
+    --x1: 0px;
+    --y1: 0px;
+    --xm: 0px;
+    --s1: 0px;
+    --s2: 0px;
+    --s3: 0px;
+    --s4: 0px;
+    --tilt: 0deg;
+    --turn: 0deg;
+    --x: 0px;
+    --y: 0px;
+    --x2: 0px;
+    --y2: 0px;
+    --dx: 0px;
+    --dy: 0px;
+    --dip: 0px;
+    --mid: 0px;
+    --bx: 0px;
+    --by: 0px;
+    --reach: 0px;
+    --rise: 0px;
+    --drift: 0px;
+    --r: 0px;
+    --fall: 0px;
+    --len: 0px;
+    --sit: 0px;
+    --xt: 0px;
+    --yt: 0px;
+    --spin: 0deg;
+    --rot: 0deg;
+    --r1: 0deg;
+    --r2: 0deg;
+    --floor: 0px;
+    --depth: 0px;
+    --p0x: 0px;
+    --p0y: 0px;
+    --p1x: 0px;
+    --p1y: 0px;
+    --p2x: 0px;
+    --p2y: 0px;
+    --p3x: 0px;
+    --p3y: 0px;
+    --p4x: 0px;
+    --p4y: 0px;
+    --p5x: 0px;
+    --p5y: 0px;
+    --a0: 0deg;
+    --a1: 0deg;
+    --a2: 0deg;
+    --a3: 0deg;
+    --a4: 0deg;
+}
+
+.creature {
+    display: block;
+    overflow: visible;
+}
+
+.sprite {
+    display: block;
+    height: auto;
+    max-width: none;
+    user-select: none;
+}
+
+/* [EN] Drawn facing right; going left — mirrored. [RU] Нарисованы мордой вправо; идут влево — зеркалим. */
+.flip {
+    display: block;
+    transform: scaleX(-1);
+}
+
+.facing {
+    display: block;
+}
+
+/* ===================== [EN] CHESS — cartoon space / [RU] ШАХМАТЫ — мультяшный космос ===================== */
+
+.across {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+    animation: across var(--dur) linear var(--delay) both;
+}
+
+.swoop {
+    display: block;
+    animation: swoop var(--dur) ease-in-out var(--delay) both;
+}
+
+.flutter {
+    display: block;
+    animation: flutter 0.42s ease-in-out infinite alternate;
+}
+
+@keyframes across {
+    from {
+        transform: translate(var(--x0), var(--y0));
+    }
+    to {
+        transform: translate(var(--x1), var(--y1));
+    }
+}
+
+@keyframes swoop {
+    0% {
+        transform: translateY(0) rotate(var(--tilt));
+    }
+    20% {
+        transform: translateY(var(--s1)) rotate(calc(var(--tilt) * -0.6));
+    }
+    42% {
+        transform: translateY(var(--s2)) rotate(var(--tilt));
+    }
+    63% {
+        transform: translateY(var(--s3)) rotate(calc(var(--tilt) * -1));
+    }
+    84% {
+        transform: translateY(var(--s4)) rotate(calc(var(--tilt) * 0.5));
+    }
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+@keyframes flutter {
+    from {
+        transform: translateY(-4px);
+    }
+    to {
+        transform: translateY(5px);
+    }
+}
+
+/* [EN] Peeking from behind a side edge (the alien). [RU] Выглядывает из-за бокового края (пришелец). */
+.peeker {
+    position: absolute;
+    top: var(--y);
+    left: 0;
+    will-change: transform;
+    animation: peek var(--dur) ease-in-out both;
+}
+
+.peekRight {
+    left: auto;
+    right: 0;
+    animation-name: peek-right;
+}
+
+@keyframes peek {
+    0%,
+    100% {
+        transform: translateX(-100%);
+    }
+    22%,
+    40% {
+        transform: translateX(-30%);
+    }
+    48% {
+        transform: translateX(-46%);
+    }
+    58%,
+    78% {
+        transform: translateX(-30%);
+    }
+}
+
+@keyframes peek-right {
+    0%,
+    100% {
+        transform: translateX(100%);
+    }
+    22%,
+    40% {
+        transform: translateX(30%);
+    }
+    48% {
+        transform: translateX(46%);
+    }
+    58%,
+    78% {
+        transform: translateX(30%);
+    }
+}
+
+/* [EN] Drifting slowly across, turning (astronaut, satellite). [RU] Медленно плывёт поперёк, поворачиваясь (космонавт, спутник). */
+.drifter {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+    animation: across var(--dur) linear both;
+}
+
+.turn {
+    display: block;
+    animation: turn var(--dur) ease-in-out both;
+}
+
+@keyframes turn {
+    from {
+        transform: rotate(calc(var(--turn) * -1));
+    }
+    to {
+        transform: rotate(var(--turn));
+    }
+}
+
+/* ===================== [EN] SEA BATTLE — cartoon sea / [RU] МОРСКОЙ БОЙ — мультяшное море ===================== */
+
+/* [EN] A gull glides, dips toward the water and climbs again. [RU] Чайка парит, ныряет к воде и снова набирает высоту. */
+.gullPath {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+    animation: gull var(--dur) ease-in-out both;
+}
+
+@keyframes gull {
+    0% {
+        transform: translate(var(--x0), var(--y0));
+    }
+    45% {
+        transform: translate(calc(var(--x0) + (var(--x1) - var(--x0)) * 0.45), calc(var(--y0) + var(--dip)));
+    }
+    100% {
+        transform: translate(var(--x1), calc(var(--y0) - var(--dip) * 0.4));
+    }
+}
+
+.bank {
+    display: block;
+    animation: bank 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes bank {
+    from {
+        transform: rotate(-7deg);
+    }
+    to {
+        transform: rotate(6deg);
+    }
+}
+
+/* [EN] A shark fin: fast, slows in the middle, turns back for a moment, then goes on. [RU] Плавник: быстро, замедляется посередине, на миг поворачивает назад и уходит. */
+.cutter {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    will-change: transform;
+    animation: cut var(--dur) both;
+}
+
+@keyframes cut {
+    0% {
+        transform: translateX(var(--x0));
+        animation-timing-function: ease-out;
+    }
+    40% {
+        transform: translateX(var(--mid));
+        animation-timing-function: ease-in-out;
+    }
+    52% {
+        transform: translateX(calc(var(--mid) - (var(--x1) - var(--x0)) * 0.06));
+        animation-timing-function: ease-in-out;
+    }
+    64% {
+        transform: translateX(var(--mid));
+        animation-timing-function: ease-in;
+    }
+    100% {
+        transform: translateX(var(--x1));
+    }
+}
+
+.finTurn {
+    display: block;
+    animation: fin-turn var(--dur) both;
+}
+
+@keyframes fin-turn {
+    0%,
+    42%,
+    62%,
+    100% {
+        transform: scaleX(1);
+    }
+    46%,
+    58% {
+        transform: scaleX(-1);
+    }
+}
+
+/* [EN] Rising from under the bottom edge (tentacle, periscope). [RU] Поднимается из-под нижнего края (щупальце, перископ). */
+.riser {
+    position: absolute;
+    left: var(--x);
+    bottom: 0;
+    will-change: transform;
+    animation: rise var(--dur) ease-in-out both;
+}
+
+@keyframes rise {
+    0%,
+    100% {
+        transform: translateY(105%);
+    }
+    24%,
+    76% {
+        transform: translateY(8%);
+    }
+    50% {
+        transform: translateY(14%);
+    }
+}
+
+/* [EN] A bottle bobbing past low on the waves. [RU] Бутылка проплывает низко по волнам. */
+.bobber {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+    animation: bobber var(--dur) linear both;
+}
+
+@keyframes bobber {
+    from {
+        transform: translate(var(--x0), var(--y0));
+    }
+    to {
+        transform: translate(var(--x1), var(--y0));
+    }
+}
+
+.rock {
+    display: block;
+    transform-origin: 50% 80%;
+    animation: rock 1.7s ease-in-out infinite alternate;
+}
+
+@keyframes rock {
+    from {
+        transform: translateY(-4px) rotate(-11deg);
+    }
+    to {
+        transform: translateY(5px) rotate(9deg);
+    }
+}
+
+/* [EN] Sonar: three rings spread from a point, a target blip flashes. [RU] Сонар: три круга расходятся от точки, мигает отметка цели. */
+.sonar {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    transform: translate(-50%, -50%);
+}
+
+.ping {
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(110, 255, 170, 0.75);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(110, 255, 170, 0.45), inset 0 0 12px rgba(110, 255, 170, 0.25);
+    opacity: 0;
+    animation: ping var(--dur) ease-out both;
+}
+
+.pingLate {
+    animation-delay: 0.7s;
+}
+
+.pingLast {
+    animation-delay: 1.4s;
+}
+
+@keyframes ping {
+    0% {
+        opacity: 0.9;
+        transform: scale(0.05);
+    }
+    55% {
+        opacity: 0;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}
+
+.blip {
+    position: absolute;
+    left: calc(50% + var(--bx) - 6px);
+    top: calc(50% + var(--by) - 6px);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #9dffc4;
+    box-shadow: 0 0 10px 4px rgba(110, 255, 170, 0.7);
+    opacity: 0;
+    animation: blip var(--dur) steps(1, end) both;
+}
+
+@keyframes blip {
+    0%,
+    30% {
+        opacity: 0;
+    }
+    32%,
+    42%,
+    52%,
+    62% {
+        opacity: 1;
+    }
+    37%,
+    47%,
+    57%,
+    70%,
+    100% {
+        opacity: 0;
+    }
+}
+
+/* ===================== [EN] PREFERANS — realistic salon / [RU] ПРЕФЕРАНС — реалистичный салон ===================== */
+
+/* [EN] The raven: hops in along the bottom, stops, pecks twice, takes off up and away.
+   [RU] Ворон: прыжками заходит по низу, останавливается, дважды клюёт, взлетает вверх и прочь. */
+.hopPath {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    will-change: transform;
+    animation: hop-path var(--dur) both;
+}
+
+@keyframes hop-path {
+    0% {
+        transform: translate(var(--x0), 0);
+        animation-timing-function: linear;
+    }
+    40% {
+        transform: translate(var(--xm), 0);
+    }
+    70% {
+        transform: translate(var(--xm), 0);
+        animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6);
+    }
+    100% {
+        transform: translate(var(--x1), var(--y1));
+    }
+}
+
+.hopBody {
+    display: block;
+    transform-origin: 50% 100%;
+    animation: hop-body var(--dur) both;
+}
+
+@keyframes hop-body {
+    0%,
+    10%,
+    20%,
+    30%,
+    40% {
+        transform: translateY(0) rotate(0deg);
+    }
+    5%,
+    15%,
+    25%,
+    35% {
+        transform: translateY(-14px) rotate(-3deg);
+    }
+    46%,
+    56% {
+        transform: translateY(0) rotate(22deg);
+    }
+    50%,
+    60%,
+    68% {
+        transform: translateY(0) rotate(0deg);
+    }
+    80% {
+        transform: translateY(-10px) rotate(-18deg) scale(0.92);
+    }
+    100% {
+        transform: translateY(-20px) rotate(-26deg) scale(0.7);
+    }
+}
+
+/* [EN] The ghost hand: slides in from a side toward the cards, fingers tremble, snaps back.
+   [RU] Призрачная рука: выдвигается сбоку к картам, пальцы дрожат, резко отдёргивается. */
+.reach {
+    position: absolute;
+    top: var(--y);
+    will-change: transform, opacity;
+}
+
+.reachLeft {
+    left: 0;
+    animation: reach-left var(--dur) both;
+}
+
+.reachRight {
+    right: 0;
+    animation: reach-right var(--dur) both;
+}
+
+@keyframes reach-left {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%) rotate(6deg);
+        animation-timing-function: cubic-bezier(0.25, 0.8, 0.4, 1);
+    }
+    12% {
+        opacity: 0.9;
+    }
+    55% {
+        opacity: 0.9;
+        transform: translateX(calc(var(--reach) - 100%)) rotate(-4deg);
+    }
+    80% {
+        opacity: 0.85;
+        transform: translateX(calc(var(--reach) - 100%)) rotate(-2deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-100%) rotate(8deg);
+    }
+}
+
+@keyframes reach-right {
+    0% {
+        opacity: 0;
+        transform: translateX(100%) rotate(-6deg);
+        animation-timing-function: cubic-bezier(0.25, 0.8, 0.4, 1);
+    }
+    12% {
+        opacity: 0.9;
+    }
+    55% {
+        opacity: 0.9;
+        transform: translateX(calc(100% - var(--reach))) rotate(4deg);
+    }
+    80% {
+        opacity: 0.85;
+        transform: translateX(calc(100% - var(--reach))) rotate(2deg);
+        animation-timing-function: cubic-bezier(0.7, 0, 1, 0.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100%) rotate(-8deg);
+    }
+}
+
+.tremble {
+    display: block;
+    animation: tremble 0.11s linear infinite alternate;
+}
+
+@keyframes tremble {
+    from {
+        transform: translate(0, 0) rotate(-0.6deg);
+    }
+    to {
+        transform: translate(1px, -1px) rotate(0.7deg);
+    }
+}
+
+/* [EN] The smoke skull: rises, grows, thins out. [RU] Дымный череп: поднимается, растёт, тает. */
+.curl {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: curl var(--dur) ease-out both;
+}
+
+@keyframes curl {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.45) rotate(-6deg);
+    }
+    30% {
+        opacity: 0.85;
+    }
+    65% {
+        opacity: 0.75;
+        transform: translateY(calc(var(--rise) * -0.7)) scale(1.05) rotate(3deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(calc(var(--rise) * -1)) scale(1.3) rotate(8deg);
+    }
+}
+
+/* [EN] The moth: circles faster and faster round a flame, dives in, flares, ash falls.
+   [RU] Бражник: кружит всё быстрее вокруг пламени, ныряет в него, вспыхивает, падает пепел. */
+.orbit {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: 0;
+    height: 0;
+}
+
+.orbitArm {
+    position: absolute;
+    left: 0;
+    top: 0;
+    animation: orbit-arm var(--dur) both;
+}
+
+@keyframes orbit-arm {
+    0% {
+        transform: rotate(0deg);
+        animation-timing-function: cubic-bezier(0.4, 0, 0.9, 0.7);
+    }
+    76% {
+        transform: rotate(1260deg);
+    }
+    100% {
+        transform: rotate(1260deg);
+    }
+}
+
+.orbitBody {
+    position: absolute;
+    left: 0;
+    top: 0;
+    animation: orbit-body var(--dur) both;
+}
+
+@keyframes orbit-body {
+    0% {
+        opacity: 0;
+        transform: translate(var(--r), 0) rotate(180deg) translate(-50%, -50%);
+    }
+    8% {
+        opacity: 1;
+    }
+    62% {
+        opacity: 1;
+        transform: translate(var(--r), 0) rotate(180deg) translate(-50%, -50%);
+    }
+    76% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(180deg) translate(-50%, -50%) scale(0.6);
+    }
+    80%,
+    100% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(180deg) translate(-50%, -50%) scale(0.3);
+    }
+}
+
+.flare {
+    position: absolute;
+    left: -40px;
+    top: -40px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff6d8 0 12%, #ffb347 34%, rgba(255, 90, 20, 0.5) 56%, transparent 72%);
+    opacity: 0;
+    animation: flare var(--dur) both;
+}
+
+@keyframes flare {
+    0%,
+    75% {
+        opacity: 0;
+        transform: scale(0.2);
+    }
+    79% {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+    90%,
+    100% {
+        opacity: 0;
+        transform: scale(1.8);
+    }
+}
+
+.ash {
+    position: absolute;
+    left: -3px;
+    top: -3px;
+    width: 5px;
+    height: 4px;
+    border-radius: 40%;
+    background: #6f6a63;
+    opacity: 0;
+    animation: ash var(--dur) both;
+}
+
+.ashLate {
+    left: 4px;
+    animation-delay: 0.12s;
+}
+
+.ashLast {
+    left: -9px;
+    width: 3px;
+    animation-delay: 0.22s;
+}
+
+@keyframes ash {
+    0%,
+    78% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(0deg);
+    }
+    82% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(14px, var(--fall)) rotate(260deg);
+    }
+}
+
+/* [EN] A drop of blood runs down from the top, leaving a trail. [RU] Капля крови бежит сверху, оставляя след. */
+.trickle {
+    position: absolute;
+    left: var(--x);
+    top: 0;
+    animation: trickle-fade var(--dur) both;
+}
+
+@keyframes trickle-fade {
+    0%,
+    78% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.trail {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 5px;
+    margin-left: -2.5px;
+    height: var(--len);
+    border-radius: 0 0 3px 3px;
+    background: linear-gradient(to bottom, #3d0309, #7a0d18 70%, #9b0f1f);
+    transform-origin: 50% 0;
+    animation: trail var(--dur) both;
+}
+
+@keyframes trail {
+    0% {
+        transform: scaleY(0);
+        animation-timing-function: ease-in;
+    }
+    20% {
+        transform: scaleY(0.18);
+    }
+    30% {
+        transform: scaleY(0.22);
+        animation-timing-function: ease-in;
+    }
+    62% {
+        transform: scaleY(0.92);
+    }
+    70%,
+    100% {
+        transform: scaleY(1);
+    }
+}
+
+.drop {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    animation: drop var(--dur) both;
+}
+
+@keyframes drop {
+    0% {
+        transform: translate(-50%, -100%);
+        animation-timing-function: ease-in;
+    }
+    20% {
+        transform: translate(-50%, calc(var(--len) * 0.18 - 60%));
+    }
+    30% {
+        transform: translate(-50%, calc(var(--len) * 0.22 - 60%));
+        animation-timing-function: ease-in;
+    }
+    62% {
+        transform: translate(-50%, calc(var(--len) * 0.92 - 60%));
+    }
+    70%,
+    100% {
+        transform: translate(-50%, calc(var(--len) - 60%));
+    }
+}
+
+/* ===================== [EN] POKER — realistic casino of the dead / [RU] ПОКЕР — реалистичное казино мертвецов ===================== */
+
+/* [EN] The cat: walks in, sits down facing you and yawns, then walks back out the same side.
+   [RU] Кот: заходит, садится к вам мордой и зевает, потом уходит туда же, откуда пришёл. */
+.prowlPath {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    will-change: transform;
+    animation: prowl var(--dur) both;
+}
+
+@keyframes prowl {
+    0% {
+        transform: translateX(var(--x0));
+        animation-timing-function: linear;
+    }
+    30%,
+    74% {
+        transform: translateX(var(--xm));
+        animation-timing-function: linear;
+    }
+    100% {
+        transform: translateX(var(--x0));
+    }
+}
+
+.catIn,
+.catOut,
+.catSit {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.catIn {
+    animation: cat-in var(--dur) both;
+}
+
+.catOut {
+    opacity: 0;
+    animation: cat-out var(--dur) both;
+}
+
+.catSit {
+    opacity: 0;
+    animation: cat-sit var(--dur) both;
+}
+
+@keyframes cat-in {
+    0%,
+    29% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    7%,
+    15%,
+    23% {
+        transform: translateY(-3px);
+    }
+    32%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes cat-sit {
+    0%,
+    29% {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+    33%,
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    58%,
+    64% {
+        opacity: 1;
+        transform: scale(1.06);
+    }
+    70% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    75%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes cat-out {
+    0%,
+    73% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+    76%,
+    100% {
+        opacity: 1;
+    }
+    82%,
+    90% {
+        transform: translateY(-3px);
+    }
+}
+
+/* [EN] The cockroach: five dashes, freezing and turning between them. [RU] Таракан: пять рывков, между ними замирает и поворачивается. */
+.scurry {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+    animation: scurry var(--dur) both;
+}
+
+@keyframes scurry {
+    0% {
+        transform: translate(var(--p0x), var(--p0y)) rotate(var(--a0));
+        animation-timing-function: cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+    12% {
+        transform: translate(var(--p1x), var(--p1y)) rotate(var(--a0));
+    }
+    22% {
+        transform: translate(var(--p1x), var(--p1y)) rotate(var(--a1));
+        animation-timing-function: cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+    34% {
+        transform: translate(var(--p2x), var(--p2y)) rotate(var(--a1));
+    }
+    46% {
+        transform: translate(var(--p2x), var(--p2y)) rotate(var(--a2));
+        animation-timing-function: cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+    56% {
+        transform: translate(var(--p3x), var(--p3y)) rotate(var(--a2));
+    }
+    66% {
+        transform: translate(var(--p3x), var(--p3y)) rotate(var(--a3));
+        animation-timing-function: cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+    78% {
+        transform: translate(var(--p4x), var(--p4y)) rotate(var(--a3));
+    }
+    86% {
+        transform: translate(var(--p4x), var(--p4y)) rotate(var(--a4));
+        animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5);
+    }
+    100% {
+        transform: translate(var(--p5x), var(--p5y)) rotate(var(--a4));
+    }
+}
+
+.scuttle {
+    display: block;
+    animation: scuttle 0.06s linear infinite alternate;
+}
+
+@keyframes scuttle {
+    from {
+        transform: rotate(-2deg);
+    }
+    to {
+        transform: rotate(2deg);
+    }
+}
+
+/* [EN] The card: spins in like a shuriken, sticks into the top edge, quivers, drops out.
+   [RU] Карта: летит, крутясь как сюрикен, втыкается в верхний край, дрожит, падает вниз. */
+.thrown {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+    animation: thrown var(--dur) both;
+}
+
+@keyframes thrown {
+    0% {
+        transform: translate(var(--x0), var(--y0)) rotate(0deg);
+        animation-timing-function: cubic-bezier(0.15, 0.6, 0.3, 1);
+    }
+    28% {
+        transform: translate(var(--xt), var(--yt)) rotate(var(--spin));
+    }
+    31% {
+        transform: translate(var(--xt), var(--yt)) rotate(calc(var(--spin) + 6deg));
+    }
+    34% {
+        transform: translate(var(--xt), var(--yt)) rotate(calc(var(--spin) - 4deg));
+    }
+    37% {
+        transform: translate(var(--xt), var(--yt)) rotate(calc(var(--spin) + 2deg));
+    }
+    40%,
+    70% {
+        transform: translate(var(--xt), var(--yt)) rotate(var(--spin));
+        animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+    }
+    100% {
+        transform: translate(var(--xt), var(--fall)) rotate(calc(var(--spin) + 160deg));
+    }
+}
+
+/* [EN] The chip: rolls on its rim, slows, wobbles and falls flat. [RU] Фишка: катится на ребре, замедляется, качается и падает плашмя. */
+.rollPath {
+    position: absolute;
+    left: 0;
+    bottom: 8px;
+    will-change: transform;
+    animation: roll-path var(--dur) both;
+}
+
+@keyframes roll-path {
+    0% {
+        transform: translateX(var(--x0));
+        animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+    }
+    55%,
+    100% {
+        transform: translateX(var(--xm));
+    }
+}
+
+.rollSpin {
+    display: block;
+    animation: roll-spin var(--dur) both;
+}
+
+@keyframes roll-spin {
+    0% {
+        transform: rotate(0deg);
+        animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+    }
+    55%,
+    100% {
+        transform: rotate(var(--rot));
+    }
+}
+
+.rollFall {
+    display: block;
+    transform-origin: 50% 100%;
+    animation: roll-fall var(--dur) both;
+}
+
+@keyframes roll-fall {
+    0%,
+    55% {
+        opacity: 1;
+        transform: rotate(0deg) scaleY(1);
+    }
+    61% {
+        transform: rotate(-9deg) scaleY(1);
+    }
+    66% {
+        transform: rotate(8deg) scaleY(1);
+    }
+    71% {
+        transform: rotate(-5deg) scaleY(0.9);
+    }
+    78% {
+        transform: rotate(0deg) scaleY(0.3);
+    }
+    82% {
+        transform: rotate(0deg) scaleY(0.36);
+    }
+    86%,
+    92% {
+        opacity: 1;
+        transform: rotate(0deg) scaleY(0.3);
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(0deg) scaleY(0.3);
+    }
+}
+
+/* [EN] Dice: fall from the top, bounce twice, settle and fade. [RU] Кости: падают сверху, дважды отскакивают, замирают и тают. */
+.tumble {
+    position: absolute;
+    left: var(--x);
+    top: 0;
+    will-change: transform;
+    animation: tumble var(--dur) var(--delay) both;
+}
+
+@keyframes tumble {
+    0% {
+        opacity: 1;
+        transform: translateY(-120%) rotate(0deg);
+        animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6);
+    }
+    32% {
+        transform: translateY(var(--floor)) rotate(calc(var(--spin) * 0.7));
+        animation-timing-function: cubic-bezier(0, 0.4, 0.5, 1);
+    }
+    44% {
+        transform: translateY(calc(var(--floor) - 90px)) rotate(calc(var(--spin) * 0.88));
+        animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6);
+    }
+    56% {
+        transform: translateY(var(--floor)) rotate(calc(var(--spin) * 0.96));
+        animation-timing-function: cubic-bezier(0, 0.4, 0.5, 1);
+    }
+    63% {
+        transform: translateY(calc(var(--floor) - 26px)) rotate(var(--spin));
+        animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6);
+    }
+    70%,
+    86% {
+        opacity: 1;
+        transform: translateY(var(--floor)) rotate(var(--spin));
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(var(--floor)) rotate(var(--spin));
+    }
+}
+
+/* [EN] A smoke ring: floats up, widens, dissolves. [RU] Кольцо дыма: всплывает, расширяется, растворяется. */
+.ring {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    opacity: 0;
+    /* [EN] smoke on a dark table is faint: a little more light / [RU] дым на тёмном столе бледен: чуть больше света */
+    filter: brightness(1.45);
+    will-change: transform, opacity;
+    animation: ring var(--dur) ease-out both;
+}
+
+@keyframes ring {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.35);
+    }
+    20% {
+        opacity: 1;
+    }
+    55% {
+        opacity: 0.85;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--drift), calc(var(--rise) * -1)) scale(1.7);
+    }
+}
+
+/* ===================== [EN] CHECKERS — realistic crypt / [RU] ШАШКИ — реалистичный склеп ===================== */
+
+/* [EN] Grave worms: rise from below, writhe, sink back. [RU] Могильные черви: поднимаются снизу, извиваются, уходят. */
+.worm {
+    position: absolute;
+    left: var(--x);
+    bottom: 0;
+    will-change: transform;
+    animation: worm var(--dur) var(--delay) both;
+}
+
+@keyframes worm {
+    0%,
+    100% {
+        transform: translateY(105%);
+    }
+    18% {
+        transform: translateY(45%);
+    }
+    34% {
+        transform: translateY(6%);
+    }
+    58% {
+        transform: translateY(12%);
+    }
+    76% {
+        transform: translateY(4%);
+    }
+    88% {
+        transform: translateY(40%);
+    }
+}
+
+.writhe {
+    display: block;
+    transform-origin: 50% 100%;
+    animation: writhe 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes writhe {
+    from {
+        transform: skewX(-6deg) rotate(-3deg);
+    }
+    to {
+        transform: skewX(7deg) rotate(4deg);
+    }
+}
+
+/* [EN] The skull: rolls in, stops, rocks as if looking at you, rolls on. [RU] Череп: вкатывается, останавливается, качается, будто разглядывает вас, катится дальше. */
+.skullPath {
+    position: absolute;
+    left: 0;
+    bottom: 4px;
+    will-change: transform;
+    animation: skull-path var(--dur) both;
+}
+
+@keyframes skull-path {
+    0% {
+        transform: translateX(var(--x0));
+        animation-timing-function: cubic-bezier(0.25, 0.6, 0.4, 1);
+    }
+    38%,
+    72% {
+        transform: translateX(var(--xm));
+        animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.6);
+    }
+    100% {
+        transform: translateX(var(--x1));
+    }
+}
+
+.skullSpin {
+    display: block;
+    animation: skull-spin var(--dur) both;
+}
+
+@keyframes skull-spin {
+    0% {
+        transform: rotate(0deg);
+        animation-timing-function: cubic-bezier(0.25, 0.6, 0.4, 1);
+    }
+    38% {
+        transform: rotate(var(--r1));
+    }
+    46% {
+        transform: rotate(calc(var(--r1) + 14deg));
+    }
+    54% {
+        transform: rotate(calc(var(--r1) - 10deg));
+    }
+    62% {
+        transform: rotate(calc(var(--r1) + 5deg));
+    }
+    72% {
+        transform: rotate(var(--r1));
+        animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.6);
+    }
+    100% {
+        transform: rotate(var(--r2));
+    }
+}
+
+/* [EN] The lantern: comes down on its chain, swings with a dying swing, goes back up. [RU] Фонарь: спускается на цепи, качается с затухающим размахом, уходит вверх. */
+.swing {
+    position: absolute;
+    left: var(--x);
+    top: 0;
+    will-change: transform;
+    animation: swing-down var(--dur) both;
+}
+
+@keyframes swing-down {
+    0% {
+        transform: translateY(-110%);
+        animation-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1);
+    }
+    18%,
+    82% {
+        transform: translateY(var(--depth));
+        animation-timing-function: ease-in;
+    }
+    100% {
+        transform: translateY(-110%);
+    }
+}
+
+.pendulum {
+    display: block;
+    position: relative;
+    transform-origin: 50% calc(var(--depth) * -1);
+    animation: pendulum var(--dur) both;
+}
+
+@keyframes pendulum {
+    0%,
+    16% {
+        transform: rotate(0deg);
+    }
+    26% {
+        transform: rotate(14deg);
+    }
+    38% {
+        transform: rotate(-11deg);
+    }
+    50% {
+        transform: rotate(8deg);
+    }
+    61% {
+        transform: rotate(-5deg);
+    }
+    71% {
+        transform: rotate(2deg);
+    }
+    80%,
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.chain {
+    position: absolute;
+    left: 50%;
+    bottom: 94%;
+    width: 3px;
+    translate: -50% 0;
+    height: 100vh;
+    background: repeating-linear-gradient(to top, #2b2622 0 5px, #57504a 5px 8px);
+}
+
+.halo {
+    position: absolute;
+    left: -40%;
+    top: 20%;
+    width: 180%;
+    height: 90%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 170, 70, 0.42), rgba(255, 120, 30, 0.12) 50%, transparent 70%);
+    animation: halo 0.18s ease-in-out infinite alternate;
+}
+
+@keyframes halo {
+    from {
+        opacity: 0.7;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* [EN] Lightning: two flashes; a hooded figure stands at the side, then closer — then nobody.
+   [RU] Молния: две вспышки; фигура в капюшоне стоит сбоку, потом ближе — потом никого. */
+.lightning {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 20%, rgba(235, 242, 255, 0.85), rgba(190, 205, 235, 0.6) 60%, rgba(150, 165, 200, 0.45));
+    opacity: 0;
+    animation: lightning var(--dur) both;
+}
+
+@keyframes lightning {
+    0%,
+    100% {
+        opacity: 0;
+    }
+    6% {
+        opacity: 0.75;
+    }
+    8% {
+        opacity: 0.08;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    15%,
+    58% {
+        opacity: 0;
+    }
+    62% {
+        opacity: 0.8;
+    }
+    64% {
+        opacity: 0.1;
+    }
+    66% {
+        opacity: 0.72;
+    }
+    71% {
+        opacity: 0;
+    }
+}
+
+.apparition {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+}
+
+.apparitionFirst {
+    transform: translate(var(--x1), var(--y1));
+    animation: apparition-first var(--dur) steps(1, end) both;
+}
+
+.apparitionSecond {
+    transform: translate(var(--x2), var(--y2));
+    animation: apparition-second var(--dur) steps(1, end) both;
+}
+
+@keyframes apparition-first {
+    0%,
+    15%,
+    100% {
+        opacity: 0;
+    }
+    6%,
+    10% {
+        opacity: 0.95;
+    }
+    8% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes apparition-second {
+    0%,
+    71%,
+    100% {
+        opacity: 0;
+    }
+    62%,
+    66% {
+        opacity: 0.97;
+    }
+    64% {
+        opacity: 0.35;
+    }
+}
+
+/* [EN] Eyes gliding in the dark margins, blinking. [RU] Глаза плывут в тёмных полях, моргая. */
+.glider {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    display: flex;
+    gap: 0.9em;
+    opacity: 0;
+    animation: glide var(--dur) ease-in-out var(--delay) both;
+}
+
+.glider i {
+    position: relative;
+    width: 1em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fffbe0 0 14%, #f5c84a 45%, #b5741a 80%);
+    box-shadow:
+        0 0 8px 2px rgba(245, 200, 74, 0.8),
+        0 0 22px 7px rgba(200, 120, 20, 0.35);
+    animation: glide-blink var(--dur) var(--delay) both;
+}
+
+.glider i::after {
+    content: '';
+    position: absolute;
+    left: 44%;
+    top: 6%;
+    width: 12%;
+    height: 88%;
+    border-radius: 50%;
+    background: #120802;
+}
+
+@keyframes glide {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+    12%,
+    84% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy));
+    }
+}
+
+@keyframes glide-blink {
+    0%,
+    30%,
+    36%,
+    70%,
+    76%,
+    100% {
+        transform: scaleY(1);
+    }
+    33%,
+    73% {
+        transform: scaleY(0.08);
+    }
+}
+
+/* ===================== [EN] Life of the photographed creatures (rigs.ts, Rig.tsx) / [RU] Жизнь сфотографированных существ ===================== */
+
+/* [EN] Every group of a rig turns round its joint given in px of the picture (inline transform-origin).
+   [RU] Каждая группа оснастки поворачивается вокруг сустава, заданного в px картинки (transform-origin в style). */
+.rig {
+    display: block;
+    overflow: visible;
+}
+
+.rig g,
+.rig ellipse {
+    transform-box: view-box;
+}
+
+/* [EN] The chest rises and falls. [RU] Грудь поднимается и опускается. */
+.breathe {
+    animation: breathe 1.7s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+    from {
+        transform: scale(1, 1);
+    }
+    to {
+        transform: scale(1.012, 1.024);
+    }
+}
+
+/* [EN] A head that looks round in quick jerks and holds still between them, as birds do.
+   [RU] Голова оглядывается быстрыми рывками и замирает между ними, как у птиц. */
+.headTurn {
+    animation: look-round 3.4s infinite;
+}
+
+@keyframes look-round {
+    0%,
+    14% {
+        transform: rotate(0deg);
+    }
+    17%,
+    34% {
+        transform: rotate(-9deg);
+    }
+    37%,
+    52% {
+        transform: rotate(5deg);
+    }
+    55%,
+    66% {
+        transform: rotate(12deg);
+    }
+    69%,
+    84% {
+        transform: rotate(-3deg);
+    }
+    87%,
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.tailSway {
+    animation: tail-sway 1.9s ease-in-out infinite alternate;
+}
+
+@keyframes tail-sway {
+    from {
+        transform: rotate(-4deg) skewX(2deg);
+    }
+    to {
+        transform: rotate(5deg) skewX(-3deg);
+    }
+}
+
+.footStep {
+    animation: foot-step 0.55s ease-in-out infinite alternate;
+}
+
+@keyframes foot-step {
+    from {
+        transform: rotate(-12deg);
+    }
+    to {
+        transform: rotate(9deg);
+    }
+}
+
+/* [EN] A cat's head tilting back slowly in a yawn. [RU] Голова кота медленно запрокидывается в зевке. */
+.yawnTilt {
+    animation: yawn-tilt 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes yawn-tilt {
+    from {
+        transform: rotate(-4deg);
+    }
+    to {
+        transform: rotate(7deg) translateY(-3px);
+    }
+}
+
+/* [EN] The tip of a tail twitching in short jerks. [RU] Кончик хвоста дёргается короткими рывками. */
+.tailFlick {
+    animation: tail-flick 1.4s infinite;
+}
+
+@keyframes tail-flick {
+    0%,
+    40%,
+    100% {
+        transform: rotate(0deg);
+    }
+    46% {
+        transform: rotate(-12deg);
+    }
+    52% {
+        transform: rotate(6deg);
+    }
+    58% {
+        transform: rotate(-8deg);
+    }
+    66% {
+        transform: rotate(2deg);
+    }
+}
+
+.footStepLate {
+    animation: foot-step 0.55s ease-in-out -0.27s infinite alternate;
+}
+
+/* [EN] Antennae that never rest, in uneven jerks. [RU] Усы, которые не знают покоя, неровными рывками. */
+.antennaTwitch {
+    animation: antenna-twitch 0.9s infinite;
+}
+
+@keyframes antenna-twitch {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+    12% {
+        transform: rotate(-7deg);
+    }
+    20% {
+        transform: rotate(3deg);
+    }
+    44% {
+        transform: rotate(-2deg);
+    }
+    52% {
+        transform: rotate(8deg);
+    }
+    70% {
+        transform: rotate(-4deg);
+    }
+}
+
+/* [EN] Scuttling legs. [RU] Семенящие лапы. */
+.legScuttle,
+.legScuttleLate {
+    animation: leg-scuttle 0.09s linear infinite alternate;
+}
+
+.legScuttleLate {
+    animation-delay: -0.045s;
+}
+
+@keyframes leg-scuttle {
+    from {
+        transform: rotate(-3deg);
+    }
+    to {
+        transform: rotate(3deg);
+    }
+}
+
+/* [EN] A jaw chattering its teeth. [RU] Челюсть стучит зубами. */
+.jawChatter {
+    animation: jaw-chatter 0.16s ease-in-out infinite alternate;
+}
+
+@keyframes jaw-chatter {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-7deg) translateY(4px);
+    }
+}
+
+/* [EN] The grave skull laughs without a sound: the jaw drops, clacks three times, shuts and waits.
+   [RU] Могильный череп смеётся без звука: челюсть отвисает, трижды клацает, закрывается и ждёт. */
+.jawLaugh {
+    animation: jaw-laugh 2.6s infinite;
+}
+
+@keyframes jaw-laugh {
+    0%,
+    30%,
+    100% {
+        transform: rotate(0deg);
+    }
+    37%,
+    49%,
+    61% {
+        transform: rotate(6deg);
+    }
+    43%,
+    55% {
+        transform: rotate(1.5deg);
+    }
+    70% {
+        transform: rotate(0deg);
+    }
+}
+
+/* [EN] The hooded figure between two flashes (the flash lasts about 5 s): straight at the first, the hood bent and
+        the fingers hooked at the second; the hem stirs all the time.
+   [RU] Фигура в капюшоне между двумя вспышками (вспышка длится около 5 с): в первой прямо, во второй капюшон
+        склонён и пальцы скрючены; подол шевелится всё время. */
+.hoodTilt {
+    animation: hood-tilt 6s ease-in-out both;
+}
+
+@keyframes hood-tilt {
+    0%,
+    22% {
+        transform: rotate(0deg);
+    }
+    45%,
+    100% {
+        transform: rotate(11deg);
+    }
+}
+
+.clawCurl,
+.clawCurlMirror {
+    animation: claw-curl 6s ease-in-out both;
+}
+
+.clawCurlMirror {
+    animation-name: claw-curl-mirror;
+}
+
+@keyframes claw-curl {
+    0%,
+    25% {
+        transform: rotate(0deg) scaleY(1);
+    }
+    45%,
+    100% {
+        transform: rotate(-14deg) scaleY(0.88);
+    }
+}
+
+@keyframes claw-curl-mirror {
+    0%,
+    25% {
+        transform: rotate(0deg) scaleY(1);
+    }
+    45%,
+    100% {
+        transform: rotate(14deg) scaleY(0.88);
+    }
+}
+
+.hemSway {
+    animation: hem-sway 2.3s ease-in-out infinite alternate;
+}
+
+@keyframes hem-sway {
+    from {
+        transform: skewX(-4deg);
+    }
+    to {
+        transform: skewX(3deg);
+    }
+}
+
+/* [EN] A candle flame in a draught: stretches, shrinks, leans this way and that, never twice the same.
+   [RU] Пламя свечи на сквозняке: вытягивается, сжимается, клонится то туда, то сюда, ни разу одинаково. */
+.flameFlicker {
+    animation: flame-flicker 0.9s ease-in-out infinite;
+}
+
+@keyframes flame-flicker {
+    0%,
+    100% {
+        transform: scale(1, 1) skewX(0deg);
+    }
+    18% {
+        transform: scale(0.92, 1.14) skewX(5deg);
+    }
+    37% {
+        transform: scale(1.05, 0.9) skewX(-3deg);
+    }
+    55% {
+        transform: scale(0.95, 1.1) skewX(2deg);
+    }
+    74% {
+        transform: scale(1.04, 0.94) skewX(-6deg);
+    }
+    88% {
+        transform: scale(0.97, 1.06) skewX(1deg);
+    }
+}
+
+/* [EN] The grave worm's head sways as if sniffing the air, then darts at you and draws back.
+   [RU] Голова могильного червя покачивается, будто принюхивается, потом делает выпад к вам и отдёргивается. */
+.neckSway {
+    animation: neck-sway 3.3s ease-in-out infinite;
+}
+
+@keyframes neck-sway {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+    24% {
+        transform: rotate(-5deg);
+    }
+    48% {
+        transform: rotate(4deg);
+    }
+    64% {
+        transform: rotate(3deg);
+        animation-timing-function: cubic-bezier(0.2, 0, 0.1, 1);
+    }
+    69% {
+        transform: rotate(-8deg) translateX(14px);
+    }
+    80% {
+        transform: rotate(-1deg);
+    }
+}
+
+/* [EN] Moth wings folding and opening from the body. [RU] Крылья бражника складываются и раскрываются от тела. */
+.mothWingLeft,
+.mothWingRight {
+    animation: moth-wing 0.16s ease-in-out infinite alternate;
+}
+
+.mothWingRight {
+    animation-delay: -0.02s;
+}
+
+@keyframes moth-wing {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0.32);
+    }
+}
+
+/* [EN] Fingers curling in turn, as if grasping. [RU] Пальцы сжимаются по очереди, будто хватают. */
+.fingerCurl,
+.fingerCurlLate,
+.fingerCurlLast {
+    animation: finger-curl 1.3s ease-in-out infinite alternate;
+}
+
+.fingerCurlLate {
+    animation-delay: -0.45s;
+}
+
+.fingerCurlLast {
+    animation-delay: -0.9s;
+}
+
+@keyframes finger-curl {
+    from {
+        transform: rotate(-6deg);
+    }
+    to {
+        transform: rotate(8deg);
+    }
+}
+
+.mistWaft {
+    animation: mist-waft 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes mist-waft {
+    from {
+        transform: skewY(-5deg) rotate(-3deg);
+    }
+    to {
+        transform: skewY(6deg) rotate(4deg);
+    }
+}
+
+/* [EN] Now and then the eye flares with an evil colour for a moment. [RU] Время от времени глаз на миг вспыхивает злым цветом. */
+.eyeFlare {
+    opacity: 0;
+    mix-blend-mode: screen;
+    animation: eye-flare 5.3s ease-in-out infinite;
+}
+
+@keyframes eye-flare {
+    0%,
+    30%,
+    46%,
+    100% {
+        opacity: 0;
+    }
+    36%,
+    40% {
+        opacity: 0.85;
+    }
+}
+
+/* [EN] A lid closes the eye now and then, sometimes twice. [RU] Веко время от времени закрывает глаз, иногда дважды. */
+.lid {
+    transform: scaleY(0);
+    animation: lid 4.6s infinite;
+}
+
+@keyframes lid {
+    0%,
+    62%,
+    68%,
+    74%,
+    100% {
+        transform: scaleY(0);
+    }
+    65%,
+    71% {
+        transform: scaleY(1);
+    }
+}
+
+/* ===================== [EN] Small life inside the drawings / [RU] Мелкая жизнь внутри рисунков ===================== */
+
+.wingLeft,
+.wingRight {
+    transform-box: fill-box;
+    animation: flap 0.24s ease-in-out infinite alternate;
+}
+
+.wingLeft {
+    transform-origin: 100% 60%;
+}
+
+.wingRight {
+    transform-origin: 0 60%;
+}
+
+@keyframes flap {
+    from {
+        transform: rotate(0deg) scaleY(1);
+    }
+    to {
+        transform: rotate(-18deg) scaleY(0.55);
+    }
+}
+
+.bob {
+    animation: bob 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes bob {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-3px);
+    }
+}
+
+.sway {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: sway 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes sway {
+    from {
+        transform: rotate(-5deg);
+    }
+    to {
+        transform: rotate(5deg);
+    }
+}
+
+.beam {
+    animation: beam 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes beam {
+    from {
+        opacity: 0.55;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* [EN] The abducted pawn goes up the beam and wobbles. [RU] Похищенная пешка едет вверх по лучу и покачивается. */
+.lift {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: lift 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes lift {
+    from {
+        transform: translateY(6px) rotate(-8deg);
+    }
+    to {
+        transform: translateY(-46px) rotate(10deg);
+    }
+}
+
+.blink {
+    animation: blink 0.8s steps(2, jump-none) infinite;
+}
+
+@keyframes blink {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0.25;
+    }
+}
+
+.blinkEyes {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: blink-eyes 2.4s ease-in-out infinite;
+}
+
+@keyframes blink-eyes {
+    0%,
+    44%,
+    52%,
+    100% {
+        transform: scaleY(1);
+    }
+    48% {
+        transform: scaleY(0.1);
+    }
+}
+
+.noodles {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: noodles 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes noodles {
+    from {
+        transform: skewX(-8deg) scaleY(0.92);
+    }
+    to {
+        transform: skewX(9deg) scaleY(1.06);
+    }
+}
+
+/* [EN] The periscope looks left and right. [RU] Перископ осматривается. */
+.look {
+    transform-box: fill-box;
+    transform-origin: 40% 50%;
+    animation: look 2.6s ease-in-out infinite;
+}
+
+@keyframes look {
+    0%,
+    40% {
+        transform: scaleX(1);
+    }
+    50%,
+    90% {
+        transform: scaleX(-1);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+/* [EN] Asked the system for less motion — no layer at all (Surprises.tsx does not draw it either; this is the spare
+        guard). [RU] Попросили систему уменьшить движение — слоя нет вовсе (Surprises.tsx его и не рисует; это запасная защита). */
+@media (prefers-reduced-motion: reduce) {
+    .layer {
+        display: none;
+    }
+}

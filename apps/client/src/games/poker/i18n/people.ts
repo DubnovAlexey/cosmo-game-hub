@@ -8,7 +8,7 @@ import type { CharacterId } from '../../../shared/characters/roster.ts';
 import { CAST } from '../characters.ts';
 import type { PokerDictionary, PokerTexts } from './types.ts';
 
-export function withCharacters(dictionary: PokerDictionary, people: Readonly<Record<CharacterId, { readonly name: string; readonly bio: string }>>): PokerTexts {
-    const characters = Object.fromEntries(CAST.map(({ id }) => [id, { name: people[id].name, bio: people[id].bio, tagline: dictionary.characters[id].tagline }])) as PokerTexts['characters'];
+export function withCharacters(dictionary: PokerDictionary, people: Readonly<Record<CharacterId, { readonly name: string; readonly bio: string; readonly quote?: string }>>): PokerTexts {
+    const characters = Object.fromEntries(CAST.map(({ id }) => [id, { name: people[id].name, bio: people[id].bio, quote: people[id].quote, tagline: dictionary.characters[id].tagline }])) as PokerTexts['characters'];
     return { ...dictionary, characters };
 }

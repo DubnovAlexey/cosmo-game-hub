@@ -32,3 +32,59 @@
 @media (prefers-reduced-motion: reduce) {
     .game-card { transition: none; }
 }
+
+/* [EN] The living cover of a card: the cover and our variants lie one on another; the shown one is opaque, the next
+        dissolves in over it (shell/utils/coverCycle.ts). Each picture drifts slowly closer and back, like a camera
+        breathing. Without the script only the cover shows; «reduce motion» keeps it still.
+   [RU] Живая обложка карточки: обложка и наши варианты лежат одна на другой; показанная непрозрачна, следующая
+        проступает поверх неё (shell/utils/coverCycle.ts). Каждая картинка медленно приближается и отходит, будто
+        дышит камера. Без скрипта видна только обложка; «уменьшить движение» оставляет её неподвижной. */
+.cover-stack {
+    position: absolute;
+    inset: 0;
+    display: block;
+}
+.cover-picture {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.8s ease;
+    animation: cover-breath 19s ease-in-out infinite alternate;
+}
+.cover-picture.is-shown {
+    opacity: 1;
+}
+.cover-picture:nth-child(even) {
+    animation-duration: 23s;
+    animation-direction: alternate-reverse;
+}
+@keyframes cover-breath {
+    from { transform: scale(1); }
+    to { transform: scale(1.08) translate(-1.2%, -0.8%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cover-picture { transition: none; animation: none; }
+}
+
+/* [EN] The «surprises» button in the header (shell/utils/surprisesToggle.ts): switched off — dimmed, the bat crossed out.
+   [RU] Кнопка «неожиданностей» в шапке (shell/utils/surprisesToggle.ts): выключено — тусклая, мышь перечёркнута. */
+.surprises-toggle[data-on='false'] {
+    opacity: 0.62;
+}
+
+.surprises-toggle > span:first-child {
+    position: relative;
+}
+
+.surprises-toggle[data-on='false'] > span:first-child::after {
+    content: '';
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    top: 50%;
+    border-top: 2px solid #f87171;
+    transform: rotate(-35deg);
+}

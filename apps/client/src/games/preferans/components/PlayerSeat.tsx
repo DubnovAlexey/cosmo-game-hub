@@ -5,6 +5,7 @@
 //      с именем, роль, последнее слово, рука (лицом для вас и открытых рук, иначе рубашкой) и взятые взятки на
 //      сукне, каждая — отдельной стопкой рубашкой вверх.
 import React, { useEffect, useId, useRef, useState } from 'react';
+import { breathDelay } from '@shared/components/CharacterCard';
 import { useKeepOnScreen } from '@shared/hooks/useKeepOnScreen';
 import { withBase } from '@shell/utils/withBase';
 import { countCards, type Card, type CardSet } from '../engine/index.ts';
@@ -122,7 +123,7 @@ const Portrait: React.FC<{ id: CharacterId; name: string; thinking: boolean; ali
                 aria-expanded={open} aria-controls={bioId} aria-label={t.portrait.about(name)} onClick={() => setOpen(value => !value)}>
                 {!loaded && <span className={styles.monogram} aria-hidden="true"><span>{initial}</span></span>}
                 <img ref={picture} src={withBase(portraitPath(id))} alt="" loading="lazy" decoding="async" draggable={false}
-                    onLoad={() => setLoaded(true)} onError={() => setLoaded(false)} />
+                    style={{ animationDelay: breathDelay(id) }} onLoad={() => setLoaded(true)} onError={() => setLoaded(false)} />
             </button>
             {open && (
                 <div ref={bio} id={bioId} className={`${styles.bio} ${alignRight ? styles.bioRight : ''}`} role="dialog" aria-label={t.portrait.about(name)}>
@@ -130,6 +131,7 @@ const Portrait: React.FC<{ id: CharacterId; name: string; thinking: boolean; ali
                     <p className={styles.bioName}>{text.name}</p>
                     <p className={styles.bioTag}>{characterInfo(id).guest ? t.portrait.guest : t.portrait.dweller}</p>
                     <p className={styles.bioText}>{text.bio}</p>
+                    {text.quote && <q className={styles.bioQuote}>{text.quote}</q>}
                     <ul className={styles.bioManner}>
                         {mannerOf(characterInfo(id), t).map(([label, value]) => <li key={label}><b>{label}:</b> {value}</li>)}
                     </ul>

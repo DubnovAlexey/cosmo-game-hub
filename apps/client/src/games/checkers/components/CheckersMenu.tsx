@@ -46,7 +46,7 @@ export const CheckersMenu: React.FC<CheckersMenuProps> = ({ settings, saved, lan
                     <span className={styles.fieldLabel}>{t.setup.opponent}</span>
                     <div className={styles.opponentRow}>
                         <CharacterFace className={styles.face} faceClassName={styles.portrait} side="start" label={t.hero.about(hero.name)} closeLabel={t.hero.close}
-                            story={{ id: opponent, name: hero.name, bio: hero.bio, tag: characterFacts(opponent).guest ? t.hero.guest : t.hero.dweller }} />
+                            story={{ id: opponent, name: hero.name, bio: hero.bio, quote: hero.quote, tag: characterFacts(opponent).guest ? t.hero.guest : t.hero.dweller }} />
                         <span className={styles.opponentName}>{hero.name}</span>
                         <button type="button" className={styles.button} onClick={onAnother}>{t.setup.another}</button>
                     </div>

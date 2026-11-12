@@ -103,7 +103,7 @@ export interface PokerTexts {
    * [RU] Завсегдатаи: имя и биография приходят из текстов, общих для всех игр (shared/characters/texts), покерная
    *      реплика — из словаря покера.
    */
-  readonly characters: Readonly<Record<PokerCharacterId, { readonly name: string; readonly bio: string; readonly tagline: string }>>;
+  readonly characters: Readonly<Record<PokerCharacterId, { readonly name: string; readonly bio: string; readonly quote?: string; readonly tagline: string }>>;
 }
 
 /** [EN] What a language file of poker holds: everything but the names and biographies. [RU] Что хранит языковой файл покера: всё, кроме имён и биографий. */

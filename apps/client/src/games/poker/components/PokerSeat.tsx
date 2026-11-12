@@ -63,7 +63,7 @@ export const PokerSeat: React.FC<PokerSeatProps> = ({
                          биографией и покерной репликой (shared/components/CharacterCard). */}
                 {character && (
                     <CharacterFace className={styles.face} faceClassName={styles.portrait} side={side} label={t.seat.about(name)} closeLabel={t.seat.closeAbout}
-                        story={{ id: character, name, bio: t.characters[character].bio, note: t.characters[character].tagline }} />
+                        story={{ id: character, name, bio: t.characters[character].bio, quote: t.characters[character].quote, note: t.characters[character].tagline }} />
                 )}
                 {/* [EN] The button and the blinds sit on the frame, outside the round picture that would clip them.
                     [RU] Баттон и блайнды сидят на рамке, вне круглой картинки, которая бы их обрезала. */}

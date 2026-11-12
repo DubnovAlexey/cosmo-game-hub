@@ -103,7 +103,9 @@ const {title, titleKey, scrollToTop = true, favicon = '/favicon'} = Astro.props;
 <!-- [RU] Тексты хаба на выбранном языке; следуют переключателю в шапке и переключателям внутри игр. -->
 <script>
     import { startShellLanguage } from '../i18n/applyLanguage';
+    import { startSurprisesToggle } from '../utils/surprisesToggle';
     startShellLanguage();
+    startSurprisesToggle();
 </script>
 </body>
 </html>

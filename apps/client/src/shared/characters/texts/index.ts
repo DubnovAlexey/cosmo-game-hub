@@ -8,7 +8,7 @@
 import type { Language } from '../../i18n/languages.ts';
 import type { CharacterId } from '../roster.ts';
 
-export interface CharacterText { readonly name: string; readonly bio: string }
+export interface CharacterText { readonly name: string; readonly bio: string; readonly quote?: string }
 export type CharacterTexts = Readonly<Record<CharacterId, CharacterText>>;
 
 export function loadCharacterTexts(language: Language): Promise<CharacterTexts> {

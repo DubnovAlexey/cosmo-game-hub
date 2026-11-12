@@ -82,8 +82,8 @@ test('every pool seats a new company; a damaged save gets a valid one', () => {
     assert.equal(withChampion[0], 'koschei', 'the winner of the last pool keeps a seat');
     assert.ok(withChampion[1] !== 'carmilla' && withChampion[1] !== 'koschei', 'the other seat gets a new face');
     assert.deepEqual(castForNewPool(['xenon', null], 2, random, CAST, 'koschei'), ['xenon', 'koschei']);
-    assert.equal(ROSTER.length, 116, 'all of Alexey\'s pictures play: 67 dwellers and 49 guests (pirates, necromancers and the players of the draughts scenes since 11.11)');
-    assert.equal(ROSTER.filter(character => character.guest).length, 49);
+    assert.equal(ROSTER.length, 146, 'everybody plays: 67 dwellers and 79 guests (pirates, necromancers, the players of the draughts scenes since 11.11, the thirty space guests since 12.11)');
+    assert.equal(ROSTER.filter(character => character.guest).length, 79);
     // [EN] A new face speaks Russian in its own gender and case. [RU] Новое лицо говорит по-русски в своём роде и падеже.
     const company = makeRu(['vual', 'ivy']);
     assert.equal(company.info.needs(1, 6), 'Императрице Вуали нужно 6 взяток');

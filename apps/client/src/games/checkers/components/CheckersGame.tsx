@@ -11,6 +11,7 @@ import '@fontsource/cormorant-garamond/600-italic.css';
 import { loadCharacterTexts, type CharacterTexts } from '@shared/characters/texts';
 import { directionOf } from '@shared/i18n/languages';
 import { useLanguage } from '@shared/i18n/useLanguage';
+import { Surprises } from '@shared/surprises/Surprises';
 import { loadCheckersTexts, type CheckersTexts } from '../i18n';
 import { CheckersRoom } from './CheckersRoom';
 import styles from './Checkers.module.css';
@@ -27,6 +28,7 @@ export const CheckersGame: React.FC = () => {
     return (
         <div lang={loaded.texts.language} dir={directionOf(language)}>
             <CheckersRoom language={language} onLanguage={setLanguage} texts={loaded.texts} people={loaded.people} />
+            <Surprises set="checkers" />
         </div>
     );
 };

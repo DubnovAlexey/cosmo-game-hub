@@ -102,6 +102,19 @@ const aboutActive = isNavigationPathActive(currentPath, withBase('/about'));
                     {LANGUAGES.map(language => <option value={language.code} lang={language.code} dir={language.dir}>{language.name}</option>)}
                 </select>
             </label>
+            <!-- [EN] «Surprises» in the games (a raven, a black cat, comets, gulls…): on or off for the whole site (shell/utils/surprisesToggle.ts).
+                 [RU] «Неожиданности» в играх (ворон, чёрный кот, кометы, чайки…): включить или выключить на весь сайт (shell/utils/surprisesToggle.ts). -->
+            <button
+                    type="button"
+                    data-surprises-toggle
+                    aria-pressed="true"
+                    title="Ravens, black cats, comets and gulls now and then show up in the games — press to switch them off or on"
+                    data-i18n-title="nav.surprisesTitle"
+                    class="surprises-toggle bg-gray-700 text-white border border-gray-600 rounded-lg px-4 min-h-[44px] flex items-center gap-2 cursor-pointer hover:bg-gray-600"
+            >
+                <span aria-hidden="true">🦇</span>
+                <span data-i18n="nav.surprises">Surprises</span>
+            </button>
             <button
                     type="button"
                     disabled

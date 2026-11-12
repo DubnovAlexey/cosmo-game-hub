@@ -12,6 +12,7 @@ import '@fontsource/cormorant-garamond/700.css';
 import '@fontsource/cormorant-garamond/600-italic.css';
 import { directionOf } from '@shared/i18n/languages';
 import { useLanguage } from '@shared/i18n/useLanguage';
+import { Surprises } from '@shared/surprises/Surprises';
 import { loadPokerTexts, type PokerTexts } from '../i18n';
 import { PokerTable } from './PokerTable';
 import styles from './Poker.module.css';
@@ -28,6 +29,7 @@ export const PokerGame: React.FC = () => {
     return (
         <div lang={texts.language} dir={directionOf(language)}>
             <PokerTable language={language} onLanguage={setLanguage} texts={texts} />
+            <Surprises set="poker" />
         </div>
     );
 };

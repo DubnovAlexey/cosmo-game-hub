@@ -1,26 +1,29 @@
 // [EN] FILE: shared/characters/roster.ts — who lives in the lair: the same company sits down at every table of the hub
 //      (preferans, poker, chess, the sea battle, draughts), so the characters belong to no single game. The lair has
 //      sixty-seven dwellers (vampires, ghouls, necromancers — five of them up from the catacombs —, a masked empress,
-//      a weeping queen, a plague doctor…) and forty-nine guests from the neighbouring worlds (an alchemist, a zombie
+//      a weeping queen, a plague doctor…) and seventy-nine guests from the neighbouring worlds (an alchemist, a zombie
 //      from Marseille, aliens, a raccoon, a ronin from an old print, neon vampires, four dead pirates, a quartet of
-//      four worlds…). Here is only what does not depend on a game or a language: the name of the record, the
+//      four worlds… and since 12.11.2026 the thirty space guests of «Кровная рента», SPACE_FOLK). Here is only what does not depend on a game or a language: the name of the record, the
 //      grammatical gender, dweller or guest, where the picture lies and, for a wide picture, where the face is.
 //      Names and biographies — texts/*.ts; how a character plays — in each game
 //      (games/preferans/characters/roster.ts, games/poker/characters.ts, games/chess/…).
 //      Pictures: Alexey's own collection (Desktop «Favicon», 08–09.11.2026; some from StockCake, free to use; the
-//      pirates — Desktop «Морской бой», the necromancers — Desktop «Шашки», 11.11.2026), whole, with their
-//      backgrounds, only scaled down, in public/shared/characters — one copy for all the games.
+//      pirates — Desktop «Морской бой», the necromancers — Desktop «Шашки», 11.11.2026; the space guests — generated
+//      on our own GPU, FLUX.1 Krea, Desktop «Кровная рента», 12.11.2026), whole, with their backgrounds, only scaled
+//      down, in public/shared/characters — one copy for all the games.
 //      Pure data without React, so the Node tests use it too.
 // [RU] ФАЙЛ: кто живёт в логове: одна и та же компания садится за любой стол хаба (преферанс, покер, шахматы,
 //      морской бой, шашки), поэтому герои не принадлежат ни одной игре. В логове шестьдесят семь обитателей
 //      (вампиры, упыри, некроманты — пятеро поднялись из катакомб, — императрица в маске, плачущая королева, чумной
-//      доктор…) и сорок девять гостей из соседних миров (алхимик, зомби из Марселя, пришельцы, енот, ронин со старой
-//      гравюры, неоновые вампирши, четыре мёртвых пирата, квартет четырёх миров…). Здесь только то, что не зависит от
+//      доктор…) и семьдесят девять гостей из соседних миров (алхимик, зомби из Марселя, пришельцы, енот, ронин со старой
+//      гравюры, неоновые вампирши, четыре мёртвых пирата, квартет четырёх миров… и с 12.11.2026 тридцать космических
+//      гостей «Кровной ренты», SPACE_FOLK). Здесь только то, что не зависит от
 //      игры и языка: имя записи, грамматический род, обитатель или гость, где лежит картинка и, для широкой картинки,
 //      где на ней лицо. Имена и биографии — texts/*.ts; как герой играет — в каждой
 //      игре (games/preferans/characters/roster.ts, games/poker/characters.ts, games/chess/…). Картинки: собственная
 //      коллекция Алексея (Рабочий стол «Favicon», 08–09.11.2026; часть со StockCake, свободная лицензия; пираты —
-//      Рабочий стол «Морской бой», некроманты — Рабочий стол «Шашки», 11.11.2026), целиком, со своим фоном, только
+//      Рабочий стол «Морской бой», некроманты — Рабочий стол «Шашки», 11.11.2026; космические гости — сгенерированы на
+//      нашей видеокарте, FLUX.1 Krea, Рабочий стол «Кровная рента», 12.11.2026), целиком, со своим фоном, только
 //      уменьшенные, в public/shared/characters — одна копия на все игры. Чистые данные без React, поэтому их
 //      используют и тесты Node.
 
@@ -45,6 +48,10 @@ export type CharacterId =
   /** The players of the draughts scenes (11.11.2026, the same folder): nine dwellers and seven guests, each pictured at a board. */
   | 'velmira' | 'kostolom' | 'strelyany' | 'violet' | 'prokhor' | 'kvartet' | 'morok' | 'bagryana'
   | 'rogach' | 'agata' | 'serebryana' | 'scarlett' | 'letitia' | 'ogneslava' | 'celestine' | 'vivien'
+  /** The space guests (12.11.2026): thirty portraits generated on our own GPU for «Кровная рента». */
+  | 'markus' | 'vera' | 'grob' | 'nekro' | 'brut' | 'eva' | 'vakuum' | 'xavier' | 'ksi' | 'sporus'
+  | 'torgovets' | 'vivisector' | 'globb' | 'gorizont' | 'klony' | 'kraken' | 'malakor' | 'kurtizanka' | 'skeleton' | 'vudu'
+  | 'obzhorin' | 'zero' | 'drednout' | 'kollektor' | 'zazerkal' | 'zhrets' | 'sshivatel' | 'krik' | 'pozhiratel' | 'smert'
   /** The dummy of a game for two: never picked as an opponent, it sits in the third seat. */
   | 'dummy';
 
@@ -183,10 +190,53 @@ export const CHARACTERS: Readonly<Record<Exclude<CharacterId, 'dummy'>, Characte
   ogneslava: { female: true, guest: true, focus: '70% 13%' },
   celestine: { female: true, guest: true, focus: '17% 20%' },
   vivien: { female: true, guest: true, focus: '17% 16%' },
+  // [EN] The space guests of «Кровная рента», 12.11.2026. [RU] Космические гости «Кровной ренты», 12.11.2026.
+  markus: { female: false, guest: true },
+  vera: { female: true, guest: true },
+  grob: { female: false, guest: true },
+  nekro: { female: true, guest: true },
+  brut: { female: false, guest: true },
+  eva: { female: true, guest: true },
+  vakuum: { female: false, guest: true },
+  xavier: { female: false, guest: true },
+  ksi: { female: true, guest: true },
+  sporus: { female: false, guest: true },
+  torgovets: { female: false, guest: true },
+  vivisector: { female: true, guest: true },
+  globb: { female: false, guest: true },
+  gorizont: { female: true, guest: true },
+  klony: { female: false, guest: true },
+  kraken: { female: false, guest: true },
+  malakor: { female: false, guest: true },
+  kurtizanka: { female: true, guest: true },
+  skeleton: { female: false, guest: true },
+  vudu: { female: true, guest: true },
+  obzhorin: { female: false, guest: true },
+  zero: { female: false, guest: true },
+  drednout: { female: false, guest: true },
+  kollektor: { female: true, guest: true },
+  zazerkal: { female: false, guest: true },
+  zhrets: { female: false, guest: true },
+  sshivatel: { female: false, guest: true },
+  krik: { female: true, guest: true },
+  pozhiratel: { female: false, guest: true },
+  smert: { female: true, guest: true },
 });
 
 /** [EN] The sea folk: the guests who came by sea (Captain Galleon and the crew of the sea battle). [RU] Морской народ: гости, приплывшие морем (Капитан Галеон и команда морского боя). */
 export const SEA_FOLK: readonly Exclude<CharacterId, 'dummy'>[] = Object.freeze(['galeon', 'krasnoglaz', 'sunduk', 'priliv', 'abordazh']);
+
+/**
+ * [EN] The space folk (12.11.2026): the thirty opponents of «Кровная рента» — cosmic horror with black humour, their
+ *      portraits generated on our own GPU (FLUX.1 Krea) from Alexey's prompts. Guests from space.
+ * [RU] Космический народ (12.11.2026): тридцать соперников «Кровной ренты» — космический хоррор с чёрным юмором,
+ *      портреты сгенерированы на нашей видеокарте (FLUX.1 Krea) по промптам Алексея. Гости из космоса.
+ */
+export const SPACE_FOLK: readonly Exclude<CharacterId, 'dummy'>[] = Object.freeze([
+  'markus', 'vera', 'grob', 'nekro', 'brut', 'eva', 'vakuum', 'xavier', 'ksi', 'sporus',
+  'torgovets', 'vivisector', 'globb', 'gorizont', 'klony', 'kraken', 'malakor', 'kurtizanka', 'skeleton', 'vudu',
+  'obzhorin', 'zero', 'drednout', 'kollektor', 'zazerkal', 'zhrets', 'sshivatel', 'krik', 'pozhiratel', 'smert',
+]);
 
 /**
  * [EN] The folk of the board (the folder «Шашки»): the necromancers of the catacombs, who play draughts with bones, and

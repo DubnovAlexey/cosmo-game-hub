@@ -35,6 +35,8 @@ export interface CharacterStory {
     readonly id: CharacterId;
     readonly name: string;
     readonly bio: string;
+    /** [EN] The hero about himself, one line in the first person, shown in quotes. [RU] Герой о себе, одна строка от первого лица, в кавычках. */
+    readonly quote?: string;
     /** [EN] «Dweller of the crypt» or «guest». [RU] «Обитатель склепа» или «гость». */
     readonly tag?: string;
     /** [EN] What the hero is like in this very game (a poker line). [RU] Каков герой именно в этой игре (покерная реплика). */
@@ -42,6 +44,14 @@ export interface CharacterStory {
     /** [EN] Manners in pairs «what: how». [RU] Манеры парами «что: как». */
     readonly manner?: readonly (readonly [string, string])[];
 }
+
+/**
+ * [EN] Each hero at a table breathes at a pace of its own: the phase of the breath comes from the name of the record,
+ *      so two opponents never swell in step (CharacterCard.module.css, `.face`).
+ * [RU] Каждый герой за столом дышит в своём ритме: фаза дыхания берётся из имени записи, поэтому два соперника никогда
+ *      не вздымаются в такт (CharacterCard.module.css, `.face`).
+ */
+export const breathDelay = (id: CharacterId): string => `${-([...id].reduce((sum, letter) => sum + letter.charCodeAt(0), 0) % 70) / 10}s`;
 
 interface CharacterCardProps extends CharacterStory {
     readonly wide?: boolean;
@@ -57,14 +67,19 @@ interface CharacterCardProps extends CharacterStory {
 }
 
 export const CharacterCard: React.FC<CharacterCardProps> = ({
-    id, name, bio, tag, note, manner, wide = false, className = '', domId, role = 'note', label, closeLabel, onClose, cardRef, style,
+    id, name, bio, quote, tag, note, manner, wide = false, className = '', domId, role = 'note', label, closeLabel, onClose, cardRef, style,
 }) => (
     <div ref={cardRef} id={domId} className={`${styles.card} ${wide ? styles.wide : ''} ${className}`} role={role} aria-label={label ?? name} style={style}>
-        <img className={styles.picture} src={withBase(portraitPath(id))} alt="" decoding="async" draggable={false} />
+        {/* [EN] A living portrait: it breathes slowly inside its frame and a warm light wanders over it (12.11.2026).
+            [RU] Живой портрет: медленно «дышит» внутри рамки, по нему гуляет тёплый отсвет (12.11.2026). */}
+        <span className={styles.portrait}>
+            <img className={styles.picture} src={withBase(portraitPath(id))} alt="" decoding="async" draggable={false} />
+        </span>
         <div>
             <p className={styles.name}>{name}</p>
             {tag && <p className={styles.tag}>{tag}</p>}
             <p className={styles.text}>{bio}</p>
+            {quote && <q className={styles.quote}>{quote}</q>}
             {note && <p className={styles.note}>{note}</p>}
             {manner && manner.length > 0 && (
                 <ul className={styles.manner}>
@@ -114,7 +129,7 @@ export const CharacterFace: React.FC<CharacterFaceProps> = ({ story, label, clos
     return (
         <span ref={wrap} className={`${styles.face} ${open ? styles.faceOpen : ''} ${className}`}>
             <button type="button" className={faceClassName} aria-label={label} aria-expanded={open} aria-controls={cardId} onClick={() => setOpen(value => !value)}>
-                <img src={picture} alt="" loading="lazy" decoding="async" draggable={false} style={portraitFocus(story.id)} />
+                <img src={picture} alt="" loading="lazy" decoding="async" draggable={false} style={{ ...portraitFocus(story.id), animationDelay: breathDelay(story.id) }} />
                 {children}
             </button>
             <img className={`${styles.zoom} ${zoom}`} src={picture} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false}

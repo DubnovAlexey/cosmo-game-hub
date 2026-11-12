@@ -11,6 +11,7 @@ import { TimerPanel } from './TimerPanel';
 import { MoveHistory } from './MoveHistory';
 import { Graveyard } from './Graveyard';
 import { GameOverOverlay } from '@shared/components/GameOverOverlay';
+import { Surprises } from '@shared/surprises/Surprises';
 import { GameSetupModal } from './GameSetupModal';
 import { ChessOpponent, pickOpponent } from './ChessOpponent';
 
@@ -202,6 +203,8 @@ export const ChessGame: React.FC = () => {
                     </div>
                 </GameOverOverlay>
             )}
+            {/* [EN] Comets, a UFO stealing a pawn, an astronaut with noodles (shared/surprises). [RU] Кометы, НЛО крадёт пешку, космонавт с лапшой. */}
+            <Surprises set="chess" />
         </div>
     );
 };
