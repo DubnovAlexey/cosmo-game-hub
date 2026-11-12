@@ -34,11 +34,11 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
     'nav.language': t('Language', 'Язык', 'שפה', 'Idioma', 'Langue'),
     'nav.surprises': t('Surprises', 'Неожиданности', 'הפתעות', 'Sorpresas', 'Surprises'),
     'nav.surprisesTitle': t(
-        'Ravens, black cats, comets and gulls now and then show up in the games — press to switch them off or on',
-        'В играх время от времени появляются вороны, чёрные коты, кометы и чайки — нажмите, чтобы выключить или включить',
-        'עורבים, חתולים שחורים, שביטים ושחפים מופיעים מדי פעם במשחקים — לחצו כדי לכבות או להדליק',
-        'Cuervos, gatos negros, cometas y gaviotas aparecen a veces en los juegos: pulsa para apagarlos o encenderlos',
-        'Corbeaux, chats noirs, comètes et mouettes surgissent parfois dans les jeux — appuyez pour les couper ou les remettre',
+        'Ravens, black cats, meteorites and gulls now and then show up in the games — press to switch them off or on',
+        'В играх время от времени появляются вороны, чёрные коты, метеориты и чайки — нажмите, чтобы выключить или включить',
+        'עורבים, חתולים שחורים, מטאוריטים ושחפים מופיעים מדי פעם במשחקים — לחצו כדי לכבות או להדליק',
+        'Cuervos, gatos negros, meteoritos y gaviotas aparecen a veces en los juegos: pulsa para apagarlos o encenderlos',
+        'Corbeaux, chats noirs, météorites et mouettes surgissent parfois dans les jeux — appuyez pour les couper ou les remettre',
     ),
     'nav.sound': t('Sound', 'Звук', 'צליל', 'Sonido', 'Son'),
     'nav.soundTitle': t(

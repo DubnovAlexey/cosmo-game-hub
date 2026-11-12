@@ -1,5 +1,6 @@
 // [EN] FILE: shared/tests/surprises.test.ts — the «surprises» of the hub: every game has its own cast and its own
-//      choreography (no creature and no motion is shared between two games — Alexey, 12.11.2026), every drawing and
+//      choreography (no creature and no motion is shared between two games — Alexey, 12.11.2026), no game is a cartoon
+//      any more (only a drop of blood and a card back are drawn — the evening of 12.11.2026), every drawing and
 //      every photograph is used and the photographs exist, every kind builds a sane path on a phone and on wide
 //      screens, the choice follows the weights and never repeats the last kind, pauses stay in their ranges, and the
 //      setting is on unless the player switched it off.
@@ -14,7 +15,7 @@ import test from 'node:test';
 import { RIGS } from '../surprises/rigs.ts';
 // noinspection ES6PreferShortImport
 import {
-    buildSurprise, DRAWN, nextDelay, pickSurprise, SPRITES, SURPRISE_DELAY, SURPRISE_SETS, surprisesEnabled,
+    buildSurprise, DRAWN, nextDelay, PAINTING, pickSurprise, readyKinds, SPRITES, SURPRISE_DELAY, SURPRISE_SETS, surprisesEnabled,
     type Surprise, type SurpriseSetId, type View,
 } from '../surprises/logic.ts';
 
@@ -35,7 +36,7 @@ test('no creature and no choreography is shared between two games', () => {
     const owner = new Map<string, SurpriseSetId>();
     for (const set of SETS) {
         for (const kind of SURPRISE_SETS[set]) {
-            for (const key of [`motion:${kind.motion}`, kind.creature ? `creature:${kind.creature}` : null]) {
+            for (const key of [`motion:${kind.motion}`, kind.creature ? `creature:${kind.creature}` : null, kind.extra ? `creature:${kind.extra}` : null]) {
                 if (!key) continue;
                 const first = owner.get(key);
                 assert.ok(!first || first === set, `${key} is used by ${first} and ${set}`);
@@ -45,12 +46,21 @@ test('no creature and no choreography is shared between two games', () => {
     }
 });
 
+test('no game is a cartoon: only the drop of blood and the card back are drawn', () => {
+    // [EN] Alexey, 12.11.2026: «мультяшные картинки не очень… реалистичней, для взрослых, позлее».
+    assert.deepEqual([...DRAWN], ['bloodDrop', 'card']);
+});
+
 test('every drawing and every photograph is used, and every photograph is on disk', () => {
-    const used = new Set<string>(SETS.flatMap(set => SURPRISE_SETS[set].map(kind => kind.creature ?? '')).filter(Boolean));
-    used.add('cat-yawn'); // [EN] the sitting cat plays inside the cat's walk / [RU] сидящий кот играет внутри прогулки кота
+    // [EN] A scene may have a second creature: the sitting cat, the lich among the worms, hot meteorites among rocks.
+    // [RU] У сцены бывает второе существо: сидящий кот, лич среди червей, раскалённые метеориты среди камней.
+    const used = new Set<string>(SETS.flatMap(set => SURPRISE_SETS[set].flatMap(kind => [kind.creature ?? '', kind.extra ?? ''])).filter(Boolean));
     for (const creature of [...DRAWN, ...SPRITES]) assert.ok(used.has(creature), `${creature} is never shown`);
+    // [EN] A picture still being painted is listed in PAINTING and is not on disk; every other one is on disk.
+    // [RU] Картинка, которая ещё рисуется, записана в PAINTING и её нет на диске; все остальные — на диске.
     for (const sprite of SPRITES) {
-        assert.ok(existsSync(new URL(`../../../public/shared/surprises/${sprite}.webp`, import.meta.url)), `public/shared/surprises/${sprite}.webp`);
+        const onDisk = existsSync(new URL(`../../../public/shared/surprises/${sprite}.webp`, import.meta.url));
+        assert.equal(onDisk, !PAINTING.includes(sprite), `public/shared/surprises/${sprite}.webp ${onDisk ? 'is ready: take it out of PAINTING' : 'is missing'}`);
     }
 });
 
@@ -169,20 +179,28 @@ test('every kind of every game builds a sane surprise on a phone and on wide scr
 
 test('the choice follows the weights and never repeats the kind just shown', () => {
     for (const set of SETS) {
+        // [EN] A game with fewer than two ready kinds has nothing to choose from yet. [RU] Игре, у которой готово меньше двух видов, пока не из чего выбирать.
+        if (readyKinds(set).length < 2) {
+            assert.equal(pickSurprise(set, seeded(7)), readyKinds(set)[0] ?? null);
+            continue;
+        }
         const random = seeded(7);
         const counts = new Map<string, number>();
         let previous: string | null = null;
         for (let round = 0; round < 6000; round += 1) {
             const kind = pickSurprise(set, random, previous);
+            assert.ok(kind);
             assert.notEqual(kind.id, previous);
             counts.set(kind.id, (counts.get(kind.id) ?? 0) + 1);
             previous = kind.id;
         }
-        const kinds = SURPRISE_SETS[set];
+        const kinds = readyKinds(set);
         for (const kind of kinds) assert.ok((counts.get(kind.id) ?? 0) > 0, `${set}/${kind.id}`);
         const heaviest = kinds.reduce((a, b) => (b.weight > a.weight ? b : a));
         const lightest = kinds.reduce((a, b) => (b.weight < a.weight ? b : a));
-        if (heaviest.weight > lightest.weight) assert.ok((counts.get(heaviest.id) ?? 0) > (counts.get(lightest.id) ?? 0), set);
+        // [EN] With exactly two kinds «never the same twice» forces them to alternate, so weights can only show from three.
+        // [RU] Ровно два вида при правиле «не подряд» обязаны чередоваться — веса видны только с трёх видов.
+        if (kinds.length > 2 && heaviest.weight > lightest.weight) assert.ok((counts.get(heaviest.id) ?? 0) > (counts.get(lightest.id) ?? 0), set);
     }
 });
 

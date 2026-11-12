@@ -94,7 +94,7 @@
     display: block;
 }
 
-/* ===================== [EN] CHESS — cartoon space / [RU] ШАХМАТЫ — мультяшный космос ===================== */
+/* ===================== [EN] CHESS — deep space, real and unkind / [RU] ШАХМАТЫ — глубокий космос, настоящий и недобрый ===================== */
 
 .across {
     position: absolute;
@@ -109,9 +109,51 @@
     animation: swoop var(--dur) ease-in-out var(--delay) both;
 }
 
-.flutter {
+/* [EN] A rock tumbles as it flies; the pace and the direction are set per rock (Surprises.tsx).
+   [RU] Камень кувыркается на лету; темп и направление — у каждого камня свои (Surprises.tsx). */
+.rockSpin {
     display: block;
-    animation: flutter 0.42s ease-in-out infinite alternate;
+    animation: rock-spin 4s linear infinite;
+}
+
+@keyframes rock-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* [EN] The tail of fire behind a burning meteorite: white-hot at the rock, orange, then smoke; it flickers.
+   [RU] Огненный хвост за горящим метеоритом: у камня добела, дальше оранжевый, потом дым; мерцает. */
+.fireTail {
+    position: absolute;
+    top: 50%;
+    right: 45%;
+    border-radius: 50% 12% 12% 50% / 50% 50% 50% 50%;
+    background: linear-gradient(90deg, transparent 0%, rgba(90, 80, 80, 0.25) 18%, rgba(255, 96, 20, 0.55) 55%, rgba(255, 190, 80, 0.85) 82%, rgba(255, 250, 225, 0.95) 100%);
+    filter: blur(5px);
+    translate: 0 -50%;
+    transform-origin: 100% 50%;
+    animation: fire-tail 0.16s ease-in-out infinite alternate;
+}
+
+.fireTailFlip {
+    right: auto;
+    left: 45%;
+    scale: -1 1;
+}
+
+@keyframes fire-tail {
+    from {
+        transform: scale(1, 1);
+        opacity: 0.85;
+    }
+    to {
+        transform: scale(0.93, 1.18);
+        opacity: 1;
+    }
 }
 
 @keyframes across {
@@ -144,16 +186,7 @@
     }
 }
 
-@keyframes flutter {
-    from {
-        transform: translateY(-4px);
-    }
-    to {
-        transform: translateY(5px);
-    }
-}
-
-/* [EN] Peeking from behind a side edge (the alien). [RU] Выглядывает из-за бокового края (пришелец). */
+/* [EN] Leaning in from behind a side edge (the thing from the void). [RU] Заглядывает из-за бокового края (тварь из пустоты). */
 .peeker {
     position: absolute;
     top: var(--y);
@@ -204,7 +237,7 @@
     }
 }
 
-/* [EN] Drifting slowly across, turning (astronaut, satellite). [RU] Медленно плывёт поперёк, поворачиваясь (космонавт, спутник). */
+/* [EN] Drifting slowly across, turning (the wreck, the dead astronaut, the dead probe). [RU] Медленно плывёт поперёк, поворачиваясь (обломок, мёртвый космонавт, мёртвый зонд). */
 .drifter {
     position: absolute;
     left: 0;
@@ -227,7 +260,7 @@
     }
 }
 
-/* ===================== [EN] SEA BATTLE — cartoon sea / [RU] МОРСКОЙ БОЙ — мультяшное море ===================== */
+/* ===================== [EN] SEA BATTLE — a real, unfriendly sea / [RU] МОРСКОЙ БОЙ — настоящее недоброе море ===================== */
 
 /* [EN] A gull glides, dips toward the water and climbs again. [RU] Чайка парит, ныряет к воде и снова набирает высоту. */
 .gullPath {
@@ -1224,6 +1257,35 @@
     }
 }
 
+/* [EN] The lich rises among the centipedes: slowly up out of the ground to the chest, leans toward you, holds, sinks back.
+   [RU] Лич поднимается среди сколопендр: медленно из земли по грудь, наклоняется к вам, замирает, уходит обратно. */
+.lichRise {
+    position: absolute;
+    left: var(--x);
+    bottom: 0;
+    will-change: transform;
+    animation: lich-rise var(--dur) var(--delay) both;
+}
+
+@keyframes lich-rise {
+    0%,
+    100% {
+        transform: translateY(105%);
+    }
+    26% {
+        transform: translateY(8%);
+    }
+    40% {
+        transform: translateY(4%) scale(1.06);
+    }
+    72% {
+        transform: translateY(6%) scale(1.06);
+    }
+    86% {
+        transform: translateY(40%);
+    }
+}
+
 /* [EN] The skull: rolls in, stops, rocks as if looking at you, rolls on. [RU] Череп: вкатывается, останавливается, качается, будто разглядывает вас, катится дальше. */
 .skullPath {
     position: absolute;
@@ -1735,10 +1797,10 @@
     }
 }
 
-/* [EN] The hooded figure between two flashes (the flash lasts about 5 s): straight at the first, the hood bent and
-        the fingers hooked at the second; the hem stirs all the time.
+/* [EN] The hooded figure between two flashes (the flash lasts about 5 s): straight at the first, the hood bent at the
+        second; the pendant swings and the hem stirs all the time.
    [RU] Фигура в капюшоне между двумя вспышками (вспышка длится около 5 с): в первой прямо, во второй капюшон
-        склонён и пальцы скрючены; подол шевелится всё время. */
+        склонён; кулон качается, подол шевелится всё время. */
 .hoodTilt {
     animation: hood-tilt 6s ease-in-out both;
 }
@@ -1754,34 +1816,66 @@
     }
 }
 
-.clawCurl,
-.clawCurlMirror {
-    animation: claw-curl 6s ease-in-out both;
+/* [EN] The lich's jaw drops slowly, hangs open and shuts. [RU] Челюсть лича медленно отвисает, висит открытой и захлопывается. */
+.jawGape {
+    animation: jaw-gape 3.6s ease-in-out infinite;
 }
 
-.clawCurlMirror {
-    animation-name: claw-curl-mirror;
-}
-
-@keyframes claw-curl {
+@keyframes jaw-gape {
     0%,
-    25% {
-        transform: rotate(0deg) scaleY(1);
-    }
-    45%,
+    28%,
     100% {
-        transform: rotate(-14deg) scaleY(0.88);
+        transform: translateY(0);
+    }
+    46%,
+    70% {
+        transform: translateY(11px);
+    }
+    76% {
+        transform: translateY(0);
     }
 }
 
-@keyframes claw-curl-mirror {
+/* [EN] The giant centipede on the lich's shoulder creeps in short jerks, the way real centipedes move: a twitch, a
+   pause, a twitch back. [RU] Гигантская сколопендра на плече лича ползёт короткими рывками, как настоящие: дёрнулась,
+   замерла, дёрнулась обратно. */
+.centipedeCreep {
+    animation: centipede-creep 2.4s steps(1, end) infinite;
+}
+
+@keyframes centipede-creep {
     0%,
-    25% {
-        transform: rotate(0deg) scaleY(1);
-    }
-    45%,
     100% {
-        transform: rotate(14deg) scaleY(0.88);
+        transform: translate(0, 0) rotate(0deg);
+    }
+    18% {
+        transform: translate(-3px, 2px) rotate(-1.6deg);
+    }
+    26% {
+        transform: translate(-5px, 3px) rotate(-2.4deg);
+    }
+    54% {
+        transform: translate(-2px, 1px) rotate(-0.8deg);
+    }
+    70% {
+        transform: translate(3px, -2px) rotate(1.4deg);
+    }
+    82% {
+        transform: translate(1px, -1px) rotate(0.6deg);
+    }
+}
+
+/* [EN] The raven-skull pendant swings on its chain. [RU] Кулон-череп ворона качается на цепи. */
+.pendantSwing {
+    animation: pendant-swing 1.7s ease-in-out infinite alternate;
+}
+
+@keyframes pendant-swing {
+    from {
+        transform: rotate(-7deg);
+    }
+    to {
+        transform: rotate(7deg);
     }
 }
 
@@ -1948,155 +2042,6 @@
     65%,
     71% {
         transform: scaleY(1);
-    }
-}
-
-/* ===================== [EN] Small life inside the drawings / [RU] Мелкая жизнь внутри рисунков ===================== */
-
-.wingLeft,
-.wingRight {
-    transform-box: fill-box;
-    animation: flap 0.24s ease-in-out infinite alternate;
-}
-
-.wingLeft {
-    transform-origin: 100% 60%;
-}
-
-.wingRight {
-    transform-origin: 0 60%;
-}
-
-@keyframes flap {
-    from {
-        transform: rotate(0deg) scaleY(1);
-    }
-    to {
-        transform: rotate(-18deg) scaleY(0.55);
-    }
-}
-
-.bob {
-    animation: bob 0.6s ease-in-out infinite alternate;
-}
-
-@keyframes bob {
-    from {
-        transform: translateY(0);
-    }
-    to {
-        transform: translateY(-3px);
-    }
-}
-
-.sway {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: sway 1.6s ease-in-out infinite alternate;
-}
-
-@keyframes sway {
-    from {
-        transform: rotate(-5deg);
-    }
-    to {
-        transform: rotate(5deg);
-    }
-}
-
-.beam {
-    animation: beam 0.9s ease-in-out infinite alternate;
-}
-
-@keyframes beam {
-    from {
-        opacity: 0.55;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-/* [EN] The abducted pawn goes up the beam and wobbles. [RU] Похищенная пешка едет вверх по лучу и покачивается. */
-.lift {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
-    animation: lift 2.4s ease-in-out infinite alternate;
-}
-
-@keyframes lift {
-    from {
-        transform: translateY(6px) rotate(-8deg);
-    }
-    to {
-        transform: translateY(-46px) rotate(10deg);
-    }
-}
-
-.blink {
-    animation: blink 0.8s steps(2, jump-none) infinite;
-}
-
-@keyframes blink {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0.25;
-    }
-}
-
-.blinkEyes {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
-    animation: blink-eyes 2.4s ease-in-out infinite;
-}
-
-@keyframes blink-eyes {
-    0%,
-    44%,
-    52%,
-    100% {
-        transform: scaleY(1);
-    }
-    48% {
-        transform: scaleY(0.1);
-    }
-}
-
-.noodles {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: noodles 0.9s ease-in-out infinite alternate;
-}
-
-@keyframes noodles {
-    from {
-        transform: skewX(-8deg) scaleY(0.92);
-    }
-    to {
-        transform: skewX(9deg) scaleY(1.06);
-    }
-}
-
-/* [EN] The periscope looks left and right. [RU] Перископ осматривается. */
-.look {
-    transform-box: fill-box;
-    transform-origin: 40% 50%;
-    animation: look 2.6s ease-in-out infinite;
-}
-
-@keyframes look {
-    0%,
-    40% {
-        transform: scaleX(1);
-    }
-    50%,
-    90% {
-        transform: scaleX(-1);
-    }
-    100% {
-        transform: scaleX(1);
     }
 }
 

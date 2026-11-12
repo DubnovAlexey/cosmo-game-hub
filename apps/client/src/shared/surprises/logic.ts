@@ -1,15 +1,18 @@
 // [EN] FILE: shared/surprises/logic.ts — «surprises» of the hub: now and then something happens on the screen of a
 //      game. Every game has its own cast and its own choreography — nothing repeats between games or with the Props
 //      project (Alexey, 12.11.2026: «индивидуальные для каждого, как по организации движений, так и самих идей»).
-//      Realistic games get photographic creatures generated on our own GPU (public/shared/surprises/*.webp), the
-//      cartoon games get drawings (creatures.tsx). Only arithmetic lives here — pure functions without the browser
+//      Since the evening of 12.11.2026 every game is realistic and grown-up (Alexey: «мультяшные картинки не очень…
+//      реалистичней, для взрослых, позлее»): photographic creatures generated on our own GPU
+//      (public/shared/surprises/*.webp); only a drop of blood and a card back are still drawn (creatures.tsx).
+//      Only arithmetic lives here — pure functions without the browser
 //      and without React: they receive a source of randomness and the size of the screen and answer who appears,
 //      after how long and along which path (CSS variables). Surprises.tsx draws and times them; tests check them all.
 // [RU] ФАЙЛ: «неожиданности» хаба: время от времени на экране игры что-то происходит. У каждой игры свой состав и
 //      своя хореография — ничего не повторяется ни между играми, ни с проектом Props (Алексей, 12.11.2026:
-//      «индивидуальные для каждого, как по организации движений, так и самих идей»). Реалистичные игры получают
-//      фотографичных существ, сгенерированных на нашей видеокарте (public/shared/surprises/*.webp), мультяшные —
-//      рисунки (creatures.tsx). Здесь только арифметика — чистые функции без браузера и без React: им дают источник
+//      «индивидуальные для каждого, как по организации движений, так и самих идей»). С вечера 12.11.2026 все игры
+//      реалистичные и взрослые (Алексей: «мультяшные картинки не очень… реалистичней, для взрослых, позлее»):
+//      фотографичные существа, сгенерированные на нашей видеокарте (public/shared/surprises/*.webp); нарисованными
+//      остались только капля крови и рубашка карты (creatures.tsx). Здесь только арифметика — чистые функции без браузера и без React: им дают источник
 //      случайности и размер экрана, а они отвечают, кто появится, через сколько и по какой траектории (переменные
 //      CSS). Рисует и запускает их Surprises.tsx; тесты проверяют каждую.
 
@@ -18,9 +21,9 @@
  * [RU] Хореографии. Каждая принадлежит только одной игре.
  */
 export type Motion =
-    // [EN] chess (cartoon space) / [RU] шахматы (мультяшный космос)
+    // [EN] chess (deep space: meteorites, wreckage, the dead) / [RU] шахматы (глубокий космос: метеориты, обломки, мертвецы)
     | 'fly' | 'swarm' | 'peek' | 'drift'
-    // [EN] sea battle (cartoon sea) / [RU] морской бой (мультяшное море)
+    // [EN] sea battle (a real, unfriendly sea) / [RU] морской бой (настоящее недоброе море)
     | 'glideGull' | 'flock' | 'cut' | 'rise' | 'bob' | 'sonar'
     // [EN] preferans (realistic vampire salon) / [RU] преферанс (реалистичный вампирский салон)
     | 'hop' | 'reach' | 'curl' | 'orbit' | 'trickle'
@@ -30,18 +33,16 @@ export type Motion =
     | 'wriggle' | 'rollStop' | 'swing' | 'flash' | 'glide';
 
 /** [EN] Drawn creatures (creatures.tsx). [RU] Нарисованные существа (creatures.tsx). */
-export const DRAWN = [
-    'comet', 'ufo', 'astronaut', 'alien', 'satellite',
-    'gull', 'fin', 'tentacle', 'bottle', 'periscope',
-    'bloodDrop', 'card',
-] as const;
+export const DRAWN = ['bloodDrop', 'card'] as const;
 export type Drawn = typeof DRAWN[number];
 
 /** [EN] Photographic creatures: file name in public/shared/surprises (.webp). [RU] Фотографичные существа: имя файла. */
 export const SPRITES = [
     'raven', 'ghost-hand', 'moth', 'smoke-skull',
     'cat-walk', 'cat-yawn', 'roach', 'chip', 'die', 'smoke-ring',
-    'worm', 'skull', 'lantern', 'hooded',
+    'centipede', 'skull', 'lantern', 'hooded', 'lich',
+    'wreck', 'dead-astronaut', 'stalker', 'probe',
+    'sea-gull', 'shark-fin', 'kraken', 'mine', 'scope',
 ] as const;
 export type Sprite = typeof SPRITES[number];
 export type Creature = Drawn | Sprite;
@@ -52,6 +53,9 @@ export interface SurpriseKind {
     readonly id: string;
     readonly creature: Creature | null; // [EN] null — no figure (eyes, sonar) / [RU] null — без фигуры (глаза, сонар)
     readonly motion: Motion;
+    // [EN] A second creature of the same scene (the sitting cat, the lich among the centipedes, hot meteorites among rocks).
+    // [RU] Второе существо той же сцены (сидящий кот, лич среди сколопендр, раскалённые метеориты среди камней).
+    readonly extra?: Creature;
     readonly weight: number;
     readonly count?: readonly [number, number]; // [EN] how many at once / [RU] сколько сразу: от и до
 }
@@ -73,55 +77,81 @@ export const SURPRISE_SETS: Readonly<Record<SurpriseSetId, readonly SurpriseKind
         { id: 'moth', creature: 'moth', motion: 'orbit', weight: 2 },
         { id: 'blood', creature: 'bloodDrop', motion: 'trickle', weight: 2 },
     ],
-    // [EN] A black cat comes, sits down, stares, yawns and goes back; a cockroach dashes and freezes; a card flies like
+    // [EN] A scarred black tomcat comes snarling, sits down, hisses at you and goes back; a cockroach dashes and freezes; a card flies like
     //      a shuriken and sticks in the edge; a chip rolls on its rim and falls flat; dice fall and bounce; a smoke ring.
-    // [RU] Чёрный кот приходит, садится, смотрит, зевает и уходит обратно; таракан мечется и замирает; карта летит
+    // [RU] Чёрный кот-драчун со шрамами приходит, скалясь, садится, шипит на вас и уходит обратно; таракан мечется и замирает; карта летит
     //      сюрикеном и втыкается в край; фишка катится на ребре и падает; кости падают с отскоком; кольцо дыма.
     poker: [
-        { id: 'cat', creature: 'cat-walk', motion: 'prowl', weight: 3 },
+        { id: 'cat', creature: 'cat-walk', extra: 'cat-yawn', motion: 'prowl', weight: 3 },
         { id: 'roach', creature: 'roach', motion: 'scurry', weight: 2 },
         { id: 'card', creature: 'card', motion: 'throw', weight: 2 },
         { id: 'chip', creature: 'chip', motion: 'roll', weight: 2 },
         { id: 'dice', creature: 'die', motion: 'tumble', weight: 2, count: [2, 2] },
         { id: 'smokeRing', creature: 'smoke-ring', motion: 'ring', weight: 2 },
     ],
-    // [EN] Grave worms rise from below; a skull rolls in, stops and rocks; a lantern comes down on its chain and swings;
+    // [EN] Giant cave centipedes rear up from below (they replaced the grave worms on 12.11.2026 — Alexey: «черви
+    //      вызывают чувства не особо приятные… заменить… сороконожками») and a crowned lich rises among them; a skull rolls in, stops and rocks; a lantern comes down on its chain and swings;
     //      lightning shows a hooded figure standing behind you — and at the second flash it is closer; eyes glide in the dark.
-    // [RU] Снизу выползают могильные черви; катится череп, останавливается и покачивается; на цепи спускается фонарь и
+    // [RU] Снизу поднимаются гигантские пещерные сколопендры (12.11.2026 они заменили могильных червей — Алексей:
+    //      «черви вызывают чувства не особо приятные… заменить… сороконожками»), а среди них — лич в короне; катится череп, останавливается и покачивается; на цепи спускается фонарь и
     //      качается; молния показывает фигуру в капюшоне за спиной — а при второй вспышке она ближе; в темноте плывут глаза.
     checkers: [
-        { id: 'worms', creature: 'worm', motion: 'wriggle', weight: 2, count: [2, 3] },
+        { id: 'centipedes', creature: 'centipede', extra: 'lich', motion: 'wriggle', weight: 2, count: [3, 4] },
         { id: 'skull', creature: 'skull', motion: 'rollStop', weight: 3 },
         { id: 'lantern', creature: 'lantern', motion: 'swing', weight: 2 },
         { id: 'hooded', creature: 'hooded', motion: 'flash', weight: 1 },
         { id: 'eyes', creature: null, motion: 'glide', weight: 3, count: [3, 4] },
     ],
-    // [EN] Deep space, cartoon: a comet, a meteor shower, a UFO abducting a pawn, an astronaut eating noodles, an alien
-    //      peeking from behind the edge, a satellite with a sock drying on its antenna.
-    // [RU] Глубокий космос, мультяшно: комета, метеоритный дождь, НЛО похищает пешку, космонавт ест лапшу, пришелец
-    //      выглядывает из-за края, спутник с носком на антенне.
+    // [EN] Deep space, real and unkind: a burning meteorite, a field of tumbling rocks, a torn piece of a ship's hull
+    //      with one lamp still blinking, a dead astronaut drifting past with a skull behind the visor, a thing from the
+    //      void leaning in from behind the edge, a dead probe.
+    // [RU] Глубокий космос, настоящий и недобрый: горящий метеорит, поле кувыркающихся камней, оторванный кусок
+    //      обшивки корабля с одной ещё мигающей лампой, мёртвый космонавт проплывает мимо с черепом за стеклом шлема,
+    //      тварь из пустоты заглядывает из-за края, мёртвый зонд.
     chess: [
-        { id: 'comet', creature: 'comet', motion: 'fly', weight: 3 },
-        { id: 'meteors', creature: 'comet', motion: 'swarm', weight: 2, count: [5, 8] },
-        { id: 'ufo', creature: 'ufo', motion: 'fly', weight: 2 },
-        { id: 'astronaut', creature: 'astronaut', motion: 'drift', weight: 2 },
-        { id: 'alien', creature: 'alien', motion: 'peek', weight: 2 },
-        { id: 'satellite', creature: 'satellite', motion: 'drift', weight: 1 },
+        { id: 'meteor', creature: 'meteor', motion: 'fly', weight: 3 },
+        { id: 'meteors', creature: 'rock', extra: 'meteor', motion: 'swarm', weight: 2, count: [5, 8] },
+        { id: 'wreck', creature: 'wreck', motion: 'drift', weight: 2 },
+        { id: 'astronaut', creature: 'dead-astronaut', motion: 'drift', weight: 2 },
+        { id: 'stalker', creature: 'stalker', motion: 'peek', weight: 2 },
+        { id: 'probe', creature: 'probe', motion: 'drift', weight: 1 },
     ],
-    // [EN] The sea, cartoon: a gull glides with a stolen captain's cap, a flock passes, a shark fin cuts the water, a
-    //      tentacle squeezes a paper boat, a bottle bobs past with a fish inside, a periscope looks around, a sonar pings.
-    // [RU] Море, мультяшно: чайка парит с украденной фуражкой, проходит стая, плавник режет воду, щупальце сжимает
-    //      бумажный кораблик, мимо качается бутылка с рыбкой, перископ осматривается, пищит сонар.
+    // [EN] The sea, real and unfriendly: a screaming gull glides past with a fish in its beak, a flock passes, a
+    //      scarred shark fin cuts the water, a kraken tentacle rises with a ship's wheel in its grip, a rusty horned
+    //      mine bobs past, a periscope looks around, a sonar pings.
+    // [RU] Море, настоящее и недоброе: орущая чайка парит с рыбой в клюве, проходит стая, акулий плавник в шрамах
+    //      режет воду, щупальце кракена поднимается, сжимая штурвал, мимо качается ржавая рогатая мина, перископ
+    //      осматривается, пищит сонар.
     battleship: [
-        { id: 'gull', creature: 'gull', motion: 'glideGull', weight: 3 },
-        { id: 'gulls', creature: 'gull', motion: 'flock', weight: 2, count: [4, 7] },
-        { id: 'fin', creature: 'fin', motion: 'cut', weight: 3 },
-        { id: 'tentacle', creature: 'tentacle', motion: 'rise', weight: 2 },
-        { id: 'bottle', creature: 'bottle', motion: 'bob', weight: 2 },
-        { id: 'periscope', creature: 'periscope', motion: 'rise', weight: 1 },
+        { id: 'gull', creature: 'sea-gull', motion: 'glideGull', weight: 3 },
+        { id: 'gulls', creature: 'sea-gull', motion: 'flock', weight: 2, count: [4, 7] },
+        { id: 'fin', creature: 'shark-fin', motion: 'cut', weight: 3 },
+        { id: 'tentacle', creature: 'kraken', motion: 'rise', weight: 2 },
+        { id: 'mine', creature: 'mine', motion: 'bob', weight: 2 },
+        { id: 'periscope', creature: 'scope', motion: 'rise', weight: 1 },
         { id: 'sonar', creature: null, motion: 'sonar', weight: 1 },
     ],
 };
+
+/**
+ * [EN] Photographs still being painted on our GPU (the evening of 12.11.2026: the cartoon casts of chess and the sea
+ *      battle are being replaced by real ones). A kind whose picture is not ready is simply not shown, so the hub can
+ *      be built and published at any moment; a test keeps this list honest (listed — not on disk, not listed — on
+ *      disk). Empty when every picture is in place.
+ * [RU] Фотографии, которые ещё рисует наша видеокарта (вечер 12.11.2026: мультяшные составы шахмат и морского боя
+ *      заменяются настоящими). Вид, чья картинка не готова, просто не показывается, поэтому хаб можно собрать и
+ *      выложить в любой момент; тест держит список честным (в списке — нет на диске, не в списке — есть на диске).
+ *      Пуст, когда все картинки на месте.
+ */
+export const PAINTING: readonly Sprite[] = [
+    'centipede',
+    'wreck', 'dead-astronaut', 'stalker', 'probe',
+    'sea-gull', 'shark-fin', 'kraken', 'mine', 'scope',
+];
+
+/** [EN] The kinds of a game whose pictures are ready. [RU] Виды игры, чьи картинки готовы. */
+export const readyKinds = (set: SurpriseSetId): readonly SurpriseKind[] => SURPRISE_SETS[set].filter(kind =>
+    ![kind.creature, kind.extra].some(creature => creature && (PAINTING as readonly Creature[]).includes(creature)));
 
 /** [EN] Pause before the first surprise and between the next ones, ms. [RU] Пауза перед первой и между следующими, мс. */
 export const SURPRISE_DELAY = { first: [15000, 30000], next: [35000, 80000] } as const;
@@ -141,6 +171,7 @@ export interface Actor {
 export interface Surprise {
     readonly id: string;
     readonly creature: Creature | null;
+    readonly extra: Creature | null;
     readonly motion: Motion;
     readonly duration: number; // [EN] ms until the last actor is gone / [RU] мс до ухода последнего
     readonly actors: readonly Actor[];
@@ -159,9 +190,16 @@ export function nextDelay(random: Random, first = false): number {
     return Math.round(between(random, min, max));
 }
 
-/** [EN] Picks the next kind by weight, never the one just shown. [RU] Выбирает следующий вид по весам, не тот же, что был. */
-export function pickSurprise(set: SurpriseSetId, random: Random, previous: string | null = null): SurpriseKind {
-    const pool = SURPRISE_SETS[set].filter(kind => kind.id !== previous);
+/**
+ * [EN] Picks the next kind by weight, never the one just shown (unless it is the only one ready); null — the game has
+ *      no ready kind yet. [RU] Выбирает следующий вид по весам, не тот же, что был (если он не единственный готовый);
+ *      null — у игры ещё нет ни одного готового вида.
+ */
+export function pickSurprise(set: SurpriseSetId, random: Random, previous: string | null = null): SurpriseKind | null {
+    const ready = readyKinds(set);
+    if (ready.length === 0) return null;
+    const fresh = ready.filter(kind => kind.id !== previous);
+    const pool = fresh.length > 0 ? fresh : ready;
     const total = pool.reduce((sum, kind) => sum + kind.weight, 0);
     let roll = random() * total;
     for (const kind of pool) {
@@ -176,36 +214,42 @@ export function pickSurprise(set: SurpriseSetId, random: Random, previous: strin
  * [RU] Размер каждой фигуры, [телефон, широкий экран], px: базовый размер рисунка (creatures.tsx), ширина фотографии.
  */
 const SIZES: Readonly<Record<Creature, readonly [readonly [number, number], readonly [number, number]]>> = {
-    comet: [[120, 150], [170, 230]],
-    ufo: [[110, 130], [150, 190]],
-    astronaut: [[110, 130], [150, 190]],
-    alien: [[150, 150], [210, 210]],
-    satellite: [[110, 130], [150, 180]],
-    gull: [[80, 100], [110, 140]],
-    fin: [[90, 90], [120, 120]],
-    tentacle: [[130, 130], [190, 190]],
-    bottle: [[64, 64], [84, 84]],
-    periscope: [[80, 80], [110, 110]],
     bloodDrop: [[18, 18], [24, 24]],
     card: [[54, 54], [72, 72]],
     raven: [[120, 140], [170, 210]],
     'ghost-hand': [[170, 190], [250, 300]],
     moth: [[56, 64], [72, 88]],
     'smoke-skull': [[120, 140], [170, 210]],
-    'cat-walk': [[150, 170], [210, 250]],
-    'cat-yawn': [[110, 120], [150, 170]],
+    // [EN] The cat is a big one: a heavyweight, not a kitten. [RU] Кот крупный: тяжеловес, а не котёнок.
+    'cat-walk': [[220, 250], [330, 400]],
+    'cat-yawn': [[150, 170], [220, 260]],
     roach: [[50, 56], [64, 76]],
     chip: [[56, 62], [72, 84]],
     die: [[44, 50], [58, 66]],
     'smoke-ring': [[130, 150], [180, 230]],
-    worm: [[84, 96], [118, 140]],
+    centipede: [[96, 110], [130, 160]],
     skull: [[86, 96], [112, 128]],
     lantern: [[70, 80], [92, 104]],
-    hooded: [[150, 170], [210, 250]],
+    hooded: [[200, 220], [300, 360]],
+    lich: [[150, 170], [220, 270]],
+    meteor: [[90, 110], [130, 180]],
+    rock: [[60, 80], [80, 120]],
+    wreck: [[190, 220], [280, 360]],
+    'dead-astronaut': [[130, 150], [180, 230]],
+    stalker: [[220, 250], [320, 400]],
+    probe: [[170, 190], [230, 290]],
+    'sea-gull': [[120, 140], [170, 220]],
+    'shark-fin': [[90, 100], [120, 150]],
+    kraken: [[120, 130], [170, 200]],
+    mine: [[80, 90], [104, 124]],
+    scope: [[56, 64], [76, 90]],
 };
 
+/** [EN] The key of the lich among the centipedes (Surprises.tsx draws it differently). [RU] Ключ лича среди сколопендр (Surprises.tsx рисует его иначе). */
+export const LICH_KEY = 100;
+
 /** [EN] Flock members are small. [RU] Члены стаи — маленькие. */
-const FLOCK_SIZES: Readonly<Partial<Record<Creature, readonly [number, number]>>> = { comet: [40, 90], gull: [36, 64] };
+const FLOCK_SIZES: Readonly<Partial<Record<Creature, readonly [number, number]>>> = { rock: [34, 84], 'sea-gull': [50, 84] };
 
 /**
  * [EN] A flight across the screen, never straight: four throws up and down on the way (s1…s4).
@@ -246,7 +290,7 @@ export function buildSurprise(kind: SurpriseKind, random: Random, view: View): S
     const { width, height } = view;
     const phone = width < 700;
     const ltr = random() < 0.5;
-    const base = { id: kind.id, creature: kind.creature, motion: kind.motion };
+    const base = { id: kind.id, creature: kind.creature, extra: kind.extra ?? null, motion: kind.motion };
     const sized = (creature: Creature | null = kind.creature): number => {
         if (!creature) return 0;
         const [min, max] = SIZES[creature][phone ? 0 : 1];
@@ -261,16 +305,14 @@ export function buildSurprise(kind: SurpriseKind, random: Random, view: View): S
         // ---------------- [EN] chess / [RU] шахматы ----------------
         case 'fly': {
             const size = sized();
-            // [EN] A UFO hovers, a comet rushes. [RU] НЛО зависает, комета несётся.
-            const pace = kind.creature === 'ufo' ? 2.4 : 0.9;
-            const duration = clamp(2600 + width * pace, 3200, 7600) + between(random, -300, 400);
-            const swingRate = kind.creature === 'ufo' ? 0.07 : 0.03;
-            return { ...base, duration, actors: [{ key: 0, size, flip: !ltr, style: flight(random, view, size, duration, ltr, 0, undefined, swingRate) }] };
+            // [EN] A burning meteorite rushes across, almost straight. [RU] Горящий метеорит несётся через экран, почти по прямой.
+            const duration = clamp(2600 + width * 0.9, 3200, 7600) + between(random, -300, 400);
+            return { ...base, duration, actors: [{ key: 0, size, flip: !ltr, style: flight(random, view, size, duration, ltr, 0, undefined, 0.03) }] };
         }
 
         case 'swarm':
         case 'flock': {
-            const creature = kind.creature ?? 'comet';
+            const creature = kind.creature ?? 'rock';
             const [min, max] = FLOCK_SIZES[creature] ?? [30, 60];
             const meteors = kind.motion === 'swarm';
             const span = clamp(1600 + width * (meteors ? 0.6 : 1.1), 1900, 4200);
@@ -330,7 +372,7 @@ export function buildSurprise(kind: SurpriseKind, random: Random, view: View): S
         }
 
         case 'bob': {
-            // [EN] A bottle drifts low on the waves, rocking. [RU] Бутылка плывёт низко по волнам, покачиваясь.
+            // [EN] A mine drifts low on the waves, rocking. [RU] Мина плывёт низко по волнам, покачиваясь.
             const size = sized();
             const duration = clamp(6000 + width * 3.4, 8000, 13000);
             return one(duration, { ...across(view, size, ltr), '--y0': px(between(random, 0.66, 0.8) * height) }, size);
@@ -484,14 +526,23 @@ export function buildSurprise(kind: SurpriseKind, random: Random, view: View): S
 
         // ---------------- [EN] checkers / [RU] шашки ----------------
         case 'wriggle': {
-            // [EN] Worms rise from below the bottom edge one after another, writhe and sink. [RU] Черви по очереди поднимаются из-под нижнего края, извиваются и уходят.
+            // [EN] Centipedes rear up from below the bottom edge one after another, sway and sink; among them the lich
+            //      rises slowly, looks at you and goes down last (the actor with the key LICH_KEY).
+            // [RU] Сколопендры по очереди поднимаются из-под нижнего края, покачиваются и уходят; среди них медленно
+            //      поднимается лич, смотрит на вас и уходит последним (фигура с ключом LICH_KEY).
             const ends: number[] = [];
-            const actors = Array.from({ length: countOf() }, (_, key): Actor => {
+            const crawlers = Math.max(1, countOf() - (kind.extra ? 1 : 0));
+            const actors = Array.from({ length: crawlers }, (_, key): Actor => {
                 const size = sized();
                 const delay = key * between(random, 500, 900);
                 ends.push(delay + 5200);
                 return { key, size, flip: random() < 0.5, style: { '--x': px(spot(0.06, 0.94, size)), '--dur': '5200ms', '--delay': ms(delay) } };
             });
+            if (kind.extra) {
+                const size = sized(kind.extra);
+                ends.push(400 + 7000);
+                actors.push({ key: LICH_KEY, size, flip: false, style: { '--x': px(spot(0.3, 0.7, size)), '--dur': '7000ms', '--delay': '400ms' } });
+            }
             return { ...base, duration: Math.max(...ends), actors };
         }
 
@@ -530,7 +581,7 @@ export function buildSurprise(kind: SurpriseKind, random: Random, view: View): S
             const second = clamp(width / 2 - size * 0.75 + between(random, -0.12, 0.12) * width, 0, width - size * 1.5);
             return one(4600, {
                 '--x1': px(clamp(first, 0, width - size)), '--x2': px(second),
-                '--y1': px(height - size * 2.2), '--y2': px(height - size * 2.9),
+                '--y1': px(height - size * 1.42), '--y2': px(height - size * 2.04),
             }, size, false);
         }
 

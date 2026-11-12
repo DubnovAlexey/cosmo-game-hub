@@ -15,7 +15,7 @@ export type PartMove =
     | 'headTurn' | 'yawnTilt' | 'mothWingLeft' | 'mothWingRight' | 'tailSway' | 'tailFlick' | 'footStep' | 'footStepLate'
     | 'fingerCurl' | 'fingerCurlLate' | 'fingerCurlLast' | 'mistWaft' | 'jawChatter'
     | 'antennaTwitch' | 'legScuttle' | 'legScuttleLate' | 'neckSway' | 'jawLaugh' | 'flameFlicker'
-    | 'hoodTilt' | 'clawCurl' | 'clawCurlMirror' | 'hemSway';
+    | 'hoodTilt' | 'pendantSwing' | 'hemSway' | 'jawGape' | 'centipedeCreep';
 
 type Point = readonly [number, number];
 
@@ -29,6 +29,9 @@ export interface Part {
     //      may stretch past its outline without showing a dark seam. [RU] Часть движется поверх целой картинки, а не из
     //      дырки в ней: для света (пламени), чья яркая копия может выходить за контур, не показывая тёмного шва.
     readonly overlay?: boolean;
+    // [EN] What shows in the hole when the part moves away (the dark of an open mouth) instead of the page behind.
+    // [RU] Что видно в дырке, когда часть отходит (темнота открытого рта), вместо страницы позади.
+    readonly fill?: string;
 }
 
 /** [EN] An eye: where the lid closes and whether a glint lives in it. [RU] Глаз: где закрывается веко и живёт ли в нём блик. */
@@ -96,16 +99,22 @@ export const RIGS: Readonly<Partial<Record<Sprite, Rig>>> = {
     //      legs step out of step, the flanks breathe. [RU] Идущий чёрный кот: голова поворачивается, жёлто-зелёные глаза
     //      моргают, хвост качается, передняя и задняя лапы шагают вразнобой, бока дышат.
     'cat-walk': {
-        width: 512, height: 342, breathe: true,
+        // [EN] Since 12.11.2026 evening the cat is a street champion (Alexey: «кот должен выглядеть бойцом, драчуном со
+        //      скверным характером… мощным, сильным… гибкий, должен излучать мощь… несломленный характер»): the build
+        //      of a panther, a scar on the shoulder; he stalks low with the claws out, snarling.
+        // [RU] С вечера 12.11.2026 кот — уличный чемпион (Алексей: «кот должен выглядеть бойцом, драчуном со скверным
+        //      характером… мощным, сильным… гибкий, должен излучать мощь… несломленный характер»): сложён как
+        //      пантера, шрам на плече; крадётся низко, выпустив когти, и скалится.
+        width: 512, height: 241, breathe: true,
         parts: [
-            { name: 'tail', move: 'tailSway', pivot: [165, 110], points: [[0, 0], [112, 0], [112, 40], [62, 46], [52, 70], [92, 92], [168, 94], [178, 126], [120, 136], [40, 126], [0, 92]] },
-            { name: 'hind', move: 'footStepLate', pivot: [195, 206], points: [[168, 204], [232, 200], [266, 300], [266, 337], [224, 337], [200, 282], [168, 262]] },
-            { name: 'front', move: 'footStep', pivot: [410, 206], points: [[380, 200], [442, 200], [496, 250], [496, 316], [460, 316], [430, 272], [384, 262]] },
-            { name: 'head', move: 'headTurn', pivot: [420, 118], points: [[400, 100], [412, 40], [425, 28], [446, 50], [470, 46], [505, 26], [512, 32], [512, 122], [495, 136], [455, 141], [420, 136]] },
+            { name: 'tail', move: 'tailSway', pivot: [120, 68], points: [[107, 60], [130, 70], [123, 113], [107, 157], [80, 193], [47, 217], [0, 220], [0, 190], [37, 187], [70, 157], [90, 113]] },
+            { name: 'hind', move: 'footStepLate', pivot: [122, 157], points: [[100, 153], [143, 157], [143, 200], [133, 237], [103, 233], [107, 193]] },
+            { name: 'front', move: 'footStep', pivot: [410, 150], points: [[400, 137], [447, 143], [512, 200], [512, 237], [467, 237], [427, 193], [393, 173]] },
+            { name: 'head', move: 'headTurn', pivot: [425, 85], points: [[417, 40], [427, 3], [447, 13], [467, 27], [497, 7], [512, 13], [512, 113], [467, 117], [433, 100], [413, 73]] },
         ],
         eyes: [
-            { x: 460, y: 89, rx: 7, ry: 6, lid: '#141012', part: 'head' },
-            { x: 492, y: 89, rx: 7, ry: 6, lid: '#141012', part: 'head' },
+            { x: 467, y: 57, rx: 6, ry: 4, lid: '#141012', glow: '#ffe14a', part: 'head' },
+            { x: 497, y: 59, rx: 4, ry: 4, lid: '#141012', part: 'head' },
         ],
     },
     // [EN] The sitting cat yawning: the head tilts back slowly, the tip of the tail twitches, the chest breathes.
@@ -142,18 +151,6 @@ export const RIGS: Readonly<Partial<Record<Sprite, Rig>>> = {
         ],
         eyes: [],
     },
-    // [EN] The grave worm: the raised head sways as if sniffing the air and now and then darts at you, the tail flicks,
-    //      the rings of the body swell and shrink, the black eye blinks and flares a sickly green.
-    // [RU] Могильный червь: поднятая голова покачивается, будто принюхивается, и время от времени делает выпад к вам,
-    //      хвост дёргается, кольца тела набухают и опадают, чёрный глаз моргает и вспыхивает болезненно-зелёным.
-    worm: {
-        width: 512, height: 386, breathe: true,
-        parts: [
-            { name: 'tail', move: 'tailFlick', pivot: [118, 280], points: [[0, 236], [100, 212], [118, 228], [118, 330], [0, 330]] },
-            { name: 'head', move: 'neckSway', pivot: [300, 140], points: [[255, 140], [258, 50], [300, 8], [380, 0], [512, 0], [512, 110], [430, 100], [380, 115], [350, 140]] },
-        ],
-        eyes: [{ x: 457, y: 30, rx: 8, ry: 8, lid: '#e2c1b8', glow: '#a8ff3c', part: 'head' }],
-    },
     // [EN] The grave skull with moss in its socket: the jaw drops and clacks three times — a laugh without a sound —
     //      and a sickly green fire flares in both sockets. [RU] Могильный череп с мхом в глазнице: челюсть отвисает и
     //      трижды клацает — смех без звука, — а в обеих глазницах вспыхивает болезненно-зелёный огонь.
@@ -170,6 +167,27 @@ export const RIGS: Readonly<Partial<Record<Sprite, Rig>>> = {
             { x: 413, y: 198, rx: 28, ry: 52, lid: 'transparent', glow: '#9dff3a' },
         ],
     },
+    // [EN] The lich among the centipedes (Alexey, 12.11.2026: «к червю я бы добавил лича»; the worms became centipedes
+    //      the same evening): a crowned cracked skull with fangs and a giant orange centipede on his shoulder. The jaw
+    //      drops slowly as if he were about to speak, the embers in the sockets flare, the centipede creeps in jerks,
+    //      the mantle heaves. [RU] Лич среди сколопендр (Алексей, 12.11.2026: «к червю я бы добавил лича»; червей в тот
+    //      же вечер заменили сколопендрами): треснувший череп с клыками в короне и гигантская рыжая сколопендра на
+    //      плече. Челюсть медленно отвисает, будто он собирается заговорить, угли в глазницах вспыхивают, сколопендра
+    //      ползёт рывками, мантия вздымается.
+    lich: {
+        width: 512, height: 512, breathe: true,
+        parts: [
+            {
+                name: 'centipede', move: 'centipedeCreep', pivot: [400, 330], fill: '#120d12',
+                points: [[393, 305], [467, 300], [500, 312], [497, 362], [500, 422], [470, 430], [436, 468], [376, 502], [312, 470], [250, 430], [262, 376], [312, 347], [360, 342]],
+            },
+            { name: 'jaw', move: 'jawGape', pivot: [238, 252], fill: '#0b0705', points: [[177, 253], [200, 262], [240, 266], [280, 261], [301, 252], [294, 300], [274, 323], [234, 331], [200, 327], [183, 307]] },
+        ],
+        eyes: [
+            { x: 195, y: 160, rx: 17, ry: 15, lid: 'transparent', glow: '#ff3b1f' },
+            { x: 277, y: 155, rx: 17, ry: 15, lid: 'transparent', glow: '#ff3b1f' },
+        ],
+    },
     // [EN] The crypt lantern with cobwebs inside: the candle flame flickers in the draught, and now and then the light
     //      surges through the dirty glass. [RU] Склепный фонарь с паутиной внутри: пламя свечи дрожит на сквозняке, а
     //      время от времени свет вспыхивает сквозь грязное стекло.
@@ -180,22 +198,25 @@ export const RIGS: Readonly<Partial<Record<Sprite, Rig>>> = {
         ],
         eyes: [{ x: 120, y: 340, rx: 46, ry: 58, lid: 'transparent', glow: '#ffcf7a' }],
     },
-    // [EN] The hooded figure is seen only in two flashes of lightning: at the first it stands straight, at the second —
-    //      closer — its hood is bent to one side and its fingers are hooked, as in the worst dreams; the hem of the
-    //      robe stirs, the white eyes blink. [RU] Фигуру в капюшоне видно только в двух вспышках молнии: в первой она
-    //      стоит прямо, во второй — ближе — капюшон склонён набок, пальцы скрючены, как в худших снах; подол плаща
-    //      шевелится, белые глаза моргают.
+    // [EN] The necromancer in the hood (the second picture, 12.11.2026 evening — Alexey: «тога не выразительна, надо
+    //      доработать образ, взгляд»: black velvet with a crimson lining, silver thorns, a raven-skull pendant, a pale
+    //      face with a contemptuous grin and ice-white eyes). He is seen only in two flashes of lightning: at the first
+    //      he stands straight, at the second — closer — the hooded head is bent to one side; the pendant swings, the
+    //      hem of the robe stirs, the eyes flare.
+    // [RU] Некромант в капюшоне (вторая картинка, вечер 12.11.2026 — Алексей: «тога не выразительна, надо доработать
+    //      образ, взгляд»: чёрный бархат с алым подбоем, серебряные шипы, кулон-череп ворона, бледное лицо с
+    //      презрительной ухмылкой и льдисто-белыми глазами). Его видно только в двух вспышках молнии: в первой он стоит
+    //      прямо, во второй — ближе — голова в капюшоне склонена набок; кулон качается, подол шевелится, глаза вспыхивают.
     hooded: {
-        width: 198, height: 512, breathe: true,
+        width: 329, height: 512, breathe: true,
         parts: [
-            { name: 'hem', move: 'hemSway', pivot: [99, 400], points: [[8, 400], [190, 400], [198, 512], [0, 512]] },
-            { name: 'left', move: 'clawCurl', pivot: [48, 256], points: [[34, 252], [62, 252], [64, 302], [34, 302]] },
-            { name: 'right', move: 'clawCurlMirror', pivot: [160, 250], points: [[148, 246], [172, 246], [172, 296], [146, 296]] },
-            { name: 'hood', move: 'hoodTilt', pivot: [99, 135], points: [[50, 0], [150, 0], [160, 110], [140, 135], [60, 135], [40, 110]] },
+            { name: 'hem', move: 'hemSway', pivot: [165, 400], points: [[40, 400], [293, 400], [329, 512], [0, 512]] },
+            { name: 'pendant', move: 'pendantSwing', pivot: [167, 84], points: [[150, 84], [184, 84], [184, 144], [150, 144]] },
+            { name: 'hood', move: 'hoodTilt', pivot: [165, 78], points: [[124, 68], [128, 22], [148, 0], [182, 0], [206, 26], [210, 68], [188, 84], [146, 84]] },
         ],
         eyes: [
-            { x: 90, y: 40, rx: 5, ry: 4, lid: '#050505', glow: '#bfe6ff', part: 'hood' },
-            { x: 108, y: 40, rx: 5, ry: 4, lid: '#050505', glow: '#bfe6ff', part: 'hood' },
+            { x: 158, y: 37, rx: 4, ry: 3, lid: '#a39a95', glow: '#bfe6ff', part: 'hood' },
+            { x: 175, y: 37, rx: 4, ry: 3, lid: '#a39a95', glow: '#bfe6ff', part: 'hood' },
         ],
     },
 };

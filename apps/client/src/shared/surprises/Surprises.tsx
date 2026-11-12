@@ -16,7 +16,7 @@ import { ART } from './creatures';
 import { RigFigure } from './Rig';
 import { RIGS } from './rigs';
 import {
-    buildSurprise, isSprite, nextDelay, pickSurprise, SURPRISE_EVENT, SURPRISE_SETS, SURPRISES_EVENT, SURPRISES_KEY, surprisesEnabled,
+    buildSurprise, isSprite, LICH_KEY, nextDelay, pickSurprise, readyKinds, SURPRISE_EVENT, SURPRISES_EVENT, SURPRISES_KEY, surprisesEnabled,
     type Actor, type Creature, type Surprise, type SurpriseSetId,
 } from './logic';
 import styles from './Surprises.module.css';
@@ -78,7 +78,9 @@ const Figure: React.FC<{ creature: Creature; size: number; flip?: boolean; class
             <span className={`${mirror} ${className}`}>
                 {rig
                     ? <RigFigure href={href} rig={rig} size={size} />
-                    : <img className={styles.sprite} src={href} width={size} alt="" draggable={false} decoding="async" />}
+                    : <img className={styles.sprite} src={href} width={size} alt="" draggable={false} decoding="async"
+                        // [EN] a picture that did not load is not shown as a broken box / [RU] незагрузившаяся картинка не показывается сломанной рамкой
+                        onError={event => { event.currentTarget.style.visibility = 'hidden'; }} />}
             </span>
         );
     }
@@ -94,12 +96,24 @@ const ActorView: React.FC<{ surprise: Surprise; actor: Actor }> = ({ surprise, a
     switch (surprise.motion) {
         // ---------------- [EN] chess / [RU] шахматы ----------------
         case 'fly':
-        case 'swarm':
+        case 'swarm': {
+            // [EN] A lone meteorite burns with a tail of fire; in a field every second rock is a hot meteorite. Each
+            //      tumbles at its own pace. [RU] Одинокий метеорит горит с огненным хвостом; в поле каждый второй
+            //      камень — раскалённый метеорит. Каждый кувыркается в своём темпе.
+            const rock = surprise.motion === 'swarm' && surprise.extra && actor.key % 2 === 1 ? surprise.extra : creature;
             return (
                 <span className={styles.across} style={style}>
-                    <span className={styles.swoop}><span className={styles.flutter}>{figure}</span></span>
+                    <span className={styles.swoop}>
+                        {surprise.motion === 'fly' && (
+                            <i className={`${styles.fireTail} ${actor.flip ? styles.fireTailFlip : ''}`} style={{ width: actor.size * 2.8, height: actor.size * 0.62 }} />
+                        )}
+                        <span className={styles.rockSpin} style={{ animationDuration: `${3.2 + (actor.key % 4) * 1.1}s`, animationDirection: actor.key % 2 ? 'reverse' : 'normal' }}>
+                            {rock && <Figure creature={rock} size={actor.size} flip={actor.flip} />}
+                        </span>
+                    </span>
                 </span>
             );
+        }
         case 'peek':
             return <span className={`${styles.peeker} ${actor.flip ? styles.peekRight : ''}`} style={style}>{figure}</span>;
         case 'drift':
@@ -186,6 +200,10 @@ const ActorView: React.FC<{ surprise: Surprise; actor: Actor }> = ({ surprise, a
 
         // ---------------- [EN] checkers / [RU] шашки ----------------
         case 'wriggle':
+            // [EN] Among the centipedes the lich rises: slower, taller, looking straight at you. [RU] Среди сколопендр поднимается лич: медленнее, выше, глядя прямо на вас.
+            if (actor.key === LICH_KEY && surprise.extra) {
+                return <span className={styles.lichRise} style={style}><Figure creature={surprise.extra} size={actor.size} /></span>;
+            }
             return <span className={styles.worm} style={style}><span className={styles.writhe}>{figure}</span></span>;
         case 'rollStop':
             return <span className={styles.skullPath} style={style}><span className={styles.skullSpin}>{figure}</span></span>;
@@ -224,9 +242,11 @@ export const Surprises: React.FC<{ set: SurpriseSetId }> = ({ set }) => {
     // [EN] Until when the stage is busy: the schedule never cuts a surprise short. [RU] До какого времени сцена занята: расписание не обрывает неожиданность.
     const busyUntil = useRef(0);
 
-    // [EN] Builds and shows one surprise; returns it. [RU] Строит и показывает одну неожиданность; возвращает её.
-    const launch = useRef((id: string | null, previous: string | null): Surprise => {
-        const kind = SURPRISE_SETS[set].find(item => item.id === id) ?? pickSurprise(set, Math.random, previous);
+    // [EN] Builds and shows one surprise; returns it, or null while no picture of this game is ready.
+    // [RU] Строит и показывает одну неожиданность; возвращает её или null, пока ни одна картинка этой игры не готова.
+    const launch = useRef((id: string | null, previous: string | null): Surprise | null => {
+        const kind = readyKinds(set).find(item => item.id === id) ?? pickSurprise(set, Math.random, previous);
+        if (!kind) return null;
         const surprise = buildSurprise(kind, Math.random, { width: window.innerWidth, height: window.innerHeight });
         serial.current += 1;
         busyUntil.current = Date.now() + surprise.duration + 200;
@@ -250,6 +270,10 @@ export const Surprises: React.FC<{ set: SurpriseSetId }> = ({ set }) => {
                 return;
             }
             const surprise = launch.current(null, previous);
+            if (!surprise) {
+                timer = window.setTimeout(fire, nextDelay(Math.random));
+                return;
+            }
             previous = surprise.id;
             timer = window.setTimeout(fire, surprise.duration + nextDelay(Math.random));
         };

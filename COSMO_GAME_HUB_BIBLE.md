@@ -702,6 +702,21 @@ Astro требует, чтобы маршруты лежали в `src/pages/`, 
   - `layout-audit.mjs --game checkers --to-the-end` смотрит вёрстку меню, доски, выбранной шашки, хода партии, меню поверх партии и экрана конца на пяти языках.
 
 - **Герои во всех играх (11.11.2026, ночь).** Алексей: «Каждому персонажу надо краткую биографию. Все окна должны… увеличиваться при наведении мышки… серьёзно. Так же, как и во время игры. Плюс должна открываться биография каждому». Биографии пиратов, некромантов и игроков со сцен вышли вдвое длиннее, чем у первых героев, — они сокращены до одного-двух предложений на всех пяти языках, а тест держит каждую биографию в пределах самой длинной из первой компании. В меню соперников преферанса плитка под мышью теперь вырастает в карточку (`CharacterPeek grow`): крупная картинка начинается там, где маленькая, рядом биография и манера; карточка рисуется поверх страницы, потому что прокручиваемый список обрезал бы выросший внутри него портрет. Широкая картинка (сцена за доской) вырастает до 380 % ширины рамки, чтобы быть такой же крупной, как высокий портрет в 250 %. За столами преферанса, покера, у шахматной доски, в морском бое и в шашках портрет и раньше рос и открывал карточку; это проверено мышью и пальцем.
+
+### 24. Живые игры: неожиданности, финалы, обложки, герои (12.11.2026)
+
+- **Неожиданности** (`shared/surprises/`). Время от времени в игре что-то случается: ворон идёт по краю стола, кот-драчун крадётся и рычит, молния показывает некроманта за спиной, сквозь шахматы летит горящий метеорит. У каждой игры свой состав и свои движения, ничего не повторяется (тест следит). Кнопка 🦇 в шапке выключает их на всём сайте.
+  - С вечера 12.11 всё реалистичное (Алексей: «мультяшные картинки не очень… для взрослых, позлее»). Существа — фотографии, нарисованные на нашей видеокарте и вырезанные с зелёного фона; нарисованными остались только капля крови и рубашка карты.
+  - Оснастка (`rigs.ts`, `Rig.tsx`): та же фотография режется на части, и они двигаются — голова оглядывается, хвост качается, челюсть отвисает, веки моргают, глаза вспыхивают.
+  - Картинка, которую видеокарта ещё рисует, записана в `PAINTING`: её сцена просто не показывается, поэтому хаб можно выложить в любой момент.
+- **Финал партии** (`shared/finale/`, во всех пяти играх). Победа — почёт: золотые лучи, соперник кланяется, лавровый венок, лепестки роз, фанфары и уважительные слова вслух. Поражение — взрослая издёвка с фальшивым сочувствием, одна из четырёх сцен: подачка (прожектор, медленные аплодисменты, монета), соболезнования (ваш портрет в траурной рамке, самая маленькая скрипка в мире), «тц-тц-тц» (вздох, покачивание головой), медаль за участие.
+  - Серии поражений в одной игре награждаются: 3 подряд — «Идиот года», 5 — «Идиот десятилетия», 7 — «Идиот века», 10 и каждые следующие 5 — «Клинический идиот» с салютом.
+  - Звуки создаются в браузере без файлов, голос — синтез речи браузера на языке игры; кнопка 🔊 в шапке выключает их. Любую сцену можно вызвать событием `cosmo-game-hub:finale`.
+- **Живые портреты.** Соперники за столами едва заметно дышат, каждый в своём ритме; в преферансе на лицах мерцают свечи.
+- **Каталог.** У каждой игры к её обложке добавлены наши варианты, карточка медленно перетекает между ними (`shell/utils/coverCycle.ts`). Карточка торговой игры называется «Кровная рента»: чужое фирменное название убрано.
+- **Герои.** Их 176 (67 обитателей и 109 гостей): тридцать космических гостей «Кровной ренты» и тридцать героев новых стилей. У каждого героя есть строка о себе от первого лица.
+- **Картинки на своей видеокарте.** ComfyUI и FLUX.1 Krea (`C:\AI`), книги промптов — в папках игр на Рабочем столе, неудачные картинки остаются там с пометкой. Правила, выученные за день: реализм вместо мультяшности; руки прятать или проверять каждый палец; никаких надписей и подписей; следы драк — только на морде (на чёрной шерсти шрамы выходят проплешинами); предмет висит в воздухе без пола, иначе нижняя грань сливается с зелёным фоном.
+- **Проверки.** `npm test` — 208 тестов.
 [↑ К выбору языка](#top)
 
 ---
@@ -1402,6 +1417,21 @@ The decision of 08.11.2026 is a **hybrid**. Rules are written in TypeScript, and
   - `layout-audit.mjs --game checkers --to-the-end` looks at the layout of the menu, the board, a chosen man, the log, the menu over the game and the end screen in five languages.
 
 - **Heroes in every game (11.11.2026, night).** Alexey: «Каждому персонажу надо краткую биографию. Все окна должны… увеличиваться при наведении мышки… серьёзно. Так же, как и во время игры. Плюс должна открываться биография каждому». The biographies of the pirates, the necromancers and the players of the scenes came out twice as long as those of the first heroes — they are cut to one or two sentences in all five languages, and a test keeps every biography within the longest of the first company. In the preferans opponents menu a tile under the mouse now grows into its card (`CharacterPeek grow`): the large picture starts where the small one is, with the biography and the manner beside it; the card is drawn over the page, because a scrolled list would clip a portrait grown inside it. A wide picture (a scene at a board) grows to 380 % of its frame, as large as a tall portrait at 250 %. At the preferans and poker tables, by the chess board, in the sea battle and in draughts the portrait already grew and opened the card; checked by mouse and by finger.
+
+### 24. Living games: surprises, finales, covers, heroes (12.11.2026)
+
+- **Surprises** (`shared/surprises/`). Now and then something happens in a game: a raven walks the edge of the table, a brawler cat stalks in and snarls, lightning shows a necromancer behind you, a burning meteorite crosses the chessboard. Every game has its own cast and its own moves, nothing repeats (a test watches it). The 🦇 button in the header switches them off for the whole site.
+  - Since the evening of 12.11 everything is realistic (Alexey: «мультяшные картинки не очень… для взрослых, позлее»). The creatures are photographs painted on our own GPU and cut out from a green backdrop; only the drop of blood and the card back are still drawn.
+  - Rigs (`rigs.ts`, `Rig.tsx`): the same photograph is cut into parts that move — a head looks round, a tail sways, a jaw drops, lids blink, eyes flare.
+  - A picture the GPU is still painting is listed in `PAINTING`: its scene is simply not shown, so the hub can be published at any moment.
+- **The end of a game** (`shared/finale/`, in all five games). A win is honour: golden rays, the opponent bows, a laurel wreath, rose petals, a fanfare and respectful words aloud. A loss is grown-up mockery with false sympathy, one of four scenes: alms (a spotlight, slow applause, a coin), condolences (your portrait in a mourning frame, the smallest violin in the world), «tsk-tsk-tsk» (a sigh, a shake of the head), a medal for taking part.
+  - Losing streaks in one game are crowned: 3 in a row — «Idiot of the Year», 5 — «Idiot of the Decade», 7 — «Idiot of the Century», 10 and every 5 more — «Clinical Idiot» with a salute.
+  - The sounds are made in the browser without files, the voice is the browser's speech in the language of the game; the 🔊 button in the header switches them off. Any scene can be called with the event `cosmo-game-hub:finale`.
+- **Living portraits.** The opponents at the tables breathe barely visibly, each at a pace of its own; in preferans candles flicker on the faces.
+- **The catalog.** Our own variants stand beside the cover of every game, and the card slowly dissolves between them (`shell/utils/coverCycle.ts`). The trading game is called «Blood Rent»: the branded name of somebody else is gone.
+- **Heroes.** There are 176 of them (67 dwellers and 109 guests): thirty space guests of «Blood Rent» and thirty heroes of new styles. Every hero has a line about himself in the first person.
+- **Pictures on our own GPU.** ComfyUI and FLUX.1 Krea (`C:\AI`); the prompt books live in the game folders on the Desktop, failed pictures stay there with a mark. Rules learned during the day: realism instead of cartoons; hide the hands or check every finger; no lettering and no signatures; the marks of fights only on the face (on black fur scars come out as bald patches); an object floats in the air with no floor, or its lower face merges with the green backdrop.
+- **Checks.** `npm test` — 208 tests.
 [↑ Back to the languages](#top)
 
 ---
@@ -2108,6 +2138,21 @@ cosmo-game-hub/
   - `layout-audit.mjs --game checkers --to-the-end` בודק את הפריסה של התפריט, הלוח, אבן שנבחרה, מהלך המשחק, התפריט מעל המשחק ומסך הסיום בחמש שפות.
 
 - **הגיבורים בכל המשחקים (11.11.2026, לילה).** אלכסיי: «Каждому персонажу надо краткую биографию. Все окна должны… увеличиваться при наведении мышки… серьёзно. Так же, как и во время игры. Плюс должна открываться биография каждому». הביוגרפיות של הפיראטים, הנקרומנטים והשחקנים מהסצנות יצאו ארוכות פי שניים מאלה של הגיבורים הראשונים — הן קוצרו למשפט או שניים בכל חמש השפות, ובדיקה שומרת כל ביוגרפיה בגבולות הארוכה ביותר של החבורה הראשונה. בתפריט היריבים של הפרפרנס אריח מתחת לעכבר גדל עכשיו לכרטיס שלו (`CharacterPeek grow`): התמונה הגדולה מתחילה איפה שהקטנה, ולצידה הביוגרפיה והסגנון; הכרטיס מצויר מעל הדף, כי רשימה גלולה הייתה חותכת דיוקן שגדל בתוכה. תמונה רחבה (סצנה ליד לוח) גדלה ל־380% מרוחב המסגרת, גדולה כמו דיוקן גבוה ב־250%. ליד שולחנות הפרפרנס והפוקר, ליד לוח השחמט, בצוללות ובדמקה הדיוקן כבר גדל ופתח את הכרטיס; נבדק בעכבר ובאצבע.
+
+### 24. משחקים חיים: הפתעות, סיומים, עטיפות, גיבורים (12.11.2026)
+
+- **הפתעות** (`shared/surprises/`). מדי פעם קורה משהו במשחק: עורב הולך על קצה השולחן, חתול קטטן מתגנב ונוהם, ברק מגלה נקרומנט מאחוריכם, מטאוריט בוער חוצה את לוח השחמט. לכל משחק צוות ותנועות משלו, ושום דבר לא חוזר (בדיקה שומרת על כך). הכפתור 🦇 בכותרת מכבה אותן בכל האתר.
+  - מאז ערב 12.11 הכול ריאליסטי (אלכסיי: «מצוירים מדי — לא טוב… למבוגרים, מרושע יותר»). היצורים הם צילומים שצוירו בכרטיס המסך שלנו ונגזרו מרקע ירוק; מצוירות נשארו רק טיפת הדם וגב הקלף.
+  - שלד תנועה (`rigs.ts`, `Rig.tsx`): אותו צילום נחתך לחלקים שזזים — ראש מסתובב, זנב מתנדנד, לסת נשמטת, עפעפיים ממצמצים, עיניים מתלקחות.
+  - תמונה שכרטיס המסך עוד מצייר רשומה ב-`PAINTING`: הסצנה שלה פשוט לא מוצגת, ולכן אפשר לפרסם את האתר בכל רגע.
+- **סוף המשחק** (`shared/finale/`, בכל חמשת המשחקים). ניצחון — כבוד: קרני זהב, היריב קד, זר דפנה, עלי ורדים, תרועה ומילות הוקרה בקול. הפסד — לעג של מבוגרים עם השתתפות מזויפת, אחת מארבע סצנות: נדבה (זרקור, מחיאות כפיים איטיות, מטבע), תנחומים (הדיוקן שלכם במסגרת אבל, הכינור הקטן בעולם), «נו, נו, נו» (אנחה, נענוע ראש), מדליה על השתתפות.
+  - רצפי הפסדים במשחק אחד זוכים בפרס: 3 ברצף — „אידיוט השנה“, 5 — „אידיוט העשור“, 7 — „אידיוט המאה“, 10 וכל 5 נוספים — „אידיוט קליני“ עם זיקוקים.
+  - הצלילים נוצרים בדפדפן בלי קבצים, הקול הוא הקראת הדפדפן בשפת המשחק; הכפתור 🔊 בכותרת מכבה אותם. כל סצנה אפשר לזמן באירוע `cosmo-game-hub:finale`.
+- **דיוקנאות חיים.** היריבים ליד השולחנות נושמים כמעט בלי שרואים, כל אחד בקצב משלו; בפרפרנס נרות מהבהבים על הפנים.
+- **הקטלוג.** ליד העטיפה של כל משחק עומדות גרסאות משלנו, והכרטיס עובר לאט ביניהן (`shell/utils/coverCycle.ts`). משחק המסחר נקרא „שכר דירה בדם“: שם המותג של אחרים הוסר.
+- **גיבורים.** יש 176 (67 תושבים ו-109 אורחים): שלושים אורחי חלל של „שכר דירה בדם“ ושלושים גיבורים בסגנונות חדשים. לכל גיבור יש שורה על עצמו בגוף ראשון.
+- **תמונות בכרטיס המסך שלנו.** ‏ComfyUI ו-FLUX.1 Krea ‏(`C:\AI`); ספרי ההנחיות בתיקיות המשחקים בשולחן העבודה, ותמונות שלא הצליחו נשארות שם עם סימון. כללים שנלמדו במהלך היום: ריאליזם במקום ציור מצויר; להסתיר ידיים או לבדוק כל אצבע; בלי כיתוב ובלי חתימות; סימני קרבות רק על הפנים (על פרווה שחורה צלקות יוצאות כקרחות); חפץ מרחף באוויר בלי רצפה, אחרת הפאה התחתונה שלו נבלעת ברקע הירוק.
+- **בדיקות.** ‏`npm test` — 208 בדיקות.
 [↑ חזרה לבחירת השפה](#top)
 
 </div>
@@ -2810,6 +2855,21 @@ La decisión del 08.11.2026 es un **híbrido**. Las reglas se escriben en TypeSc
   - `layout-audit.mjs --game checkers --to-the-end` revisa la maquetación del menú, el tablero, una ficha elegida, la partida, el menú sobre la partida y la pantalla final en cinco idiomas.
 
 - **Los héroes en todos los juegos (11.11.2026, noche).** Alexey: «Каждому персонажу надо краткую биографию. Все окна должны… увеличиваться при наведении мышки… серьёзно. Так же, как и во время игры. Плюс должна открываться биография каждому». Las biografías de los piratas, los nigromantes y los jugadores de las escenas salieron el doble de largas que las de los primeros héroes: se han reducido a una o dos frases en los cinco idiomas, y una prueba mantiene cada biografía dentro de la más larga de la primera compañía. En el menú de rivales del preferans, una ficha bajo el ratón crece ahora hasta su tarjeta (`CharacterPeek grow`): la imagen grande empieza donde estaba la pequeña, con la biografía y el estilo al lado; la tarjeta se dibuja sobre la página, porque una lista con desplazamiento recortaría un retrato crecido dentro de ella. Una imagen ancha (una escena ante un tablero) crece hasta el 380 % de su marco, tan grande como un retrato alto al 250 %. En las mesas de preferans y póker, junto al tablero de ajedrez, en la batalla naval y en las damas el retrato ya crecía y abría la tarjeta; comprobado con el ratón y con el dedo.
+
+### 24. Juegos vivos: sorpresas, finales, portadas, héroes (12.11.2026)
+
+- **Sorpresas** (`shared/surprises/`). De vez en cuando pasa algo en un juego: un cuervo camina por el borde de la mesa, un gato pendenciero se acerca acechando y gruñe, un relámpago muestra a un nigromante a tu espalda, un meteorito en llamas cruza el tablero de ajedrez. Cada juego tiene su propio reparto y sus propios movimientos, nada se repite (lo vigila una prueba). El botón 🦇 de la cabecera las apaga en todo el sitio.
+  - Desde la tarde del 12.11 todo es realista (Alexey: «мультяшные картинки не очень… для взрослых, позлее»). Las criaturas son fotografías pintadas en nuestra propia tarjeta gráfica y recortadas de un fondo verde; dibujadas quedan solo la gota de sangre y el reverso de la carta.
+  - Articulación (`rigs.ts`, `Rig.tsx`): la misma fotografía se corta en partes que se mueven: una cabeza mira alrededor, una cola se balancea, una mandíbula cae, los párpados parpadean, los ojos se encienden.
+  - Una imagen que la tarjeta gráfica aún está pintando figura en `PAINTING`: su escena simplemente no se muestra, así que el sitio puede publicarse en cualquier momento.
+- **El final de la partida** (`shared/finale/`, en los cinco juegos). Ganar es honor: rayos dorados, el rival hace una reverencia, una corona de laurel, pétalos de rosa, fanfarria y palabras respetuosas en voz alta. Perder es una burla de adultos con falsa compasión, una de cuatro escenas: limosna (un foco, aplausos lentos, una moneda), condolencias (tu retrato con marco de luto, el violín más pequeño del mundo), «tsk, tsk, tsk» (un suspiro, la cabeza que niega), una medalla por participar.
+  - Las rachas de derrotas en un mismo juego se premian: 3 seguidas — «Idiota del año», 5 — «Idiota de la década», 7 — «Idiota del siglo», 10 y cada 5 más — «Idiota clínico» con fuegos artificiales.
+  - Los sonidos se crean en el navegador sin archivos, la voz es la síntesis de voz del navegador en el idioma del juego; el botón 🔊 de la cabecera los apaga. Cualquier escena se puede invocar con el evento `cosmo-game-hub:finale`.
+- **Retratos vivos.** Los rivales en las mesas respiran de forma casi imperceptible, cada uno a su ritmo; en el preferans las velas parpadean sobre las caras.
+- **El catálogo.** Junto a la portada de cada juego hay variantes nuestras, y la tarjeta pasa lentamente de una a otra (`shell/utils/coverCycle.ts`). El juego de comercio se llama «Renta de sangre»: el nombre de marca ajeno ha desaparecido.
+- **Héroes.** Son 176 (67 habitantes y 109 invitados): treinta invitados espaciales de «Renta de sangre» y treinta héroes de estilos nuevos. Cada héroe tiene una frase sobre sí mismo en primera persona.
+- **Imágenes en nuestra tarjeta gráfica.** ComfyUI y FLUX.1 Krea (`C:\AI`); los libros de prompts viven en las carpetas de los juegos en el Escritorio y las imágenes fallidas se quedan allí con una marca. Reglas aprendidas durante el día: realismo en vez de dibujos animados; esconder las manos o revisar cada dedo; nada de letras ni firmas; las marcas de peleas solo en la cara (en el pelo negro las cicatrices salen como calvas); un objeto flota en el aire sin suelo, o su cara inferior se funde con el fondo verde.
+- **Pruebas.** `npm test` — 208 pruebas.
 [↑ Volver a los idiomas](#top)
 
 ---
@@ -3510,4 +3570,19 @@ La décision du 08.11.2026 est un **hybride**. Les règles sont écrites en Type
   - `layout-audit.mjs --game checkers --to-the-end` examine la mise en page du menu, du damier, d’un pion choisi, du fil de la partie, du menu au-dessus de la partie et de l’écran de fin en cinq langues.
 
 - **Les héros dans tous les jeux (11.11.2026, nuit).** Alexey : « Каждому персонажу надо краткую биографию. Все окна должны… увеличиваться при наведении мышки… серьёзно. Так же, как и во время игры. Плюс должна открываться биография каждому ». Les biographies des pirates, des nécromanciens et des joueurs des scènes étaient deux fois plus longues que celles des premiers héros : elles sont réduites à une ou deux phrases dans les cinq langues, et un test garde chaque biographie dans la limite de la plus longue de la première compagnie. Dans le menu des adversaires de la préférence, une vignette sous la souris grandit maintenant jusqu’à sa fiche (`CharacterPeek grow`) : la grande image commence là où était la petite, avec la biographie et la manière à côté ; la fiche est dessinée par-dessus la page, car une liste défilante couperait un portrait grandi à l’intérieur. Une image large (une scène devant un damier) grandit jusqu’à 380 % de son cadre, aussi grande qu’un portrait haut à 250 %. Aux tables de préférence et de poker, devant l’échiquier, à la bataille navale et aux dames, le portrait grandissait déjà et ouvrait la fiche ; vérifié à la souris et au doigt.
+
+### 24. Des jeux vivants : surprises, fins de partie, couvertures, héros (12.11.2026)
+
+- **Surprises** (`shared/surprises/`). De temps en temps, il se passe quelque chose dans un jeu : un corbeau marche au bord de la table, un chat bagarreur approche à pas de loup en grondant, un éclair montre un nécromancien derrière vous, une météorite en feu traverse l’échiquier. Chaque jeu a sa propre distribution et ses propres mouvements, rien ne se répète (un test y veille). Le bouton 🦇 de l’en-tête les coupe sur tout le site.
+  - Depuis le soir du 12.11, tout est réaliste (Alexey : « мультяшные картинки не очень… для взрослых, позлее »). Les créatures sont des photographies peintes sur notre propre carte graphique et détourées d’un fond vert ; seuls la goutte de sang et le dos de la carte sont encore dessinés.
+  - Articulation (`rigs.ts`, `Rig.tsx`) : la même photographie est découpée en parties qui bougent — une tête regarde autour d’elle, une queue se balance, une mâchoire tombe, les paupières clignent, les yeux s’embrasent.
+  - Une image que la carte graphique peint encore figure dans `PAINTING` : sa scène n’est tout simplement pas montrée, si bien que le site peut être publié à tout moment.
+- **La fin de partie** (`shared/finale/`, dans les cinq jeux). Gagner, c’est l’honneur : rayons dorés, l’adversaire s’incline, une couronne de laurier, des pétales de rose, une fanfare et des mots respectueux à voix haute. Perdre, c’est une moquerie d’adultes à la fausse compassion, l’une de quatre scènes : l’aumône (un projecteur, des applaudissements lents, une pièce), les condoléances (votre portrait dans un cadre de deuil, le plus petit violon du monde), « tss, tss, tss » (un soupir, un hochement de tête), une médaille de participation.
+  - Les séries de défaites dans un même jeu sont récompensées : 3 d’affilée — « Idiot de l’année », 5 — « Idiot de la décennie », 7 — « Idiot du siècle », 10 puis toutes les 5 — « Idiot clinique » avec feu d’artifice.
+  - Les sons sont créés dans le navigateur sans fichiers, la voix est la synthèse vocale du navigateur dans la langue du jeu ; le bouton 🔊 de l’en-tête les coupe. N’importe quelle scène peut être appelée par l’événement `cosmo-game-hub:finale`.
+- **Portraits vivants.** Les adversaires aux tables respirent de façon presque imperceptible, chacun à son rythme ; au préférence, des bougies vacillent sur les visages.
+- **Le catalogue.** À côté de la couverture de chaque jeu se trouvent nos propres variantes, et la carte passe lentement de l’une à l’autre (`shell/utils/coverCycle.ts`). Le jeu de commerce s’appelle « Loyer du sang » : le nom de marque d’autrui a disparu.
+- **Héros.** Ils sont 176 (67 habitants et 109 invités) : trente invités spatiaux de « Loyer du sang » et trente héros de styles nouveaux. Chaque héros a une phrase sur lui-même à la première personne.
+- **Des images sur notre propre carte graphique.** ComfyUI et FLUX.1 Krea (`C:\AI`) ; les livres de prompts vivent dans les dossiers des jeux sur le Bureau, et les images ratées y restent avec une mention. Règles apprises dans la journée : le réalisme plutôt que le dessin animé ; cacher les mains ou vérifier chaque doigt ; ni lettres ni signatures ; les marques de combat seulement sur la face (sur une fourrure noire, les cicatrices sortent en plaques chauves) ; un objet flotte en l’air sans sol, sinon sa face inférieure se fond dans le fond vert.
+- **Vérifications.** `npm test` — 208 tests.
 [↑ Retour aux langues](#top)

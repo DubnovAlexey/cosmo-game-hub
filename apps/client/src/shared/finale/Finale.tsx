@@ -18,7 +18,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { withBase } from '@shell/utils/withBase';
 import { characterFacts, portraitFocus, portraitPath, type CharacterId } from '../characters/roster.ts';
-import { loadCharacterTexts } from '../characters/texts/index.ts';
+import { loadCharacterTexts } from '../characters/texts';
 import { directionOf } from '../i18n/languages.ts';
 import { useLanguage } from '../i18n/useLanguage.ts';
 import {
@@ -87,7 +87,8 @@ export const Finale: React.FC<FinaleProps> = ({ game, outcome, hero }) => {
             const scene = outcome === 'lose' ? pickScene(Math.random, lastScene.current) : 'alms';
             if (outcome === 'lose') lastScene.current = scene;
             // [EN] three, five, ten defeats in a row are crowned instead / [RU] три, пять, десять поражений подряд вместо этого награждаются
-            const award = outcome === 'lose' ? awardFor(advanceStreak(game, outcome)) : (advanceStreak(game, outcome), null);
+            const streak = advanceStreak(game, outcome);
+            const award = outcome === 'lose' ? awardFor(streak) : null;
             const line = award ? AWARD_WORDS[language][award].lines[0] : pickLine(speechOf(language, outcome, scene), Math.random, lastLine.current);
             lastLine.current = line;
             serial.current += 1;

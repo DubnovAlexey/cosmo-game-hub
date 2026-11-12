@@ -49,6 +49,8 @@ export const RigFigure: React.FC<{ href: string; rig: Rig; size: number }> = ({ 
                 {rig.parts.map(part => <clipPath key={part.name} id={`${id}-${part.name}`}><path d={path(part.points)} /></clipPath>)}
             </defs>
             <g className={rig.breathe ? styles.breathe : undefined} style={{ transformOrigin: `${w / 2}px ${h}px` }}>
+                {/* [EN] the dark of an open mouth under a jaw that moves away / [RU] темнота открытого рта под отходящей челюстью */}
+                {rig.parts.filter(part => part.fill).map(part => <path key={`${part.name}-fill`} d={path(part.points)} fill={part.fill} />)}
                 {photo('body')}
                 {lidsOf()}
                 {rig.parts.map(part => (
