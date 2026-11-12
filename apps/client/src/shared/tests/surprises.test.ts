@@ -56,6 +56,12 @@ test('every drawing and every photograph is used, and every photograph is on dis
     // [RU] У сцены бывает второе существо: сидящий кот, лич среди червей, раскалённые метеориты среди камней.
     const used = new Set<string>(SETS.flatMap(set => SURPRISE_SETS[set].flatMap(kind => [kind.creature ?? '', kind.extra ?? ''])).filter(Boolean));
     for (const creature of [...DRAWN, ...SPRITES]) assert.ok(used.has(creature), `${creature} is never shown`);
+    // [EN] …and the other way round: every creature a game shows is a known drawing or photograph (12.11.2026 a
+    //      replacement dropped «meteor» and «rock» from SPRITES and only the type check noticed).
+    // [RU] …и наоборот: каждое существо, которое показывает игра, — известный рисунок или фотография (12.11.2026 замена
+    //      выкинула «meteor» и «rock» из SPRITES, и заметила это только проверка типов).
+    const known = new Set<string>([...DRAWN, ...SPRITES]);
+    for (const creature of used) assert.ok(known.has(creature), `${creature} is shown but is neither in DRAWN nor in SPRITES`);
     // [EN] A picture still being painted is listed in PAINTING and is not on disk; every other one is on disk.
     // [RU] Картинка, которая ещё рисуется, записана в PAINTING и её нет на диске; все остальные — на диске.
     for (const sprite of SPRITES) {

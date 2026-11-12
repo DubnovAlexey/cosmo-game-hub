@@ -41,7 +41,7 @@ export const SPRITES = [
     'raven', 'ghost-hand', 'moth', 'smoke-skull',
     'cat-walk', 'cat-yawn', 'roach', 'chip', 'die', 'smoke-ring',
     'centipede', 'skull', 'lantern', 'hooded', 'lich',
-    'wreck', 'dead-astronaut', 'stalker', 'probe',
+    'meteor', 'rock', 'wreck', 'dead-astronaut', 'stalker', 'probe',
     'sea-gull', 'shark-fin', 'kraken', 'mine', 'scope',
 ] as const;
 export type Sprite = typeof SPRITES[number];

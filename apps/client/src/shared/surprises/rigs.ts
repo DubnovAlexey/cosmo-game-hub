@@ -105,27 +105,34 @@ export const RIGS: Readonly<Partial<Record<Sprite, Rig>>> = {
         // [RU] С вечера 12.11.2026 кот — уличный чемпион (Алексей: «кот должен выглядеть бойцом, драчуном со скверным
         //      характером… мощным, сильным… гибкий, должен излучать мощь… несломленный характер»): сложён как
         //      пантера, шрам на плече; крадётся низко, выпустив когти, и скалится.
-        width: 512, height: 241, breathe: true,
+        // The fifth picture (12.11.2026, approved: «да, ставь»): a heavyweight black tom stalking to the right with the
+        // fangs bared, no bald patches. [RU] Пятая картинка (одобрена 12.11.2026): тяжёлый чёрный кот крадётся вправо,
+        // оскалившись, без проплешин.
+        width: 512, height: 230, breathe: true,
         parts: [
-            { name: 'tail', move: 'tailSway', pivot: [120, 68], points: [[107, 60], [130, 70], [123, 113], [107, 157], [80, 193], [47, 217], [0, 220], [0, 190], [37, 187], [70, 157], [90, 113]] },
-            { name: 'hind', move: 'footStepLate', pivot: [122, 157], points: [[100, 153], [143, 157], [143, 200], [133, 237], [103, 233], [107, 193]] },
-            { name: 'front', move: 'footStep', pivot: [410, 150], points: [[400, 137], [447, 143], [512, 200], [512, 237], [467, 237], [427, 193], [393, 173]] },
-            { name: 'head', move: 'headTurn', pivot: [425, 85], points: [[417, 40], [427, 3], [447, 13], [467, 27], [497, 7], [512, 13], [512, 113], [467, 117], [433, 100], [413, 73]] },
+            { name: 'tail', move: 'tailSway', pivot: [110, 90], points: [[103, 80], [117, 100], [100, 127], [73, 137], [40, 137], [17, 133], [3, 123], [3, 100], [17, 100], [40, 120], [67, 120], [90, 103], [93, 83]] },
+            { name: 'hind', move: 'footStepLate', pivot: [105, 135], points: [[87, 133], [123, 133], [120, 173], [117, 203], [87, 203], [90, 167]] },
+            { name: 'front', move: 'footStep', pivot: [400, 140], points: [[393, 133], [427, 143], [467, 173], [500, 200], [501, 223], [467, 223], [440, 200], [400, 167]] },
+            { name: 'head', move: 'headTurn', pivot: [430, 75], points: [[413, 40], [427, 20], [447, 30], [480, 37], [503, 27], [512, 30], [512, 100], [497, 123], [467, 130], [440, 117], [420, 93]] },
         ],
         eyes: [
-            { x: 467, y: 57, rx: 6, ry: 4, lid: '#141012', glow: '#ffe14a', part: 'head' },
-            { x: 497, y: 59, rx: 4, ry: 4, lid: '#141012', part: 'head' },
+            { x: 471, y: 78, rx: 6.5, ry: 4.5, lid: '#141012', glow: '#ffe14a', part: 'head' },
+            { x: 500, y: 75, rx: 5, ry: 4.5, lid: '#141012', part: 'head' },
         ],
     },
-    // [EN] The sitting cat yawning: the head tilts back slowly, the tip of the tail twitches, the chest breathes.
-    // [RU] Сидящий кот зевает: голова медленно запрокидывается, кончик хвоста дёргается, грудь дышит.
+    // [EN] The sitting champion snarls at the table: the head tilts back slowly with the jaws open, the eyes burn, the
+    //      tip of the tail twitches, the chest breathes. [RU] Сидящий чемпион скалится на стол: голова медленно
+    //      запрокидывается с открытой пастью, глаза горят, кончик хвоста дёргается, грудь дышит.
     'cat-yawn': {
-        width: 342, height: 512, breathe: true,
+        width: 486, height: 512, breathe: true,
         parts: [
-            { name: 'tail', move: 'tailFlick', pivot: [222, 405], points: [[214, 380], [342, 380], [342, 452], [300, 452], [260, 432], [214, 420]] },
-            { name: 'head', move: 'yawnTilt', pivot: [170, 206], points: [[78, 40], [90, 3], [130, 30], [200, 30], [236, 4], [256, 40], [256, 150], [226, 200], [170, 216], [114, 200], [84, 150]] },
+            { name: 'tail', move: 'tailFlick', pivot: [240, 470], points: [[233, 453], [300, 440], [373, 433], [427, 393], [467, 400], [481, 433], [467, 460], [400, 467], [320, 483], [253, 490], [230, 477]] },
+            { name: 'head', move: 'yawnTilt', pivot: [120, 190], points: [[7, 40], [17, 10], [60, 37], [107, 37], [160, 10], [175, 27], [183, 80], [190, 133], [160, 180], [113, 200], [67, 193], [27, 167], [7, 120]] },
         ],
-        eyes: [],
+        eyes: [
+            { x: 53, y: 85, rx: 10, ry: 6, lid: '#141012', glow: '#ffd23a', part: 'head' },
+            { x: 120, y: 85, rx: 10, ry: 6, lid: '#141012', part: 'head' },
+        ],
     },
     // [EN] The cockroach seen from above: the antennae twitch all the time — even while it freezes — and the two rows
     //      of legs scuttle out of step. [RU] Таракан сверху: усы дёргаются всё время — даже когда он замирает, — а два
