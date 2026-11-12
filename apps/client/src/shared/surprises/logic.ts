@@ -145,8 +145,7 @@ export const SURPRISE_SETS: Readonly<Record<SurpriseSetId, readonly SurpriseKind
  */
 export const PAINTING: readonly Sprite[] = [
     'centipede',
-    'wreck', 'dead-astronaut', 'stalker', 'probe',
-    'sea-gull', 'shark-fin', 'kraken', 'mine', 'scope',
+    'wreck', 'dead-astronaut', 'stalker',
 ];
 
 /** [EN] The kinds of a game whose pictures are ready. [RU] Виды игры, чьи картинки готовы. */
