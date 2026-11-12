@@ -7,6 +7,7 @@
 //      частями стола; все правила — в ../engine, все тексты — на текущем языке.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { GameOverOverlay } from '@shared/components/GameOverOverlay';
+import { Finale } from '@shared/finale/Finale';
 import { LanguageSwitch } from '@shared/components/LanguageSwitch';
 import type { Language } from '@shared/i18n/languages';
 import { loadGame, loadGameResults } from '@shared/utils/storageEngine';
@@ -132,6 +133,13 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
     const positionOf = (seat: Seat): TablePosition => POSITIONS[size][seating.players[seat]];
     const dealerPosition: TablePosition | null = seating.sittingOut === null ? null : POSITIONS[size][seating.sittingOut];
     const characterOf = (player: number) => (player === HUMAN_PLAYER ? null : company[player - 1] ?? null);
+    const finaleOutcome = game.gameOver ? (humanBalance > 0.05 ? 'win' : humanBalance < -0.05 ? 'lose' : null) : null;
+    const finaleHero = (() => {
+        const bots = Array.from({ length: size }, (_, player) => player).filter(player => player !== HUMAN_PLAYER);
+        if (bots.length === 0) return null;
+        const pick = bots.reduce((best, player) => ((finaleOutcome === 'lose' ? game.balance[player] > game.balance[best] : game.balance[player] < game.balance[best]) ? player : best));
+        return characterOf(pick);
+    })();
     const playing = deal.phase === 'play' || deal.phase === 'done';
 
     const seatView = (seat: Seat) => {
@@ -248,6 +256,9 @@ export const PreferansTable: React.FC<PreferansTableProps> = ({ language, onLang
                     </p>
                 </GameOverOverlay>
             )}
+            {/* [EN] The end of the pool: the best of the table mocks you, or the worst of it bows to you (shared/finale).
+                [RU] Конец пули: лучший за столом издевается над вами, или худший кланяется вам (shared/finale). */}
+            <Finale game="preferans" outcome={finaleOutcome} hero={finaleHero} />
 
             {setupOpen && (
                 <SetupPanel initial={game.settings} saved={saved} results={results} language={language} onLanguage={onLanguage}

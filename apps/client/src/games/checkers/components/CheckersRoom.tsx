@@ -10,6 +10,7 @@
 //      она пойдёт. Взятие нескольких шашек вводится поле за полем — или сразу последним полем, если туда ведёт
 //      только один путь; повторное нажатие на шашку отменяет последний шаг.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Finale } from '@shared/finale/Finale';
 import { characterFacts } from '@shared/characters/roster';
 import type { CharacterTexts } from '@shared/characters/texts';
 import { CharacterFace } from '@shared/components/CharacterCard';
@@ -288,6 +289,9 @@ export const CheckersRoom: React.FC<CheckersRoomProps> = ({ language, onLanguage
                         </aside>
                     </main>
                 )}
+
+                {/* [EN] The end of the game: mockery or honour (shared/finale). [RU] Конец партии: издёвка или почёт (shared/finale). */}
+                <Finale game="checkers" outcome={winner === null || winner === 'draw' ? null : winner === you ? 'win' : 'lose'} hero={opponent} />
 
                 {menuOpen && (
                     <CheckersMenu settings={play.settings} saved={saved} language={language} people={people} opponent={offered}

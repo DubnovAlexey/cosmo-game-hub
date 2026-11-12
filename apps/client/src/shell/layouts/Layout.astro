@@ -104,8 +104,10 @@ const {title, titleKey, scrollToTop = true, favicon = '/favicon'} = Astro.props;
 <script>
     import { startShellLanguage } from '../i18n/applyLanguage';
     import { startSurprisesToggle } from '../utils/surprisesToggle';
+    import { startSoundToggle } from '../utils/soundToggle';
     startShellLanguage();
     startSurprisesToggle();
+    startSoundToggle();
 </script>
 </body>
 </html>

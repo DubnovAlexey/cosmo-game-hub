@@ -52,6 +52,10 @@ export type CharacterId =
   | 'markus' | 'vera' | 'grob' | 'nekro' | 'brut' | 'eva' | 'vakuum' | 'xavier' | 'ksi' | 'sporus'
   | 'torgovets' | 'vivisector' | 'globb' | 'gorizont' | 'klony' | 'kraken' | 'malakor' | 'kurtizanka' | 'skeleton' | 'vudu'
   | 'obzhorin' | 'zero' | 'drednout' | 'kollektor' | 'zazerkal' | 'zhrets' | 'sshivatel' | 'krik' | 'pozhiratel' | 'smert'
+  /** The style guests (12.11.2026): crystal folk, sea folk, a pastel planet, an airship crew, an asteroid saloon. */
+  | 'ametist' | 'kvarts' | 'opal' | 'obsidian' | 'malahit' | 'sapfir' | 'meduza' | 'mudroslav' | 'shuler' | 'briza'
+  | 'ogonek' | 'konyok' | 'lavanda' | 'mohovik' | 'pochtalyon' | 'pryakha' | 'gribnoy' | 'lunnykot' | 'latun' | 'shesterenkin'
+  | 'kompassa' | 'parokhvost' | 'tiktak' | 'lovkach' | 'ryzhaya' | 'dzho' | 'ksar' | 'grey' | 'nova' | 'skupshchik'
   /** The dummy of a game for two: never picked as an opponent, it sits in the third seat. */
   | 'dummy';
 
@@ -221,6 +225,37 @@ export const CHARACTERS: Readonly<Record<Exclude<CharacterId, 'dummy'>, Characte
   krik: { female: true, guest: true },
   pozhiratel: { female: false, guest: true },
   smert: { female: true, guest: true },
+  // [EN] The style guests, 12.11.2026. [RU] Гости новых стилей, 12.11.2026.
+  ametist: { female: true, guest: true },
+  kvarts: { female: false, guest: true },
+  opal: { female: true, guest: true },
+  obsidian: { female: false, guest: true },
+  malahit: { female: false, guest: true },
+  sapfir: { female: false, guest: true },
+  meduza: { female: true, guest: true },
+  mudroslav: { female: false, guest: true },
+  shuler: { female: false, guest: true },
+  briza: { female: true, guest: true },
+  ogonek: { female: false, guest: true },
+  konyok: { female: false, guest: true },
+  lavanda: { female: true, guest: true },
+  mohovik: { female: false, guest: true },
+  pochtalyon: { female: false, guest: true },
+  pryakha: { female: true, guest: true },
+  gribnoy: { female: false, guest: true },
+  lunnykot: { female: false, guest: true },
+  latun: { female: true, guest: true },
+  shesterenkin: { female: false, guest: true },
+  kompassa: { female: true, guest: true },
+  parokhvost: { female: false, guest: true },
+  tiktak: { female: false, guest: true },
+  lovkach: { female: false, guest: true },
+  ryzhaya: { female: true, guest: true },
+  dzho: { female: false, guest: true },
+  ksar: { female: false, guest: true },
+  grey: { female: false, guest: true },
+  nova: { female: true, guest: true },
+  skupshchik: { female: false, guest: true },
 });
 
 /** [EN] The sea folk: the guests who came by sea (Captain Galleon and the crew of the sea battle). [RU] Морской народ: гости, приплывшие морем (Капитан Галеон и команда морского боя). */
@@ -236,6 +271,20 @@ export const SPACE_FOLK: readonly Exclude<CharacterId, 'dummy'>[] = Object.freez
   'markus', 'vera', 'grob', 'nekro', 'brut', 'eva', 'vakuum', 'xavier', 'ksi', 'sporus',
   'torgovets', 'vivisector', 'globb', 'gorizont', 'klony', 'kraken', 'malakor', 'kurtizanka', 'skeleton', 'vudu',
   'obzhorin', 'zero', 'drednout', 'kollektor', 'zazerkal', 'zhrets', 'sshivatel', 'krik', 'pozhiratel', 'smert',
+]);
+
+/**
+ * [EN] The style folk (12.11.2026): guests in five new styles — crystal folk (dark fairy tale), sea folk (underwater
+ *      fairy tale), a pastel planet (gentle magic), an airship crew (steampunk), an asteroid saloon (space western) —
+ *      portraits generated on our own GPU (FLUX.1 Krea), each with a gag of its own.
+ * [RU] Народ стилей (12.11.2026): гости пяти новых стилей — кристальный народ (тёмная сказка), морской народ
+ *      (подводная сказка), пастельная планета (мягкое волшебство), экипаж дирижабля (стимпанк), салун на астероиде
+ *      (космический вестерн) — портреты сгенерированы на нашей видеокарте (FLUX.1 Krea), у каждого своя шутка.
+ */
+export const STYLE_FOLK: readonly Exclude<CharacterId, 'dummy'>[] = Object.freeze([
+  'ametist', 'kvarts', 'opal', 'obsidian', 'malahit', 'sapfir', 'meduza', 'mudroslav', 'shuler', 'briza',
+  'ogonek', 'konyok', 'lavanda', 'mohovik', 'pochtalyon', 'pryakha', 'gribnoy', 'lunnykot', 'latun', 'shesterenkin',
+  'kompassa', 'parokhvost', 'tiktak', 'lovkach', 'ryzhaya', 'dzho', 'ksar', 'grey', 'nova', 'skupshchik',
 ]);
 
 /**

@@ -71,14 +71,18 @@
 
 /* [EN] The «surprises» button in the header (shell/utils/surprisesToggle.ts): switched off — dimmed, the bat crossed out.
    [RU] Кнопка «неожиданностей» в шапке (shell/utils/surprisesToggle.ts): выключено — тусклая, мышь перечёркнута. */
-.surprises-toggle[data-on='false'] {
+.surprises-toggle[data-on='false'],
+.sound-toggle[data-on='false'] {
     opacity: 0.62;
 }
 
-.surprises-toggle > span:first-child {
+.surprises-toggle > span:first-child,
+.sound-toggle > span:first-child {
     position: relative;
 }
 
+/* [EN] The sound button (shell/utils/soundToggle.ts) is crossed out the same way. [RU] Кнопка звука (shell/utils/soundToggle.ts) перечёркивается так же. */
+.sound-toggle[data-on='false'] > span:first-child::after,
 .surprises-toggle[data-on='false'] > span:first-child::after {
     content: '';
     position: absolute;

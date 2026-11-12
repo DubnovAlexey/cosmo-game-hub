@@ -10,6 +10,7 @@
 //      корабль в море берёт его обратно «в руку»; «Повернуть» (или клавиша R) меняет его направление. Мышь ещё и
 //      видит, где встанет корабль, до нажатия.
 import React, { useEffect, useMemo, useState } from 'react';
+import { Finale } from '@shared/finale/Finale';
 import { characterFacts } from '@shared/characters/roster';
 import type { CharacterTexts } from '@shared/characters/texts';
 import { CharacterFace } from '@shared/components/CharacterCard';
@@ -241,6 +242,9 @@ export const BattleRoom: React.FC<BattleRoomProps> = ({ language, onLanguage, te
                         )}
                     </main>
                 )}
+
+                {/* [EN] The end of the battle: mockery or honour (shared/finale). [RU] Конец боя: издёвка или почёт (shared/finale). */}
+                <Finale game="battleship" outcome={winner === null ? null : winner === YOU ? 'win' : 'lose'} hero={opponent} />
 
                 {menuOpen && (
                     <BattleMenu settings={game.settings} saved={saved} language={language} people={people} opponent={offered}

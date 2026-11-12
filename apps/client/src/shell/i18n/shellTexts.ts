@@ -40,6 +40,14 @@ export const SHELL_TEXTS: Readonly<Record<string, Texts>> = Object.freeze({
         'Cuervos, gatos negros, cometas y gaviotas aparecen a veces en los juegos: pulsa para apagarlos o encenderlos',
         'Corbeaux, chats noirs, comètes et mouettes surgissent parfois dans les jeux — appuyez pour les couper ou les remettre',
     ),
+    'nav.sound': t('Sound', 'Звук', 'צליל', 'Sonido', 'Son'),
+    'nav.soundTitle': t(
+        'The opponent’s voice, applause and fanfares at the end of a game — press to switch them off or on',
+        'Голос соперника, аплодисменты и фанфары в конце партии — нажмите, чтобы выключить или включить',
+        'קול היריב, מחיאות כפיים ותרועות בסוף המשחק — לחצו כדי לכבות או להדליק',
+        'La voz del rival, los aplausos y las fanfarrias al final de la partida: pulsa para apagarlos o encenderlos',
+        'La voix de l’adversaire, les applaudissements et les fanfares en fin de partie — appuyez pour les couper ou les remettre',
+    ),
 
     // Footer
     'footer.rights': t('© 2026 Cosmo Game Hub. All rights reserved.', '© 2026 Cosmo Game Hub. Все права защищены.', '© 2026 Cosmo Game Hub. כל הזכויות שמורות.', '© 2026 Cosmo Game Hub. Todos los derechos reservados.', '© 2026 Cosmo Game Hub. Tous droits réservés.'),

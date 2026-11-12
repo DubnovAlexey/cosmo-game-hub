@@ -1,0 +1,484 @@
+/* [EN] FILE: shared/finale/Finale.module.css — the end-of-game scene (Finale.tsx). Losing: grown-up mockery — darkness,
+        a cold spotlight on you, the winner looming above and looking down, the frame flashing at every slow sarcastic
+        clap, a coin tossed to you as alms. Winning: honour — golden rays, a bow, a laurel wreath, falling rose petals.
+        Every keyframe lives in this module. «Reduce motion» keeps everything in place.
+   [RU] ФАЙЛ: сцена конца партии (Finale.tsx). Проигрыш: взрослая издёвка — темнота, холодный луч прожектора на вас,
+        победитель нависает сверху и смотрит свысока, рамка вспыхивает на каждом медленном саркастическом хлопке, вам
+        бросают монету-подачку. Победа: почёт — золотые лучи, поклон, лавровый венок, падающие лепестки роз. Все
+        ключевые кадры — в этом модуле. «Уменьшить движение» оставляет всё на месте. */
+
+.layer {
+    --x: 50vw;
+    --y: 20vh;
+    --angle: 0deg;
+    --delay: 0s;
+    --time: 5s;
+    --turn: 1;
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    animation: layer-life 11.5s ease both;
+}
+
+@keyframes layer-life {
+    0% { opacity: 0; }
+    4%, 93% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.lose { place-items: start center; background: rgba(3, 2, 4, 0.86); }
+.win { background: rgba(8, 6, 2, 0.5); }
+
+.stage {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    max-width: min(92vw, 520px);
+    padding: 16px;
+    text-align: center;
+}
+
+.title {
+    margin: 0;
+    font: 400 clamp(2.2rem, 9vmin, 4.4rem) / 1 var(--quill, 'Marck Script'), cursive;
+    letter-spacing: 0.02em;
+}
+.lose .stage { padding-top: max(28px, 5vh); }
+/* [EN] A cold, slow «Bravo… bravo.» — the letters spread apart as if drawled. [RU] Холодное, медленное «Браво… браво.» — буквы расходятся, будто сказаны нараспев. */
+.lose .title {
+    color: #e6e1d8;
+    text-shadow: 0 0 14px rgba(200, 210, 230, 0.35), 0 3px 0 #000;
+    animation: title-drawl 3s 0.8s ease-out both;
+}
+.win .title {
+    color: #f6d77a;
+    text-shadow: 0 0 22px rgba(255, 200, 80, 0.7), 0 3px 0 #3a2a04;
+    animation: title-glow 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes title-drawl {
+    from { opacity: 0; letter-spacing: -0.06em; }
+    to { opacity: 1; letter-spacing: 0.08em; }
+}
+
+@keyframes title-glow {
+    from { filter: brightness(1); }
+    to { filter: brightness(1.25); }
+}
+
+.hero {
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+.lose .hero { animation: emerge 1.2s 0.3s ease-out both, loom 9s 1.5s ease-in-out both; }
+.win .hero { animation: honour-in 0.9s ease-out both; }
+
+@keyframes emerge {
+    from { opacity: 0; transform: scale(0.85); filter: brightness(0.2); }
+    to { opacity: 1; transform: none; filter: brightness(1); }
+}
+
+/* [EN] The winner leans over you, chin up, looking down. [RU] Победитель нависает над вами, задрав подбородок, глядя сверху вниз. */
+@keyframes loom {
+    from { transform: none; }
+    to { transform: scale(1.14) translateY(2vh) rotate(-3deg); }
+}
+
+@keyframes honour-in {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: none; }
+}
+
+.portrait {
+    display: block;
+    width: clamp(110px, 26vmin, 190px);
+    aspect-ratio: 1;
+    border: 4px solid #c9ced5;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #0c070a;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.8);
+}
+.portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 22%;
+}
+.lose .portrait {
+    position: relative;
+    width: clamp(130px, 32vmin, 240px);
+    border-color: #6f7680;
+    box-shadow: 0 0 0 1px #000, 0 -8px 30px rgba(190, 205, 230, 0.25), 0 24px 50px rgba(0, 0, 0, 0.9);
+}
+.win .portrait {
+    border-color: #e0b93a;
+    box-shadow: 0 0 40px rgba(255, 200, 80, 0.55), 0 14px 34px rgba(0, 0, 0, 0.8);
+    animation: bow 1.3s 1.1s ease-in-out 2;
+}
+
+/* [EN] At every clap a pale flash runs over the face. [RU] На каждом хлопке по лицу пробегает бледная вспышка. */
+.clap {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, rgba(235, 240, 255, 0.55), transparent 70%);
+    opacity: 0;
+    animation: clap-flash 0.35s var(--delay) ease-out both;
+}
+
+@keyframes clap-flash {
+    0% { opacity: 0.9; }
+    100% { opacity: 0; }
+}
+
+/* [EN] A deep bow: the head goes down and forward, then back up with dignity. [RU] Глубокий поклон: голова уходит вниз и вперёд и с достоинством поднимается. */
+@keyframes bow {
+    0%, 100% { transform: perspective(500px) rotateX(0deg) translateY(0); }
+    40%, 60% { transform: perspective(500px) rotateX(32deg) translateY(16px) scale(0.95); }
+}
+
+.bubble {
+    margin: 0;
+    display: grid;
+    gap: 4px;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font: 600 clamp(1rem, 3.4vmin, 1.25rem) / 1.35 'Cormorant Garamond', serif;
+    unicode-bidi: plaintext;
+    animation: bubble-pop 0.4s 0.6s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+.lose .bubble {
+    color: #ece6dc;
+    background: rgba(12, 10, 14, 0.94);
+    border: 1px solid #6f7680;
+    animation-delay: 5.9s;
+}
+.win .bubble {
+    color: #fff4d6;
+    background: rgba(30, 22, 6, 0.92);
+    border: 2px solid #c9a227;
+}
+.name {
+    font: 400 1.3em / 1.1 var(--quill, 'Marck Script'), cursive;
+}
+.lose .name { color: #c9ced5; }
+.win .name { color: #f6d77a; }
+
+@keyframes bubble-pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: none; }
+}
+
+/* [EN] A cold spotlight from above onto the place where you stand. [RU] Холодный луч прожектора сверху на место, где стоите вы. */
+.spotlight {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 22vmin 5vmin at 50% 88%, rgba(215, 225, 245, 0.42), transparent 70%),
+        linear-gradient(180deg, transparent 0%, rgba(200, 212, 235, 0.1) 100%);
+    clip-path: polygon(44% 0, 56% 0, 78% 100%, 22% 100%);
+    opacity: 0;
+    animation: spot-on 0.25s 0.05s steps(2, end) both;
+}
+
+@keyframes spot-on {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* [EN] The coin tossed to you: it spins down into the light, bounces twice and lies at your feet.
+   [RU] Монета, брошенная вам: падает, вращаясь, в свет, дважды подпрыгивает и ложится у ваших ног. */
+.coin {
+    position: absolute;
+    left: 50%;
+    top: 86%;
+    z-index: 3;
+    width: clamp(26px, 6vmin, 40px);
+    opacity: 0;
+    animation: coin-toss 1.3s 4.45s linear both;
+}
+.coin svg { display: block; width: 100%; }
+
+@keyframes coin-toss {
+    0% { opacity: 0; transform: translate(-50%, -60vh) rotateY(0deg); }
+    6% { opacity: 1; }
+    54% { transform: translate(-50%, 0) rotateY(900deg) scaleY(1); }
+    66% { transform: translate(-50%, -5vh) rotateY(1080deg); }
+    78% { transform: translate(-50%, 0) rotateY(1260deg); }
+    86% { transform: translate(-50%, -1.5vh) rotateY(1300deg); }
+    100% { opacity: 1; transform: translate(-50%, 0) rotateX(70deg) rotateY(1440deg); }
+}
+
+/* [EN] Condolences: the hero tilts the head in false grief; the smallest violin in the world plays beside him; your
+        portrait in a mourning frame stands below with a candle. [RU] Соболезнования: герой склоняет голову в притворной
+        скорби; рядом играет самая маленькая скрипка в мире; внизу ваш портрет в траурной рамке со свечой. */
+.condolences .hero { animation: emerge 1.2s 0.3s ease-out both, grief 3s 1.5s ease-in-out both; }
+
+@keyframes grief {
+    from { transform: none; }
+    to { transform: rotate(-8deg) translateY(1vh); }
+}
+
+.violin {
+    position: absolute;
+    top: 48%;
+    inset-inline-start: 84%;
+    width: clamp(46px, 11vmin, 80px);
+    opacity: 0;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.8));
+    animation: finger-in 0.6s 1s ease-out both;
+}
+
+@keyframes finger-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+}
+
+.bow {
+    transform-box: view-box;
+    transform-origin: 30px 34px;
+    animation: bow-saw 0.5s 1.1s ease-in-out 7 alternate;
+}
+
+@keyframes bow-saw {
+    from { transform: translate(-6px, 3px); }
+    to { transform: translate(6px, -3px); }
+}
+
+.mourning {
+    position: absolute;
+    left: 50%;
+    bottom: 4vh;
+    width: clamp(110px, 24vmin, 180px);
+    opacity: 0;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.9));
+    animation: mourn-in 1.4s 0.6s ease-out both;
+}
+.mourning svg { display: block; width: 100%; }
+
+@keyframes mourn-in {
+    from { opacity: 0; transform: translate(-50%, 4vh); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.candle {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: candle 0.7s ease-in-out infinite alternate;
+}
+
+@keyframes candle {
+    from { transform: scale(1, 1) skewX(0deg); opacity: 0.95; }
+    to { transform: scale(0.85, 1.15) skewX(6deg); opacity: 0.8; }
+}
+
+/* [EN] A shake of the head: slowly, three times, «no, no, no» — and a long, disappointed look. [RU] Покачивание головой:
+        медленно, трижды, «нет, нет, нет» — и долгий разочарованный взгляд. */
+.headshake .hero { animation: emerge 1s 0.2s ease-out both, shake-no 0.9s 1.3s ease-in-out 3 alternate both; }
+
+@keyframes shake-no {
+    from { transform: perspective(600px) rotateY(-22deg); }
+    to { transform: perspective(600px) rotateY(22deg); }
+}
+.headshake .title { animation-delay: 1.9s; }
+
+/* [EN] The words appear when the hero starts to speak (VOICE_AT in logic.ts). [RU] Слова появляются, когда герой начинает говорить (VOICE_AT в logic.ts). */
+.condolences .bubble { animation-delay: 4.4s; }
+.headshake .bubble { animation-delay: 3.4s; }
+.medal .bubble { animation-delay: 4s; }
+
+/* [EN] A tin medal for taking part comes down on its ribbon, swings and stops before you. [RU] Жестяная медаль за участие
+        спускается на ленте, качается и замирает перед вами. */
+.tinMedal {
+    position: absolute;
+    left: 50%;
+    top: -30vh;
+    width: clamp(48px, 11vmin, 80px);
+    transform-origin: 50% 0;
+    filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.85));
+    animation: medal-down 1.4s 0.9s cubic-bezier(0.3, 1.3, 0.5, 1) both, medal-swing 1.2s 2.3s ease-in-out 3 alternate;
+}
+.tinMedal svg { display: block; width: 100%; }
+
+@keyframes medal-down {
+    from { transform: translate(-50%, 0); }
+    to { transform: translate(-50%, 92vh); }
+}
+
+@keyframes medal-swing {
+    from { transform: translate(-50%, 92vh) rotate(-6deg); }
+    to { transform: translate(-50%, 92vh) rotate(6deg); }
+}
+
+/* [EN] An award for a losing streak comes down into the spotlight: a medal, a cup, a big medal, and the super medal
+        with a brain in it; a plaque under it bears its name. [RU] Награда за серию проигрышей спускается в луч: медаль,
+        кубок, большая медаль и супермедаль с мозгом внутри; под ней табличка с названием. */
+.prize {
+    position: absolute;
+    left: 50%;
+    top: -40vh;
+    z-index: 3;
+    display: grid;
+    justify-items: center;
+    width: clamp(70px, 16vmin, 120px);
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 14px rgba(255, 210, 110, 0.35));
+    animation: prize-down 1.6s 0.9s cubic-bezier(0.3, 1.3, 0.5, 1) both;
+}
+.prize svg { display: block; width: 100%; }
+.century { top: -46vh; width: clamp(84px, 19vmin, 140px); }
+.clinical { top: -52vh; width: clamp(96px, 22vmin, 160px); filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 18px rgba(160, 100, 40, 0.6)); }
+
+@keyframes prize-down {
+    from { transform: translate(-50%, 0); }
+    to { transform: translate(-50%, 94vh); }
+}
+
+.plaque {
+    margin-top: 6px;
+    padding: 4px 10px;
+    border: 1px solid #d9b13b;
+    border-radius: 3px;
+    background: #2a1d0a;
+    color: #f6e09a;
+    font: 400 clamp(0.95rem, 2.8vmin, 1.25rem) / 1.1 var(--quill, 'Marck Script'), cursive;
+    white-space: nowrap;
+}
+.award .bubble { animation-delay: 4.6s; }
+
+/* [EN] The salute of dung: brown lumps fly out from every burst and fall heavily. [RU] Салют из говна: коричневые комья
+        разлетаются из каждого разрыва и тяжело падают. */
+.burst {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: 2;
+    width: 0;
+    height: 0;
+}
+.burst::before {
+    content: '';
+    position: absolute;
+    left: -6vmin;
+    top: -6vmin;
+    width: 12vmin;
+    height: 12vmin;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 190, 90, 0.85), rgba(120, 70, 20, 0.4) 45%, transparent 70%);
+    opacity: 0;
+    animation: burst-flash 0.6s var(--delay) ease-out both;
+}
+
+@keyframes burst-flash {
+    0% { opacity: 1; transform: scale(0.2); }
+    100% { opacity: 0; transform: scale(1.6); }
+}
+
+.dung {
+    position: absolute;
+    left: -8px;
+    top: -7px;
+    width: 16px;
+    height: 14px;
+    border-radius: 50% 50% 45% 45% / 62% 62% 38% 38%;
+    background: radial-gradient(circle at 40% 30%, #9a6a35, #5a3415 60%, #3a210b);
+    box-shadow: 0 -5px 0 -2px #6e4420, 0 -9px 0 -5px #82552a;
+    opacity: 0;
+    animation: dung-fly 1.4s var(--delay) cubic-bezier(0.1, 0.7, 0.3, 1) both;
+}
+
+@keyframes dung-fly {
+    0% { opacity: 1; transform: rotate(var(--angle)) translateX(0) scale(0.4); }
+    65% { opacity: 1; transform: rotate(var(--angle)) translateX(17vmin) scale(1); }
+    100% { opacity: 0; transform: rotate(var(--angle)) translateX(19vmin) translateY(9vmin) scale(0.9); }
+}
+
+/* [EN] Golden rays turning slowly behind the hero. [RU] Золотые лучи медленно вращаются за героем. */
+.rays {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 160vmax;
+    height: 160vmax;
+    background: repeating-conic-gradient(from 0deg, rgba(255, 210, 110, 0.22) 0deg 8deg, transparent 8deg 20deg);
+    mask-image: radial-gradient(circle, #000 0%, transparent 55%);
+    opacity: 0;
+    animation: rays-in 1s ease-out both, rays-spin 24s linear infinite;
+}
+
+@keyframes rays-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes rays-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* [EN] The laurel wreath comes down onto the bowing hero. [RU] Лавровый венок опускается на кланяющегося героя. */
+.wreath {
+    position: absolute;
+    top: -16%;
+    left: 50%;
+    z-index: 1;
+    width: clamp(120px, 30vmin, 220px);
+    filter: drop-shadow(0 0 10px rgba(255, 200, 80, 0.7));
+    animation: wreath-drop 1.2s 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+@keyframes wreath-drop {
+    from { opacity: 0; transform: translate(-50%, -60vh) rotate(-30deg); }
+    to { opacity: 1; transform: translate(-50%, 0) rotate(0deg); }
+}
+
+/* [EN] Dark red rose petals falling and turning. [RU] Тёмно-красные лепестки роз падают, кружась. */
+.petal {
+    position: absolute;
+    top: -8vh;
+    left: var(--x);
+    z-index: 1;
+    width: 14px;
+    height: 18px;
+    border-radius: 80% 0 80% 0;
+    background: radial-gradient(circle at 30% 30%, #d4333f, #7a0b16);
+    opacity: 0;
+    animation: petal-fall var(--time) var(--delay) linear infinite;
+}
+
+@keyframes petal-fall {
+    0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+    10% { opacity: 0.95; }
+    100% { opacity: 0.9; transform: translate(calc(var(--turn) * 60px), 118vh) rotate(calc(var(--turn) * 540deg)); }
+}
+
+.close {
+    position: absolute;
+    top: max(12px, env(safe-area-inset-top));
+    inset-inline-end: 12px;
+    z-index: 4;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #f2ede4;
+    font: 400 1.6rem / 1 sans-serif;
+    cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .layer, .layer * { animation: none !important; }
+    .petal, .rays, .clap, .violin, .tinMedal, .burst { display: none; }
+    .prize { top: 54vh; transform: translateX(-50%); }
+    .coin, .spotlight, .mourning, .lose .bubble, .lose .title { opacity: 1; }
+}

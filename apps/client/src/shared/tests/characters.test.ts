@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { BOARD_FOLK, CHARACTER_IDS, SEA_FOLK, SPACE_FOLK, characterFacts, portraitPath } from '../characters/roster.ts';
+import { BOARD_FOLK, CHARACTER_IDS, SEA_FOLK, SPACE_FOLK, STYLE_FOLK, characterFacts, portraitPath } from '../characters/roster.ts';
 import { CHARACTERS_EN } from '../characters/texts/en.ts';
 import { CHARACTERS_ES } from '../characters/texts/es.ts';
 import { CHARACTERS_FR } from '../characters/texts/fr.ts';
@@ -18,7 +18,7 @@ import { CHARACTERS_RU } from '../characters/texts/ru.ts';
 const PUBLIC = fileURLToPath(new URL('../../../public/', import.meta.url));
 
 test('every hero has a picture and words in five languages', () => {
-  assert.equal(CHARACTER_IDS.length, 146);
+  assert.equal(CHARACTER_IDS.length, 176);
   for (const id of CHARACTER_IDS) {
     assert.ok(existsSync(PUBLIC + portraitPath(id)), `${id}: no picture ${portraitPath(id)}`);
     const ru = CHARACTERS_RU[id];
@@ -57,6 +57,19 @@ test('the space folk of «Кровная рента» are thirty guests of their
   for (const texts of [CHARACTERS_RU, CHARACTERS_EN, CHARACTERS_HE, CHARACTERS_ES, CHARACTERS_FR]) {
     const names = CHARACTER_IDS.map(id => texts[id].name);
     assert.equal(new Set(names).size, names.length, names.filter((name, index) => names.indexOf(name) !== index).join(', '));
+  }
+});
+
+test('the style folk are thirty guests of five new styles, apart from every other company', () => {
+  // [EN] Crystal folk, sea folk, a pastel planet, an airship crew, an asteroid saloon (12.11.2026).
+  // [RU] Кристальный народ, морской народ, пастельная планета, экипаж дирижабля, салун на астероиде (12.11.2026).
+  assert.equal(STYLE_FOLK.length, 30);
+  assert.equal(new Set(STYLE_FOLK).size, STYLE_FOLK.length);
+  for (const id of STYLE_FOLK) {
+    assert.ok(CHARACTER_IDS.includes(id), id);
+    assert.equal(characterFacts(id).guest, true, `${id} is a guest`);
+    assert.ok(!SEA_FOLK.includes(id) && !BOARD_FOLK.includes(id) && !SPACE_FOLK.includes(id), id);
+    assert.ok(CHARACTERS_RU[id].quote, `${id} has its say`);
   }
 });
 

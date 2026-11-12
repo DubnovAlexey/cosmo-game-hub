@@ -8,6 +8,7 @@
 //      пятёркой, ваш лоток решений, ход раздачи, меню турнира и его конец. Кто где сидит, решает seating.ts, одно
 //      место рисует PokerSeat.tsx.
 import React, { useMemo, useState } from 'react';
+import { Finale } from '@shared/finale/Finale';
 import { LanguageSwitch } from '@shared/components/LanguageSwitch';
 import type { Language } from '@shared/i18n/languages';
 import {
@@ -175,6 +176,10 @@ export const PokerTable: React.FC<PokerTableProps> = ({ language, onLanguage, te
                         </section>
                     </aside>
                 </div>
+
+                {/* [EN] The end of the tournament: mockery from the one who took your chips, or honour (shared/finale). [RU] Конец турнира: издёвка того, кто забрал ваши фишки, или почёт (shared/finale). */}
+                <Finale game="poker" outcome={game.over ? (game.over.place === 1 ? 'win' : 'lose') : null}
+                    hero={game.over ? cast[Math.max(1, game.over.winner) - 1] ?? null : null} />
 
                 {menuOpen && (
                     <SetupMenu settings={game.settings} saved={saved} language={language}

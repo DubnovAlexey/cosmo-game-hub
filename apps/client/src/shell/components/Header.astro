@@ -115,6 +115,20 @@ const aboutActive = isNavigationPathActive(currentPath, withBase('/about'));
                 <span aria-hidden="true">🦇</span>
                 <span data-i18n="nav.surprises">Surprises</span>
             </button>
+            <!-- [EN] The sounds and voices at the end of a game: on or off for the whole site (shell/utils/soundToggle.ts).
+                 [RU] Звуки и голоса в конце партии: включить или выключить на весь сайт (shell/utils/soundToggle.ts). -->
+            <button
+                    type="button"
+                    data-sound-toggle
+                    aria-pressed="true"
+                    aria-label="Sound"
+                    data-i18n-aria-label="nav.sound"
+                    title="The opponent's voice, applause and fanfares at the end of a game — press to switch them off or on"
+                    data-i18n-title="nav.soundTitle"
+                    class="sound-toggle bg-gray-700 text-white border border-gray-600 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer hover:bg-gray-600"
+            >
+                <span aria-hidden="true">🔊</span>
+            </button>
             <button
                     type="button"
                     disabled

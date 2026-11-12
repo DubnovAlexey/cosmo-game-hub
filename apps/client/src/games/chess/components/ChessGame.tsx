@@ -12,6 +12,7 @@ import { MoveHistory } from './MoveHistory';
 import { Graveyard } from './Graveyard';
 import { GameOverOverlay } from '@shared/components/GameOverOverlay';
 import { Surprises } from '@shared/surprises/Surprises';
+import { Finale } from '@shared/finale/Finale';
 import { GameSetupModal } from './GameSetupModal';
 import { ChessOpponent, pickOpponent } from './ChessOpponent';
 
@@ -203,6 +204,8 @@ export const ChessGame: React.FC = () => {
                     </div>
                 </GameOverOverlay>
             )}
+            {/* [EN] The end of the game: mockery or honour, by checkmate or on time (shared/finale). [RU] Конец партии: издёвка или почёт, матом или по времени (shared/finale). */}
+            <Finale game="chess" outcome={gameStatus === 'win' || gameStatus === 'lose' ? gameStatus : null} hero={opponent} />
             {/* [EN] Comets, a UFO stealing a pawn, an astronaut with noodles (shared/surprises). [RU] Кометы, НЛО крадёт пешку, космонавт с лапшой. */}
             <Surprises set="chess" />
         </div>
