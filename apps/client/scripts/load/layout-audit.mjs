@@ -290,6 +290,10 @@ async function poker(page, touch, where, players, language) {
                 board: document.querySelectorAll('#poker-room [class*="_board_"] [class*="_card_"]').length,
             })`);
             if (state.done) {
+                // [EN] The finale scene (mockery or honour) covers the table on purpose; a player taps it away, so does the audit.
+                // [RU] Финальная сцена (насмешка или почести) нарочно закрывает стол; игрок убирает её касанием — и проверка тоже.
+                await page.evaluate(`document.querySelector('[class*="_layer_"] button[class*="_close_"]')?.click()`);
+                await sleep(400);
                 await scrollTo(page, '#poker-room [class*="_felt_"]');
                 note(`${where} ${players}p result`, [...await page.evaluate(`${TEXT_AUDIT}('#poker-room')`), ...await page.evaluate(POKER_AUDIT)]);
                 await shot(page, `poker-${where}-${players}p-${language}-result`);
