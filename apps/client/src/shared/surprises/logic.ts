@@ -144,7 +144,6 @@ export const SURPRISE_SETS: Readonly<Record<SurpriseSetId, readonly SurpriseKind
  *      Пуст, когда все картинки на месте.
  */
 export const PAINTING: readonly Sprite[] = [
-    'centipede',
     'wreck', 'dead-astronaut', 'stalker',
 ];
 
