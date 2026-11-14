@@ -603,10 +603,11 @@ button.card { cursor: pointer; }
     filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.75));
 }
 .portrait:hover, .portrait:focus-visible { transform: translateY(-2px); outline: none; box-shadow: var(--frame-light), 0 0 0 1px var(--candle), 0 12px 26px rgba(255, 140, 50, 0.4); }
-/* [EN] Under the mouse the portrait grows twofold over everything around it, so you can see who sits there (Alexey,
-        09.11.2026); a short delay keeps it still while the mouse only passes by. With the biography open it stays
+/* [EN] Under the mouse the portrait grows 2.5 times over everything around it, so you can see who sits there (Alexey,
+        09.11.2026; 14.11.2026: «2.5 or even 3 times», like the pictures in the other projects); a short delay keeps it still while the mouse only passes by. With the biography open it stays
         small, the card shows it large. A finger has no hover: a tap opens the card with the large picture.
-   [RU] Под мышью портрет вырастает вдвое поверх всего вокруг, чтобы было видно, кто там сидит (Алексей, 09.11.2026);
+   [RU] Под мышью портрет вырастает в 2,5 раза поверх всего вокруг, чтобы было видно, кто там сидит (Алексей, 09.11.2026;
+        14.11.2026: «раза в 2,5, а то и в 3», как картинки в остальных проектах);
         короткая задержка не даёт ему дёргаться, когда мышь просто проходит мимо. Когда открыта биография, он
         остаётся маленьким — крупно его показывает карточка. У пальца нет наведения: касание открывает карточку с
         крупной картинкой. */
@@ -614,7 +615,7 @@ button.card { cursor: pointer; }
     .portrait { transform-origin: 50% 22%; transition: transform 0.32s cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 0.32s ease; }
     .portrait:hover:not([aria-expanded='true']) {
         z-index: 40;
-        transform: scale(2);
+        transform: scale(2.5);
         transition-delay: 0.12s;
         box-shadow: var(--frame-light), 0 0 0 1px var(--candle), 0 20px 46px rgba(0, 0, 0, 0.85), 0 0 34px rgba(255, 140, 50, 0.35);
     }

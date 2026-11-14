@@ -15,19 +15,25 @@
     z-index: 0;
     transition: transform 0.3s cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
+/* [EN] nth-of-type, not nth-child: Astro puts the card's <script> into the grid right after the first card, and
+        nth-child counted it too — from the second card on every card grew from the wrong edge, and a card of the
+        right column grew past the screen (found 14.11.2026).
+   [RU] nth-of-type, а не nth-child: Astro вставляет <script> карточки в сетку сразу после первой карточки, и
+        nth-child считал и его — со второй карточки все росли не от того края, а карточка правой колонки уходила
+        за экран (найдено 14.11.2026). */
 @media (hover: hover) and (pointer: fine) and (min-width: 768px) {
     .game-card:hover {
         z-index: 20;
         transform: scale(1.5);
         box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(59, 130, 246, 0.6);
     }
-    .game-card:nth-child(odd) { transform-origin: 0 50%; }
-    .game-card:nth-child(even) { transform-origin: 100% 50%; }
+    .game-card:nth-of-type(odd) { transform-origin: 0 50%; }
+    .game-card:nth-of-type(even) { transform-origin: 100% 50%; }
 }
 @media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
-    .game-card:nth-child(3n + 1) { transform-origin: 0 50%; }
-    .game-card:nth-child(3n + 2) { transform-origin: 50% 50%; }
-    .game-card:nth-child(3n) { transform-origin: 100% 50%; }
+    .game-card:nth-of-type(3n + 1) { transform-origin: 0 50%; }
+    .game-card:nth-of-type(3n + 2) { transform-origin: 50% 50%; }
+    .game-card:nth-of-type(3n) { transform-origin: 100% 50%; }
 }
 @media (prefers-reduced-motion: reduce) {
     .game-card { transition: none; }
